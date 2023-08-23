@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/evaluation/db" VERSION="20160511" COMMENT="XMLDB file for Moodle mod/evaluation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="evaluation" COMMENT="all evaluations">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="anonymous" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+		<FIELD NAME="shuffled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="email_notification" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="multiple_submit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="autonumbering" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="site_after_submit" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="page_after_submit" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="page_after_submitformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="publish_stats" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="visible_evaluation_index" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completionsubmit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1, then the activity will be automatically marked as 'complete' once the user submits their choice."/>
+		<FIELD NAME="teamteaching" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Team Teaching"/>
+		<FIELD NAME="semester" TYPE="text" LENGTH="5" NOTNULL="true" DEFAULT="" SEQUENCE="false" COMMENT="Evaluation Semester in format YYYYS"/>
+		<FIELD NAME="min_results" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Privacy: No of evaluations required to show results"/>
+		<FIELD NAME="min_results_text" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Privacy: No of evaluations required to show free taxtresults"/>
+		<FIELD NAME="min_results_priv" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Privacy: No of evaluations required to show results to privileged users"/>
+        <FIELD NAME="privileged_users" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Global evaluations: define privileged users"/>
+        <FIELD NAME="filter_course_of_studies" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Global evaluations: select courses of studies"/>
+		<FIELD NAME="filter_courses" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Global evaluations: Select courses by course id"/>
+		<FIELD NAME="possible_evaluations" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="possible_active_evaluations" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="participating_students" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="participating_active_students" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="participating_teachers" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="participating_active_teachers" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="participating_courses" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="participating_active_courses" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="courses_of_studies" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="duplicated_replies" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="teamteaching_courses" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+	</FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for evaluation"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="evaluation_template" COMMENT="templates of evaluation structures">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="ispublic" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for evaluation_template"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="evaluation_item" COMMENT="evaluation_items">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="evaluation" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="template" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="label" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="presentation" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="typ" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="hasvalue" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="position" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="required" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="dependitem" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="dependvalue" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for evaluation_item"/>
+        <KEY NAME="evaluation" TYPE="foreign" FIELDS="evaluation" REFTABLE="evaluation" REFFIELDS="id"/>
+        <KEY NAME="template" TYPE="foreign" FIELDS="template" REFTABLE="evaluation_template" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+	
+    <TABLE NAME="evaluation_completed" COMMENT="filled out evaluation">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="evaluation" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="random_response" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="anonymous_response" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="course_of_studies" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="" SEQUENCE="false"/>
+        <FIELD NAME="teacherid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>		
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for evaluation_completed"/>
+        <KEY NAME="evaluation" TYPE="foreign" FIELDS="evaluation" REFTABLE="evaluation" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="teacherid" UNIQUE="false" FIELDS="teacherid"/>
+      </INDEXES>
+    </TABLE>
+	
+    <TABLE NAME="evaluation_completedtmp" COMMENT="filled out evaluation">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="evaluation" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="guestid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="random_response" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="anonymous_response" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="course_of_studies" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="" SEQUENCE="false"/>
+		<FIELD NAME="teacherid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>		
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for evaluation_completedtmp"/>
+        <KEY NAME="evaluation" TYPE="foreign" FIELDS="evaluation" REFTABLE="evaluation" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+	
+    <TABLE NAME="evaluation_value" COMMENT="values of the completed evaluations">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="course_of_studies" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="" SEQUENCE="false"/>
+		<FIELD NAME="teacherid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="item" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="tmp_completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+	  <KEYS>
+		<KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for evaluation_value"/>
+		<KEY NAME="item" TYPE="foreign" FIELDS="item" REFTABLE="evaluation_item" REFFIELDS="id"/>
+		</KEYS>
+	  <INDEXES>
+		<INDEX NAME="completed_item" UNIQUE="true" FIELDS="completed, item, courseid, teacherid"/>
+		<INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+		<INDEX NAME="course_of_studies" UNIQUE="false" FIELDS="course_of_studies"/>
+		<INDEX NAME="teacherid" UNIQUE="false" FIELDS="teacherid"/>
+	  </INDEXES>
+    </TABLE>
+	
+    <TABLE NAME="evaluation_valuetmp" COMMENT="values of the completedstmp">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="course_of_studies" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="" SEQUENCE="false"/>
+		<FIELD NAME="teacherid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="item" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="tmp_completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+	  <KEYS>
+		<KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for evaluation_value"/>
+		<KEY NAME="item" TYPE="foreign" FIELDS="item" REFTABLE="evaluation_item" REFFIELDS="id"/>
+		</KEYS>
+	  <INDEXES>
+		<INDEX NAME="completed_item" UNIQUE="true" FIELDS="completed, item, courseid, teacherid"/>
+	  </INDEXES>
+    </TABLE>
+	
+    <TABLE NAME="evaluation_sitecourse_map" COMMENT="evaluation sitecourse map">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="evaluationid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for evaluation_sitecourse_map"/>
+        <KEY NAME="evaluationid" TYPE="foreign" FIELDS="evaluationid" REFTABLE="evaluation" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+		
+    <TABLE NAME="evaluation_enrolments" COMMENT="Store each participating course, number of course students and course teachers after completion of evaluation">
+	<FIELDS>
+		<FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+		<FIELD NAME="evaluation" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+		<FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="fullname" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="shortname" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="course_of_studies" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="students" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="active_students" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="teacherids" TYPE="text" LENGTH="600" NOTNULL="true" DEFAULT="" SEQUENCE="false"/>
+		<FIELD NAME="active_teachers" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+	</FIELDS>
+	<KEYS>
+		<KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+		<KEY NAME="evaluation" TYPE="foreign" FIELDS="evaluation" REFTABLE="evaluation" REFFIELDS="id"/>
+	</KEYS>
+	<INDEXES>
+		<INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+	</INDEXES>
+	</TABLE>
+		
+    <TABLE NAME="evaluation_users" COMMENT="Store each user core data after completion of evaluation">
+	<FIELDS>
+		<FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+		<FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="firstname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="lastname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="alternatename" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="teacher" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="student" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+		<FIELD NAME="lastaccess" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+	</FIELDS>
+	<KEYS>
+		<KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+	</KEYS>
+	<INDEXES>	
+        <INDEX NAME="userid" UNIQUE="true" FIELDS="userid"/>
+        <INDEX NAME="username" UNIQUE="false" FIELDS="username"/>
+	</INDEXES>
+	</TABLE>
+		
+    <TABLE NAME="evaluation_users_la" COMMENT="Store each user core data after completion of evaluation">
+	<FIELDS>
+		<FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+		<FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="evaluation" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="role" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="lastaccess" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+		<FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+	</FIELDS>
+	<KEYS>
+		<KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+	</KEYS>
+	<INDEXES>	
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="evaluation" UNIQUE="false" FIELDS="evaluation"/>
+	</INDEXES>
+	</TABLE>
+
+
+  </TABLES>
+</XMLDB>

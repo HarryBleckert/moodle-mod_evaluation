@@ -1,0 +1,146 @@
+/* styles used by evaluation */
+
+@media print {
+  @page {size: auto; }	
+  //size: auto; 
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  body {
+    background-color: White;
+    color: Black;
+    font-size: 75%;
+  }
+ 
+  div.tabtree, div#header, div.navbar, 
+  div.headermenu, div.paging, div#footer, 
+  div.datapreferences {
+    display: none;
+  }
+
+  table {
+    text-align: left;
+  }
+}
+
+.path-mod-evaluation span.evaluation_info {
+    font-weight: bold;
+}
+
+.path-mod-evaluation div.evaluation_is_dependent {
+    background: #ddd;
+}
+
+.path-mod-evaluation span.evaluation_depend {
+    color: #f00;
+}
+
+.path-mod-evaluation hr.evaluation_pagebreak {
+    height: 4px;
+    color: #aaa;
+    background-color: #aaa;
+    border: 0;
+    margin: 0;
+}
+
+.path-mod-evaluation .drag_target_active {
+    opacity: .25;
+}
+
+.path-mod-evaluation .drag_item_active {
+    opacity: .5;
+}
+
+.path-mod-evaluation .evaluation_bar_image {
+    height: 10px;
+}
+
+.path-mod-evaluation #analysis-form label {
+    display: inline;
+}
+
+.path-mod-evaluation .templateslist td.cell.action,
+.path-mod-evaluation .templateslist th.header.action {
+    width: 10%;
+}
+
+/* Analysis page */
+.path-mod-evaluation table.analysis {
+    width: 100%;
+    border-top: 1px solid #aaa;
+    margin-top: 10px;
+	margin: 0; float: none;
+}
+
+.path-mod-evaluation table.analysis tr:first-child th {
+    padding-top: 10px;
+}
+
+.path-mod-evaluation table.analysis tr:hover {
+    background: #f5f5f5;
+}
+
+.path-mod-evaluation table.analysis td.singlevalue:before,
+.path-mod-evaluation table.analysis td.optionname:before {
+    content: '- ';
+}
+
+.path-mod-evaluation table.analysis.itemtype_textarea td {
+    padding: 4px 0;
+}
+
+.path-mod-evaluation table.analysis tr.isempty {
+    display: none;
+}
+
+/* Responses list */
+.path-mod-evaluation #showentrytable td.cell.completed_timemodified,
+.path-mod-evaluation #showentryanontable td.cell.random_response {
+    font-weight: bold;
+}
+
+.path-mod-evaluation #showentrytable td.cell.userpic,
+.path-mod-evaluation #showentrytable td.cell.deleteentry,
+.path-mod-evaluation #showentryanontable td.cell.deleteentry {
+    width: 10px;
+}
+
+/* Responses navigation */
+.path-mod-evaluation .response_navigation {
+    margin: .5em 0;
+}
+
+.path-mod-evaluation .response_navigation a {
+    display: block;
+}
+
+.path-mod-evaluation .response_navigation a.back_to_list {
+    text-align: center;
+}
+
+.path-mod-evaluation .response_navigation .prev_response:before {
+    /*rtl:raw:
+    content: ' ► ';
+    */
+    /*rtl:remove*/
+    content: ' ◄ ';
+}
+
+.path-mod-evaluation .response_navigation .next_response:after {
+    /*rtl:raw:
+    content: ' ◄ ';
+    */
+    /*rtl:remove*/
+    content: ' ► ';
+}
+
+.path-mod-evaluation .response_navigation .next_response {
+    text-align: right;
+}
+
+.path-mod-evaluation .response_navigation .prev_response {
+    text-align: left;
+}

@@ -1,0 +1,80 @@
+=== 3.8 ===
+
+* The following functions have been finally deprecated and can not be used anymore:
+    * evaluation_scale_used()
+
+=== 3.6 ===
+
+* The following functions have been finally deprecated and can not be used anymore:
+  * evaluation_print_item_preview()
+  * evaluation_print_item_complete()
+  * evaluation_print_item_show_value()
+  * evaluation_check_values()
+  * evaluation_clean_input_value()
+  * evaluation_get_context()
+  * evaluation_create_item()
+  * evaluation_delete_completedtmp()
+  * evaluation_get_page_to_continue()
+  * evaluation_save_values()
+  * evaluation_save_guest_values()
+  * evaluation_create_values()
+  * evaluation_update_values()
+  * evaluation_get_current_completed()
+  * evaluation_is_course_in_sitecourse_map()
+  * evaluation_is_evaluation_in_sitecourse_map()
+  * evaluation_clean_up_sitecourse_map()
+  * evaluation_print_numeric_option_list()
+* Web Service functions now support an optional courseid parameter (course where user completes the evaluation).
+  This new parameter was necessary to support site evaluations.
+
+=== 3.5 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-59159 for more info:
+    - mod_evaluation_upgrade_delete_duplicate_values()
+    - mod_evaluation_upgrade_courseid()
+
+=== 3.3.2 ===
+
+* evaluation_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
+=== 3.3 ===
+
+* Method get_current_completed_tmp in mod_evaluation_completion class is now public.
+* Function evaluation_set_tmp_values is not deprecated anymore.
+
+=== 3.1 ===
+
+* evaluation_get_courses_from_sitecourse_map() now returns course id as 'id' attribute
+* Base class for evaluation items - evaluation_item_base - has been significantly changed, all item types now
+  must implement method complete_form_element() instead of print_item_preview(), print_item_complete(),
+  print_item_show_value(), check_values(), clean_input_value() and value_is_array(). Rendering the items
+  on complete form, evaluation preview, evaluation edit and when viewing response is done using moodleform.
+* The following functions have been deprecated:
+  * evaluation_print_item_preview()
+  * evaluation_print_item_complete()
+  * evaluation_print_item_show_value
+  * evaluation_check_values()
+  * evaluation_clean_input_value()
+  * evaluation_get_context()
+  * evaluation_create_item()
+  * evaluation_set_tmp_values()
+  * evaluation_delete_completedtmp()
+  * evaluation_get_page_to_continue()
+  * evaluation_save_values()
+  * evaluation_save_guest_values()
+  * evaluation_create_values()
+  * evaluation_update_values()
+  * evaluation_get_current_completed()
+  * evaluation_is_course_in_sitecourse_map()
+  * evaluation_is_evaluation_in_sitecourse_map()
+  * evaluation_clean_up_sitecourse_map()
+  * evaluation_print_numeric_option_list()
+
+=== 2.7 ===
+
+* The validation of the following events is now stricter (see MDL-45445):
+    - \mod_evaluation\event\response_deleted
+    - \mod_evaluation\event\response_submitted
