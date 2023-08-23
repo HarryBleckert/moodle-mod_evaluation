@@ -1229,8 +1229,8 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         ?>
         <div id="evDataTable"></div>
         <script src="js/jquery.min.js"></script>
-        <script src="js/chart/chart/chart.min.js"></script>
-        <script src="js/chart/chart/driver.js"></script>
+        <script src="js/chart/chart.min.js"></script>
+        <script src="js/chart/driver.js"></script>
         <script>
 
 
