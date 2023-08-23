@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 define('EVALUATION_ITEM_NAME_TEXTBOX_SIZE', 80);
 define('EVALUATION_ITEM_LABEL_TEXTBOX_SIZE', 20);
+
 abstract class evaluation_item_form extends moodleform {
     public function definition() {
         $item = $this->_customdata['item']; //the item object
@@ -40,15 +41,15 @@ abstract class evaluation_item_form extends moodleform {
 
         if (array_filter(array_keys($common['items']))) {
             $mform->addElement('select',
-                                'dependitem',
-                                get_string('dependitem', 'evaluation').'&nbsp;',
-                                $common['items']
-                                );
+                    'dependitem',
+                    get_string('dependitem', 'evaluation') . '&nbsp;',
+                    $common['items']
+            );
             $mform->addHelpButton('dependitem', 'depending', 'evaluation');
             $mform->addElement('text',
-                                'dependvalue',
-                                get_string('dependvalue', 'evaluation'),
-                                array('size'=>EVALUATION_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
+                    'dependvalue',
+                    get_string('dependvalue', 'evaluation'),
+                    array('size' => EVALUATION_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength' => 255));
             $mform->hideIf('dependvalue', 'dependitem', 'eq', '0');
         } else {
             $mform->addElement('hidden', 'dependitem', 0);
@@ -59,9 +60,9 @@ abstract class evaluation_item_form extends moodleform {
         $mform->setType('dependvalue', PARAM_RAW);
 
         $position_select = $mform->addElement('select',
-                                            'position',
-                                            get_string('position', 'evaluation').'&nbsp;',
-                                            $positionlist);
+                'position',
+                get_string('position', 'evaluation') . '&nbsp;',
+                $positionlist);
         $position_select->setValue($position);
 
         $mform->addElement('hidden', 'cmid', $common['cmid']);
@@ -91,18 +92,18 @@ abstract class evaluation_item_form extends moodleform {
         $buttonarray = array();
         if (!empty($item->id)) {
             $buttonarray[] = &$mform->createElement('submit',
-                                                    'update_item',
-                                                    get_string('update_item', 'evaluation'));
+                    'update_item',
+                    get_string('update_item', 'evaluation'));
 
             $buttonarray[] = &$mform->createElement('submit',
-                                                    'clone_item',
-                                                    get_string('save_as_new_item', 'evaluation'));
+                    'clone_item',
+                    get_string('save_as_new_item', 'evaluation'));
         } else {
             $mform->addElement('hidden', 'clone_item', 0);
             $mform->setType('clone_item', PARAM_INT);
             $buttonarray[] = &$mform->createElement('submit',
-                                                    'save_item',
-                                                    get_string('save_item', 'evaluation'));
+                    'save_item',
+                    get_string('save_item', 'evaluation'));
         }
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '&nbsp;', array(' '), false);

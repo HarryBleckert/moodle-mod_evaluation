@@ -27,7 +27,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 class evaluation_edit_use_template_form extends moodleform {
 
@@ -73,15 +73,15 @@ class evaluation_edit_use_template_form extends moodleform {
 
             $attributes = 'onChange="M.core_formchangechecker.set_form_submitted(); this.form.submit()"';
             $elementgroup[] = $mform->createElement('selectgroups',
-                                                     'templateid',
-                                                     get_string('using_templates', 'evaluation'),
-                                                     $options,
-                                                     $attributes);
+                    'templateid',
+                    get_string('using_templates', 'evaluation'),
+                    $options,
+                    $attributes);
 
             $elementgroup[] = $mform->createElement('submit',
-                                                     'use_template',
-                                                     get_string('use_this_template', 'evaluation'),
-                                                     array('class' => 'hiddenifjs'));
+                    'use_template',
+                    get_string('use_this_template', 'evaluation'),
+                    array('class' => 'hiddenifjs'));
 
             $mform->addGroup($elementgroup, 'elementgroup', '', array(' '), false);
         } else {
@@ -114,22 +114,21 @@ class evaluation_edit_create_template_form extends moodleform {
         $elementgroup = array();
 
         $elementgroup[] = $mform->createElement('text',
-                                                 'templatename',
-                                                 get_string('name', 'evaluation'),
-                                                 array('size'=>'40', 'maxlength'=>'200'));
+                'templatename',
+                get_string('name', 'evaluation'),
+                array('size' => '40', 'maxlength' => '200'));
 
         if (has_capability('mod/evaluation:createpublictemplate', context_system::instance())) {
             $elementgroup[] = $mform->createElement('checkbox',
-                                                     'ispublic', '',
-                                                     get_string('public', 'evaluation'));
+                    'ispublic', '',
+                    get_string('public', 'evaluation'));
         }
 
-
         $mform->addGroup($elementgroup,
-                         'elementgroup',
-                         get_string('name', 'evaluation'),
-                         array(' '),
-                         false);
+                'elementgroup',
+                get_string('name', 'evaluation'),
+                array(' '),
+                false);
 
         // Buttons.
         $mform->addElement('submit', 'create_template', get_string('save_as_new_template', 'evaluation'));

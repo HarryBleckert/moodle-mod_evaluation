@@ -26,9 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 $logs = array(
-    array('module'=>'evaluation', 'action'=>'startcomplete', 'mtable'=>'evaluation', 'field'=>'name'),
-    array('module'=>'evaluation', 'action'=>'submit', 'mtable'=>'evaluation', 'field'=>'name'),
-    array('module'=>'evaluation', 'action'=>'delete', 'mtable'=>'evaluation', 'field'=>'name'),
-    array('module'=>'evaluation', 'action'=>'view', 'mtable'=>'evaluation', 'field'=>'name'),
-    array('module'=>'evaluation', 'action'=>'view all', 'mtable'=>'course', 'field'=>'shortname'),
+        array('module' => 'evaluation', 'action' => 'startcomplete', 'mtable' => 'evaluation', 'field' => 'name'),
+        array('module' => 'evaluation', 'action' => 'submit', 'mtable' => 'evaluation', 'field' => 'name'),
+        array('module' => 'evaluation', 'action' => 'delete', 'mtable' => 'evaluation', 'field' => 'name'),
+        array('module' => 'evaluation', 'action' => 'view', 'mtable' => 'evaluation', 'field' => 'name'),
+        array('module' => 'evaluation', 'action' => 'view all', 'mtable' => 'course', 'field' => 'shortname'),
 );

@@ -30,7 +30,7 @@ evaluation_init_evaluation_session();
 
 $id = required_param('id', PARAM_INT);
 
-if (($formdata = data_submitted()) AND !confirm_sesskey()) {
+if (($formdata = data_submitted()) and !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
@@ -40,7 +40,7 @@ $deleteitem = optional_param('deleteitem', false, PARAM_INT);
 
 $current_tab = $do_show;
 
-$url = new moodle_url('/mod/evaluation/edit.php', array('id'=>$id, 'do_show'=>$do_show));
+$url = new moodle_url('/mod/evaluation/edit.php', array('id' => $id, 'do_show' => $do_show));
 
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
 
@@ -70,7 +70,7 @@ if ($deleteitem) {
 
 // Process the create template form.
 $cancreatetemplates = has_capability('mod/evaluation:createprivatetemplate', $context) ||
-            has_capability('mod/evaluation:createpublictemplate', $context);
+        has_capability('mod/evaluation:createpublictemplate', $context);
 $create_template_form = new evaluation_edit_create_template_form(null, array('id' => $id));
 if ($data = $create_template_form->get_data()) {
     // Check the capabilities to create templates.
@@ -87,11 +87,11 @@ if ($data = $create_template_form->get_data()) {
 
 //Get the evaluationitems
 $lastposition = 0;
-$evaluationitems = $DB->get_records('evaluation_item', array('evaluation'=>$evaluation->id), 'position');
+$evaluationitems = $DB->get_records('evaluation_item', array('evaluation' => $evaluation->id), 'position');
 if (is_array($evaluationitems)) {
     $evaluationitems = array_values($evaluationitems);
     if (count($evaluationitems) > 0) {
-        $lastitem = $evaluationitems[count($evaluationitems)-1];
+        $lastitem = $evaluationitems[count($evaluationitems) - 1];
         $lastposition = $lastitem->position;
     } else {
         $lastposition = 0;
@@ -99,19 +99,18 @@ if (is_array($evaluationitems)) {
 }
 $lastposition++;
 
-
 //The use_template-form
 $use_template_form = new evaluation_edit_use_template_form('use_templ.php', array('course' => $course, 'id' => $id));
 
 //Print the page header.
 $strevaluations = get_string('modulenameplural', 'evaluation');
-$strevaluation  = get_string('modulename', 'evaluation');
+$strevaluation = get_string('modulename', 'evaluation');
 
 evHideSettings();
 //$url = new moodle_url('/mod/evaluation/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show )); 
 //evSetPage( $url );
 
-$PAGE->set_url('/mod/evaluation/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show));
+$PAGE->set_url('/mod/evaluation/edit.php', array('id' => $cm->id, 'do_show' => $do_show));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($evaluation->name);
 
@@ -119,23 +118,22 @@ $PAGE->set_title($evaluation->name);
 if (count($evaluationitems) > 1) {
     if ($do_show == 'edit') {
         $PAGE->requires->strings_for_js(array(
-               'pluginname',
-               'move_item',
-               'position',
-            ), 'evaluation');
+                'pluginname',
+                'move_item',
+                'position',
+        ), 'evaluation');
         $PAGE->requires->yui_module('moodle-mod_evaluation-dragdrop', 'M.mod_evaluation.init_dragdrop',
                 array(array('cmid' => $cm->id)));
     }
 }
 
 echo $OUTPUT->header();
-if ( substr( $CFG->release,0,1) < "4")
-{	
-	$icon = '<img src="pix/icon120.png" height="30" alt="'.$evaluation->name.'">';
-	echo $OUTPUT->heading( $icon. "&nbsp;" .format_string($evaluation->name) );
+if (substr($CFG->release, 0, 1) < "4") {
+    $icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
+    echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
 
-	/// print the tabs
-	require('tabs.php');
+    /// print the tabs
+    require('tabs.php');
 }
 // Print the main part of the page.
 
@@ -146,20 +144,20 @@ if ($do_show == 'templates') {
     if ($cancreatetemplates) {
         $deleteurl = new moodle_url('/mod/evaluation/delete_template.php', array('id' => $id));
         $create_template_form->display();
-        echo '<p><a href="'.$deleteurl->out().'">'.
-             get_string('delete_templates', 'evaluation').
-             '</a></p>';
+        echo '<p><a href="' . $deleteurl->out() . '">' .
+                get_string('delete_templates', 'evaluation') .
+                '</a></p>';
     } else {
         echo '&nbsp;';
     }
 
     if (has_capability('mod/evaluation:edititems', $context)) {
-        $urlparams = array('action'=>'exportfile', 'id'=>$id);
+        $urlparams = array('action' => 'exportfile', 'id' => $id);
         $exporturl = new moodle_url('/mod/evaluation/export.php', $urlparams);
-        $importurl = new moodle_url('/mod/evaluation/import.php', array('id'=>$id));
+        $importurl = new moodle_url('/mod/evaluation/import.php', array('id' => $id));
         echo '<p>
-            <a href="'.$exporturl->out().'">'.get_string('export_questions', 'evaluation').'</a>/
-            <a href="'.$importurl->out().'">'.get_string('import_questions', 'evaluation').'</a>
+            <a href="' . $exporturl->out() . '">' . get_string('export_questions', 'evaluation') . '</a>/
+            <a href="' . $importurl->out() . '">' . get_string('import_questions', 'evaluation') . '</a>
         </p>';
     }
 }
@@ -169,10 +167,9 @@ if ($do_show == 'edit') {
 
     $select = new single_select(new moodle_url('/mod/evaluation/edit_item.php',
             array('cmid' => $id, 'position' => $lastposition, 'sesskey' => sesskey())),
-        'typ', evaluation_load_evaluation_items_options());
+            'typ', evaluation_load_evaluation_items_options());
     $select->label = get_string('add_item', 'mod_evaluation');
     echo $OUTPUT->render($select);
-
 
     $form = new mod_evaluation_complete_form(mod_evaluation_complete_form::MODE_EDIT,
             $evaluationstructure, 'evaluation_edit_form');

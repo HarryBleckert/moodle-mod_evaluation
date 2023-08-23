@@ -29,7 +29,7 @@ $current_tab = 'analysis';
 
 $id = required_param('id', PARAM_INT);  // Course module id.
 
-$url = new moodle_url('/mod/evaluation/analysis.php', array('id'=>$id));
+$url = new moodle_url('/mod/evaluation/analysis.php', array('id' => $id));
 $PAGE->set_url($url);
 
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
@@ -40,9 +40,10 @@ $evaluationstructure = new mod_evaluation_structure($evaluation, $cm);
 $context = context_module::instance($cm->id);
 $courseid = $evaluation->course;
 
-list($isPermitted, $CourseTitle, $CourseName, $SiteEvaluation) = evaluation_check_Roles_and_Permissions( $courseid, $evaluation, $cm );
+list($isPermitted, $CourseTitle, $CourseName, $SiteEvaluation) =
+        evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm);
 
-if ( ($SiteEvaluation AND !defined('EVALUATION_OWNER')) || !$evaluationstructure->can_view_analysis()) {
+if (($SiteEvaluation and !defined('EVALUATION_OWNER')) || !$evaluationstructure->can_view_analysis()) {
     print_error(get_string('you_have_no_permission', 'evaluation'));
 }
 
@@ -52,13 +53,11 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_title($evaluation->name);
 echo $OUTPUT->header();
 
-$icon = '<img src="pix/icon120.png" height="30" alt="'.$evaluation->name.'">';
-echo $OUTPUT->heading( $icon. "&nbsp;" .format_string($evaluation->name) );
-
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
 
 /// print the tabs
 require('tabs.php');
-
 
 //get the groupid
 $mygroupid = groups_get_activity_group($cm, true);
@@ -81,30 +80,30 @@ $items = $evaluationstructure->get_items(true);
 //var_dump($items);exit;
 
 $check_anonymously = true;
-if ($mygroupid > 0 AND $evaluation->anonymous == EVALUATION_ANONYMOUS_YES) {
+if ($mygroupid > 0 and $evaluation->anonymous == EVALUATION_ANONYMOUS_YES) {
     $completedcount = $evaluationstructure->count_completed_responses($mygroupid);
     if ($completedcount < EVALUATION_MIN_ANONYMOUS_COUNT_IN_GROUP) {
         $check_anonymously = false;
     }
 }
 
-
 echo '<div>';
 if ($check_anonymously) {
     // Print the items in an analysed form.
     foreach ($items as $item) {
-        if ( $course->id == SITEID AND !defined('EVALUATION_OWNER') )
-		{	if ( $item->typ !== "multichoice" || (stristr($item->name,"geschlecht") || stristr($item->name,"semester") ) ) 
-			{	continue; }
-		}
-		$itemobj = evaluation_get_item_class($item->typ);
-		$printnr = ($evaluation->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
-		$itemobj->print_analysed($item, $printnr, $mygroupid);
+        if ($course->id == SITEID and !defined('EVALUATION_OWNER')) {
+            if ($item->typ !== "multichoice" || (stristr($item->name, "geschlecht") || stristr($item->name, "semester"))) {
+                continue;
+            }
+        }
+        $itemobj = evaluation_get_item_class($item->typ);
+        $printnr = ($evaluation->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
+        $itemobj->print_analysed($item, $printnr, $mygroupid);
     }
 } else {
     echo $OUTPUT->heading_with_help(get_string('insufficient_responses_for_this_group', 'evaluation'),
-                                    'insufficient_responses',
-                                    'evaluation', '', '', 3);
+            'insufficient_responses',
+            'evaluation', '', '', 3);
 }
 echo '</div>';
 

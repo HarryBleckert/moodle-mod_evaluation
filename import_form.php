@@ -27,18 +27,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 class evaluation_import_form extends moodleform {
     public function definition() {
         global $CFG;
         $mform =& $this->_form;
 
-        $strdeleteolditmes = get_string('delete_old_items', 'evaluation').
-                             ' ('.get_string('oldvalueswillbedeleted', 'evaluation').')';
+        $strdeleteolditmes = get_string('delete_old_items', 'evaluation') .
+                ' (' . get_string('oldvalueswillbedeleted', 'evaluation') . ')';
 
-        $strnodeleteolditmes = get_string('append_new_items', 'evaluation').
-                               ' ('.get_string('oldvaluespreserved', 'evaluation').')';
+        $strnodeleteolditmes = get_string('append_new_items', 'evaluation') .
+                ' (' . get_string('oldvaluespreserved', 'evaluation') . ')';
 
         $mform->addElement('radio', 'deleteolditems', '', $strdeleteolditmes, true);
         $mform->addElement('radio', 'deleteolditems', '', $strnodeleteolditmes);
@@ -47,10 +47,10 @@ class evaluation_import_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->addElement('filepicker',
-                           'choosefile',
-                           get_string('file'),
-                           null,
-                           array('maxbytes' => $CFG->maxbytes, 'filetypes' => '*'));
+                'choosefile',
+                get_string('file'),
+                null,
+                array('maxbytes' => $CFG->maxbytes, 'filetypes' => '*'));
 
         // buttons
         $this->add_action_buttons(true, get_string('yes'));

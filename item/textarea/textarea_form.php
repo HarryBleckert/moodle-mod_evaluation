@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot.'/mod/evaluation/item/evaluation_item_form_class.php');
+require_once($CFG->dirroot . '/mod/evaluation/item/evaluation_item_form_class.php');
 
 class evaluation_textarea_form extends evaluation_item_form {
     protected $type = "textarea";
@@ -28,26 +28,26 @@ class evaluation_textarea_form extends evaluation_item_form {
         $mform =& $this->_form;
 
         $mform->addElement('header', 'general', get_string($this->type, 'evaluation'));
-        $mform->addElement('advcheckbox', 'required', get_string('required', 'evaluation'), '' , null , array(0, 1));
+        $mform->addElement('advcheckbox', 'required', get_string('required', 'evaluation'), '', null, array(0, 1));
 
         $mform->addElement('text',
-                            'name',
-                            get_string('item_name', 'evaluation'),
-                            array('size'=>EVALUATION_ITEM_NAME_TEXTBOX_SIZE, 'maxlength'=>255));
+                'name',
+                get_string('item_name', 'evaluation'),
+                array('size' => EVALUATION_ITEM_NAME_TEXTBOX_SIZE, 'maxlength' => 255));
         $mform->addElement('text',
-                            'label',
-                            get_string('item_label', 'evaluation'),
-                            array('size'=>EVALUATION_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
+                'label',
+                get_string('item_label', 'evaluation'),
+                array('size' => EVALUATION_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength' => 255));
 
         $mform->addElement('select',
-                            'itemwidth',
-                            get_string('textarea_width', 'evaluation').'&nbsp;',
-                            array_slice(range(0, 80), 5, 80, true));
+                'itemwidth',
+                get_string('textarea_width', 'evaluation') . '&nbsp;',
+                array_slice(range(0, 80), 5, 80, true));
 
         $mform->addElement('select',
-                            'itemheight',
-                            get_string('textarea_height', 'evaluation').'&nbsp;',
-                            array_slice(range(0, 40), 5, 40, true));
+                'itemheight',
+                get_string('textarea_height', 'evaluation') . '&nbsp;',
+                array_slice(range(0, 40), 5, 40, true));
 
         parent::definition();
         $this->set_data($item);
@@ -59,7 +59,7 @@ class evaluation_textarea_form extends evaluation_item_form {
             return false;
         }
 
-        $item->presentation = $item->itemwidth . '|'. $item->itemheight;
+        $item->presentation = $item->itemwidth . '|' . $item->itemheight;
         return $item;
     }
 }

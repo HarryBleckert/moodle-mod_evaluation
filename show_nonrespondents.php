@@ -24,7 +24,7 @@
 
 require_once("../../config.php");
 require_once("lib.php");
-require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir . '/tablelib.php');
 
 ////////////////////////////////////////////////////////
 //get the params
@@ -49,17 +49,17 @@ if ($message) {
 }
 
 list ($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
-if (! $evaluation = $DB->get_record("evaluation", array("id"=>$cm->instance))) {
+if (!$evaluation = $DB->get_record("evaluation", array("id" => $cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
 //this page only can be shown on nonanonymous evaluations in courses
 //we should never reach this page
-if ($evaluation->anonymous != EVALUATION_ANONYMOUS_NO OR $evaluation->course == SITEID) {
+if ($evaluation->anonymous != EVALUATION_ANONYMOUS_NO or $evaluation->course == SITEID) {
     print_error('error');
 }
 
-$url = new moodle_url('/mod/evaluation/show_nonrespondents.php', array('id'=>$cm->id));
+$url = new moodle_url('/mod/evaluation/show_nonrespondents.php', array('id' => $cm->id));
 
 $PAGE->set_url($url);
 
@@ -70,30 +70,30 @@ $coursecontext = context_course::instance($course->id);
 
 require_login($course, true, $cm);
 
-if (($formdata = data_submitted()) AND !confirm_sesskey()) {
+if (($formdata = data_submitted()) and !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
 require_capability('mod/evaluation:viewreports', $context);
 
 $canbulkmessaging = has_capability('moodle/course:bulkmessaging', $coursecontext);
-if ($action == 'sendmessage' AND $canbulkmessaging) {
+if ($action == 'sendmessage' and $canbulkmessaging) {
     $shortname = format_string($course->shortname,
-                            true,
-                            array('context' => $coursecontext));
+            true,
+            array('context' => $coursecontext));
     $strevaluations = get_string("modulenameplural", "evaluation");
 
     $htmlmessage = "<body id=\"email\">";
 
-    $link1 = $CFG->wwwroot.'/course/view.php?id='.$course->id;
-    $link2 = $CFG->wwwroot.'/mod/evaluation/index.php?id='.$course->id;
-    $link3 = $CFG->wwwroot.'/mod/evaluation/view.php?id='.$cm->id;
+    $link1 = $CFG->wwwroot . '/course/view.php?id=' . $course->id;
+    $link2 = $CFG->wwwroot . '/mod/evaluation/index.php?id=' . $course->id;
+    $link3 = $CFG->wwwroot . '/mod/evaluation/view.php?id=' . $cm->id;
 
-    $htmlmessage .= '<div class="navbar">'.
-    '<a target="_blank" href="'.$link1.'">'.$shortname.'</a> &raquo; '.
-    '<a target="_blank" href="'.$link2.'">'.$strevaluations.'</a> &raquo; '.
-    '<a target="_blank" href="'.$link3.'">'.format_string($evaluation->name, true).'</a>'.
-    '</div>';
+    $htmlmessage .= '<div class="navbar">' .
+            '<a target="_blank" href="' . $link1 . '">' . $shortname . '</a> &raquo; ' .
+            '<a target="_blank" href="' . $link2 . '">' . $strevaluations . '</a> &raquo; ' .
+            '<a target="_blank" href="' . $link3 . '">' . format_string($evaluation->name, true) . '</a>' .
+            '</div>';
 
     $htmlmessage .= $message;
     $htmlmessage .= '</body>';
@@ -101,21 +101,21 @@ if ($action == 'sendmessage' AND $canbulkmessaging) {
     $good = 1;
     if (is_array($messageuser)) {
         foreach ($messageuser as $userid) {
-            $senduser = $DB->get_record('user', array('id'=>$userid));
+            $senduser = $DB->get_record('user', array('id' => $userid));
             $eventdata = new \core\message\message();
-            $eventdata->courseid         = $course->id;
-            $eventdata->name             = 'message';
-            $eventdata->component        = 'mod_evaluation';
-            $eventdata->userfrom         = $USER;
-            $eventdata->userto           = $senduser;
-            $eventdata->subject          = $subject;
-            $eventdata->fullmessage      = html_to_text($htmlmessage);
+            $eventdata->courseid = $course->id;
+            $eventdata->name = 'message';
+            $eventdata->component = 'mod_evaluation';
+            $eventdata->userfrom = $USER;
+            $eventdata->userto = $senduser;
+            $eventdata->subject = $subject;
+            $eventdata->fullmessage = html_to_text($htmlmessage);
             $eventdata->fullmessageformat = FORMAT_PLAIN;
-            $eventdata->fullmessagehtml  = $htmlmessage;
-            $eventdata->smallmessage     = '';
-            $eventdata->courseid         = $course->id;
-            $eventdata->contexturl       = $link3;
-            $eventdata->contexturlname   = $evaluation->name;
+            $eventdata->fullmessagehtml = $htmlmessage;
+            $eventdata->smallmessage = '';
+            $eventdata->courseid = $course->id;
+            $eventdata->contexturl = $link3;
+            $eventdata->contexturlname = $evaluation->name;
             $good = $good && message_send($eventdata);
         }
         if (!empty($good)) {
@@ -136,9 +136,8 @@ if ($action == 'sendmessage' AND $canbulkmessaging) {
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($evaluation->name);
 echo $OUTPUT->header();
-$icon = '<img src="pix/icon120.png" height="30" alt="'.$evaluation->name.'">';
-echo $OUTPUT->heading( $icon. "&nbsp;" .format_string($evaluation->name) );
-
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
 
 require('tabs.php');
 
@@ -152,7 +151,7 @@ require('tabs.php');
 ////////////////////////////////////////////////////////
 //get the effective groupmode of this course and module
 if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
-    $groupmode =  $cm->groupmode;
+    $groupmode = $cm->groupmode;
 } else {
     $groupmode = $course->groupmode;
 }
@@ -162,7 +161,7 @@ $mygroupid = groups_get_activity_group($cm);
 
 // preparing the table for output
 $baseurl = new moodle_url('/mod/evaluation/show_nonrespondents.php');
-$baseurl->params(array('id'=>$id, 'showall'=>$showall));
+$baseurl->params(array('id' => $id, 'showall' => $showall));
 
 $tablecolumns = array('userpic', 'fullname', 'status');
 $tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('status'));
@@ -173,19 +172,19 @@ if ($canbulkmessaging) {
     // Build the select/deselect all control.
     $selectallid = 'selectall-non-respondents';
     $mastercheckbox = new \core\output\checkbox_toggleall('evaluation-non-respondents', true, [
-        'id' => $selectallid,
-        'name' => $selectallid,
-        'value' => 1,
-        'label' => get_string('select'),
+            'id' => $selectallid,
+            'name' => $selectallid,
+            'value' => 1,
+            'label' => get_string('select'),
         // Consistent label to prevent the select column from resizing.
-        'selectall' => get_string('select'),
-        'deselectall' => get_string('select'),
-        'labelclasses' => 'm-0',
+            'selectall' => get_string('select'),
+            'deselectall' => get_string('select'),
+            'labelclasses' => 'm-0',
     ]);
     $tableheaders[] = $OUTPUT->render($mastercheckbox);
 }
 
-$table = new flexible_table('evaluation-shownonrespondents-'.$course->id);
+$table = new flexible_table('evaluation-shownonrespondents-' . $course->id);
 
 $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
@@ -196,11 +195,11 @@ $table->set_attribute('cellspacing', '0');
 $table->set_attribute('id', 'showentrytable');
 $table->set_attribute('class', 'generaltable generalbox');
 $table->set_control_variables(array(
-            TABLE_VAR_SORT    => 'ssort',
-            TABLE_VAR_IFIRST  => 'sifirst',
-            TABLE_VAR_ILAST   => 'silast',
-            TABLE_VAR_PAGE    => 'spage'
-            ));
+        TABLE_VAR_SORT => 'ssort',
+        TABLE_VAR_IFIRST => 'sifirst',
+        TABLE_VAR_ILAST => 'silast',
+        TABLE_VAR_PAGE => 'spage'
+));
 
 $table->no_sorting('select');
 $table->no_sorting('status');
@@ -254,8 +253,8 @@ if (empty($students)) {
 
     foreach ($students as $student) {
         //userpicture and link to the profilepage
-        $profileurl = $CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id;
-        $profilelink = '<strong><a href="'.$profileurl.'">'.fullname($student).'</a></strong>';
+        $profileurl = $CFG->wwwroot . '/user/view.php?id=' . $student->id . '&amp;course=' . $course->id;
+        $profilelink = '<strong><a href="' . $profileurl . '">' . fullname($student) . '</a></strong>';
         $data = array($OUTPUT->user_picture($student, array('courseid' => $course->id)), $profilelink);
 
         if ($student->evaluationstarted) {
@@ -267,12 +266,12 @@ if (empty($students)) {
         //selections to bulk messaging
         if ($canbulkmessaging) {
             $checkbox = new \core\output\checkbox_toggleall('evaluation-non-respondents', false, [
-                'id' => 'messageuser-' . $student->id,
-                'name' => 'messageuser[]',
-                'classes' => 'mr-1',
-                'value' => $student->id,
-                'label' => get_string('includeuserinrecipientslist', 'mod_evaluation', fullname($student)),
-                'labelclasses' => 'accesshide',
+                    'id' => 'messageuser-' . $student->id,
+                    'name' => 'messageuser[]',
+                    'classes' => 'mr-1',
+                    'value' => $student->id,
+                    'label' => get_string('includeuserinrecipientslist', 'mod_evaluation', fullname($student)),
+                    'labelclasses' => 'accesshide',
             ]);
             $data[] = $OUTPUT->render($checkbox);
         }
@@ -285,7 +284,7 @@ if (empty($students)) {
     if ($showall) {
         $allurl->param('showall', 0);
         echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', EVALUATION_DEFAULT_PAGE_COUNT)),
-                                    array(), 'showall');
+                array(), 'showall');
 
     } else if ($matchcount > 0 && $perpage < $matchcount) {
         $allurl->param('showall', 1);
@@ -293,20 +292,21 @@ if (empty($students)) {
     }
     if ($canbulkmessaging) {
         echo '<fieldset class="clearfix">';
-        echo '<legend class="ftoggler">'.get_string('send_message', 'evaluation').'</legend>';
+        echo '<legend class="ftoggler">' . get_string('send_message', 'evaluation') . '</legend>';
         echo '<div>';
-        echo '<label for="evaluation_subject">'.get_string('subject', 'evaluation').'&nbsp;</label>';
-        echo '<input type="text" id="evaluation_subject" size="50" maxlength="255" name="subject" value="'.s($subject).'" />';
+        echo '<label for="evaluation_subject">' . get_string('subject', 'evaluation') . '&nbsp;</label>';
+        echo '<input type="text" id="evaluation_subject" size="50" maxlength="255" name="subject" value="' . s($subject) . '" />';
         echo '</div>';
         echo $OUTPUT->print_textarea('message', 'edit-message', $message, 15, 25);
         print_string('formathtml');
-        echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+        echo '<input type="hidden" name="format" value="' . FORMAT_HTML . '" />';
         echo '<br /><div class="buttons">';
-        echo '<input type="submit" name="send_message" value="'.get_string('send', 'evaluation').'" class="btn btn-secondary" />';
+        echo '<input type="submit" name="send_message" value="' . get_string('send', 'evaluation') .
+                '" class="btn btn-secondary" />';
         echo '</div>';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         echo '<input type="hidden" name="action" value="sendmessage" />';
-        echo '<input type="hidden" name="id" value="'.$id.'" />';
+        echo '<input type="hidden" name="id" value="' . $id . '" />';
         echo '</fieldset>';
         echo '</form>';
     }

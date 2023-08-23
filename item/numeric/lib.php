@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') OR die('not allowed');
-require_once($CFG->dirroot.'/mod/evaluation/item/evaluation_item_class.php');
+defined('MOODLE_INTERNAL') or die('not allowed');
+require_once($CFG->dirroot . '/mod/evaluation/item/evaluation_item_class.php');
 
 class evaluation_item_numeric extends evaluation_item_base {
     protected $type = "numeric";
@@ -26,7 +26,7 @@ class evaluation_item_numeric extends evaluation_item_base {
 
         //get the lastposition number of the evaluation_items
         $position = $item->position;
-        $lastposition = $DB->count_records('evaluation_item', array('evaluation'=>$evaluation->id));
+        $lastposition = $DB->count_records('evaluation_item', array('evaluation' => $evaluation->id));
         if ($position == -1) {
             $i_formselect_last = $lastposition + 1;
             $i_formselect_value = $lastposition + 1;
@@ -41,13 +41,13 @@ class evaluation_item_numeric extends evaluation_item_base {
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
 
         $range_from_to = explode('|', $item->presentation);
-        if (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) {
+        if (isset($range_from_to[0]) and is_numeric($range_from_to[0])) {
             $range_from = $this->format_float($range_from_to[0]);
         } else {
             $range_from = '-';
         }
 
-        if (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) {
+        if (isset($range_from_to[1]) and is_numeric($range_from_to[1])) {
             $range_to = $this->format_float($range_from_to[1]);
         } else {
             $range_to = '-';
@@ -58,19 +58,35 @@ class evaluation_item_numeric extends evaluation_item_base {
 
         //all items for dependitem
         $evaluationitems = evaluation_get_depend_candidates_for_item($evaluation, $item);
-        $commonparams = array('cmid'=>$cm->id,
-                             'id'=>isset($item->id) ? $item->id : null,
-                             'typ'=>$item->typ,
-                             'items'=>$evaluationitems,
-                             'evaluation'=>$evaluation->id);
+        $commonparams = array('cmid' => $cm->id,
+                'id' => isset($item->id) ? $item->id : null,
+                'typ' => $item->typ,
+                'items' => $evaluationitems,
+                'evaluation' => $evaluation->id);
 
         //build the form
         $customdata = array('item' => $item,
-                            'common' => $commonparams,
-                            'positionlist' => $positionlist,
-                            'position' => $position);
+                'common' => $commonparams,
+                'positionlist' => $positionlist,
+                'position' => $position);
 
         $this->item_form = new evaluation_numeric_form('edit_item.php', $customdata);
+    }
+
+    /**
+     * Prints the float nicely in the localized format
+     *
+     * Similar to format_float() but automatically calculates the number of decimal places
+     *
+     * @param float $value The float to print
+     * @return string
+     */
+    protected function format_float($value) {
+        if (!is_numeric($value)) {
+            return null;
+        }
+        $decimal = is_int($value) ? 0 : strlen(substr(strrchr($value, '.'), 1));
+        return format_float($value, $decimal);
     }
 
     public function save_item() {
@@ -81,7 +97,7 @@ class evaluation_item_numeric extends evaluation_item_base {
         }
         $item = $this->item;
 
-        if (isset($item->clone_item) AND $item->clone_item) {
+        if (isset($item->clone_item) and $item->clone_item) {
             $item->id = ''; //to clone this item
             $item->position++;
         }
@@ -93,7 +109,47 @@ class evaluation_item_numeric extends evaluation_item_base {
             $DB->update_record('evaluation_item', $item);
         }
 
-        return $DB->get_record('evaluation_item', array('id'=>$item->id));
+        return $DB->get_record('evaluation_item', array('id' => $item->id));
+    }
+
+    public function get_printval($item, $value) {
+        if (!isset($value->value)) {
+            return '';
+        }
+
+        return $value->value;
+    }
+
+    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid = false,
+            $course_of_studies = false) {
+        $values = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
+
+        if (isset($values->data) and is_array($values->data)) {
+            echo "<table class=\"analysis itemtype_{$item->typ}\">";
+            echo '<tr><th colspan="2" align="left">';
+            echo $itemnr . ' ';
+            if (strval($item->label) !== '') {
+                echo '(' . format_string($item->label) . ') ';
+            }
+            echo format_text($item->name, FORMAT_HTML, array('noclean' => true, 'para' => false));
+            echo '</th></tr>';
+
+            foreach ($values->data as $value) {
+                echo '<tr><td colspan="2" class="singlevalue">';
+                echo $this->format_float($value);
+                echo '</td></tr>';
+            }
+
+            if (isset($values->avg)) {
+                $avg = format_float($values->avg, 2);
+            } else {
+                $avg = '-';
+            }
+            echo '<tr><td colspan="2"><b>';
+            echo get_string('average', 'evaluation') . ': ' . $avg;
+            echo '</b></td></tr>';
+            echo '</table>';
+        }
     }
 
     /**
@@ -104,15 +160,14 @@ class evaluation_item_numeric extends evaluation_item_base {
      * @param int $courseid
      * @return stdClass
      */
-    protected function get_analysed($item, $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false ) 
-	{
+    protected function get_analysed($item, $groupid = false, $courseid = false, $teacherid = false, $course_of_studies = false) {
 
         global $DB;
 
         $analysed = new stdClass();
         $analysed->data = array();
         $analysed->name = $item->name;
-        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies );
+        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies);
 
         $avg = 0.0;
         $counter = 0;
@@ -132,48 +187,9 @@ class evaluation_item_numeric extends evaluation_item_base {
         return $analysed;
     }
 
-    public function get_printval($item, $value) {
-        if (!isset($value->value)) {
-            return '';
-        }
-
-        return $value->value;
-    }
-
-    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false ) 
-	{   $values = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
-
-        if (isset($values->data) AND is_array($values->data)) {
-            echo "<table class=\"analysis itemtype_{$item->typ}\">";
-            echo '<tr><th colspan="2" align="left">';
-            echo $itemnr . ' ';
-            if (strval($item->label) !== '') {
-                echo '('. format_string($item->label).') ';
-            }
-            echo format_text($item->name, FORMAT_HTML, array('noclean' => true, 'para' => false));
-            echo '</th></tr>';
-
-            foreach ($values->data as $value) {
-                echo '<tr><td colspan="2" class="singlevalue">';
-                echo $this->format_float($value);
-                echo '</td></tr>';
-            }
-
-            if (isset($values->avg)) {
-                $avg = format_float($values->avg, 2);
-            } else {
-                $avg = '-';
-            }
-            echo '<tr><td colspan="2"><b>';
-            echo get_string('average', 'evaluation').': '.$avg;
-            echo '</b></td></tr>';
-            echo '</table>';
-        }
-    }
-
     public function excelprint_item(&$worksheet, $row_offset,
-                             $xls_formats, $item,
-                              $groupid, $courseid = false, $teacherid=false, $course_of_studies=false) {
+            $xls_formats, $item,
+            $groupid, $courseid = false, $teacherid = false, $course_of_studies = false) {
 
         $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
 
@@ -184,20 +200,20 @@ class evaluation_item_numeric extends evaluation_item_base {
 
             // Export average.
             $worksheet->write_string($row_offset,
-                                     2,
-                                     get_string('average', 'evaluation'),
-                                     $xls_formats->value_bold);
+                    2,
+                    get_string('average', 'evaluation'),
+                    $xls_formats->value_bold);
 
             if (isset($analysed_item->avg)) {
                 $worksheet->write_number($row_offset + 1,
-                                         2,
-                                         $analysed_item->avg,
-                                         $xls_formats->value_bold);
+                        2,
+                        $analysed_item->avg,
+                        $xls_formats->value_bold);
             } else {
                 $worksheet->write_string($row_offset + 1,
-                                         2,
-                                         '',
-                                         $xls_formats->value_bold);
+                        2,
+                        '',
+                        $xls_formats->value_bold);
             }
             $row_offset++;
         }
@@ -206,23 +222,18 @@ class evaluation_item_numeric extends evaluation_item_base {
     }
 
     /**
-     * Prints the float nicely in the localized format
+     * Returns the postfix to be appended to the display name that is based on other settings
      *
-     * Similar to format_float() but automatically calculates the number of decimal places
-     *
-     * @param float $value The float to print
+     * @param stdClass $item
      * @return string
      */
-    protected function format_float($value) {
-        if (!is_numeric($value)) {
-            return null;
-        }
-        $decimal = is_int($value) ? 0 : strlen(substr(strrchr($value, '.'), 1));
-        return format_float($value, $decimal);
+    public function get_display_name_postfix($item) {
+        return html_writer::span($this->get_boundaries_for_display($item), 'boundaries');
     }
 
     /**
      * Returns human-readable boundaries (min - max)
+     *
      * @param stdClass $item
      * @return string
      */
@@ -237,27 +248,17 @@ class evaluation_item_numeric extends evaluation_item_base {
 
         if (is_null($rangefrom) && is_numeric($rangeto)) {
             return ' (' . get_string('maximal', 'evaluation') .
-                        ': ' . $this->format_float($rangeto) . ')';
+                    ': ' . $this->format_float($rangeto) . ')';
         }
         if (is_numeric($rangefrom) && is_null($rangeto)) {
             return ' (' . get_string('minimal', 'evaluation') .
-                        ': ' . $this->format_float($rangefrom) . ')';
+                    ': ' . $this->format_float($rangefrom) . ')';
         }
         if (is_null($rangefrom) && is_null($rangeto)) {
             return '';
         }
         return ' (' . $this->format_float($rangefrom) .
                 ' - ' . $this->format_float($rangeto) . ')';
-    }
-
-    /**
-     * Returns the postfix to be appended to the display name that is based on other settings
-     *
-     * @param stdClass $item
-     * @return string
-     */
-    public function get_display_name_postfix($item) {
-        return html_writer::span($this->get_boundaries_for_display($item), 'boundaries');
     }
 
     /**
@@ -273,7 +274,7 @@ class evaluation_item_numeric extends evaluation_item_base {
                 ['text', $inputname, $name],
                 true,
                 false
-                );
+        );
         $form->set_element_type($inputname, PARAM_NOTAGS);
         $tmpvalue = $this->format_float($form->get_item_value($item));
         $form->set_element_default($inputname, $tmpvalue);
@@ -311,16 +312,17 @@ class evaluation_item_numeric extends evaluation_item_base {
     /**
      * Return the analysis data ready for external functions.
      *
-     * @param stdClass $item     the item (question) information
-     * @param int      $groupid  the group id to filter data (optional)
-     * @param int      $courseid the course id (optional)
+     * @param stdClass $item the item (question) information
+     * @param int $groupid the group id to filter data (optional)
+     * @param int $courseid the course id (optional)
      * @return array an array of data with non scalar types json encoded
      * @since  Moodle 3.3
      */
-    public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false) {
+    public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid = false,
+            $course_of_studies = false) {
 
         $externaldata = array();
-        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies );
+        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
 
         if (is_array($data->data)) {
             return $data->data; // No need to json, scalar type.

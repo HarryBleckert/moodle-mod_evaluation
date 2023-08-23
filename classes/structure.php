@@ -47,14 +47,14 @@ class mod_evaluation_structure {
     protected $allitems;
     /** @var array */
     protected $allcourses;
-	protected $allstudies;
-	protected $allteachers;
+    protected $allstudies;
+    protected $allteachers;
     /** @var int */
     protected $userid;
     //** @var int teacherid for whom the evaluation is filled.  */
     protected $teacherid = 0;
-	protected $course_of_studies = "";
-	protected $course_of_studiesID = 0;
+    protected $course_of_studies = "";
+    protected $course_of_studiesID = 0;
 
     /**
      * Constructor
@@ -66,33 +66,36 @@ class mod_evaluation_structure {
      * @param int $courseid current course (for site evaluations only)
      * @param int $templateid template id if this class represents the template structure
      * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
-	 * @param int $teacherid for selected teacher (for teamteaching only). Set to 0 as default.
+     * @param int $teacherid for selected teacher (for teamteaching only). Set to 0 as default.
      */
-    public function __construct($evaluation, $cm=false, $courseid = 0, $templateid = null, $userid = 0, $teacherid = 0, 
-								$course_of_studies = "", $course_of_studiesID = 0 ) 
-    {	global $USER;
-		if ((empty($evaluation->id) || empty($evaluation->course)) && (empty($cm->instance) || empty($cm->course))) 
-		{	throw new coding_exception('Either $evaluation or $cm must be passed to constructor'); }
-        $this->evaluation = $evaluation ?: (object)['id' => $cm->instance, 'course' => $cm->course];
-		if ( !isset($this->evaluation->teamteaching) )
-		{	$this->evaluation = $this->get_evaluation(); }
-		if ( !$cm )
-		{	$cm = get_evaluation_cm_from_id($evaluation); }
+    public function __construct($evaluation, $cm = false, $courseid = 0, $templateid = null, $userid = 0, $teacherid = 0,
+            $course_of_studies = "", $course_of_studiesID = 0) {
+        global $USER;
+        if ((empty($evaluation->id) || empty($evaluation->course)) && (empty($cm->instance) || empty($cm->course))) {
+            throw new coding_exception('Either $evaluation or $cm must be passed to constructor');
+        }
+        $this->evaluation = $evaluation ?: (object) ['id' => $cm->instance, 'course' => $cm->course];
+        if (!isset($this->evaluation->teamteaching)) {
+            $this->evaluation = $this->get_evaluation();
+        }
+        if (!$cm) {
+            $cm = get_evaluation_cm_from_id($evaluation);
+        }
         $this->cm = $cm;
         $this->templateid = $templateid;
-		$this->courseid = 0;
-		$this->teacherid = 0;
-		$this->course_of_studies = "";
-		$this->course_of_studiesID = 0;
-		if ($this->evaluation->course == SITEID)
-        {	$this->courseid = $courseid ?: 0; 
-			$this->teacherid = $teacherid ?: 0;
-			$this->course_of_studies = $course_of_studies ?:"";
-			$this->course_of_studiesID = $course_of_studiesID ?:0;
-		}
-		//if ( $this->courseid AND empty($this->course_of_studies) ) 
-		//{	$this->course_of_studies = evaluation_get_course_of_studies( $this->courseid, false ); }	
-		
+        $this->courseid = 0;
+        $this->teacherid = 0;
+        $this->course_of_studies = "";
+        $this->course_of_studiesID = 0;
+        if ($this->evaluation->course == SITEID) {
+            $this->courseid = $courseid ?: 0;
+            $this->teacherid = $teacherid ?: 0;
+            $this->course_of_studies = $course_of_studies ?: "";
+            $this->course_of_studiesID = $course_of_studiesID ?: 0;
+        }
+        //if ( $this->courseid AND empty($this->course_of_studies) )
+        //{	$this->course_of_studies = evaluation_get_course_of_studies( $this->courseid, false ); }
+
         if (empty($userid)) {
             $this->userid = $USER->id;
         } else {
@@ -103,70 +106,38 @@ class mod_evaluation_structure {
             // If evaluation object was not specified, populate object with fields required for the most of methods.
             // These fields were added to course module cache in evaluation_get_coursemodule_info().
             // Full instance record can be retrieved by calling mod_evaluation_structure::get_evaluation().
-            $customdata = ($this->cm->customdata ?: []) + ['timeopen' => 0, 'timeclose' => 0, 'anonymous' => 0, 'teamteaching' => 0];
+            $customdata =
+                    ($this->cm->customdata ?: []) + ['timeopen' => 0, 'timeclose' => 0, 'anonymous' => 0, 'teamteaching' => 0];
             $this->evaluation->timeopen = $customdata['timeopen'];
             $this->evaluation->timeclose = $customdata['timeclose'];
             $this->evaluation->anonymous = $customdata['anonymous'];
-			$this->evaluation->teamteaching = $customdata['teamteaching'];
+            $this->evaluation->teamteaching = $customdata['teamteaching'];
             $this->evaluation->completionsubmit = empty($this->cm->customdata['customcompletionrules']['completionsubmit']) ? 0 : 1;
         }
     }
 
     /**
      * Current evaluation
+     *
      * @return stdClass
      */
     public function get_evaluation() {
         global $DB;
-        if (!isset($this->evaluation->publish_stats) || !isset($this->evaluation->name) || !isset($this->evaluation->teamteaching) ) {
+        if (!isset($this->evaluation->publish_stats) || !isset($this->evaluation->name) ||
+                !isset($this->evaluation->teamteaching)) {
             // Make sure the full object is retrieved.
             $this->evaluation = $DB->get_record('evaluation', ['id' => $this->evaluation->id], '*', MUST_EXIST);
         }
         return $this->evaluation;
     }
 
-    /**
-     * Current course module
-     * @return stdClass
-     */
-    public function get_cm() {
-        return $this->cm;
-    }
-
-    /**
-     * Id of the current course (for site evaluations only)
-     * @return stdClass
-     */
-    public function get_courseid() {
-        return $this->courseid;
-    }
-
-    /**
-     * current course of studies functions (for site evaluations only)
-     * @return stdClass
-     */
-    public function get_course_of_studies() {
-        return $this->course_of_studies;
-    }
     public function get_course_of_studiesID() {
-		return $this->course_of_studiesID;
+        return $this->course_of_studiesID;
     }
 
-	public function set_course_of_studies($studies) {
-        $this->course_of_studies = $studies;
-		return $this->course_of_studies;
-    }
-
-    /**
-     * Id of the current teacher 
-     * @return stdClass
-     */
-    public function get_teacherid() {
-        return $this->teacherid;
-    }
-	
     /**
      * Template id
+     *
      * @return int
      */
     public function get_templateid() {
@@ -175,16 +146,31 @@ class mod_evaluation_structure {
 
     /**
      * Is this evaluation open (check timeopen and timeclose)
+     *
      * @return bool
      */
     public function is_open() {
         $checktime = time();
         return (!$this->evaluation->timeopen || $this->evaluation->timeopen <= $checktime) &&
-            (!$this->evaluation->timeclose || $this->evaluation->timeclose >= $checktime);
+                (!$this->evaluation->timeclose || $this->evaluation->timeclose >= $checktime);
+    }
+
+    /**
+     * Is the items list empty?
+     *
+     * @return bool
+     */
+    public function is_empty() {
+        $items = $this->get_items();
+        $displayeditems = array_filter($items, function($item) {
+            return $item->typ !== 'pagebreak';
+        });
+        return !$displayeditems;
     }
 
     /**
      * Get all items in this evaluation or this template
+     *
      * @param bool $hasvalueonly only count items with a value.
      * @return array of objects from evaluation_item with an additional attribute 'itemnr'
      */
@@ -210,19 +196,8 @@ class mod_evaluation_structure {
     }
 
     /**
-     * Is the items list empty?
-     * @return bool
-     */
-    public function is_empty() {
-        $items = $this->get_items();
-        $displayeditems = array_filter($items, function($item) {
-            return $item->typ !== 'pagebreak';
-        });
-        return !$displayeditems;
-    }
-
-    /**
      * Is this evaluation anonymous?
+     *
      * @return bool
      */
     public function is_anonymous() {
@@ -249,6 +224,15 @@ class mod_evaluation_structure {
                 'pluginfile.php', $context->id, 'mod_evaluation', 'page_after_submit', 0);
 
         return format_text($output, $pageaftersubmitformat, array('overflowdiv' => true));
+    }
+
+    /**
+     * Current course module
+     *
+     * @return stdClass
+     */
+    public function get_cm() {
+        return $this->cm;
     }
 
     /**
@@ -285,7 +269,7 @@ class mod_evaluation_structure {
      *     Applicable to frontpage evaluations only
      * @return bool true if the evaluation already is submitted otherwise false
      */
-    public function is_already_submitted($anycourseid = false, $teacherid=false ) {
+    public function is_already_submitted($anycourseid = false, $teacherid = false) {
         global $DB, $USER;
 
         if ((!isloggedin() && $USER->id == $this->userid) || isguestuser($this->userid)) {
@@ -293,16 +277,17 @@ class mod_evaluation_structure {
         }
 
         $params = array('userid' => $this->userid, 'evaluation' => $this->evaluation->id);
-        if (!$anycourseid && $this->courseid) 
-		{   $params['courseid'] = $this->courseid;
-			if ( $this->courseid AND $this->get_evaluation()->teamteaching ) 
-			{	evaluation_get_course_teachers( $this->courseid);
-				$teachers = $_SESSION["allteachers"][$this->courseid];
-				$completed = $DB->get_records_sql("select id,evaluation,courseid,course_of_studies,userid,teacherid from {evaluation_completed} 
-							 WHERE evaluation=".$this->evaluation->id." AND userid=".$this->userid." AND courseid=".$this->courseid);
-				return (count( $completed ) == count( $teachers));
-			}
-		}
+        if (!$anycourseid && $this->courseid) {
+            $params['courseid'] = $this->courseid;
+            if ($this->courseid and $this->get_evaluation()->teamteaching) {
+                evaluation_get_course_teachers($this->courseid);
+                $teachers = $_SESSION["allteachers"][$this->courseid];
+                $completed = $DB->get_records_sql("select id,evaluation,courseid,course_of_studies,userid,teacherid from {evaluation_completed} 
+							 WHERE evaluation=" . $this->evaluation->id . " AND userid=" . $this->userid . " AND courseid=" .
+                        $this->courseid);
+                return (count($completed) == count($teachers));
+            }
+        }
         return $DB->record_exists('evaluation_completed', $params);
     }
 
@@ -331,12 +316,15 @@ class mod_evaluation_structure {
     public function shuffle_anonym_responses() {
         global $DB;
         $params = array('evaluation' => $this->evaluation->id,
-            'random_response' => 0,
-            'anonymous_response' => EVALUATION_ANONYMOUS_YES);
-		if ($DB->count_records('evaluation_completed', $params, 'random_response')) {
-            // Get all of the anonymous records, go through them and assign a response id.		
-			print "<script>document.getElementById('evaluation_showinfo').innerHTML='<b>Reshuffling anonymous responses</b>...';</script>";
-			@ob_flush();@ob_end_flush();@flush();@ob_start(); 
+                'random_response' => 0,
+                'anonymous_response' => EVALUATION_ANONYMOUS_YES);
+        if ($DB->count_records('evaluation_completed', $params, 'random_response')) {
+            // Get all of the anonymous records, go through them and assign a response id.
+            print "<script>document.getElementById('evaluation_showinfo').innerHTML='<b>Reshuffling anonymous responses</b>...';</script>";
+            @ob_flush();
+            @ob_end_flush();
+            @flush();
+            @ob_start();
             unset($params['random_response']);
             $evaluationcompleteds = $DB->get_records('evaluation_completed', $params, 'id');
             shuffle($evaluationcompleteds);
@@ -356,53 +344,75 @@ class mod_evaluation_structure {
      * @param int $groupid
      * @return mixed array of found completeds otherwise false
      */
-    public function count_completed_responses($groupid = 0, $today = false ) 
-	{   global $DB;
-		$cosPrivileged_filter = evaluation_get_cosPrivileged_filter( $this->evaluation, "fbc" );
-		$params = ['evaluation' => $this->evaluation->id, 'groupid' => $groupid, 'courseid' => $this->courseid];
-		$filter = $fstudies = $fteacher = $ftoday = $fcourseid = "" ;
-		if ( $this->get_course_of_studies() )
-		{	$filter .= " AND course_of_studies = '" . $this->get_course_of_studies() ."'";
-			$fstudies = " AND fbc.course_of_studies = :course_of_studies"; $params['course_of_studies'] = $this->get_course_of_studies(); 
-		}	
-		if ( $this->get_teacherid() )
-		{	$filter .= " AND teacherid = " . $this->get_teacherid(); 
-			$fteacher = " AND fbc.teacherid = :teacherid"; $params['teacherid'] = $this->get_teacherid(); 
-		}
-		if ( $today ) 
-		{	$today = date("d M Y");
-			$midnight = strtotime("$today 0:00");
-			$dayend = strtotime("$today 23:59:60");
-			$ftoday = " AND timemodified >= $midnight AND timemodified <= $dayend";
-			$filter .= $ftoday;
-		}
-        if (intval($groupid) > 0) {			
-			$query = "SELECT COUNT(DISTINCT fbc.id)
+    public function count_completed_responses($groupid = 0, $today = false) {
+        global $DB;
+        $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($this->evaluation, "fbc");
+        $params = ['evaluation' => $this->evaluation->id, 'groupid' => $groupid, 'courseid' => $this->courseid];
+        $filter = $fstudies = $fteacher = $ftoday = $fcourseid = "";
+        if ($this->get_course_of_studies()) {
+            $filter .= " AND course_of_studies = '" . $this->get_course_of_studies() . "'";
+            $fstudies = " AND fbc.course_of_studies = :course_of_studies";
+            $params['course_of_studies'] = $this->get_course_of_studies();
+        }
+        if ($this->get_teacherid()) {
+            $filter .= " AND teacherid = " . $this->get_teacherid();
+            $fteacher = " AND fbc.teacherid = :teacherid";
+            $params['teacherid'] = $this->get_teacherid();
+        }
+        if ($today) {
+            $today = date("d M Y");
+            $midnight = strtotime("$today 0:00");
+            $dayend = strtotime("$today 23:59:60");
+            $ftoday = " AND timemodified >= $midnight AND timemodified <= $dayend";
+            $filter .= $ftoday;
+        }
+        if (intval($groupid) > 0) {
+            $query = "SELECT COUNT(DISTINCT fbc.id)
                         FROM {evaluation_completed} fbc, {groups_members} gm
                         WHERE fbc.evaluation = :evaluation
                             AND gm.groupid = :groupid
                             AND fbc.userid = gm.userid $fteacher $fstudies $ftoday";
-			$filter .= " AND true";
-        } 
-		else 
-		if ($this->courseid) {
+            $filter .= " AND true";
+        } else if ($this->courseid) {
             $query = "SELECT COUNT(fbc.id)
                         FROM {evaluation_completed} fbc
                         WHERE fbc.evaluation = :evaluation
 						AND fbc.courseid = :courseid $fteacher $ftoday";
-			$filter .= " AND courseid=" .$this->courseid;
-        } 
-		else {
+            $filter .= " AND courseid=" . $this->courseid;
+        } else {
             $query = "SELECT COUNT(fbc.id) FROM {evaluation_completed} fbc 
 						WHERE fbc.evaluation = :evaluation $fteacher $fstudies $ftoday $cosPrivileged_filter";
         }
-		$duplicated = 0;
-		if ( !$this->evaluation->teamteaching  AND empty($filter) AND !$cosPrivileged_filter )
-		{	$duplicated = evaluation_count_duplicated_replies( $this->evaluation ); }
-		return $DB->get_field_sql($query, $params) - $duplicated;
+        $duplicated = 0;
+        if (!$this->evaluation->teamteaching and empty($filter) and !$cosPrivileged_filter) {
+            $duplicated = evaluation_count_duplicated_replies($this->evaluation);
+        }
+        return $DB->get_field_sql($query, $params) - $duplicated;
     }
 
-	
+    /**
+     * current course of studies functions (for site evaluations only)
+     *
+     * @return stdClass
+     */
+    public function get_course_of_studies() {
+        return $this->course_of_studies;
+    }
+
+    public function set_course_of_studies($studies) {
+        $this->course_of_studies = $studies;
+        return $this->course_of_studies;
+    }
+
+    /**
+     * Id of the current teacher
+     *
+     * @return stdClass
+     */
+    public function get_teacherid() {
+        return $this->teacherid;
+    }
+
     /**
      * For the frontpage evaluation returns the list of courses with at least one completed evaluation
      *
@@ -411,41 +421,45 @@ class mod_evaluation_structure {
     public function get_completed_courses() {
         global $DB;
 
-        if ($this->get_evaluation()->course != SITEID) 
-		{	return []; }
+        if ($this->get_evaluation()->course != SITEID) {
+            return [];
+        }
 
-		if ($this->allcourses !== null) {	return $this->allcourses; }
-		
-		$filter = "";
-		if ( $this->get_teacherid() )
-		{	$filter .= " AND completed.teacherid=".$this->get_teacherid(); }
-		if ( $this->get_course_of_studies() )
-		{	$filter .= " AND completed.course_of_studies='".$this->get_course_of_studies()."'"; }
-		
-		// handle CoS privileged users
-		$CoS_Filter = evaluation_get_cosPrivileged_filter( $this->get_evaluation(), "completed" );
-		if ( $CoS_Filter )
-		{	$filter .= $CoS_Filter; }
-		
+        if ($this->allcourses !== null) {
+            return $this->allcourses;
+        }
+
+        $filter = "";
+        if ($this->get_teacherid()) {
+            $filter .= " AND completed.teacherid=" . $this->get_teacherid();
+        }
+        if ($this->get_course_of_studies()) {
+            $filter .= " AND completed.course_of_studies='" . $this->get_course_of_studies() . "'";
+        }
+
+        // handle CoS privileged users
+        $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
+        if ($CoS_Filter) {
+            $filter .= $CoS_Filter;
+        }
+
         $sql = "SELECT completed.id, completed.courseid, completed.teacherid, completed.course_of_studies, 
 				concat(u.firstname,' ',u.lastname) as name, c.fullname, c.shortname, c.idnumber
 				FROM {evaluation_completed} completed, {course} c, {user} u
 				WHERE completed.evaluation = :evaluationid $filter AND c.id=completed.courseid AND u.id=completed.userid ORDER BY c.fullname ASC";
-        
- 		$list = $DB->get_records_sql($sql, ['evaluationid' => $this->get_evaluation()->id]);
-		
-		
+
+        $list = $DB->get_records_sql($sql, ['evaluationid' => $this->get_evaluation()->id]);
+
         $this->allcourses = array();
         foreach ($list as $course) {
-            $label = $course->fullname . ($course->fullname!==$course->shortname ?" (" . $course->shortname . ")" :"");
-			//if ( strlen($label) > 60 )
-			//{	$label = wordwrap( $label, 60, " <br>",false ); }
+            $label = $course->fullname . ($course->fullname !== $course->shortname ? " (" . $course->shortname . ")" : "");
+            //if ( strlen($label) > 60 )
+            //{	$label = wordwrap( $label, 60, " <br>",false ); }
             $this->allcourses[$course->courseid] = $label;
         }
         return $this->allcourses;
     }
-	
-	
+
     /**
      * For the frontpage evaluation returns the list of course_of_studies with at least one completed evaluation
      *
@@ -454,67 +468,89 @@ class mod_evaluation_structure {
     public function get_completed_course_of_studies() {
         global $DB;
 
-        if ($this->get_evaluation()->course != SITEID) 
-		{return [];	}
-		
-        if ($this->allstudies !== null) {	return $this->allstudies; }
+        if ($this->get_evaluation()->course != SITEID) {
+            return [];
+        }
 
-		$filter = "";
-		if ( $this->get_teacherid() )
-		{	$filter .= " AND completed.teacherid=".$this->get_teacherid(); }
-		if ( $this->get_courseid() )
-		{	$filter .= " AND completed.courseid='".$this->get_courseid()."'"; }
-		
-		// handle CoS privileged users
-		$CoS_Filter = evaluation_get_cosPrivileged_filter( $this->get_evaluation()); // , "completed" );
-		if ( $CoS_Filter )
-		{	$filter .= $CoS_Filter; }
-		
+        if ($this->allstudies !== null) {
+            return $this->allstudies;
+        }
+
+        $filter = "";
+        if ($this->get_teacherid()) {
+            $filter .= " AND completed.teacherid=" . $this->get_teacherid();
+        }
+        if ($this->get_courseid()) {
+            $filter .= " AND completed.courseid='" . $this->get_courseid() . "'";
+        }
+
+        // handle CoS privileged users
+        $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation()); // , "completed" );
+        if ($CoS_Filter) {
+            $filter .= $CoS_Filter;
+        }
+
         $sql = "SELECT DISTINCT ON (course_of_studies) course_of_studies, completed.id, completed.teacherid, completed.courseid
 				FROM {evaluation_completed} AS completed
 				WHERE completed.evaluation = :evaluationid $filter ORDER BY completed.course_of_studies ASC";
-        
- 		$list = $DB->get_records_sql($sql, ['evaluationid' => $this->get_evaluation()->id]);
-		
+
+        $list = $DB->get_records_sql($sql, ['evaluationid' => $this->get_evaluation()->id]);
+
         $this->allstudies = array();
         foreach ($list as $completed) {
             $label = $completed->course_of_studies;
-			if ( !empty($label) )
-			{	$this->allstudies[$completed->id] = $label; }
+            if (!empty($label)) {
+                $this->allstudies[$completed->id] = $label;
+            }
         }
-		return $this->allstudies;
+        return $this->allstudies;
     }
-	
+
+    /**
+     * Id of the current course (for site evaluations only)
+     *
+     * @return stdClass
+     */
+    public function get_courseid() {
+        return $this->courseid;
+    }
+
     /**
      * For the frontpage evaluation returns the list of course_of_studies with at least one completed evaluation
      *
      * @return array id=>name pairs of courses
      */
-    public function get_completed_teachers($CoS=true) {
+    public function get_completed_teachers($CoS = true) {
         global $DB;
 
-        if ($this->get_evaluation()->course != SITEID) {	return []; }
+        if ($this->get_evaluation()->course != SITEID) {
+            return [];
+        }
 
-        if ($this->allteachers !== null)	{	return $this->allteachers; }
+        if ($this->allteachers !== null) {
+            return $this->allteachers;
+        }
 
-		$filter = "";
-		if ( $this->get_courseid() )
-		{	$filter .= " AND completed.courseid=".$this->get_courseid(); }
-		elseif ( $this->get_course_of_studies() )
-		{	$filter .= " AND completed.course_of_studies='".$this->get_course_of_studies()."'"; }
-		
-		// handle CoS privileged users
-		$CoS_Filter = evaluation_get_cosPrivileged_filter( $this->get_evaluation(), "completed" );
-		if ( $CoS_Filter )
-		{	$filter .= $CoS_Filter; }
-		
+        $filter = "";
+        if ($this->get_courseid()) {
+            $filter .= " AND completed.courseid=" . $this->get_courseid();
+        } else if ($this->get_course_of_studies()) {
+            $filter .= " AND completed.course_of_studies='" . $this->get_course_of_studies() . "'";
+        }
+
+        // handle CoS privileged users
+        $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
+        if ($CoS_Filter) {
+            $filter .= $CoS_Filter;
+        }
+
         $sql = "SELECT completed.id, completed.courseid, completed.teacherid, completed.course_of_studies, 
 				concat(u.firstname,' ',u.lastname) as name, 
 				c.fullname, c.shortname, c.idnumber
 				FROM {evaluation_completed} completed, {course} c, {user} u
 				WHERE completed.evaluation = :evaluationid $filter AND c.id=completed.courseid AND u.id=completed.teacherid ORDER bY concat(u.lastname,' ',u.firstname) ASC";
-        
-		$list = $DB->get_records_sql($sql, ['evaluationid' => $this->get_evaluation()->id]);
+
+        $list = $DB->get_records_sql($sql, ['evaluationid' => $this->get_evaluation()->id]);
 
         $this->allteachers = array();
         foreach ($list as $teacher) {

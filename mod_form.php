@@ -27,7 +27,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
 class mod_evaluation_mod_form extends moodleform_mod {
 
@@ -36,12 +36,12 @@ class mod_evaluation_mod_form extends moodleform_mod {
 
         $editoroptions = evaluation_get_editor_options();
 
-        $mform    =& $this->_form;
+        $mform =& $this->_form;
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        $mform->addElement('text', 'name', get_string('name', 'evaluation'), array('size'=>'64'));
+        $mform->addElement('text', 'name', get_string('name', 'evaluation'), array('size' => '64'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
@@ -52,26 +52,26 @@ class mod_evaluation_mod_form extends moodleform_mod {
         $mform->addElement('header', 'timinghdr', get_string('availability'));
 
         $mform->addElement('date_time_selector', 'timeopen', get_string('evaluationopen', 'evaluation'),
-            array('optional' => true));
+                array('optional' => true));
 
         $mform->addElement('date_time_selector', 'timeclose', get_string('evaluationclose', 'evaluation'),
-            array('optional' => true));
+                array('optional' => true));
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'evaluationhdr', get_string('questionandsubmission', 'evaluation'));
 
-        $options=array();
-        $options[1]  = get_string('anonymous', 'evaluation');
-        $options[2]  = get_string('non_anonymous', 'evaluation');
+        $options = array();
+        $options[1] = get_string('anonymous', 'evaluation');
+        $options[2] = get_string('non_anonymous', 'evaluation');
         $mform->addElement('select',
-                           'anonymous',
-                           get_string('anonymous_edit', 'evaluation'),
-                           $options);
+                'anonymous',
+                get_string('anonymous_edit', 'evaluation'),
+                $options);
 
         // check if there is existing responses to this evaluation
-        if (is_numeric($this->_instance) AND
-                    $this->_instance AND
-                    $evaluation = $DB->get_record("evaluation", array("id"=>$this->_instance))) {
+        if (is_numeric($this->_instance) and
+                $this->_instance and
+                $evaluation = $DB->get_record("evaluation", array("id" => $this->_instance))) {
 
             $completed_evaluation_count = evaluation_get_completeds_group_count($evaluation);
         } else {
@@ -81,11 +81,11 @@ class mod_evaluation_mod_form extends moodleform_mod {
         if ($completed_evaluation_count) {
             $multiple_submit_value = $evaluation->multiple_submit ? get_string('yes') : get_string('no');
             $mform->addElement('text',
-                               'multiple_submit_static',
-                               get_string('multiplesubmit', 'evaluation'),
-                               array('size'=>'4',
-                                    'disabled'=>'disabled',
-                                    'value'=>$multiple_submit_value));
+                    'multiple_submit_static',
+                    get_string('multiplesubmit', 'evaluation'),
+                    array('size' => '4',
+                            'disabled' => 'disabled',
+                            'value' => $multiple_submit_value));
             $mform->setType('multiple_submit_static', PARAM_RAW);
 
             $mform->addElement('hidden', 'multiple_submit', '');
@@ -93,8 +93,8 @@ class mod_evaluation_mod_form extends moodleform_mod {
             $mform->addHelpButton('multiple_submit_static', 'multiplesubmit', 'evaluation');
         } else {
             $mform->addElement('selectyesno',
-                               'multiple_submit',
-                               get_string('multiplesubmit', 'evaluation'));
+                    'multiple_submit',
+                    get_string('multiplesubmit', 'evaluation'));
 
             $mform->addHelpButton('multiple_submit', 'multiplesubmit', 'evaluation');
         }
@@ -108,70 +108,71 @@ class mod_evaluation_mod_form extends moodleform_mod {
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'aftersubmithdr', get_string('after_submit', 'evaluation'));
 
-        $mform->addElement('text', 'min_results', get_string('min_results_desc', 'evaluation'),'size="5"');
-		$mform->addElement('text', 'min_results_text', get_string('min_results_text_desc', 'evaluation'),'size="5"');
-		$mform->setType('min_results', PARAM_INT);
-		$mform->setType('min_results_text', PARAM_INT);
+        $mform->addElement('text', 'min_results', get_string('min_results_desc', 'evaluation'), 'size="5"');
+        $mform->addElement('text', 'min_results_text', get_string('min_results_text_desc', 'evaluation'), 'size="5"');
+        $mform->setType('min_results', PARAM_INT);
+        $mform->setType('min_results_text', PARAM_INT);
         $mform->addElement('selectyesno', 'publish_stats', get_string('show_analysepage_after_submit', 'evaluation'));
 
-		$mform->addElement('selectyesno', 'show_on_index', get_string('show_on_index', 'evaluation'));
-		
+        $mform->addElement('selectyesno', 'show_on_index', get_string('show_on_index', 'evaluation'));
+
         $mform->addElement('editor',
-                           'page_after_submit_editor',
-                           get_string("page_after_submit", "evaluation"),
-                           null,
-                           $editoroptions);
+                'page_after_submit_editor',
+                get_string("page_after_submit", "evaluation"),
+                null,
+                $editoroptions);
 
         $mform->setType('page_after_submit_editor', PARAM_RAW);
 
         $mform->addElement('text',
-                           'site_after_submit',
-                           get_string('url_for_continue', 'evaluation'),
-                           array('size'=>'64', 'maxlength'=>'255'));
+                'site_after_submit',
+                get_string('url_for_continue', 'evaluation'),
+                array('size' => '64', 'maxlength' => '255'));
 
         $mform->setType('site_after_submit', PARAM_TEXT);
         $mform->addHelpButton('site_after_submit', 'url_for_continue', 'evaluation');
-		
-		if ( $this->_course->id == SITEID )
-		{	
-			$mform->addElement('header', 'globalevaluationheader', get_string('global_evaluations','evaluation'), 'evaluation'); 
-			$mform->addElement('text', 'semester', "Semester",'size="5"');
-			$mform->setType('semester', PARAM_INT);
-			$mform->setType('min_results_priv', PARAM_INT);
-			$mform->addElement('text', 'min_results_priv', get_string('min_results_priv_desc', 'evaluation'),'size="5"');
-			$mform->addElement('textarea', 'privileged_users', get_string('privileged_users_desc','evaluation'), 'wrap="virtual" rows="8" cols="17"');
-			$mform->addElement('textarea', 'filter_course_of_studies', get_string('filter_course_of_studies_desc','evaluation'), 'wrap="virtual" rows="12" cols="150"');
-			$mform->addElement('textarea', 'filter_courses', get_string('filter_courses_desc','evaluation'), 'wrap="virtual" rows="12" cols="30"');
-			$mform->setExpanded('globalevaluationheader');
-		}
-		else
-		{	$mform->addElement('hidden', 'privileged_users', '');	
-			$mform->addElement('hidden', 'filter_course_of_studies', '');
-			$mform->addElement('hidden', 'filter_courses', '');	
-		}
-		$mform->setType('privileged_users', PARAM_TEXT);
-		$mform->setType('filter_course_of_studies', PARAM_TEXT);
-		$mform->setType('filter_courses', PARAM_TEXT);
-		$mform->setDefault('privileged_users', "");
-		$mform->setDefault('filter_course_of_studies', "");
-		$mform->setDefault('filter_courses', "");
-		//$mform->addElement('header', 'globalevaluationheader', get_string('teamteaching','evaluation'), 'evaluation'); 
-        if ($completed_evaluation_count>3) {
+
+        if ($this->_course->id == SITEID) {
+            $mform->addElement('header', 'globalevaluationheader', get_string('global_evaluations', 'evaluation'), 'evaluation');
+            $mform->addElement('text', 'semester', "Semester", 'size="5"');
+            $mform->setType('semester', PARAM_INT);
+            $mform->setType('min_results_priv', PARAM_INT);
+            $mform->addElement('text', 'min_results_priv', get_string('min_results_priv_desc', 'evaluation'), 'size="5"');
+            $mform->addElement('textarea', 'privileged_users', get_string('privileged_users_desc', 'evaluation'),
+                    'wrap="virtual" rows="8" cols="17"');
+            $mform->addElement('textarea', 'filter_course_of_studies', get_string('filter_course_of_studies_desc', 'evaluation'),
+                    'wrap="virtual" rows="12" cols="150"');
+            $mform->addElement('textarea', 'filter_courses', get_string('filter_courses_desc', 'evaluation'),
+                    'wrap="virtual" rows="12" cols="30"');
+            $mform->setExpanded('globalevaluationheader');
+        } else {
+            $mform->addElement('hidden', 'privileged_users', '');
+            $mform->addElement('hidden', 'filter_course_of_studies', '');
+            $mform->addElement('hidden', 'filter_courses', '');
+        }
+        $mform->setType('privileged_users', PARAM_TEXT);
+        $mform->setType('filter_course_of_studies', PARAM_TEXT);
+        $mform->setType('filter_courses', PARAM_TEXT);
+        $mform->setDefault('privileged_users', "");
+        $mform->setDefault('filter_course_of_studies', "");
+        $mform->setDefault('filter_courses', "");
+        //$mform->addElement('header', 'globalevaluationheader', get_string('teamteaching','evaluation'), 'evaluation');
+        if ($completed_evaluation_count > 3) {
             $teamteaching_value = $evaluation->teamteaching ? get_string('yes') : get_string('no');
             $mform->addElement('text',
-                               'teamteaching_static',
-                               get_string('teamteaching', 'evaluation'),
-                               array('size'=>'4',
-                                    'disabled'=>'disabled',
-                                    'value'=>$teamteaching_value));
+                    'teamteaching_static',
+                    get_string('teamteaching', 'evaluation'),
+                    array('size' => '4',
+                            'disabled' => 'disabled',
+                            'value' => $teamteaching_value));
             $mform->setType('teamteaching_static', PARAM_RAW);
             $mform->addElement('hidden', 'teamteaching', '');
             $mform->setType('teamteaching', PARAM_INT);
             $mform->addHelpButton('teamteaching_static', 'teamteaching', 'evaluation');
         } else {
             $mform->addElement('selectyesno',
-                               'teamteaching',
-                               get_string('teamteaching', 'evaluation'));
+                    'teamteaching',
+                    get_string('teamteaching', 'evaluation'));
 
             $mform->addHelpButton('teamteaching', 'teamteaching', 'evaluation');
         }
@@ -190,21 +191,21 @@ class mod_evaluation_mod_form extends moodleform_mod {
             // editing an existing evaluation - let us prepare the added editor elements (intro done automatically)
             $draftitemid = file_get_submitted_draft_itemid('page_after_submit');
             $default_values['page_after_submit_editor']['text'] =
-                                    file_prepare_draft_area($draftitemid, $this->context->id,
-                                    'mod_evaluation', 'page_after_submit', false,
-                                    $editoroptions,
-                                    $default_values['page_after_submit']);
+                    file_prepare_draft_area($draftitemid, $this->context->id,
+                            'mod_evaluation', 'page_after_submit', false,
+                            $editoroptions,
+                            $default_values['page_after_submit']);
 
             $default_values['page_after_submit_editor']['format'] = $default_values['page_after_submitformat'];
             $default_values['page_after_submit_editor']['itemid'] = $draftitemid;
         } else {
             // adding a new evaluation instance
             $draftitemid = file_get_submitted_draft_itemid('page_after_submit_editor');
-			$default_values['min_results'] = 3;
-			$default_values['min_results_text'] = 3;
-			$default_values['min_results_priv'] = 3;
-			$default_values['show_on_index'] = 1;
-			$default_values['semester'] = evaluation_get_current_semester();
+            $default_values['min_results'] = 3;
+            $default_values['min_results_text'] = 3;
+            $default_values['min_results_priv'] = 3;
+            $default_values['show_on_index'] = 1;
+            $default_values['semester'] = evaluation_get_current_semester();
             // no context yet, itemid not used
             file_prepare_draft_area($draftitemid, null, 'mod_evaluation', 'page_after_submit', false);
             $default_values['page_after_submit_editor']['text'] = '';
@@ -224,8 +225,8 @@ class mod_evaluation_mod_form extends moodleform_mod {
      */
     public function data_postprocessing($data) {
         parent::data_postprocessing($data);
-		/* unset $_SESSION["EvaluationsName"] to reset stored evaluation data */
-		unset( 	$_SESSION["EvaluationsName"] );
+        /* unset $_SESSION["EvaluationsName"] to reset stored evaluation data */
+        unset($_SESSION["EvaluationsName"]);
 
         if (isset($data->page_after_submit_editor)) {
             $data->page_after_submitformat = $data->page_after_submit_editor['format'];
@@ -234,48 +235,57 @@ class mod_evaluation_mod_form extends moodleform_mod {
             if (!empty($data->completionunlocked)) {
                 // Turn off completion settings if the checkboxes aren't ticked
                 $autocompletion = !empty($data->completion) &&
-                    $data->completion == COMPLETION_TRACKING_AUTOMATIC;
+                        $data->completion == COMPLETION_TRACKING_AUTOMATIC;
                 if (!$autocompletion || empty($data->completionsubmit)) {
-                    $data->completionsubmit=0;
+                    $data->completionsubmit = 0;
                 }
             }
         }
-		// patched by Harry
-		if ( isset($data->filter_course_of_studies) AND !empty($data->filter_course_of_studies) )
-		{	$data->filter_course_of_studies = str_replace( "\r", "", $data->filter_course_of_studies ); 
-			$selected = explode("\n", $data->filter_course_of_studies);
-			sort($selected);
-			$sorted = array();
-			foreach ( $selected AS $filter_course_of_studies )
-			{	if (!empty($filter_course_of_studies)) {	$sorted[] = $filter_course_of_studies; } }
-			$data->filter_course_of_studies = implode("\n", $sorted);
-		}
-		else
-		{	$data->filter_course_of_studies = ""; }
-		if ( isset($data->filter_courses) AND !empty($data->filter_courses) )
-		{	$data->filter_courses = str_replace( "\r", "", $data->filter_courses ); 
-			$selected = explode("\n", $data->filter_courses);
-			sort($selected);
-			$sorted = array();
-			foreach ( $selected AS $filter_courses )
-			{	if (!empty($filter_courses)) {	$sorted[] = $filter_courses; } }
-			$data->filter_courses = implode("\n", $sorted);
-		}
-		else
-		{	$data->filter_courses = ""; }
-		
-		if ( isset($data->privileged_users) AND !empty($data->privileged_users) )
-		{	$data->privileged_users = str_replace( "\r", "", $data->privileged_users ); 
-			$selected = explode("\n", $data->privileged_users);
-			sort($selected);
-			$sorted = array();
-			foreach ( $selected AS $privileged_user )
-			{	if (!empty($privileged_user)) {	$sorted[] = $privileged_user; } }
-			$data->privileged_users = implode("\n", $sorted);
-		}
-		else
-		{	$data->privileged_users = ""; }
-		// end patch
+        // patched by Harry
+        if (isset($data->filter_course_of_studies) and !empty($data->filter_course_of_studies)) {
+            $data->filter_course_of_studies = str_replace("\r", "", $data->filter_course_of_studies);
+            $selected = explode("\n", $data->filter_course_of_studies);
+            sort($selected);
+            $sorted = array();
+            foreach ($selected as $filter_course_of_studies) {
+                if (!empty($filter_course_of_studies)) {
+                    $sorted[] = $filter_course_of_studies;
+                }
+            }
+            $data->filter_course_of_studies = implode("\n", $sorted);
+        } else {
+            $data->filter_course_of_studies = "";
+        }
+        if (isset($data->filter_courses) and !empty($data->filter_courses)) {
+            $data->filter_courses = str_replace("\r", "", $data->filter_courses);
+            $selected = explode("\n", $data->filter_courses);
+            sort($selected);
+            $sorted = array();
+            foreach ($selected as $filter_courses) {
+                if (!empty($filter_courses)) {
+                    $sorted[] = $filter_courses;
+                }
+            }
+            $data->filter_courses = implode("\n", $sorted);
+        } else {
+            $data->filter_courses = "";
+        }
+
+        if (isset($data->privileged_users) and !empty($data->privileged_users)) {
+            $data->privileged_users = str_replace("\r", "", $data->privileged_users);
+            $selected = explode("\n", $data->privileged_users);
+            sort($selected);
+            $sorted = array();
+            foreach ($selected as $privileged_user) {
+                if (!empty($privileged_user)) {
+                    $sorted[] = $privileged_user;
+                }
+            }
+            $data->privileged_users = implode("\n", $sorted);
+        } else {
+            $data->privileged_users = "";
+        }
+        // end patch
     }
 
     /**
@@ -300,9 +310,9 @@ class mod_evaluation_mod_form extends moodleform_mod {
         $mform =& $this->_form;
 
         $mform->addElement('checkbox',
-                           'completionsubmit',
-                           '',
-                           get_string('completionsubmit', 'evaluation'));
+                'completionsubmit',
+                '',
+                get_string('completionsubmit', 'evaluation'));
         // Enable this completion rule by default.
         $mform->setDefault('completionsubmit', 1);
         return array('completionsubmit');

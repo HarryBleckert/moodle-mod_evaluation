@@ -17,20 +17,19 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    $options = array(0=>get_string('no'), 1=>get_string('yes'));
+    $options = array(0 => get_string('no'), 1 => get_string('yes'));
     $str = get_string('configallowfullanonymous', 'evaluation');
     $settings->add(new admin_setting_configselect('evaluation_allowfullanonymous',
-                                    get_string('allowfullanonymous', 'evaluation'),
-                                    $str, 0, $options));
-if ( is_siteadmin() )
-{	
+            get_string('allowfullanonymous', 'evaluation'),
+            $str, 0, $options));
+    if (is_siteadmin()) {
 
-/*
-Monate des Sommersemesters: sommermonths (  Januar Februar März April Mai Juni Juli August September Oktober November Dezember
+        /*
+        Monate des Sommersemesters: sommermonths (  Januar Februar März April Mai Juni Juli August September Oktober November Dezember
 
-Semester identifier in course records: SUBSTRING(idnumber,1,5) or substr(shortname, -1, 5)
-*/
+        Semester identifier in course records: SUBSTRING(idnumber,1,5) or substr(shortname, -1, 5)
+        */
 
-}									
-	
+    }
+
 }

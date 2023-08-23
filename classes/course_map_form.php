@@ -35,7 +35,7 @@ class mod_evaluation_course_map_form extends moodleform {
      * Definition of the form
      */
     public function definition() {
-        $mform  = $this->_form;
+        $mform = $this->_form;
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

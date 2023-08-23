@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot.'/mod/evaluation/item/evaluation_item_form_class.php');
+require_once($CFG->dirroot . '/mod/evaluation/item/evaluation_item_form_class.php');
 
 class evaluation_label_form extends evaluation_item_form {
     protected $type = "label";

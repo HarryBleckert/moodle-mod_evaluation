@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') OR die('not allowed');
-require_once($CFG->dirroot.'/mod/evaluation/item/evaluation_item_class.php');
+defined('MOODLE_INTERNAL') or die('not allowed');
+require_once($CFG->dirroot . '/mod/evaluation/item/evaluation_item_class.php');
 
 define('EVALUATION_MULTICHOICE_TYPE_SEP', '>>>>>');
 define('EVALUATION_MULTICHOICE_LINE_SEP', '|');
@@ -32,7 +32,7 @@ class evaluation_item_multichoice extends evaluation_item_base {
 
         //get the lastposition number of the evaluation_items
         $position = $item->position;
-        $lastposition = $DB->count_records('evaluation_item', array('evaluation'=>$evaluation->id));
+        $lastposition = $DB->count_records('evaluation_item', array('evaluation' => $evaluation->id));
         if ($position == -1) {
             $i_formselect_last = $lastposition + 1;
             $i_formselect_value = $lastposition + 1;
@@ -52,20 +52,71 @@ class evaluation_item_multichoice extends evaluation_item_base {
 
         //all items for dependitem
         $evaluationitems = evaluation_get_depend_candidates_for_item($evaluation, $item);
-        $commonparams = array('cmid'=>$cm->id,
-                             'id'=>isset($item->id) ? $item->id : null,
-                             'typ'=>$item->typ,
-                             'items'=>$evaluationitems,
-                             'evaluation'=>$evaluation->id);
+        $commonparams = array('cmid' => $cm->id,
+                'id' => isset($item->id) ? $item->id : null,
+                'typ' => $item->typ,
+                'items' => $evaluationitems,
+                'evaluation' => $evaluation->id);
 
         //build the form
         $customdata = array('item' => $item,
-                            'common' => $commonparams,
-                            'positionlist' => $positionlist,
-                            'position' => $position,
-                            'info' => $info);
+                'common' => $commonparams,
+                'positionlist' => $positionlist,
+                'position' => $position,
+                'info' => $info);
 
         $this->item_form = new evaluation_multichoice_form('edit_item.php', $customdata);
+    }
+
+    public function get_info($item) {
+        $presentation = empty($item->presentation) ? '' : $item->presentation;
+
+        $info = new stdClass();
+        //check the subtype of the multichoice
+        //it can be check(c), radio(r) or dropdown(d)
+        // Subtypes:
+        // r = radio
+        // c = checkbox
+        // d = dropdown.
+
+        $info->subtype = '';
+        $info->presentation = '';
+        $info->horizontal = false;
+
+        $parts = explode(EVALUATION_MULTICHOICE_TYPE_SEP, $item->presentation);
+        @list($info->subtype, $info->presentation) = $parts;
+        if (!isset($info->subtype)) {
+            $info->subtype = 'r';
+        }
+
+        if ($info->subtype != 'd') {
+            $parts = explode(EVALUATION_MULTICHOICE_ADJUST_SEP, $info->presentation);
+            @list($info->presentation, $info->horizontal) = $parts;
+            if (isset($info->horizontal) and $info->horizontal == 1) {
+                $info->horizontal = true;
+            } else {
+                $info->horizontal = false;
+            }
+        }
+        return $info;
+    }
+
+
+    //gets an array with three values(typ, name, XXX)
+    //XXX is an object with answertext, answercount and quotient
+
+    public function ignoreempty($item) {
+        if (strstr($item->options, EVALUATION_MULTICHOICE_IGNOREEMPTY)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function hidenoselect($item) {
+        if (strstr($item->options, EVALUATION_MULTICHOICE_HIDENOSELECT)) {
+            return true;
+        }
+        return false;
     }
 
     public function save_item() {
@@ -76,7 +127,7 @@ class evaluation_item_multichoice extends evaluation_item_base {
         }
         $item = $this->item;
 
-        if (isset($item->clone_item) AND $item->clone_item) {
+        if (isset($item->clone_item) and $item->clone_item) {
             $item->id = ''; //to clone this item
             $item->position++;
         }
@@ -91,80 +142,21 @@ class evaluation_item_multichoice extends evaluation_item_base {
             $DB->update_record('evaluation_item', $item);
         }
 
-        return $DB->get_record('evaluation_item', array('id'=>$item->id));
+        return $DB->get_record('evaluation_item', array('id' => $item->id));
     }
 
-
-    //gets an array with three values(typ, name, XXX)
-    //XXX is an object with answertext, answercount and quotient
-
-    /**
-     * Helper function for collected data, both for analysis page and export to excel
-     *
-     * @param stdClass $item the db-object from evaluation_item
-     * @param int $groupid
-     * @param int $courseid
-     * @return array
-     */
-    protected function get_analysed($item, $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false ) 
-	{
-        $info = $this->get_info($item);
-
-        $analysed_item = array();
-        $analysed_item[] = $item->typ;
-        $analysed_item[] = format_string($item->name);
-
-        //get the possible answers
-        $answers = null;
-        $answers = explode (EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
-        if (!is_array($answers)) {
-            return null;
+    public function set_ignoreempty($item, $ignoreempty = true) {
+        $item->options = str_replace(EVALUATION_MULTICHOICE_IGNOREEMPTY, '', $item->options);
+        if ($ignoreempty) {
+            $item->options .= EVALUATION_MULTICHOICE_IGNOREEMPTY;
         }
+    }
 
-        //get the values
-        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies, $this->ignoreempty($item));
-        if (!$values) {
-            return null;
+    public function set_hidenoselect($item, $hidenoselect = true) {
+        $item->options = str_replace(EVALUATION_MULTICHOICE_HIDENOSELECT, '', $item->options);
+        if ($hidenoselect) {
+            $item->options .= EVALUATION_MULTICHOICE_HIDENOSELECT;
         }
-
-        //get answertext, answercount and quotient for each answer
-        $analysed_answer = array();
-        if ($info->subtype == 'c') {
-            $sizeofanswers = count($answers);
-            for ($i = 1; $i <= $sizeofanswers; $i++) {
-                $ans = new stdClass();
-                $ans->answertext = $answers[$i-1];
-                $ans->answercount = 0;
-                foreach ($values as $value) {
-                    //ist die Antwort gleich dem index der Antworten + 1?
-                    $vallist = explode(EVALUATION_MULTICHOICE_LINE_SEP, $value->value);
-                    foreach ($vallist as $val) {
-                        if ($val == $i) {
-                            $ans->answercount++;
-                        }
-                    }
-                }
-                $ans->quotient = $ans->answercount / count($values);
-                $analysed_answer[] = $ans;
-            }
-        } else {
-            $sizeofanswers = count($answers);
-            for ($i = 1; $i <= $sizeofanswers; $i++) {
-                $ans = new stdClass();
-                $ans->answertext = $answers[$i-1];
-                $ans->answercount = 0;
-                foreach ($values as $value) {
-                    //ist die Antwort gleich dem index der Antworten + 1?
-                    if ($value->value == $i) {
-                        $ans->answercount++;
-                    }
-                }
-                $ans->quotient = $ans->answercount / count($values);
-                $analysed_answer[] = $ans;
-            }
-        }
-        $analysed_item[] = $analysed_answer;
-        return $analysed_item;
     }
 
     public function get_printval($item, $value) {
@@ -176,10 +168,10 @@ class evaluation_item_multichoice extends evaluation_item_base {
             return $printval;
         }
 
-        $presentation = explode (EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
+        $presentation = explode(EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
 
         if ($info->subtype == 'c') {
-            $vallist = array_values(explode (EVALUATION_MULTICHOICE_LINE_SEP, $value->value));
+            $vallist = array_values(explode(EVALUATION_MULTICHOICE_LINE_SEP, $value->value));
             $sizeofvallist = count($vallist);
             $sizeofpresentation = count($presentation);
             for ($i = 0; $i < $sizeofvallist; $i++) {
@@ -203,28 +195,29 @@ class evaluation_item_multichoice extends evaluation_item_base {
         return $printval;
     }
 
-    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false, $Chart="bar") 
-	{   global $OUTPUT;
+    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid = false,
+            $course_of_studies = false, $Chart = "bar") {
+        global $OUTPUT;
         $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
-		$analysed_itemC = array();
-		
-        if ($analysed_item) 
-		{	$itemname = $analysed_item[1];
-			echo '<div style="font-size:16px;color:darkblue;">';
+        $analysed_itemC = array();
+
+        if ($analysed_item) {
+            $itemname = $analysed_item[1];
+            echo '<div style="font-size:16px;color:darkblue;">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
-                echo '('. format_string($item->label).') ';
+                echo '(' . format_string($item->label) . ') ';
             }
-            echo "\n".'<b>' . format_string($itemname) . "</b>\n";
-			echo "</div>\n";
+            echo "\n" . '<b>' . format_string($itemname) . "</b>\n";
+            echo "</div>\n";
             $analysed_vals = $analysed_item[2];
             $count = 0;
             $data = [];
-            foreach ($analysed_vals as $val) 
-			{	$quotient = format_float($val->quotient * 100, 2);
+            foreach ($analysed_vals as $val) {
+                $quotient = format_float($val->quotient * 100, 2);
                 $strquotient = '';
                 if ($val->quotient > 0) {
-                    $strquotient = ' ('. $quotient . ' %)';
+                    $strquotient = ' (' . $quotient . ' %)';
                 }
                 $answertext = format_text(trim($val->answertext), FORMAT_HTML,
                         array('noclean' => true, 'para' => false));
@@ -232,42 +225,108 @@ class evaluation_item_multichoice extends evaluation_item_base {
                 $data['labels'][$count] = $answertext;
                 $data['series'][$count] = $val->answercount;
                 $data['series_labels'][$count] = $val->answercount . $strquotient;
-				$count++;	
-			}
-			
-			// draw line chart
-			if ( $Chart == "line")
-			{	$chart = new \core\chart_line(); 
-				$chart->set_smooth(true);
-			}
-			elseif ( $Chart == "pie")
-			{	$chart = new \core\chart_pie();
-			}
-			elseif ( $Chart == "doughnut")
-			{	$chart = new \core\chart_pie();
-				$chart->set_doughnut(true);
-			}
-			// draw stacked bar chart
-			elseif ( $Chart == "stacked")
-			{	$chart = new core\chart_bar();
-				$chart->set_stacked(true);
-			}
-			// draw bar chart - DEFAULT
-			else  //if ( $Chart == "bar")
-			{	$chart = new \core\chart_bar();
-				$chart->set_horizontal(true);
-			}
+                $count++;
+            }
+
+            // draw line chart
+            if ($Chart == "line") {
+                $chart = new \core\chart_line();
+                $chart->set_smooth(true);
+            } else if ($Chart == "pie") {
+                $chart = new \core\chart_pie();
+            } else if ($Chart == "doughnut") {
+                $chart = new \core\chart_pie();
+                $chart->set_doughnut(true);
+            } // draw stacked bar chart
+            else if ($Chart == "stacked") {
+                $chart = new core\chart_bar();
+                $chart->set_stacked(true);
+            } // draw bar chart - DEFAULT
+            else  //if ( $Chart == "bar")
+            {
+                $chart = new \core\chart_bar();
+                $chart->set_horizontal(true);
+            }
             $series = new \core\chart_series(format_string(get_string("responses", "evaluation")), $data['series']);
             $series->set_labels($data['series_labels']);
             $chart->add_series($series);
             $chart->set_labels($data['labels']);
-			echo $OUTPUT->render_chart($chart); 
+            echo $OUTPUT->render_chart($chart);
         }
     }
 
+    /**
+     * Helper function for collected data, both for analysis page and export to excel
+     *
+     * @param stdClass $item the db-object from evaluation_item
+     * @param int $groupid
+     * @param int $courseid
+     * @return array
+     */
+    protected function get_analysed($item, $groupid = false, $courseid = false, $teacherid = false, $course_of_studies = false) {
+        $info = $this->get_info($item);
+
+        $analysed_item = array();
+        $analysed_item[] = $item->typ;
+        $analysed_item[] = format_string($item->name);
+
+        //get the possible answers
+        $answers = null;
+        $answers = explode(EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
+        if (!is_array($answers)) {
+            return null;
+        }
+
+        //get the values
+        $values =
+                evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies, $this->ignoreempty($item));
+        if (!$values) {
+            return null;
+        }
+
+        //get answertext, answercount and quotient for each answer
+        $analysed_answer = array();
+        if ($info->subtype == 'c') {
+            $sizeofanswers = count($answers);
+            for ($i = 1; $i <= $sizeofanswers; $i++) {
+                $ans = new stdClass();
+                $ans->answertext = $answers[$i - 1];
+                $ans->answercount = 0;
+                foreach ($values as $value) {
+                    //ist die Antwort gleich dem index der Antworten + 1?
+                    $vallist = explode(EVALUATION_MULTICHOICE_LINE_SEP, $value->value);
+                    foreach ($vallist as $val) {
+                        if ($val == $i) {
+                            $ans->answercount++;
+                        }
+                    }
+                }
+                $ans->quotient = $ans->answercount / count($values);
+                $analysed_answer[] = $ans;
+            }
+        } else {
+            $sizeofanswers = count($answers);
+            for ($i = 1; $i <= $sizeofanswers; $i++) {
+                $ans = new stdClass();
+                $ans->answertext = $answers[$i - 1];
+                $ans->answercount = 0;
+                foreach ($values as $value) {
+                    //ist die Antwort gleich dem index der Antworten + 1?
+                    if ($value->value == $i) {
+                        $ans->answercount++;
+                    }
+                }
+                $ans->quotient = $ans->answercount / count($values);
+                $analysed_answer[] = $ans;
+            }
+        }
+        $analysed_item[] = $analysed_answer;
+        return $analysed_item;
+    }
+
     public function excelprint_item(&$worksheet, $row_offset,
-                             $xls_formats, $item,
-                             $groupid, $courseid = false, $teacherid=false, $course_of_studies=false) {
+            $xls_formats, $item,
+            $groupid, $courseid = false, $teacherid = false, $course_of_studies = false) {
 
         $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
 
@@ -282,42 +341,23 @@ class evaluation_item_multichoice extends evaluation_item_base {
                 $analysed_data = $data[$i];
 
                 $worksheet->write_string($row_offset,
-                                         $i + 2,
-                                         trim($analysed_data->answertext),
-                                         $xls_formats->head2);
+                        $i + 2,
+                        trim($analysed_data->answertext),
+                        $xls_formats->head2);
 
                 $worksheet->write_number($row_offset + 1,
-                                         $i + 2,
-                                         $analysed_data->answercount,
-                                         $xls_formats->default);
+                        $i + 2,
+                        $analysed_data->answercount,
+                        $xls_formats->default);
 
                 $worksheet->write_number($row_offset + 2,
-                                         $i + 2,
-                                         $analysed_data->quotient,
-                                         $xls_formats->procent);
+                        $i + 2,
+                        $analysed_data->quotient,
+                        $xls_formats->procent);
             }
         }
         $row_offset += 3;
         return $row_offset;
-    }
-
-    /**
-     * Options for the multichoice element
-     * @param stdClass $item
-     * @return array
-     */
-    protected function get_options($item) {
-        $info = $this->get_info($item);
-        $presentation = explode (EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
-        $options = array();
-        foreach ($presentation as $idx => $optiontext) {
-            $options[$idx + 1] = format_text($optiontext, FORMAT_HTML, array('noclean' => true, 'para' => false));
-        }
-        if ($info->subtype === 'r' && !$this->hidenoselect($item)) {
-            $options = array(0 => get_string('not_selected', 'evaluation')) + $options;
-        }
-
-        return $options;
     }
 
     /**
@@ -353,27 +393,27 @@ class evaluation_item_multichoice extends evaluation_item_base {
             // Display list of checkbox values in the response view.
             $objs = [];
             foreach (explode(EVALUATION_MULTICHOICE_LINE_SEP, $form->get_item_value($item)) as $v) {
-                $objs[] = ['static', $inputname."[$v]", '', isset($options[$v]) ? $options[$v] : ''];
+                $objs[] = ['static', $inputname . "[$v]", '', isset($options[$v]) ? $options[$v] : ''];
             }
-            $element = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
+            $element = $form->add_form_group_element($item, 'group_' . $inputname, $name, $objs, $separator, $class);
         } else {
             // Display group or radio or checkbox elements.
             $class .= ' multichoice-' . ($info->horizontal ? 'horizontal' : 'vertical');
             $objs = [];
             if ($info->subtype === 'c') {
                 // Checkboxes.
-                $objs[] = ['hidden', $inputname.'[0]', 0];
-                $form->set_element_type($inputname.'[0]', PARAM_INT);
+                $objs[] = ['hidden', $inputname . '[0]', 0];
+                $form->set_element_type($inputname . '[0]', PARAM_INT);
                 foreach ($options as $idx => $label) {
-                    $objs[] = ['advcheckbox', $inputname.'['.$idx.']', '', $label, null, array(0, $idx)];
-                    $form->set_element_type($inputname.'['.$idx.']', PARAM_INT);
+                    $objs[] = ['advcheckbox', $inputname . '[' . $idx . ']', '', $label, null, array(0, $idx)];
+                    $form->set_element_type($inputname . '[' . $idx . ']', PARAM_INT);
                 }
                 // Span to hold the element id. The id is used for drag and drop reordering.
                 $objs[] = ['static', '', '', html_writer::span('', '', ['id' => 'evaluation_item_' . $item->id])];
-                $element = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
+                $element = $form->add_form_group_element($item, 'group_' . $inputname, $name, $objs, $separator, $class);
                 if ($tmpvalue) {
                     foreach (explode(EVALUATION_MULTICHOICE_LINE_SEP, $tmpvalue) as $v) {
-                        $form->set_element_default($inputname.'['.$v.']', $v);
+                        $form->set_element_default($inputname . '[' . $v . ']', $v);
                     }
                 }
             } else {
@@ -387,7 +427,7 @@ class evaluation_item_multichoice extends evaluation_item_base {
                 }
                 // Span to hold the element id. The id is used for drag and drop reordering.
                 $objs[] = ['static', '', '', html_writer::span('', '', ['id' => 'evaluation_item_' . $item->id])];
-                $element = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
+                $element = $form->add_form_group_element($item, 'group_' . $inputname, $name, $objs, $separator, $class);
                 $form->set_element_default($inputname, $tmpvalue);
                 $form->set_element_type($inputname, PARAM_INT);
             }
@@ -399,13 +439,34 @@ class evaluation_item_multichoice extends evaluation_item_base {
             $form->add_validation_rule(function($values) use ($elementname, $item) {
                 $inputname = $item->typ . '_' . $item->id;
                 return empty($values[$inputname]) || (is_array($values[$inputname]) && !array_filter($values[$inputname])) ?
-                    array($elementname => get_string('required')) : true;
+                        array($elementname => get_string('required')) : true;
             });
         }
     }
 
     /**
+     * Options for the multichoice element
+     *
+     * @param stdClass $item
+     * @return array
+     */
+    protected function get_options($item) {
+        $info = $this->get_info($item);
+        $presentation = explode(EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
+        $options = array();
+        foreach ($presentation as $idx => $optiontext) {
+            $options[$idx + 1] = format_text($optiontext, FORMAT_HTML, array('noclean' => true, 'para' => false));
+        }
+        if ($info->subtype === 'r' && !$this->hidenoselect($item)) {
+            $options = array(0 => get_string('not_selected', 'evaluation')) + $options;
+        }
+
+        return $options;
+    }
+
+    /**
      * Prepares value that user put in the form for storing in DB
+     *
      * @param array $value
      * @return string
      */
@@ -433,11 +494,11 @@ class evaluation_item_multichoice extends evaluation_item_base {
         }
 
         $info = $this->get_info($item);
-        $presentation = explode (EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
+        $presentation = explode(EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
         $index = 1;
         foreach ($presentation as $pres) {
             foreach ($dbvalues as $dbval) {
-                if ($dbval == $index AND trim($pres) == $dependvalue) {
+                if ($dbval == $index and trim($pres) == $dependvalue) {
                     return true;
                 }
             }
@@ -446,80 +507,20 @@ class evaluation_item_multichoice extends evaluation_item_base {
         return false;
     }
 
-    public function get_info($item) {
-        $presentation = empty($item->presentation) ? '' : $item->presentation;
-
-        $info = new stdClass();
-        //check the subtype of the multichoice
-        //it can be check(c), radio(r) or dropdown(d)
-        // Subtypes:
-        // r = radio
-        // c = checkbox
-        // d = dropdown.
-
-        $info->subtype = '';
-        $info->presentation = '';
-        $info->horizontal = false;
-
-        $parts = explode(EVALUATION_MULTICHOICE_TYPE_SEP, $item->presentation);
-        @list($info->subtype, $info->presentation) = $parts;
-        if (!isset($info->subtype)) {
-            $info->subtype = 'r';
-        }
-
-        if ($info->subtype != 'd') {
-            $parts = explode(EVALUATION_MULTICHOICE_ADJUST_SEP, $info->presentation);
-            @list($info->presentation, $info->horizontal) = $parts;
-            if (isset($info->horizontal) AND $info->horizontal == 1) {
-                $info->horizontal = true;
-            } else {
-                $info->horizontal = false;
-            }
-        }
-        return $info;
-    }
-
-    public function set_ignoreempty($item, $ignoreempty=true) {
-        $item->options = str_replace(EVALUATION_MULTICHOICE_IGNOREEMPTY, '', $item->options);
-        if ($ignoreempty) {
-            $item->options .= EVALUATION_MULTICHOICE_IGNOREEMPTY;
-        }
-    }
-
-    public function ignoreempty($item) {
-        if (strstr($item->options, EVALUATION_MULTICHOICE_IGNOREEMPTY)) {
-            return true;
-        }
-        return false;
-    }
-
-    public function set_hidenoselect($item, $hidenoselect=true) {
-        $item->options = str_replace(EVALUATION_MULTICHOICE_HIDENOSELECT, '', $item->options);
-        if ($hidenoselect) {
-            $item->options .= EVALUATION_MULTICHOICE_HIDENOSELECT;
-        }
-    }
-
-    public function hidenoselect($item) {
-        if (strstr($item->options, EVALUATION_MULTICHOICE_HIDENOSELECT)) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * Return the analysis data ready for external functions.
      *
-     * @param stdClass $item     the item (question) information
-     * @param int      $groupid  the group id to filter data (optional)
-     * @param int      $courseid the course id (optional)
+     * @param stdClass $item the item (question) information
+     * @param int $groupid the group id to filter data (optional)
+     * @param int $courseid the course id (optional)
      * @return array an array of data with non scalar types json encoded
      * @since  Moodle 3.3
      */
-    public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false) {
+    public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid = false,
+            $course_of_studies = false) {
 
         $externaldata = array();
-        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies );
+        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
 
         if (!empty($data[2]) && is_array($data[2])) {
             foreach ($data[2] as $d) {

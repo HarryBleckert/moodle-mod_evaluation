@@ -26,9 +26,9 @@
 // List of observers.
 $observers = array(
 
-    array(
-        'eventname'   => '\core\event\course_content_deleted',
-        'callback'    => 'mod_evaluation_observer::course_content_deleted',
-    ),
+        array(
+                'eventname' => '\core\event\course_content_deleted',
+                'callback' => 'mod_evaluation_observer::course_content_deleted',
+        ),
 
 );

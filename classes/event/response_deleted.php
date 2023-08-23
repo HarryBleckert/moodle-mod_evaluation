@@ -43,8 +43,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class response_deleted extends \core\event\course_module_viewed // \base 
-{
+class response_deleted extends \core\event\course_module_viewed // \base  {
     /**
      * Set basic properties for the event.
      */
@@ -64,15 +63,15 @@ class response_deleted extends \core\event\course_module_viewed // \base
      */
     public static function create_from_record($completed, $cm, $evaluation) {
         $event = self::create(array(
-            'relateduserid' => $completed->userid,
-            'objectid' => $completed->id,
-            'courseid' => $cm->course,
-            'context' => \context_module::instance($cm->id),
-            'anonymous' => ($completed->anonymous_response == EVALUATION_ANONYMOUS_YES),
-            'other' => array(
-                'cmid' => $cm->id,
-                'instanceid' => $evaluation->id,
-                'anonymous' => $completed->anonymous_response) // Deprecated.
+                'relateduserid' => $completed->userid,
+                'objectid' => $completed->id,
+                'courseid' => $cm->course,
+                'context' => \context_module::instance($cm->id),
+                'anonymous' => ($completed->anonymous_response == EVALUATION_ANONYMOUS_YES),
+                'other' => array(
+                        'cmid' => $cm->id,
+                        'instanceid' => $evaluation->id,
+                        'anonymous' => $completed->anonymous_response) // Deprecated.
         ));
 
         $event->add_record_snapshot('evaluation_completed', $completed);
@@ -96,7 +95,7 @@ class response_deleted extends \core\event\course_module_viewed // \base
      */
     public function get_description() {
         return "The user with id '$this->userid' deleted the evaluation for the user with id '$this->relateduserid' " .
-            "for the evaluation activity with course module id '$this->contextinstanceid'.";
+                "for the evaluation activity with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -112,10 +111,10 @@ class response_deleted extends \core\event\course_module_viewed // \base
     /**
      * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
      *
-     * @deprecated since 2.7
-     *
      * @param int|\stdClass $userorid ID of the user.
      * @return bool True if the user can view the event, false otherwise.
+     * @deprecated since 2.7
+     *
      */
     public function can_view($userorid = null) {
         global $USER;

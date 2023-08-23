@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot.'/mod/evaluation/item/evaluation_item_form_class.php');
+require_once($CFG->dirroot . '/mod/evaluation/item/evaluation_item_form_class.php');
 
 class evaluation_numeric_form extends evaluation_item_form {
     protected $type = "numeric";
@@ -29,27 +29,27 @@ class evaluation_numeric_form extends evaluation_item_form {
         $mform =& $this->_form;
 
         $mform->addElement('header', 'general', get_string($this->type, 'evaluation'));
-        $mform->addElement('advcheckbox', 'required', get_string('required', 'evaluation'), '' , null , array(0, 1));
+        $mform->addElement('advcheckbox', 'required', get_string('required', 'evaluation'), '', null, array(0, 1));
 
         $mform->addElement('text',
-                            'name',
-                            get_string('item_name', 'evaluation'),
-                            array('size'=>EVALUATION_ITEM_NAME_TEXTBOX_SIZE, 'maxlength'=>255));
+                'name',
+                get_string('item_name', 'evaluation'),
+                array('size' => EVALUATION_ITEM_NAME_TEXTBOX_SIZE, 'maxlength' => 255));
         $mform->addElement('text',
-                            'label',
-                            get_string('item_label', 'evaluation'),
-                            array('size'=>EVALUATION_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
+                'label',
+                get_string('item_label', 'evaluation'),
+                array('size' => EVALUATION_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength' => 255));
 
         $mform->addElement('text',
-                            'rangefrom',
-                            get_string('numeric_range_from', 'evaluation'),
-                            array('size'=>10, 'maxlength'=>10));
+                'rangefrom',
+                get_string('numeric_range_from', 'evaluation'),
+                array('size' => 10, 'maxlength' => 10));
         $mform->setType('rangefrom', PARAM_RAW);
 
         $mform->addElement('text',
-                            'rangeto',
-                            get_string('numeric_range_to', 'evaluation'),
-                            array('size'=>10, 'maxlength'=>10));
+                'rangeto',
+                get_string('numeric_range_to', 'evaluation'),
+                array('size' => 10, 'maxlength' => 10));
         $mform->setType('rangeto', PARAM_RAW);
 
         parent::definition();
@@ -72,15 +72,15 @@ class evaluation_numeric_form extends evaluation_item_form {
             $num2 = '-';
         }
 
-        if ($num1 === '-' OR $num2 === '-') {
-            $item->presentation = $num1 . '|'. $num2;
+        if ($num1 === '-' or $num2 === '-') {
+            $item->presentation = $num1 . '|' . $num2;
             return $item;
         }
 
         if ($num1 > $num2) {
-            $item->presentation =  $num2 . '|'. $num1;
+            $item->presentation = $num2 . '|' . $num1;
         } else {
-            $item->presentation = $num1 . '|'. $num2;
+            $item->presentation = $num1 . '|' . $num2;
         }
         return $item;
     }

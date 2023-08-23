@@ -24,12 +24,12 @@
 
 namespace mod_evaluation\output;
 
+use mod_evaluation_structure;
+use moodle_url;
 use renderable;
-use templatable;
 use renderer_base;
 use stdClass;
-use moodle_url;
-use mod_evaluation_structure;
+use templatable;
 
 /**
  * Class to help display evaluation summary
@@ -46,7 +46,7 @@ class summary implements renderable, templatable {
     /** @var int */
     protected $mygroupid;
 
-    /** @var bool  */
+    /** @var bool */
     protected $extradetails;
 
     /**

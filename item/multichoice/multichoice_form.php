@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot.'/mod/evaluation/item/evaluation_item_form_class.php');
+require_once($CFG->dirroot . '/mod/evaluation/item/evaluation_item_form_class.php');
 
 class evaluation_multichoice_form extends evaluation_item_form {
     protected $type = "multichoice";
@@ -29,45 +29,45 @@ class evaluation_multichoice_form extends evaluation_item_form {
 
         $mform->addElement('header', 'general', get_string($this->type, 'evaluation'));
 
-        $mform->addElement('advcheckbox', 'required', get_string('required', 'evaluation'), '' , null , array(0, 1));
+        $mform->addElement('advcheckbox', 'required', get_string('required', 'evaluation'), '', null, array(0, 1));
 
         $mform->addElement('text',
-                            'name',
-                            get_string('item_name', 'evaluation'),
-                            array('size' => EVALUATION_ITEM_NAME_TEXTBOX_SIZE,
-                                  'maxlength' => 255));
+                'name',
+                get_string('item_name', 'evaluation'),
+                array('size' => EVALUATION_ITEM_NAME_TEXTBOX_SIZE,
+                        'maxlength' => 255));
 
         $mform->addElement('text',
-                            'label',
-                            get_string('item_label', 'evaluation'),
-                            array('size' => EVALUATION_ITEM_LABEL_TEXTBOX_SIZE,
-                                  'maxlength' => 255));
+                'label',
+                get_string('item_label', 'evaluation'),
+                array('size' => EVALUATION_ITEM_LABEL_TEXTBOX_SIZE,
+                        'maxlength' => 255));
 
         $mform->addElement('select',
-                            'subtype',
-                            get_string('multichoicetype', 'evaluation').'&nbsp;',
-                            array('r'=>get_string('radio', 'evaluation'),
-                                  'c'=>get_string('check', 'evaluation'),
-                                  'd'=>get_string('dropdown', 'evaluation')));
+                'subtype',
+                get_string('multichoicetype', 'evaluation') . '&nbsp;',
+                array('r' => get_string('radio', 'evaluation'),
+                        'c' => get_string('check', 'evaluation'),
+                        'd' => get_string('dropdown', 'evaluation')));
 
         $mform->addElement('select',
-                            'horizontal',
-                            get_string('adjustment', 'evaluation').'&nbsp;',
-                            array(0 => get_string('vertical', 'evaluation'),
-                                  1 => get_string('horizontal', 'evaluation')));
+                'horizontal',
+                get_string('adjustment', 'evaluation') . '&nbsp;',
+                array(0 => get_string('vertical', 'evaluation'),
+                        1 => get_string('horizontal', 'evaluation')));
         $mform->hideIf('horizontal', 'subtype', 'eq', 'd');
 
         $mform->addElement('selectyesno',
-                           'hidenoselect',
-                           get_string('hide_no_select_option', 'evaluation'));
+                'hidenoselect',
+                get_string('hide_no_select_option', 'evaluation'));
         $mform->hideIf('hidenoselect', 'subtype', 'ne', 'r');
 
         $mform->addElement('selectyesno',
-                           'ignoreempty',
-                           get_string('do_not_analyse_empty_submits', 'evaluation'));
+                'ignoreempty',
+                get_string('do_not_analyse_empty_submits', 'evaluation'));
 
         $mform->addElement('textarea', 'values', get_string('multichoice_values', 'evaluation'),
-            'wrap="virtual" rows="10" cols="65"');
+                'wrap="virtual" rows="10" cols="65"');
 
         $mform->addElement('static', 'hint', '', get_string('use_one_line_for_each_value', 'evaluation'));
 
@@ -101,8 +101,8 @@ class evaluation_multichoice_form extends evaluation_item_form {
         } else {
             $subtype = substr($item->subtype, 0, 1);
         }
-        if (isset($item->horizontal) AND $item->horizontal == 1 AND $subtype != 'd') {
-            $presentation .= EVALUATION_MULTICHOICE_ADJUST_SEP.'1';
+        if (isset($item->horizontal) and $item->horizontal == 1 and $subtype != 'd') {
+            $presentation .= EVALUATION_MULTICHOICE_ADJUST_SEP . '1';
         }
         if (!isset($item->hidenoselect)) {
             $item->hidenoselect = 1;
@@ -111,7 +111,7 @@ class evaluation_multichoice_form extends evaluation_item_form {
             $item->ignoreempty = 0;
         }
 
-        $item->presentation = $subtype.EVALUATION_MULTICHOICE_TYPE_SEP.$presentation;
+        $item->presentation = $subtype . EVALUATION_MULTICHOICE_TYPE_SEP . $presentation;
         return $item;
     }
 }

@@ -47,7 +47,7 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
     protected function evaluation_viewed(\cm_info $cm, $contextid, $userid, $after = null) {
         // If stats are published any write action counts as viewed evaluation.
         if (!empty($this->instancedata[$cm->instance]->publish_stats)) {
-            $user = (object)['id' => $userid];
+            $user = (object) ['id' => $userid];
             return $this->any_write_log($contextid, $user);
         }
 

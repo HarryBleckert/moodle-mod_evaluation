@@ -28,12 +28,12 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
 
-use mod_evaluation\external\evaluation_summary_exporter;
+use mod_evaluation\external\evaluation_completed_exporter;
 use mod_evaluation\external\evaluation_completedtmp_exporter;
 use mod_evaluation\external\evaluation_item_exporter;
-use mod_evaluation\external\evaluation_valuetmp_exporter;
+use mod_evaluation\external\evaluation_summary_exporter;
 use mod_evaluation\external\evaluation_value_exporter;
-use mod_evaluation\external\evaluation_completed_exporter;
+use mod_evaluation\external\evaluation_valuetmp_exporter;
 
 /**
  * Evaluation external functions
@@ -45,22 +45,6 @@ use mod_evaluation\external\evaluation_completed_exporter;
  * @since      Moodle 3.3
  */
 class mod_evaluation_external extends external_api {
-
-    /**
-     * Describes the parameters for get_evaluations_by_courses.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function get_evaluations_by_courses_parameters() {
-        return new external_function_parameters (
-            array(
-                'courseids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, 'Course id'), 'Array of course ids', VALUE_DEFAULT, array()
-                ),
-            )
-        );
-    }
 
     /**
      * Returns a list of evaluations in a provided list of courses.
@@ -77,7 +61,7 @@ class mod_evaluation_external extends external_api {
         $returnedevaluations = array();
 
         $params = array(
-            'courseids' => $courseids,
+                'courseids' => $courseids,
         );
         $params = self::validate_parameters(self::get_evaluations_by_courses_parameters(), $params);
 
@@ -120,10 +104,26 @@ class mod_evaluation_external extends external_api {
         }
 
         $result = array(
-            'evaluations' => $returnedevaluations,
-            'warnings' => $warnings
+                'evaluations' => $returnedevaluations,
+                'warnings' => $warnings
         );
         return $result;
+    }
+
+    /**
+     * Describes the parameters for get_evaluations_by_courses.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_evaluations_by_courses_parameters() {
+        return new external_function_parameters (
+                array(
+                        'courseids' => new external_multiple_structure(
+                                new external_value(PARAM_INT, 'Course id'), 'Array of course ids', VALUE_DEFAULT, array()
+                        ),
+                )
+        );
     }
 
     /**
@@ -134,12 +134,71 @@ class mod_evaluation_external extends external_api {
      */
     public static function get_evaluations_by_courses_returns() {
         return new external_single_structure(
-            array(
-                'evaluations' => new external_multiple_structure(
-                    evaluation_summary_exporter::get_read_structure()
-                ),
-                'warnings' => new external_warnings(),
-            )
+                array(
+                        'evaluations' => new external_multiple_structure(
+                                evaluation_summary_exporter::get_read_structure()
+                        ),
+                        'warnings' => new external_warnings(),
+                )
+        );
+    }
+
+    /**
+     * Return access information for a given evaluation.
+     *
+     * @param int $evaluationid evaluation instance id
+     * @param int $courseid course where user completes the evaluation (for site evaluations only)
+     * @return array of warnings and the access information
+     * @throws  moodle_exception
+     * @since Moodle 3.3
+     */
+    public static function get_evaluation_access_information($evaluationid, $courseid = 0) {
+        global $PAGE;
+
+        $params = array(
+                'evaluationid' => $evaluationid,
+                'courseid' => $courseid,
+        );
+        $params = self::validate_parameters(self::get_evaluation_access_information_parameters(), $params);
+
+        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
+                $params['courseid']);
+        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
+
+        $result = array();
+        // Capabilities first.
+        $result['canviewanalysis'] = $evaluationcompletion->can_view_analysis();
+        $result['cancomplete'] = $evaluationcompletion->can_complete();
+        $result['cansubmit'] = $evaluationcompletion->can_submit();
+        $result['candeletesubmissions'] = has_capability('mod/evaluation:deletesubmissions', $context);
+        $result['canviewreports'] = has_capability('mod/evaluation:viewreports', $context);
+        $result['canedititems'] = has_capability('mod/evaluation:edititems', $context);
+
+        // Status information.
+        $result['isempty'] = $evaluationcompletion->is_empty();
+        $result['isopen'] = $evaluationcompletion->is_open();
+        $anycourse = ($course->id == SITEID);
+        $result['isalreadysubmitted'] = $evaluationcompletion->is_already_submitted($anycourse);
+        $result['isanonymous'] = $evaluationcompletion->is_anonymous();
+
+        $result['warnings'] = [];
+        return $result;
+    }
+
+    /**
+     * Describes the parameters for get_evaluation_access_information.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_evaluation_access_information_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id.'),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
         );
     }
 
@@ -178,14 +237,240 @@ class mod_evaluation_external extends external_api {
     }
 
     /**
+     * Describes the get_evaluation_access_information return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_evaluation_access_information_returns() {
+        return new external_single_structure(
+                array(
+                        'canviewanalysis' => new external_value(PARAM_BOOL, 'Whether the user can view the analysis or not.'),
+                        'cancomplete' => new external_value(PARAM_BOOL, 'Whether the user can complete the evaluation or not.'),
+                        'cansubmit' => new external_value(PARAM_BOOL, 'Whether the user can submit the evaluation or not.'),
+                        'candeletesubmissions' => new external_value(PARAM_BOOL, 'Whether the user can delete submissions or not.'),
+                        'canviewreports' => new external_value(PARAM_BOOL,
+                                'Whether the user can view the evaluation reports or not.'),
+                        'canedititems' => new external_value(PARAM_BOOL, 'Whether the user can edit evaluation items or not.'),
+                        'isempty' => new external_value(PARAM_BOOL, 'Whether the evaluation has questions or not.'),
+                        'isopen' => new external_value(PARAM_BOOL,
+                                'Whether the evaluation has active access time restrictions or not.'),
+                        'isalreadysubmitted' => new external_value(PARAM_BOOL,
+                                'Whether the evaluation is already submitted or not.'),
+                        'isanonymous' => new external_value(PARAM_BOOL, 'Whether the evaluation is anonymous or not.'),
+                        'warnings' => new external_warnings(),
+                )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event and update the module completion status.
+     *
+     * @param int $evaluationid evaluation instance id
+     * @param bool $moduleviewed If we need to mark the module as viewed for completion
+     * @param int $courseid course where user completes the evaluation (for site evaluations only)
+     * @return array of warnings and status result
+     * @throws moodle_exception
+     * @since Moodle 3.3
+     */
+    public static function view_evaluation($evaluationid, $moduleviewed = false, $courseid = 0) {
+
+        $params = array('evaluationid' => $evaluationid, 'moduleviewed' => $moduleviewed, 'courseid' => $courseid);
+        $params = self::validate_parameters(self::view_evaluation_parameters(), $params);
+        $warnings = array();
+
+        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
+                $params['courseid']);
+        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
+
+        // Trigger module viewed event.
+        $evaluationcompletion->trigger_module_viewed();
+        if ($params['moduleviewed']) {
+            if (!$evaluationcompletion->is_open()) {
+                throw new moodle_exception('evaluation_is_not_open', 'evaluation');
+            }
+            // Mark activity viewed for completion-tracking.
+            $evaluationcompletion->set_module_viewed();
+        }
+
+        $result = array(
+                'status' => true,
+                'warnings' => $warnings,
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the parameters for view_evaluation.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function view_evaluation_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
+                        'moduleviewed' => new external_value(PARAM_BOOL, 'If we need to mark the module as viewed for completion',
+                                VALUE_DEFAULT, false),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
+    }
+
+    /**
+     * Describes the view_evaluation return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function view_evaluation_returns() {
+        return new external_single_structure(
+                array(
+                        'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                        'warnings' => new external_warnings(),
+                )
+        );
+    }
+
+    /**
+     * Returns the temporary completion record for the current user.
+     *
+     * @param int $evaluationid evaluation instance id
+     * @param int $courseid course where user completes the evaluation (for site evaluations only)
+     * @return array of warnings and status result
+     * @throws moodle_exception
+     * @since Moodle 3.3
+     */
+    public static function get_current_completed_tmp($evaluationid, $courseid = 0) {
+        global $PAGE;
+
+        $params = array('evaluationid' => $evaluationid, 'courseid' => $courseid);
+        $params = self::validate_parameters(self::get_current_completed_tmp_parameters(), $params);
+        $warnings = array();
+
+        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
+                $params['courseid']);
+        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
+
+        if ($completed = $evaluationcompletion->get_current_completed_tmp()) {
+            $exporter = new evaluation_completedtmp_exporter($completed);
+            return array(
+                    'evaluation' => $exporter->export($PAGE->get_renderer('core')),
+                    'warnings' => $warnings,
+            );
+        }
+        throw new moodle_exception('not_started', 'evaluation');
+    }
+
+    /**
+     * Describes the parameters for get_current_completed_tmp.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_current_completed_tmp_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
+    }
+
+    /**
+     * Describes the get_current_completed_tmp return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_current_completed_tmp_returns() {
+        return new external_single_structure(
+                array(
+                        'evaluation' => evaluation_completedtmp_exporter::get_read_structure(),
+                        'warnings' => new external_warnings(),
+                )
+        );
+    }
+
+    /**
+     * Describes the get_items return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_items_returns() {
+        return new external_single_structure(
+                array(
+                        'items' => new external_multiple_structure(
+                                evaluation_item_exporter::get_read_structure()
+                        ),
+                        'warnings' => new external_warnings(),
+                )
+        );
+    }
+
+    /**
+     * Starts or continues a evaluation submission
+     *
+     * @param array $evaluationid evaluation instance id
+     * @param int $courseid course where user completes a evaluation (for site evaluations only).
+     * @return array of warnings and launch information
+     * @since Moodle 3.3
+     */
+    public static function launch_evaluation($evaluationid, $courseid = 0) {
+        global $PAGE;
+
+        $params = array('evaluationid' => $evaluationid, 'courseid' => $courseid);
+        $params = self::validate_parameters(self::launch_evaluation_parameters(), $params);
+        $warnings = array();
+
+        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
+                $params['courseid']);
+        // Check we can do a new submission (or continue an existing).
+        $evaluationcompletion = self::validate_evaluation_access($evaluation, $completioncourse, $cm, $context, true);
+
+        $gopage = $evaluationcompletion->get_resume_page();
+        if ($gopage === null) {
+            $gopage = -1; // Last page.
+        }
+
+        $result = array(
+                'gopage' => $gopage,
+                'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the parameters for launch_evaluation.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function launch_evaluation_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
+    }
+
+    /**
      * Utility function for validating access to evaluation.
      *
-     * @param  stdClass   $evaluation evaluation object
-     * @param  stdClass   $course   course where user completes the evaluation (for site evaluations only)
-     * @param  stdClass   $cm       course module
-     * @param  stdClass   $context  context object
-     * @throws moodle_exception
+     * @param stdClass $evaluation evaluation object
+     * @param stdClass $course course where user completes the evaluation (for site evaluations only)
+     * @param stdClass $cm course module
+     * @param stdClass $context context object
      * @return mod_evaluation_completion evaluation completion instance
+     * @throws moodle_exception
      * @since  Moodle 3.3
      */
     protected static function validate_evaluation_access($evaluation, $course, $cm, $context, $checksubmit = false) {
@@ -210,336 +495,6 @@ class mod_evaluation_external extends external_api {
     }
 
     /**
-     * Describes the parameters for get_evaluation_access_information.
-     *
-     * @return external_external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function get_evaluation_access_information_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id.'),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
-        );
-    }
-
-    /**
-     * Return access information for a given evaluation.
-     *
-     * @param int $evaluationid evaluation instance id
-     * @param int $courseid course where user completes the evaluation (for site evaluations only)
-     * @return array of warnings and the access information
-     * @since Moodle 3.3
-     * @throws  moodle_exception
-     */
-    public static function get_evaluation_access_information($evaluationid, $courseid = 0) {
-        global $PAGE;
-
-        $params = array(
-            'evaluationid' => $evaluationid,
-            'courseid' => $courseid,
-        );
-        $params = self::validate_parameters(self::get_evaluation_access_information_parameters(), $params);
-
-        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
-        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
-
-        $result = array();
-        // Capabilities first.
-        $result['canviewanalysis'] = $evaluationcompletion->can_view_analysis();
-        $result['cancomplete'] = $evaluationcompletion->can_complete();
-        $result['cansubmit'] = $evaluationcompletion->can_submit();
-        $result['candeletesubmissions'] = has_capability('mod/evaluation:deletesubmissions', $context);
-        $result['canviewreports'] = has_capability('mod/evaluation:viewreports', $context);
-        $result['canedititems'] = has_capability('mod/evaluation:edititems', $context);
-
-        // Status information.
-        $result['isempty'] = $evaluationcompletion->is_empty();
-        $result['isopen'] = $evaluationcompletion->is_open();
-        $anycourse = ($course->id == SITEID);
-        $result['isalreadysubmitted'] = $evaluationcompletion->is_already_submitted($anycourse);
-        $result['isanonymous'] = $evaluationcompletion->is_anonymous();
-
-        $result['warnings'] = [];
-        return $result;
-    }
-
-    /**
-     * Describes the get_evaluation_access_information return value.
-     *
-     * @return external_single_structure
-     * @since Moodle 3.3
-     */
-    public static function get_evaluation_access_information_returns() {
-        return new external_single_structure(
-            array(
-                'canviewanalysis' => new external_value(PARAM_BOOL, 'Whether the user can view the analysis or not.'),
-                'cancomplete' => new external_value(PARAM_BOOL, 'Whether the user can complete the evaluation or not.'),
-                'cansubmit' => new external_value(PARAM_BOOL, 'Whether the user can submit the evaluation or not.'),
-                'candeletesubmissions' => new external_value(PARAM_BOOL, 'Whether the user can delete submissions or not.'),
-                'canviewreports' => new external_value(PARAM_BOOL, 'Whether the user can view the evaluation reports or not.'),
-                'canedititems' => new external_value(PARAM_BOOL, 'Whether the user can edit evaluation items or not.'),
-                'isempty' => new external_value(PARAM_BOOL, 'Whether the evaluation has questions or not.'),
-                'isopen' => new external_value(PARAM_BOOL, 'Whether the evaluation has active access time restrictions or not.'),
-                'isalreadysubmitted' => new external_value(PARAM_BOOL, 'Whether the evaluation is already submitted or not.'),
-                'isanonymous' => new external_value(PARAM_BOOL, 'Whether the evaluation is anonymous or not.'),
-                'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for view_evaluation.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function view_evaluation_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
-                'moduleviewed' => new external_value(PARAM_BOOL, 'If we need to mark the module as viewed for completion',
-                    VALUE_DEFAULT, false),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
-        );
-    }
-
-    /**
-     * Trigger the course module viewed event and update the module completion status.
-     *
-     * @param int $evaluationid evaluation instance id
-     * @param bool $moduleviewed If we need to mark the module as viewed for completion
-     * @param int $courseid course where user completes the evaluation (for site evaluations only)
-     * @return array of warnings and status result
-     * @since Moodle 3.3
-     * @throws moodle_exception
-     */
-    public static function view_evaluation($evaluationid, $moduleviewed = false, $courseid = 0) {
-
-        $params = array('evaluationid' => $evaluationid, 'moduleviewed' => $moduleviewed, 'courseid' => $courseid);
-        $params = self::validate_parameters(self::view_evaluation_parameters(), $params);
-        $warnings = array();
-
-        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
-        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
-
-        // Trigger module viewed event.
-        $evaluationcompletion->trigger_module_viewed();
-        if ($params['moduleviewed']) {
-            if (!$evaluationcompletion->is_open()) {
-                throw new moodle_exception('evaluation_is_not_open', 'evaluation');
-            }
-            // Mark activity viewed for completion-tracking.
-            $evaluationcompletion->set_module_viewed();
-        }
-
-        $result = array(
-            'status' => true,
-            'warnings' => $warnings,
-        );
-        return $result;
-    }
-
-    /**
-     * Describes the view_evaluation return value.
-     *
-     * @return external_single_structure
-     * @since Moodle 3.3
-     */
-    public static function view_evaluation_returns() {
-        return new external_single_structure(
-            array(
-                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-                'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for get_current_completed_tmp.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function get_current_completed_tmp_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
-        );
-    }
-
-    /**
-     * Returns the temporary completion record for the current user.
-     *
-     * @param int $evaluationid evaluation instance id
-     * @param int $courseid course where user completes the evaluation (for site evaluations only)
-     * @return array of warnings and status result
-     * @since Moodle 3.3
-     * @throws moodle_exception
-     */
-    public static function get_current_completed_tmp($evaluationid, $courseid = 0) {
-        global $PAGE;
-
-        $params = array('evaluationid' => $evaluationid, 'courseid' => $courseid);
-        $params = self::validate_parameters(self::get_current_completed_tmp_parameters(), $params);
-        $warnings = array();
-
-        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
-        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
-
-        if ($completed = $evaluationcompletion->get_current_completed_tmp()) {
-            $exporter = new evaluation_completedtmp_exporter($completed);
-            return array(
-                'evaluation' => $exporter->export($PAGE->get_renderer('core')),
-                'warnings' => $warnings,
-            );
-        }
-        throw new moodle_exception('not_started', 'evaluation');
-    }
-
-    /**
-     * Describes the get_current_completed_tmp return value.
-     *
-     * @return external_single_structure
-     * @since Moodle 3.3
-     */
-    public static function get_current_completed_tmp_returns() {
-        return new external_single_structure(
-            array(
-                'evaluation' => evaluation_completedtmp_exporter::get_read_structure(),
-                'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for get_items.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function get_items_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
-        );
-    }
-
-    /**
-     * Returns the items (questions) in the given evaluation.
-     *
-     * @param int $evaluationid evaluation instance id
-     * @param int $courseid course where user completes the evaluation (for site evaluations only)
-     * @return array of warnings and evaluations
-     * @since Moodle 3.3
-     */
-    public static function get_items($evaluationid, $courseid = 0) {
-        global $PAGE;
-
-        $params = array('evaluationid' => $evaluationid, 'courseid' => $courseid);
-        $params = self::validate_parameters(self::get_items_parameters(), $params);
-        $warnings = array();
-
-        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
-
-        $evaluationstructure = new mod_evaluation_structure($evaluation, $cm, $completioncourse->id);
-        $returneditems = array();
-        if ($items = $evaluationstructure->get_items()) {
-            foreach ($items as $item) {
-                $itemnumber = empty($item->itemnr) ? null : $item->itemnr;
-                unset($item->itemnr);   // Added by the function, not part of the record.
-                $exporter = new evaluation_item_exporter($item, array('context' => $context, 'itemnumber' => $itemnumber));
-                $returneditems[] = $exporter->export($PAGE->get_renderer('core'));
-            }
-        }
-
-        $result = array(
-            'items' => $returneditems,
-            'warnings' => $warnings
-        );
-        return $result;
-    }
-
-    /**
-     * Describes the get_items return value.
-     *
-     * @return external_single_structure
-     * @since Moodle 3.3
-     */
-    public static function get_items_returns() {
-        return new external_single_structure(
-            array(
-                'items' => new external_multiple_structure(
-                    evaluation_item_exporter::get_read_structure()
-                ),
-                'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for launch_evaluation.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function launch_evaluation_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
-        );
-    }
-
-    /**
-     * Starts or continues a evaluation submission
-     *
-     * @param array $evaluationid evaluation instance id
-     * @param int $courseid course where user completes a evaluation (for site evaluations only).
-     * @return array of warnings and launch information
-     * @since Moodle 3.3
-     */
-    public static function launch_evaluation($evaluationid, $courseid = 0) {
-        global $PAGE;
-
-        $params = array('evaluationid' => $evaluationid, 'courseid' => $courseid);
-        $params = self::validate_parameters(self::launch_evaluation_parameters(), $params);
-        $warnings = array();
-
-        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
-        // Check we can do a new submission (or continue an existing).
-        $evaluationcompletion = self::validate_evaluation_access($evaluation, $completioncourse, $cm, $context, true);
-
-        $gopage = $evaluationcompletion->get_resume_page();
-        if ($gopage === null) {
-            $gopage = -1; // Last page.
-        }
-
-        $result = array(
-            'gopage' => $gopage,
-            'warnings' => $warnings
-        );
-        return $result;
-    }
-
-    /**
      * Describes the launch_evaluation return value.
      *
      * @return external_single_structure
@@ -547,27 +502,11 @@ class mod_evaluation_external extends external_api {
      */
     public static function launch_evaluation_returns() {
         return new external_single_structure(
-            array(
-                'gopage' => new external_value(PARAM_INT, 'The next page to go (-1 if we were already in the last page). 0 for first page.'),
-                'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for get_page_items.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function get_page_items_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
-                'page' => new external_value(PARAM_INT, 'The page to get starting by 0'),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
+                array(
+                        'gopage' => new external_value(PARAM_INT,
+                                'The next page to go (-1 if we were already in the last page). 0 for first page.'),
+                        'warnings' => new external_warnings(),
+                )
         );
     }
 
@@ -588,7 +527,7 @@ class mod_evaluation_external extends external_api {
         $warnings = array();
 
         list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
+                $params['courseid']);
 
         $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
 
@@ -607,12 +546,30 @@ class mod_evaluation_external extends external_api {
         }
 
         $result = array(
-            'items' => $returneditems,
-            'hasprevpage' => $hasprevpage,
-            'hasnextpage' => $hasnextpage,
-            'warnings' => $warnings
+                'items' => $returneditems,
+                'hasprevpage' => $hasprevpage,
+                'hasnextpage' => $hasnextpage,
+                'warnings' => $warnings
         );
         return $result;
+    }
+
+    /**
+     * Describes the parameters for get_page_items.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_page_items_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
+                        'page' => new external_value(PARAM_INT, 'The page to get starting by 0'),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
     }
 
     /**
@@ -623,40 +580,14 @@ class mod_evaluation_external extends external_api {
      */
     public static function get_page_items_returns() {
         return new external_single_structure(
-            array(
-                'items' => new external_multiple_structure(
-                    evaluation_item_exporter::get_read_structure()
-                ),
-                'hasprevpage' => new external_value(PARAM_BOOL, 'Whether is a previous page.'),
-                'hasnextpage' => new external_value(PARAM_BOOL, 'Whether there are more pages.'),
-                'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for process_page.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function process_page_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id.'),
-                'page' => new external_value(PARAM_INT, 'The page being processed.'),
-                'responses' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_NOTAGS, 'The response name (usually type[index]_id).'),
-                            'value' => new external_value(PARAM_RAW, 'The response value.'),
-                        )
-                    ), 'The data to be processed.', VALUE_DEFAULT, array()
-                ),
-                'goprevious' => new external_value(PARAM_BOOL, 'Whether we want to jump to previous page.', VALUE_DEFAULT, false),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
+                array(
+                        'items' => new external_multiple_structure(
+                                evaluation_item_exporter::get_read_structure()
+                        ),
+                        'hasprevpage' => new external_value(PARAM_BOOL, 'Whether is a previous page.'),
+                        'hasnextpage' => new external_value(PARAM_BOOL, 'Whether there are more pages.'),
+                        'warnings' => new external_warnings(),
+                )
         );
     }
 
@@ -675,13 +606,13 @@ class mod_evaluation_external extends external_api {
         global $USER, $SESSION;
 
         $params = array('evaluationid' => $evaluationid, 'page' => $page, 'responses' => $responses, 'goprevious' => $goprevious,
-            'courseid' => $courseid);
+                'courseid' => $courseid);
         $params = self::validate_parameters(self::process_page_parameters(), $params);
         $warnings = array();
         $siteaftersubmit = $completionpagecontents = '';
 
         list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
+                $params['courseid']);
         // Check we can do a new submission (or continue an existing).
         $evaluationcompletion = self::validate_evaluation_access($evaluation, $completioncourse, $cm, $context, true);
 
@@ -730,13 +661,42 @@ class mod_evaluation_external extends external_api {
         }
 
         $result = array(
-            'jumpto' => $jumpto,
-            'completed' => $completed,
-            'completionpagecontents' => $completionpagecontents,
-            'siteaftersubmit' => $siteaftersubmit,
-            'warnings' => $warnings
+                'jumpto' => $jumpto,
+                'completed' => $completed,
+                'completionpagecontents' => $completionpagecontents,
+                'siteaftersubmit' => $siteaftersubmit,
+                'warnings' => $warnings
         );
         return $result;
+    }
+
+    /**
+     * Describes the parameters for process_page.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function process_page_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id.'),
+                        'page' => new external_value(PARAM_INT, 'The page being processed.'),
+                        'responses' => new external_multiple_structure(
+                                new external_single_structure(
+                                        array(
+                                                'name' => new external_value(PARAM_NOTAGS,
+                                                        'The response name (usually type[index]_id).'),
+                                                'value' => new external_value(PARAM_RAW, 'The response value.'),
+                                        )
+                                ), 'The data to be processed.', VALUE_DEFAULT, array()
+                        ),
+                        'goprevious' => new external_value(PARAM_BOOL, 'Whether we want to jump to previous page.', VALUE_DEFAULT,
+                                false),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
     }
 
     /**
@@ -747,31 +707,13 @@ class mod_evaluation_external extends external_api {
      */
     public static function process_page_returns() {
         return new external_single_structure(
-            array(
-                'jumpto' => new external_value(PARAM_INT, 'The page to jump to.'),
-                'completed' => new external_value(PARAM_BOOL, 'If the user completed the evaluation.'),
-                'completionpagecontents' => new external_value(PARAM_RAW, 'The completion page contents.'),
-                'siteaftersubmit' => new external_value(PARAM_RAW, 'The link (could be relative) to show after submit.'),
-                'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for get_analysis.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function get_analysis_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
-                'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group',
-                                                VALUE_DEFAULT, 0),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
+                array(
+                        'jumpto' => new external_value(PARAM_INT, 'The page to jump to.'),
+                        'completed' => new external_value(PARAM_BOOL, 'If the user completed the evaluation.'),
+                        'completionpagecontents' => new external_value(PARAM_RAW, 'The completion page contents.'),
+                        'siteaftersubmit' => new external_value(PARAM_RAW, 'The link (could be relative) to show after submit.'),
+                        'warnings' => new external_warnings(),
+                )
         );
     }
 
@@ -792,7 +734,7 @@ class mod_evaluation_external extends external_api {
         $warnings = $itemsdata = array();
 
         list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
+                $params['courseid']);
 
         // Check permissions.
         $evaluationstructure = new mod_evaluation_structure($evaluation, $cm, $completioncourse->id);
@@ -824,7 +766,7 @@ class mod_evaluation_external extends external_api {
         $summarydata = $summary->export_for_template($PAGE->get_renderer('core'));
 
         $checkanonymously = true;
-        if ($groupid > 0 AND $evaluation->anonymous == EVALUATION_ANONYMOUS_YES) {
+        if ($groupid > 0 and $evaluation->anonymous == EVALUATION_ANONYMOUS_YES) {
             $completedcount = $evaluationstructure->count_completed_responses($groupid);
             if ($completedcount < EVALUATION_MIN_ANONYMOUS_COUNT_IN_GROUP) {
                 $checkanonymously = false;
@@ -841,26 +783,99 @@ class mod_evaluation_external extends external_api {
                 $exporter = new evaluation_item_exporter($item, array('context' => $context, 'itemnumber' => $itemnumber));
 
                 $itemsdata[] = array(
-                    'item' => $exporter->export($PAGE->get_renderer('core')),
-                    'data' => $itemobj->get_analysed_for_external($item, $groupid),
+                        'item' => $exporter->export($PAGE->get_renderer('core')),
+                        'data' => $itemobj->get_analysed_for_external($item, $groupid),
                 );
             }
         } else {
             $warnings[] = array(
-                'item' => 'evaluation',
-                'itemid' => $evaluation->id,
-                'warningcode' => 'insufficientresponsesforthisgroup',
-                'message' => s(get_string('insufficient_responses_for_this_group', 'evaluation'))
+                    'item' => 'evaluation',
+                    'itemid' => $evaluation->id,
+                    'warningcode' => 'insufficientresponsesforthisgroup',
+                    'message' => s(get_string('insufficient_responses_for_this_group', 'evaluation'))
             );
         }
 
         $result = array(
-            'completedcount' => $summarydata->completedcount,
-            'itemscount' => $summarydata->itemscount,
-            'itemsdata' => $itemsdata,
-            'warnings' => $warnings
+                'completedcount' => $summarydata->completedcount,
+                'itemscount' => $summarydata->itemscount,
+                'itemsdata' => $itemsdata,
+                'warnings' => $warnings
         );
         return $result;
+    }
+
+    /**
+     * Describes the parameters for get_analysis.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_analysis_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
+                        'groupid' => new external_value(PARAM_INT,
+                                'Group id, 0 means that the function will determine the user group',
+                                VALUE_DEFAULT, 0),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
+    }
+
+    /**
+     * Returns the items (questions) in the given evaluation.
+     *
+     * @param int $evaluationid evaluation instance id
+     * @param int $courseid course where user completes the evaluation (for site evaluations only)
+     * @return array of warnings and evaluations
+     * @since Moodle 3.3
+     */
+    public static function get_items($evaluationid, $courseid = 0) {
+        global $PAGE;
+
+        $params = array('evaluationid' => $evaluationid, 'courseid' => $courseid);
+        $params = self::validate_parameters(self::get_items_parameters(), $params);
+        $warnings = array();
+
+        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
+                $params['courseid']);
+
+        $evaluationstructure = new mod_evaluation_structure($evaluation, $cm, $completioncourse->id);
+        $returneditems = array();
+        if ($items = $evaluationstructure->get_items()) {
+            foreach ($items as $item) {
+                $itemnumber = empty($item->itemnr) ? null : $item->itemnr;
+                unset($item->itemnr);   // Added by the function, not part of the record.
+                $exporter = new evaluation_item_exporter($item, array('context' => $context, 'itemnumber' => $itemnumber));
+                $returneditems[] = $exporter->export($PAGE->get_renderer('core'));
+            }
+        }
+
+        $result = array(
+                'items' => $returneditems,
+                'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the parameters for get_items.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_items_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
     }
 
     /**
@@ -871,37 +886,21 @@ class mod_evaluation_external extends external_api {
      */
     public static function get_analysis_returns() {
         return new external_single_structure(
-            array(
-            'completedcount' => new external_value(PARAM_INT, 'Number of completed submissions.'),
-            'itemscount' => new external_value(PARAM_INT, 'Number of items (questions).'),
-            'itemsdata' => new external_multiple_structure(
-                new external_single_structure(
-                    array(
-                        'item' => evaluation_item_exporter::get_read_structure(),
-                        'data' => new external_multiple_structure(
-                            new external_value(PARAM_RAW, 'The analysis data (can be json encoded)')
+                array(
+                        'completedcount' => new external_value(PARAM_INT, 'Number of completed submissions.'),
+                        'itemscount' => new external_value(PARAM_INT, 'Number of items (questions).'),
+                        'itemsdata' => new external_multiple_structure(
+                                new external_single_structure(
+                                        array(
+                                                'item' => evaluation_item_exporter::get_read_structure(),
+                                                'data' => new external_multiple_structure(
+                                                        new external_value(PARAM_RAW, 'The analysis data (can be json encoded)')
+                                                ),
+                                        )
+                                )
                         ),
-                    )
+                        'warnings' => new external_warnings(),
                 )
-            ),
-            'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for get_unfinished_responses.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function get_unfinished_responses_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id.'),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
         );
     }
 
@@ -921,7 +920,7 @@ class mod_evaluation_external extends external_api {
         $warnings = $itemsdata = array();
 
         list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
+                $params['courseid']);
         $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
 
         $responses = array();
@@ -932,10 +931,27 @@ class mod_evaluation_external extends external_api {
         }
 
         $result = array(
-            'responses' => $responses,
-            'warnings' => $warnings
+                'responses' => $responses,
+                'warnings' => $warnings
         );
         return $result;
+    }
+
+    /**
+     * Describes the parameters for get_unfinished_responses.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_unfinished_responses_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id.'),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
     }
 
     /**
@@ -946,28 +962,12 @@ class mod_evaluation_external extends external_api {
      */
     public static function get_unfinished_responses_returns() {
         return new external_single_structure(
-            array(
-            'responses' => new external_multiple_structure(
-                evaluation_valuetmp_exporter::get_read_structure()
-            ),
-            'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for get_finished_responses.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function get_finished_responses_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id.'),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
+                array(
+                        'responses' => new external_multiple_structure(
+                                evaluation_valuetmp_exporter::get_read_structure()
+                        ),
+                        'warnings' => new external_warnings(),
+                )
         );
     }
 
@@ -987,7 +987,7 @@ class mod_evaluation_external extends external_api {
         $warnings = $itemsdata = array();
 
         list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
+                $params['courseid']);
         $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
 
         $responses = array();
@@ -1000,10 +1000,27 @@ class mod_evaluation_external extends external_api {
         }
 
         $result = array(
-            'responses' => $responses,
-            'warnings' => $warnings
+                'responses' => $responses,
+                'warnings' => $warnings
         );
         return $result;
+    }
+
+    /**
+     * Describes the parameters for get_finished_responses.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_finished_responses_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id.'),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
     }
 
     /**
@@ -1014,34 +1031,12 @@ class mod_evaluation_external extends external_api {
      */
     public static function get_finished_responses_returns() {
         return new external_single_structure(
-            array(
-            'responses' => new external_multiple_structure(
-                evaluation_value_exporter::get_read_structure()
-            ),
-            'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for get_non_respondents.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function get_non_respondents_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
-                'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group.',
-                                                VALUE_DEFAULT, 0),
-                'sort' => new external_value(PARAM_ALPHA, 'Sort param, must be firstname, lastname or lastaccess (default).',
-                                                VALUE_DEFAULT, 'lastaccess'),
-                'page' => new external_value(PARAM_INT, 'The page of records to return.', VALUE_DEFAULT, 0),
-                'perpage' => new external_value(PARAM_INT, 'The number of records to return per page.', VALUE_DEFAULT, 0),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
+                array(
+                        'responses' => new external_multiple_structure(
+                                evaluation_value_exporter::get_read_structure()
+                        ),
+                        'warnings' => new external_warnings(),
+                )
         );
     }
 
@@ -1064,12 +1059,12 @@ class mod_evaluation_external extends external_api {
         require_once($CFG->dirroot . '/mod/evaluation/lib.php');
 
         $params = array('evaluationid' => $evaluationid, 'groupid' => $groupid, 'sort' => $sort, 'page' => $page,
-            'perpage' => $perpage, 'courseid' => $courseid);
+                'perpage' => $perpage, 'courseid' => $courseid);
         $params = self::validate_parameters(self::get_non_respondents_parameters(), $params);
         $warnings = $nonrespondents = array();
 
         list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
+                $params['courseid']);
         $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
         $completioncourseid = $evaluationcompletion->get_courseid();
 
@@ -1114,19 +1109,44 @@ class mod_evaluation_external extends external_api {
         $users = evaluation_get_incomplete_users($cm, $groupid, $params['sort'], $page, $perpage, true);
         foreach ($users as $user) {
             $nonrespondents[] = [
-                'courseid' => $completioncourseid,
-                'userid'   => $user->id,
-                'fullname' => fullname($user),
-                'started'  => $user->evaluationstarted
+                    'courseid' => $completioncourseid,
+                    'userid' => $user->id,
+                    'fullname' => fullname($user),
+                    'started' => $user->evaluationstarted
             ];
         }
 
         $result = array(
-            'users' => $nonrespondents,
-            'total' => evaluation_count_incomplete_users($cm, $groupid),
-            'warnings' => $warnings
+                'users' => $nonrespondents,
+                'total' => evaluation_count_incomplete_users($cm, $groupid),
+                'warnings' => $warnings
         );
         return $result;
+    }
+
+    /**
+     * Describes the parameters for get_non_respondents.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_non_respondents_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
+                        'groupid' => new external_value(PARAM_INT,
+                                'Group id, 0 means that the function will determine the user group.',
+                                VALUE_DEFAULT, 0),
+                        'sort' => new external_value(PARAM_ALPHA,
+                                'Sort param, must be firstname, lastname or lastaccess (default).',
+                                VALUE_DEFAULT, 'lastaccess'),
+                        'page' => new external_value(PARAM_INT, 'The page of records to return.', VALUE_DEFAULT, 0),
+                        'perpage' => new external_value(PARAM_INT, 'The number of records to return per page.', VALUE_DEFAULT, 0),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
     }
 
     /**
@@ -1137,40 +1157,20 @@ class mod_evaluation_external extends external_api {
      */
     public static function get_non_respondents_returns() {
         return new external_single_structure(
-            array(
-                'users' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'courseid' => new external_value(PARAM_INT, 'Course id'),
-                            'userid' => new external_value(PARAM_INT, 'The user id'),
-                            'fullname' => new external_value(PARAM_TEXT, 'User full name'),
-                            'started' => new external_value(PARAM_BOOL, 'If the user has started the attempt'),
-                        )
-                    )
-                ),
-                'total' => new external_value(PARAM_INT, 'Total number of non respondents'),
-                'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for get_responses_analysis.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.3
-     */
-    public static function get_responses_analysis_parameters() {
-        return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
-                'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group',
-                                                VALUE_DEFAULT, 0),
-                'page' => new external_value(PARAM_INT, 'The page of records to return.', VALUE_DEFAULT, 0),
-                'perpage' => new external_value(PARAM_INT, 'The number of records to return per page', VALUE_DEFAULT, 0),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
+                array(
+                        'users' => new external_multiple_structure(
+                                new external_single_structure(
+                                        array(
+                                                'courseid' => new external_value(PARAM_INT, 'Course id'),
+                                                'userid' => new external_value(PARAM_INT, 'The user id'),
+                                                'fullname' => new external_value(PARAM_TEXT, 'User full name'),
+                                                'started' => new external_value(PARAM_BOOL, 'If the user has started the attempt'),
+                                        )
+                                )
+                        ),
+                        'total' => new external_value(PARAM_INT, 'Total number of non respondents'),
+                        'warnings' => new external_warnings(),
+                )
         );
     }
 
@@ -1189,12 +1189,12 @@ class mod_evaluation_external extends external_api {
     public static function get_responses_analysis($evaluationid, $groupid = 0, $page = 0, $perpage = 0, $courseid = 0) {
 
         $params = array('evaluationid' => $evaluationid, 'groupid' => $groupid, 'page' => $page, 'perpage' => $perpage,
-            'courseid' => $courseid);
+                'courseid' => $courseid);
         $params = self::validate_parameters(self::get_responses_analysis_parameters(), $params);
         $warnings = $itemsdata = array();
 
         list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
+                $params['courseid']);
 
         // Check permissions.
         require_capability('mod/evaluation:viewreports', $context);
@@ -1225,13 +1225,35 @@ class mod_evaluation_external extends external_api {
         $anonresponsestable = new mod_evaluation_responses_anon_table($evaluationstructure, $groupid);
 
         $result = array(
-            'attempts'          => $responsestable->export_external_structure($params['page'], $params['perpage']),
-            'totalattempts'     => $responsestable->get_total_responses_count(),
-            'anonattempts'      => $anonresponsestable->export_external_structure($params['page'], $params['perpage']),
-            'totalanonattempts' => $anonresponsestable->get_total_responses_count(),
-            'warnings'       => $warnings
+                'attempts' => $responsestable->export_external_structure($params['page'], $params['perpage']),
+                'totalattempts' => $responsestable->get_total_responses_count(),
+                'anonattempts' => $anonresponsestable->export_external_structure($params['page'], $params['perpage']),
+                'totalanonattempts' => $anonresponsestable->get_total_responses_count(),
+                'warnings' => $warnings
         );
         return $result;
+    }
+
+    /**
+     * Describes the parameters for get_responses_analysis.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_responses_analysis_parameters() {
+        return new external_function_parameters (
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
+                        'groupid' => new external_value(PARAM_INT,
+                                'Group id, 0 means that the function will determine the user group',
+                                VALUE_DEFAULT, 0),
+                        'page' => new external_value(PARAM_INT, 'The page of records to return.', VALUE_DEFAULT, 0),
+                        'perpage' => new external_value(PARAM_INT, 'The number of records to return per page', VALUE_DEFAULT, 0),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
+        );
     }
 
     /**
@@ -1242,45 +1264,77 @@ class mod_evaluation_external extends external_api {
      */
     public static function get_responses_analysis_returns() {
         $responsestructure = new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'Response id'),
-                    'name' => new external_value(PARAM_RAW, 'Response name'),
-                    'printval' => new external_value(PARAM_RAW, 'Response ready for output'),
-                    'rawval' => new external_value(PARAM_RAW, 'Response raw value'),
+                new external_single_structure(
+                        array(
+                                'id' => new external_value(PARAM_INT, 'Response id'),
+                                'name' => new external_value(PARAM_RAW, 'Response name'),
+                                'printval' => new external_value(PARAM_RAW, 'Response ready for output'),
+                                'rawval' => new external_value(PARAM_RAW, 'Response raw value'),
+                        )
                 )
-            )
         );
 
         return new external_single_structure(
-            array(
-                'attempts' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Completed id'),
-                            'courseid' => new external_value(PARAM_INT, 'Course id'),
-                            'userid' => new external_value(PARAM_INT, 'User who responded'),
-                            'timemodified' => new external_value(PARAM_INT, 'Time modified for the response'),
-                            'fullname' => new external_value(PARAM_TEXT, 'User full name'),
-                            'responses' => $responsestructure
-                        )
-                    )
-                ),
-                'totalattempts' => new external_value(PARAM_INT, 'Total responses count.'),
-                'anonattempts' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Completed id'),
-                            'courseid' => new external_value(PARAM_INT, 'Course id'),
-                            'number' => new external_value(PARAM_INT, 'Response number'),
-                            'responses' => $responsestructure
-                        )
-                    )
-                ),
-                'totalanonattempts' => new external_value(PARAM_INT, 'Total anonymous responses count.'),
-                'warnings' => new external_warnings(),
-            )
+                array(
+                        'attempts' => new external_multiple_structure(
+                                new external_single_structure(
+                                        array(
+                                                'id' => new external_value(PARAM_INT, 'Completed id'),
+                                                'courseid' => new external_value(PARAM_INT, 'Course id'),
+                                                'userid' => new external_value(PARAM_INT, 'User who responded'),
+                                                'timemodified' => new external_value(PARAM_INT, 'Time modified for the response'),
+                                                'fullname' => new external_value(PARAM_TEXT, 'User full name'),
+                                                'responses' => $responsestructure
+                                        )
+                                )
+                        ),
+                        'totalattempts' => new external_value(PARAM_INT, 'Total responses count.'),
+                        'anonattempts' => new external_multiple_structure(
+                                new external_single_structure(
+                                        array(
+                                                'id' => new external_value(PARAM_INT, 'Completed id'),
+                                                'courseid' => new external_value(PARAM_INT, 'Course id'),
+                                                'number' => new external_value(PARAM_INT, 'Response number'),
+                                                'responses' => $responsestructure
+                                        )
+                                )
+                        ),
+                        'totalanonattempts' => new external_value(PARAM_INT, 'Total anonymous responses count.'),
+                        'warnings' => new external_warnings(),
+                )
         );
+    }
+
+    /**
+     * Retrieves the last completion record for the current user.
+     *
+     * @param int $evaluationid evaluation instance id
+     * @return array of warnings and the last completed record
+     * @throws moodle_exception
+     * @since Moodle 3.3
+     */
+    public static function get_last_completed($evaluationid, $courseid = 0) {
+        global $PAGE;
+
+        $params = array('evaluationid' => $evaluationid, 'courseid' => $courseid);
+        $params = self::validate_parameters(self::get_last_completed_parameters(), $params);
+        $warnings = array();
+
+        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
+                $params['courseid']);
+        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
+
+        if ($evaluationcompletion->is_anonymous()) {
+            throw new moodle_exception('anonymous', 'evaluation');
+        }
+        if ($completed = $evaluationcompletion->find_last_completed()) {
+            $exporter = new evaluation_completed_exporter($completed);
+            return array(
+                    'completed' => $exporter->export($PAGE->get_renderer('core')),
+                    'warnings' => $warnings,
+            );
+        }
+        throw new moodle_exception('not_completed_yet', 'evaluation');
     }
 
     /**
@@ -1291,44 +1345,13 @@ class mod_evaluation_external extends external_api {
      */
     public static function get_last_completed_parameters() {
         return new external_function_parameters (
-            array(
-                'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
-                'courseid' => new external_value(PARAM_INT, 'Course where user completes the evaluation (for site evaluations only).',
-                    VALUE_DEFAULT, 0),
-            )
+                array(
+                        'evaluationid' => new external_value(PARAM_INT, 'Evaluation instance id'),
+                        'courseid' => new external_value(PARAM_INT,
+                                'Course where user completes the evaluation (for site evaluations only).',
+                                VALUE_DEFAULT, 0),
+                )
         );
-    }
-
-    /**
-     * Retrieves the last completion record for the current user.
-     *
-     * @param int $evaluationid evaluation instance id
-     * @return array of warnings and the last completed record
-     * @since Moodle 3.3
-     * @throws moodle_exception
-     */
-    public static function get_last_completed($evaluationid, $courseid = 0) {
-        global $PAGE;
-
-        $params = array('evaluationid' => $evaluationid, 'courseid' => $courseid);
-        $params = self::validate_parameters(self::get_last_completed_parameters(), $params);
-        $warnings = array();
-
-        list($evaluation, $course, $cm, $context, $completioncourse) = self::validate_evaluation($params['evaluationid'],
-            $params['courseid']);
-        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $completioncourse->id);
-
-        if ($evaluationcompletion->is_anonymous()) {
-             throw new moodle_exception('anonymous', 'evaluation');
-        }
-        if ($completed = $evaluationcompletion->find_last_completed()) {
-            $exporter = new evaluation_completed_exporter($completed);
-            return array(
-                'completed' => $exporter->export($PAGE->get_renderer('core')),
-                'warnings' => $warnings,
-            );
-        }
-        throw new moodle_exception('not_completed_yet', 'evaluation');
     }
 
     /**
@@ -1339,10 +1362,10 @@ class mod_evaluation_external extends external_api {
      */
     public static function get_last_completed_returns() {
         return new external_single_structure(
-            array(
-                'completed' => evaluation_completed_exporter::get_read_structure(),
-                'warnings' => new external_warnings(),
-            )
+                array(
+                        'completed' => evaluation_completed_exporter::get_read_structure(),
+                        'warnings' => new external_warnings(),
+                )
         );
     }
 }

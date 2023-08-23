@@ -58,7 +58,7 @@ if ($deletetempl) {
 
 /// Print the page header
 $strevaluations = get_string("modulenameplural", "evaluation");
-$strevaluation  = get_string("modulename", "evaluation");
+$strevaluation = get_string("modulename", "evaluation");
 $strdeleteevaluation = get_string('delete_template', 'evaluation');
 
 navigation_node::override_active_url(new moodle_url('/mod/evaluation/edit.php',
@@ -67,8 +67,8 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_title($evaluation->name);
 echo $OUTPUT->header();
 
-$icon = '<img src="pix/icon120.png" height="30" alt="'.$evaluation->name.'">';
-echo $OUTPUT->heading( $icon. "&nbsp;" .format_string($evaluation->name) );
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
 
 /// print the tabs
 require('tabs.php');
@@ -84,8 +84,8 @@ $tablecourse = new mod_evaluation_templates_table('evaluation_template_course_ta
 $tablecourse->display($templates);
 echo $OUTPUT->box_end();
 // Now we get the public templates if it is permitted.
-if (has_capability('mod/evaluation:createpublictemplate', $systemcontext) AND
-    has_capability('mod/evaluation:deletetemplate', $systemcontext)) {
+if (has_capability('mod/evaluation:createpublictemplate', $systemcontext) and
+        has_capability('mod/evaluation:deletetemplate', $systemcontext)) {
     $templates = evaluation_get_template_list($course, 'public');
     echo $OUTPUT->box_start('publictemplates');
     echo $OUTPUT->heading(get_string('public', 'evaluation'), 4);

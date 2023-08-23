@@ -38,6 +38,7 @@ class mod_evaluation_templates_table extends flexible_table {
 
     /**
      * Constructor
+     *
      * @param int $uniqueid all tables have to have a unique id, this is used
      *      as a key when storing table properties like sort order in the session.
      * @param moodle_url $baseurl
@@ -61,13 +62,14 @@ class mod_evaluation_templates_table extends flexible_table {
 
     /**
      * Displays the table with the given set of templates
+     *
      * @param array $templates
      */
     public function display($templates) {
         global $OUTPUT;
         if (empty($templates)) {
             echo $OUTPUT->box(get_string('no_templates_available_yet', 'evaluation'),
-                             'generalbox boxaligncenter');
+                    'generalbox boxaligncenter');
             return;
         }
 

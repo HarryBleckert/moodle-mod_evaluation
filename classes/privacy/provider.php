@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 use context;
 use context_helper;
-use stdClass;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\approved_userlist;
@@ -37,6 +36,7 @@ use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
+use stdClass;
 
 require_once($CFG->dirroot . '/mod/evaluation/lib.php');
 
@@ -49,9 +49,9 @@ require_once($CFG->dirroot . '/mod/evaluation/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-    \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\core_userlist_provider,
-    \core_privacy\local\request\plugin\provider {
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\core_userlist_provider,
+        \core_privacy\local\request\plugin\provider {
 
     /**
      * Returns metadata.
@@ -59,18 +59,18 @@ class provider implements
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $completedfields = [
-            'userid' => 'privacy:metadata:completed:userid',
-            'timemodified' => 'privacy:metadata:completed:timemodified',
-            'anonymous_response' => 'privacy:metadata:completed:anonymousresponse',
+                'userid' => 'privacy:metadata:completed:userid',
+                'timemodified' => 'privacy:metadata:completed:timemodified',
+                'anonymous_response' => 'privacy:metadata:completed:anonymousresponse',
         ];
 
         $collection->add_database_table('evaluation_completed', $completedfields, 'privacy:metadata:completed');
         $collection->add_database_table('evaluation_completedtmp', $completedfields, 'privacy:metadata:completedtmp');
 
         $valuefields = [
-            'value' => 'privacy:metadata:value:value'
+                'value' => 'privacy:metadata:value:value'
         ];
 
         $collection->add_database_table('evaluation_value', $valuefields, 'privacy:metadata:value');
@@ -85,7 +85,7 @@ class provider implements
      * @param int $userid The user to search.
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $sql = "
             SELECT DISTINCT ctx.id
               FROM {%s} fc
@@ -108,7 +108,7 @@ class provider implements
     /**
      * Get the list of users who have data within a context.
      *
-     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
      *
      */
     public static function get_users_in_context(userlist $userlist) {
@@ -189,22 +189,22 @@ class provider implements
 
             if (!isset($data->submissions[$id])) {
                 $data->submissions[$id] = [
-                    'inprogress' => transform::yesno($record->istmp),
-                    'anonymousresponse' => transform::yesno($record->anonymousresponse == EVALUATION_ANONYMOUS_YES),
-                    'timemodified' => transform::datetime($record->timemodified),
-                    'answers' => []
+                        'inprogress' => transform::yesno($record->istmp),
+                        'anonymousresponse' => transform::yesno($record->anonymousresponse == EVALUATION_ANONYMOUS_YES),
+                        'timemodified' => transform::datetime($record->timemodified),
+                        'answers' => []
                 ];
             }
             $item = static::extract_item_record_from_record($record);
             $value = static::extract_value_record_from_record($record);
             $itemobj = evaluation_get_item_class($record->itemtyp);
             $data->submissions[$id]['answers'][] = [
-                'question' => format_text($record->itemname, FORMAT_HTML, [
-                    'context' => context::instance_by_id($record->contextid),
-                    'para' => false,
-                    'noclean' => true,
-                ]),
-                'answer' => $itemobj->get_printval($item, $value)
+                    'question' => format_text($record->itemname, FORMAT_HTML, [
+                            'context' => context::instance_by_id($record->contextid),
+                            'para' => false,
+                            'noclean' => true,
+                    ]),
+                    'answer' => $itemobj->get_printval($item, $value)
             ];
 
             $lastctxid = $record->contextid;
@@ -215,6 +215,143 @@ class provider implements
         }
 
         $recordset->close();
+    }
+
+    /**
+     * Prepare the query to export all data.
+     *
+     * Doing it this way allows for merging all records from both the temporary and final tables
+     * as most of their columns are shared. It is a lot easier to deal with the records when
+     * exporting as we do not need to try to manually group the two types of submissions in the
+     * same reported dataset.
+     *
+     * The ordering may affect performance on large datasets.
+     *
+     * @param array $contextids The context IDs.
+     * @param int $userid The user ID.
+     * @return array With SQL and params.
+     */
+    protected static function prepare_export_query(array $contextids, $userid) {
+        global $DB;
+
+        $makefetchsql = function($istmp) use ($DB, $contextids, $userid) {
+            $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
+            list($insql, $inparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
+
+            $i = $istmp ? 0 : 1;
+            $istmpsqlval = $istmp ? 1 : 0;
+            $prefix = $istmp ? 'idtmp' : 'id';
+            $uniqid = $DB->sql_concat("'$prefix'", 'fc.id');
+
+            $sql = "
+                SELECT $uniqid AS uniqid,
+                       f.id AS evaluationid,
+                       ctx.id AS contextid,
+
+                       $istmpsqlval AS istmp,
+                       fc.id AS submissionid,
+                       fc.anonymous_response AS anonymousresponse,
+                       fc.timemodified AS timemodified,
+
+                       fv.id AS valueid,
+                       fv.courseid AS valuecourseid,
+                       fv.item AS valueitem,
+                       fv.completed AS valuecompleted,
+                       fv.tmp_completed AS valuetmp_completed,
+
+                       $ctxfields
+                  FROM {context} ctx
+                  JOIN {course_modules} cm
+                    ON cm.id = ctx.instanceid
+                  JOIN {evaluation} f
+                    ON f.id = cm.instance
+                  JOIN {%s} fc
+                    ON fc.evaluation = f.id
+                  JOIN {%s} fv
+                    ON fv.completed = fc.id
+                 WHERE ctx.id $insql
+                   AND fc.userid = :userid{$i}";
+
+            $params = array_merge($inparams, [
+                    'userid' . $i => $userid,
+            ]);
+
+            $completedtbl = $istmp ? 'evaluation_completedtmp' : 'evaluation_completed';
+            $valuetbl = $istmp ? 'evaluation_valuetmp' : 'evaluation_value';
+            return [sprintf($sql, $completedtbl, $valuetbl), $params];
+        };
+
+        list($nontmpsql, $nontmpparams) = $makefetchsql(false);
+        list($tmpsql, $tmpparams) = $makefetchsql(true);
+
+        // Oracle does not support UNION on text fields, therefore we must get the itemdescription
+        // and valuevalue after doing the union by joining on the result.
+        $sql = "
+            SELECT q.*,
+
+                   COALESCE(fv.value, fvt.value) AS valuevalue,
+
+                   fi.id AS itemid,
+                   fi.evaluation AS itemevaluation,
+                   fi.template AS itemtemplate,
+                   fi.name AS itemname,
+                   fi.label AS itemlabel,
+                   fi.presentation AS itempresentation,
+                   fi.typ AS itemtyp,
+                   fi.hasvalue AS itemhasvalue,
+                   fi.position AS itemposition,
+                   fi.required AS itemrequired,
+                   fi.dependitem AS itemdependitem,
+                   fi.dependvalue AS itemdependvalue,
+                   fi.options AS itemoptions
+
+              FROM ($nontmpsql UNION $tmpsql) q
+         LEFT JOIN {evaluation_value} fv
+                ON fv.id = q.valueid AND q.istmp = 0
+         LEFT JOIN {evaluation_valuetmp} fvt
+                ON fvt.id = q.valueid AND q.istmp = 1
+              JOIN {evaluation_item} fi
+                ON (fi.id = fv.item OR fi.id = fvt.item)
+          ORDER BY q.contextid, q.istmp, q.submissionid, q.valueid";
+        $params = array_merge($nontmpparams, $tmpparams);
+
+        return [$sql, $params];
+    }
+
+    /**
+     * Extract an item record from a database record.
+     *
+     * @param stdClass $record The record.
+     * @return The item record.
+     */
+    protected static function extract_item_record_from_record(stdClass $record) {
+        $newrec = new stdClass();
+        foreach ($record as $key => $value) {
+            if (strpos($key, 'item') !== 0) {
+                continue;
+            }
+            $key = substr($key, 4);
+            $newrec->{$key} = $value;
+        }
+        return $newrec;
+    }
+
+    /**
+     * Extract a value record from a database record.
+     *
+     * @param stdClass $record The record.
+     * @return The value record.
+     */
+    protected static function extract_value_record_from_record(stdClass $record) {
+        $newrec = new stdClass();
+        foreach ($record as $key => $value) {
+            if (strpos($key, 'value') !== 0) {
+                continue;
+            }
+            $key = substr($key, 5);
+            $newrec->{$key} = $value;
+        }
+        return $newrec;
     }
 
     /**
@@ -310,7 +447,7 @@ class provider implements
     /**
      * Delete multiple users within a single context.
      *
-     * @param   approved_userlist    $userlist The approved context and user information to delete information for.
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
      */
     public static function delete_data_for_users(approved_userlist $userlist) {
         global $DB;
@@ -347,142 +484,5 @@ class provider implements
             $DB->delete_records_select('evaluation_value', "completed $insql", $inparams);
             $DB->delete_records_select('evaluation_completed', "id $insql", $inparams);
         }
-    }
-
-    /**
-     * Extract an item record from a database record.
-     *
-     * @param stdClass $record The record.
-     * @return The item record.
-     */
-    protected static function extract_item_record_from_record(stdClass $record) {
-        $newrec = new stdClass();
-        foreach ($record as $key => $value) {
-            if (strpos($key, 'item') !== 0) {
-                continue;
-            }
-            $key = substr($key, 4);
-            $newrec->{$key} = $value;
-        }
-        return $newrec;
-    }
-
-    /**
-     * Extract a value record from a database record.
-     *
-     * @param stdClass $record The record.
-     * @return The value record.
-     */
-    protected static function extract_value_record_from_record(stdClass $record) {
-        $newrec = new stdClass();
-        foreach ($record as $key => $value) {
-            if (strpos($key, 'value') !== 0) {
-                continue;
-            }
-            $key = substr($key, 5);
-            $newrec->{$key} = $value;
-        }
-        return $newrec;
-    }
-
-    /**
-     * Prepare the query to export all data.
-     *
-     * Doing it this way allows for merging all records from both the temporary and final tables
-     * as most of their columns are shared. It is a lot easier to deal with the records when
-     * exporting as we do not need to try to manually group the two types of submissions in the
-     * same reported dataset.
-     *
-     * The ordering may affect performance on large datasets.
-     *
-     * @param array $contextids The context IDs.
-     * @param int $userid The user ID.
-     * @return array With SQL and params.
-     */
-    protected static function prepare_export_query(array $contextids, $userid) {
-        global $DB;
-
-        $makefetchsql = function($istmp) use ($DB, $contextids, $userid) {
-            $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
-            list($insql, $inparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
-
-            $i = $istmp ? 0 : 1;
-            $istmpsqlval = $istmp ? 1 : 0;
-            $prefix = $istmp ? 'idtmp' : 'id';
-            $uniqid = $DB->sql_concat("'$prefix'", 'fc.id');
-
-            $sql = "
-                SELECT $uniqid AS uniqid,
-                       f.id AS evaluationid,
-                       ctx.id AS contextid,
-
-                       $istmpsqlval AS istmp,
-                       fc.id AS submissionid,
-                       fc.anonymous_response AS anonymousresponse,
-                       fc.timemodified AS timemodified,
-
-                       fv.id AS valueid,
-                       fv.courseid AS valuecourseid,
-                       fv.item AS valueitem,
-                       fv.completed AS valuecompleted,
-                       fv.tmp_completed AS valuetmp_completed,
-
-                       $ctxfields
-                  FROM {context} ctx
-                  JOIN {course_modules} cm
-                    ON cm.id = ctx.instanceid
-                  JOIN {evaluation} f
-                    ON f.id = cm.instance
-                  JOIN {%s} fc
-                    ON fc.evaluation = f.id
-                  JOIN {%s} fv
-                    ON fv.completed = fc.id
-                 WHERE ctx.id $insql
-                   AND fc.userid = :userid{$i}";
-
-            $params = array_merge($inparams, [
-                'userid' . $i => $userid,
-            ]);
-
-            $completedtbl = $istmp ? 'evaluation_completedtmp' : 'evaluation_completed';
-            $valuetbl = $istmp ? 'evaluation_valuetmp' : 'evaluation_value';
-            return [sprintf($sql, $completedtbl, $valuetbl), $params];
-        };
-
-        list($nontmpsql, $nontmpparams) = $makefetchsql(false);
-        list($tmpsql, $tmpparams) = $makefetchsql(true);
-
-        // Oracle does not support UNION on text fields, therefore we must get the itemdescription
-        // and valuevalue after doing the union by joining on the result.
-        $sql = "
-            SELECT q.*,
-
-                   COALESCE(fv.value, fvt.value) AS valuevalue,
-
-                   fi.id AS itemid,
-                   fi.evaluation AS itemevaluation,
-                   fi.template AS itemtemplate,
-                   fi.name AS itemname,
-                   fi.label AS itemlabel,
-                   fi.presentation AS itempresentation,
-                   fi.typ AS itemtyp,
-                   fi.hasvalue AS itemhasvalue,
-                   fi.position AS itemposition,
-                   fi.required AS itemrequired,
-                   fi.dependitem AS itemdependitem,
-                   fi.dependvalue AS itemdependvalue,
-                   fi.options AS itemoptions
-
-              FROM ($nontmpsql UNION $tmpsql) q
-         LEFT JOIN {evaluation_value} fv
-                ON fv.id = q.valueid AND q.istmp = 0
-         LEFT JOIN {evaluation_valuetmp} fvt
-                ON fvt.id = q.valueid AND q.istmp = 1
-              JOIN {evaluation_item} fi
-                ON (fi.id = fv.item OR fi.id = fvt.item)
-          ORDER BY q.contextid, q.istmp, q.submissionid, q.valueid";
-        $params = array_merge($nontmpparams, $tmpparams);
-
-        return [$sql, $params];
     }
 }

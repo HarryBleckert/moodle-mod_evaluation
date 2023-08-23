@@ -14,12 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') OR die('not allowed');
-require_once($CFG->dirroot.'/mod/evaluation/item/evaluation_item_class.php');
+defined('MOODLE_INTERNAL') or die('not allowed');
+require_once($CFG->dirroot . '/mod/evaluation/item/evaluation_item_class.php');
 
 class evaluation_item_info extends evaluation_item_base {
-    protected $type = "info";
-
     /** Mode recording response time (for non-anonymous evaluations only) */
     const MODE_RESPONSETIME = 1;
     /** Mode recording current course */
@@ -28,9 +26,9 @@ class evaluation_item_info extends evaluation_item_base {
     const MODE_CATEGORY = 3;
     /** Mode recording current course of studies (category level 2) */
     const MODE_STUDIES = 4;
-
     /** Special constant to keep the current timestamp as value for the form element */
     const CURRENTTIMESTAMP = '__CURRENT__TIMESTAMP__';
+    protected $type = "info";
 
     public function build_editform($item, $evaluation, $cm) {
         global $DB, $CFG;
@@ -38,7 +36,7 @@ class evaluation_item_info extends evaluation_item_base {
 
         //get the lastposition number of the evaluation_items
         $position = $item->position;
-        $lastposition = $DB->count_records('evaluation_item', array('evaluation'=>$evaluation->id));
+        $lastposition = $DB->count_records('evaluation_item', array('evaluation' => $evaluation->id));
         if ($position == -1) {
             $i_formselect_last = $lastposition + 1;
             $i_formselect_value = $lastposition + 1;
@@ -55,11 +53,11 @@ class evaluation_item_info extends evaluation_item_base {
 
         //all items for dependitem
         $evaluationitems = evaluation_get_depend_candidates_for_item($evaluation, $item);
-        $commonparams = array('cmid'=>$cm->id,
-                             'id'=>isset($item->id) ? $item->id : null,
-                             'typ'=>$item->typ,
-                             'items'=>$evaluationitems,
-                             'evaluation'=>$evaluation->id);
+        $commonparams = array('cmid' => $cm->id,
+                'id' => isset($item->id) ? $item->id : null,
+                'typ' => $item->typ,
+                'items' => $evaluationitems,
+                'evaluation' => $evaluation->id);
 
         // Options for the 'presentation' select element.
         $presentationoptions = array();
@@ -68,17 +66,17 @@ class evaluation_item_info extends evaluation_item_base {
             // However if it was already selected leave it in the dropdown.
             $presentationoptions[self::MODE_RESPONSETIME] = get_string('responsetime', 'evaluation');
         }
-        $presentationoptions[self::MODE_COURSE]  = get_string('course');
-        $presentationoptions[self::MODE_CATEGORY]  = get_string('coursecategory');
-		$presentationoptions[self::MODE_STUDIES]  = get_string('course_of_studies','evaluation');
+        $presentationoptions[self::MODE_COURSE] = get_string('course');
+        $presentationoptions[self::MODE_CATEGORY] = get_string('coursecategory');
+        $presentationoptions[self::MODE_STUDIES] = get_string('course_of_studies', 'evaluation');
 
         //build the form
         $this->item_form = new evaluation_info_form('edit_item.php',
-                                                  array('item'=>$item,
-                                                  'common'=>$commonparams,
-                                                  'positionlist'=>$positionlist,
-                                                  'position' => $position,
-                                                  'presentationoptions' => $presentationoptions));
+                array('item' => $item,
+                        'common' => $commonparams,
+                        'positionlist' => $positionlist,
+                        'position' => $position,
+                        'presentationoptions' => $presentationoptions));
     }
 
     public function save_item() {
@@ -89,7 +87,7 @@ class evaluation_item_info extends evaluation_item_base {
         }
         $item = $this->item;
 
-        if (isset($item->clone_item) AND $item->clone_item) {
+        if (isset($item->clone_item) and $item->clone_item) {
             $item->id = ''; //to clone this item
             $item->position++;
         }
@@ -101,7 +99,31 @@ class evaluation_item_info extends evaluation_item_base {
             $DB->update_record('evaluation_item', $item);
         }
 
-        return $DB->get_record('evaluation_item', array('id'=>$item->id));
+        return $DB->get_record('evaluation_item', array('id' => $item->id));
+    }
+
+    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid = false,
+            $course_of_studies = false) {
+        echo "<table class=\"analysis itemtype_{$item->typ}\">";
+        $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
+        $data = $analysed_item->data;
+        if (is_array($data)) {
+            echo '<tr><th colspan="2" align="left">';
+            echo $itemnr . ' ';
+            if (strval($item->label) !== '') {
+                echo '(' . format_string($item->label) . ') ';
+            }
+            echo format_text($item->name, FORMAT_HTML, array('noclean' => true, 'para' => false));
+            echo '</th></tr>';
+            $sizeofdata = count($data);
+            for ($i = 0; $i < $sizeofdata; $i++) {
+                $class = strlen(trim($data[$i]->show)) ? '' : ' class="isempty"';
+                echo '<tr' . $class . '><td colspan="2" class="singlevalue">';
+                echo str_replace("\n", '<br />', $data[$i]->show);
+                echo '</td></tr>';
+            }
+        }
+        echo '</table>';
     }
 
     /**
@@ -112,8 +134,7 @@ class evaluation_item_info extends evaluation_item_base {
      * @param int $courseid
      * @return stdClass
      */
-    protected function get_analysed($item, $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false ) 
-	{
+    protected function get_analysed($item, $groupid = false, $courseid = false, $teacherid = false, $course_of_studies = false) {
 
         $presentation = $item->presentation;
         $analysed_val = new stdClass();
@@ -125,7 +146,7 @@ class evaluation_item_info extends evaluation_item_base {
             foreach ($values as $value) {
                 $datavalue = new stdClass();
 
-                switch($presentation) {
+                switch ($presentation) {
                     case self::MODE_RESPONSETIME:
                         $datavalue->value = $value->value;
                         $datavalue->show = $value->value ? userdate($datavalue->value) : '';
@@ -138,7 +159,7 @@ class evaluation_item_info extends evaluation_item_base {
                         $datavalue->value = $value->value;
                         $datavalue->show = $datavalue->value;
                         break;
-					case self::MODE_STUDIES:
+                    case self::MODE_STUDIES:
                         $datavalue->value = $value->value;
                         $datavalue->show = $datavalue->value;
                         break;
@@ -151,41 +172,9 @@ class evaluation_item_info extends evaluation_item_base {
         return $analysed_val;
     }
 
-    public function get_printval($item, $value) {
-
-        if (strval($value->value) === '') {
-            return '';
-        }
-        return $item->presentation == self::MODE_RESPONSETIME ?
-                userdate($value->value) : $value->value;
-    }
-
-    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false ) {
-        echo "<table class=\"analysis itemtype_{$item->typ}\">";
-        $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
-        $data = $analysed_item->data;
-        if (is_array($data)) {
-            echo '<tr><th colspan="2" align="left">';
-            echo $itemnr . ' ';
-            if (strval($item->label) !== '') {
-                echo '('. format_string($item->label).') ';
-            }
-            echo format_text($item->name, FORMAT_HTML, array('noclean' => true, 'para' => false));
-            echo '</th></tr>';
-            $sizeofdata = count($data);
-            for ($i = 0; $i < $sizeofdata; $i++) {
-                $class = strlen(trim($data[$i]->show)) ? '' : ' class="isempty"';
-                echo '<tr'.$class.'><td colspan="2" class="singlevalue">';
-                echo str_replace("\n", '<br />', $data[$i]->show);
-                echo '</td></tr>';
-            }
-        }
-        echo '</table>';
-    }
-
-public function excelprint_item(&$worksheet, $row_offset,
-                             $xls_formats, $item,
-                             $groupid, $courseid = false, $teacherid=false, $course_of_studies=false) {
+    public function excelprint_item(&$worksheet, $row_offset,
+            $xls_formats, $item,
+            $groupid, $courseid = false, $teacherid = false, $course_of_studies = false) {
 
         $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
 
@@ -206,6 +195,54 @@ public function excelprint_item(&$worksheet, $row_offset,
     }
 
     /**
+     * Adds an input element to the complete form
+     *
+     * @param stdClass $item
+     * @param mod_evaluation_complete_form $form
+     */
+    public function complete_form_element($item, $form) {
+        if ($form->get_mode() == mod_evaluation_complete_form::MODE_VIEW_RESPONSE) {
+            $value = strval($form->get_item_value($item));
+        } else {
+            $value = $this->get_current_value($item,
+                    $form->get_evaluation(), $form->get_current_courseid());
+        }
+        $printval = $this->get_printval($item, (object) ['value' => $value]);
+
+        $class = '';
+        switch ($item->presentation) {
+            case self::MODE_RESPONSETIME:
+                $class = 'info-responsetime';
+                $value = $value ? self::CURRENTTIMESTAMP : '';
+                break;
+            case self::MODE_COURSE:
+                $class = 'info-course';
+                break;
+            case self::MODE_CATEGORY:
+                $class = 'info-category';
+                break;
+            case self::MODE_STUDIES:
+                $class = 'info-category';
+                break;
+        }
+
+        $name = $this->get_display_name($item);
+        $inputname = $item->typ . '_' . $item->id;
+
+        $element = $form->add_form_element($item,
+                ['select', $inputname, $name,
+                        array($value => $printval),
+                        array('class' => $class)],
+                false,
+                false);
+        $form->set_element_default($inputname, $value);
+        $element->freeze();
+        if ($form->get_mode() == mod_evaluation_complete_form::MODE_COMPLETE) {
+            $element->setPersistantFreeze(true);
+        }
+    }
+
+    /**
      * Calculates the value of the item (time, course, course category)
      *
      * @param stdClass $item
@@ -213,7 +250,7 @@ public function excelprint_item(&$worksheet, $row_offset,
      * @param int $courseid
      * @return string
      */
-    protected function get_current_value($item, $evaluation, $courseid, $teacherid=false, $course_of_studies=false) {
+    protected function get_current_value($item, $evaluation, $courseid, $teacherid = false, $course_of_studies = false) {
         global $DB;
         switch ($item->presentation) {
             case self::MODE_RESPONSETIME:
@@ -235,65 +272,27 @@ public function excelprint_item(&$worksheet, $row_offset,
                             array('context' => context_coursecat::instance($coursecategory->id)));
                 }
                 break;
-			case self::MODE_STUDIES:
+            case self::MODE_STUDIES:
                 //$course = get_course($courseid);
-                return format_string(evaluation_get_course_of_studies($courseid,false), true,
+                return format_string(evaluation_get_course_of_studies($courseid, false), true,
                         array('context' => context_course::instance($courseid)));
                 break;
         }
         return '';
     }
 
-    /**
-     * Adds an input element to the complete form
-     *
-     * @param stdClass $item
-     * @param mod_evaluation_complete_form $form
-     */
-    public function complete_form_element($item, $form) {
-        if ($form->get_mode() == mod_evaluation_complete_form::MODE_VIEW_RESPONSE) {
-            $value = strval($form->get_item_value($item));
-        } else {
-            $value = $this->get_current_value($item,
-                    $form->get_evaluation(), $form->get_current_courseid());
-        }
-        $printval = $this->get_printval($item, (object)['value' => $value]);
+    public function get_printval($item, $value) {
 
-        $class = '';
-        switch ($item->presentation) {
-            case self::MODE_RESPONSETIME:
-                $class = 'info-responsetime';
-                $value = $value ? self::CURRENTTIMESTAMP : '';
-                break;
-            case self::MODE_COURSE:
-                $class = 'info-course';
-                break;
-            case self::MODE_CATEGORY:
-                $class = 'info-category';
-                break;
-			case self::MODE_STUDIES:
-                $class = 'info-category';
-                break;
+        if (strval($value->value) === '') {
+            return '';
         }
-
-        $name = $this->get_display_name($item);
-        $inputname = $item->typ . '_' . $item->id;
-
-        $element = $form->add_form_element($item,
-                ['select', $inputname, $name,
-                    array($value => $printval),
-                    array('class' => $class)],
-                false,
-                false);
-        $form->set_element_default($inputname, $value);
-        $element->freeze();
-        if ($form->get_mode() == mod_evaluation_complete_form::MODE_COMPLETE) {
-            $element->setPersistantFreeze(true);
-        }
+        return $item->presentation == self::MODE_RESPONSETIME ?
+                userdate($value->value) : $value->value;
     }
 
     /**
      * Converts the value from complete_form data to the string value that is stored in the db.
+     *
      * @param mixed $value element from mod_evaluation_complete_form::get_data() with the name $item->typ.'_'.$item->id
      * @return string
      */
@@ -318,16 +317,17 @@ public function excelprint_item(&$worksheet, $row_offset,
     /**
      * Return the analysis data ready for external functions.
      *
-     * @param stdClass $item     the item (question) information
-     * @param int      $groupid  the group id to filter data (optional)
-     * @param int      $courseid the course id (optional)
+     * @param stdClass $item the item (question) information
+     * @param int $groupid the group id to filter data (optional)
+     * @param int $courseid the course id (optional)
      * @return array an array of data with non scalar types json encoded
      * @since  Moodle 3.3
      */
-	public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false) {
+    public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid = false,
+            $course_of_studies = false) {
 
         $externaldata = array();
-        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies );
+        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
 
         if (is_array($data->data)) {
             foreach ($data->data as $d) {

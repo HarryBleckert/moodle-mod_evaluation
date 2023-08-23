@@ -55,7 +55,7 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
         $this->evaluation = $this->getDataGenerator()->create_module('evaluation',
-            array('course' => $this->course->id, 'email_notification' => 1));
+                array('course' => $this->course->id, 'email_notification' => 1));
         $this->context = context_module::instance($this->evaluation->cmid);
         $this->cm = get_coursemodule_from_instance('evaluation', $this->evaluation->id);
 
@@ -69,35 +69,6 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
     }
-
-    /**
-     * Helper method to add items to an existing evaluation.
-     *
-     * @param stdClass  $evaluation evaluation instance
-     * @param integer $pagescount the number of pages we want in the evaluation
-     * @return array list of items created
-     */
-    public function populate_evaluation($evaluation, $pagescount = 1) {
-        $evaluationgenerator = $this->getDataGenerator()->get_plugin_generator('mod_evaluation');
-        $itemscreated = [];
-
-        // Create at least one page.
-        $itemscreated[] = $evaluationgenerator->create_item_label($evaluation);
-        $itemscreated[] = $evaluationgenerator->create_item_info($evaluation);
-        $itemscreated[] = $evaluationgenerator->create_item_numeric($evaluation);
-
-        // Check if we want more pages.
-        for ($i = 1; $i < $pagescount; $i++) {
-            $itemscreated[] = $evaluationgenerator->create_item_pagebreak($evaluation);
-            $itemscreated[] = $evaluationgenerator->create_item_multichoice($evaluation);
-            $itemscreated[] = $evaluationgenerator->create_item_multichoicerated($evaluation);
-            $itemscreated[] = $evaluationgenerator->create_item_textarea($evaluation);
-            $itemscreated[] = $evaluationgenerator->create_item_textfield($evaluation);
-            $itemscreated[] = $evaluationgenerator->create_item_numeric($evaluation);
-        }
-        return $itemscreated;
-    }
-
 
     /**
      * Test test_mod_evaluation_get_evaluations_by_courses
@@ -131,7 +102,7 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
         $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'anonymous',
-            'multiple_submit', 'autonumbering', 'page_after_submitformat', 'publish_stats', 'completionsubmit');
+                'multiple_submit', 'autonumbering', 'page_after_submitformat', 'publish_stats', 'completionsubmit');
 
         $properties = evaluation_summary_exporter::read_properties_definition();
 
@@ -188,7 +159,7 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         self::setUser($this->teacher);
 
         $additionalfields = array('email_notification', 'site_after_submit', 'page_after_submit', 'timeopen', 'timeclose',
-            'timemodified', 'pageaftersubmitfiles');
+                'timemodified', 'pageaftersubmitfiles');
 
         $evaluation1->pageaftersubmitfiles = [];
 
@@ -261,6 +232,34 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Helper method to add items to an existing evaluation.
+     *
+     * @param stdClass $evaluation evaluation instance
+     * @param integer $pagescount the number of pages we want in the evaluation
+     * @return array list of items created
+     */
+    public function populate_evaluation($evaluation, $pagescount = 1) {
+        $evaluationgenerator = $this->getDataGenerator()->get_plugin_generator('mod_evaluation');
+        $itemscreated = [];
+
+        // Create at least one page.
+        $itemscreated[] = $evaluationgenerator->create_item_label($evaluation);
+        $itemscreated[] = $evaluationgenerator->create_item_info($evaluation);
+        $itemscreated[] = $evaluationgenerator->create_item_numeric($evaluation);
+
+        // Check if we want more pages.
+        for ($i = 1; $i < $pagescount; $i++) {
+            $itemscreated[] = $evaluationgenerator->create_item_pagebreak($evaluation);
+            $itemscreated[] = $evaluationgenerator->create_item_multichoice($evaluation);
+            $itemscreated[] = $evaluationgenerator->create_item_multichoicerated($evaluation);
+            $itemscreated[] = $evaluationgenerator->create_item_textarea($evaluation);
+            $itemscreated[] = $evaluationgenerator->create_item_textfield($evaluation);
+            $itemscreated[] = $evaluationgenerator->create_item_numeric($evaluation);
+        }
+        return $itemscreated;
+    }
+
+    /**
      * Test view_evaluation invalid id.
      */
     public function test_view_evaluation_invalid_id() {
@@ -268,6 +267,7 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         mod_evaluation_external::view_evaluation(0);
     }
+
     /**
      * Test view_evaluation not enrolled user.
      */
@@ -277,6 +277,7 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         mod_evaluation_external::view_evaluation(0);
     }
+
     /**
      * Test view_evaluation no capabilities.
      */
@@ -288,6 +289,7 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         mod_evaluation_external::view_evaluation(0);
     }
+
     /**
      * Test view_evaluation.
      */
@@ -320,13 +322,13 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $DB->set_field('evaluation', 'anonymous', EVALUATION_ANONYMOUS_NO, array('id' => $this->evaluation->id));
         // Add a completed_tmp record.
         $record = [
-            'evaluation' => $this->evaluation->id,
-            'userid' => $this->student->id,
-            'guestid' => '',
-            'timemodified' => time() - DAYSECS,
-            'random_response' => 0,
-            'anonymous_response' => EVALUATION_ANONYMOUS_NO,
-            'courseid' => $this->course->id,
+                'evaluation' => $this->evaluation->id,
+                'userid' => $this->student->id,
+                'guestid' => '',
+                'timemodified' => time() - DAYSECS,
+                'random_response' => 0,
+                'anonymous_response' => EVALUATION_ANONYMOUS_NO,
+                'courseid' => $this->course->id,
         ];
         $record['id'] = $DB->insert_record('evaluation_completedtmp', (object) $record);
 
@@ -391,31 +393,31 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $DB->set_field('evaluation', 'anonymous', EVALUATION_ANONYMOUS_NO, array('id' => $this->evaluation->id));
         // Add a completed_tmp record.
         $record = [
-            'evaluation' => $this->evaluation->id,
-            'userid' => $this->student->id,
-            'guestid' => '',
-            'timemodified' => time() - DAYSECS,
-            'random_response' => 0,
-            'anonymous_response' => EVALUATION_ANONYMOUS_NO,
-            'courseid' => $this->course->id,
+                'evaluation' => $this->evaluation->id,
+                'userid' => $this->student->id,
+                'guestid' => '',
+                'timemodified' => time() - DAYSECS,
+                'random_response' => 0,
+                'anonymous_response' => EVALUATION_ANONYMOUS_NO,
+                'courseid' => $this->course->id,
         ];
         $record['id'] = $DB->insert_record('evaluation_completedtmp', (object) $record);
 
         // Add a response to the evaluation for each question type with possible values.
         $response = [
-            'courseid' => $this->course->id,
-            'item' => $itemscreated[1]->id, // First item is the info question.
-            'completed' => $record['id'],
-            'tmp_completed' => $record['id'],
-            'value' => 'A',
+                'courseid' => $this->course->id,
+                'item' => $itemscreated[1]->id, // First item is the info question.
+                'completed' => $record['id'],
+                'tmp_completed' => $record['id'],
+                'value' => 'A',
         ];
         $DB->insert_record('evaluation_valuetmp', (object) $response);
         $response = [
-            'courseid' => $this->course->id,
-            'item' => $itemscreated[2]->id, // Second item is the numeric question.
-            'completed' => $record['id'],
-            'tmp_completed' => $record['id'],
-            'value' => 5,
+                'courseid' => $this->course->id,
+                'item' => $itemscreated[2]->id, // Second item is the numeric question.
+                'completed' => $record['id'],
+                'tmp_completed' => $record['id'],
+                'value' => 5,
         ];
         $DB->insert_record('evaluation_valuetmp', (object) $response);
 
@@ -560,7 +562,7 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         global $DB;
         $pagecontents = 'You finished it!';
         $this->evaluation = $this->getDataGenerator()->create_module('evaluation',
-            array('course' => SITEID, 'page_after_submit' => $pagecontents));
+                array('course' => SITEID, 'page_after_submit' => $pagecontents));
 
         // Test user with full capabilities.
         $this->setUser($this->student);
@@ -643,8 +645,8 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $textfielditem = $evaluationgenerator->create_item_textfield($this->evaluation);
 
         $pagedata = [
-            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
-            ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
+                ['name' => $numericitem->typ . '_' . $numericitem->id, 'value' => 5],
+                ['name' => $textfielditem->typ . '_' . $textfielditem->id, 'value' => 'abc'],
         ];
         // Process the evaluation, there is only one page so the evaluation will be completed.
         $result = mod_evaluation_external::process_page($this->evaluation->id, 0, $pagedata);
@@ -705,8 +707,8 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $numericitem2 = $evaluationgenerator->create_item_numeric($this->evaluation);
 
         $pagedata = [
-            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
-            ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
+                ['name' => $numericitem->typ . '_' . $numericitem->id, 'value' => 5],
+                ['name' => $textfielditem->typ . '_' . $textfielditem->id, 'value' => 'abc'],
         ];
         // Process the evaluation, there are two pages so the evaluation will be unfinished yet.
         $result = mod_evaluation_external::process_page($this->evaluation->id, 0, $pagedata);
@@ -740,8 +742,8 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $textfielditem = $evaluationgenerator->create_item_textfield($this->evaluation);
 
         $pagedata = [
-            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
-            ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
+                ['name' => $numericitem->typ . '_' . $numericitem->id, 'value' => 5],
+                ['name' => $textfielditem->typ . '_' . $textfielditem->id, 'value' => 'abc'],
         ];
 
         // Process the evaluation, there is only one page so the evaluation will be completed.
@@ -804,7 +806,7 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $numericitem = $evaluationgenerator->create_item_numeric($this->evaluation);
 
         $pagedata = [
-            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
+                ['name' => $numericitem->typ . '_' . $numericitem->id, 'value' => 5],
         ];
 
         // Process the evaluation, there is only one page so the evaluation will be completed.
@@ -835,6 +837,25 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_evaluation_external::get_non_respondents_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['users']);
+    }
+
+    /**
+     * Test get_responses_analysis for anonymous evaluation.
+     */
+    public function test_get_responses_analysis_anonymous() {
+        self::complete_basic_evaluation();
+
+        // Retrieve the responses analysis.
+        $this->setUser($this->teacher);
+        $result = mod_evaluation_external::get_responses_analysis($this->evaluation->id);
+        $result = external_api::clean_returnvalue(mod_evaluation_external::get_responses_analysis_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(0, $result['totalattempts']);
+        $this->assertEquals(2, $result['totalanonattempts']);   // Only see my groups.
+
+        foreach ($result['attempts'] as $attempt) {
+            $this->assertEmpty($attempt['userid']); // Is anonymous.
+        }
     }
 
     /**
@@ -873,8 +894,8 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $textfielditem = $evaluationgenerator->create_item_textfield($this->evaluation);
 
         $pagedata = [
-            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
-            ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
+                ['name' => $numericitem->typ . '_' . $numericitem->id, 'value' => 5],
+                ['name' => $textfielditem->typ . '_' . $textfielditem->id, 'value' => 'abc'],
         ];
 
         // Process the evaluation, there is only one page so the evaluation will be completed.
@@ -885,8 +906,8 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $this->setUser($anotherstudent1);
 
         $pagedata = [
-            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 10],
-            ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'def'],
+                ['name' => $numericitem->typ . '_' . $numericitem->id, 'value' => 10],
+                ['name' => $textfielditem->typ . '_' . $textfielditem->id, 'value' => 'def'],
         ];
 
         $result = mod_evaluation_external::process_page($this->evaluation->id, 0, $pagedata);
@@ -896,32 +917,13 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $this->setUser($anotherstudent2);
 
         $pagedata = [
-            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 10],
-            ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'def'],
+                ['name' => $numericitem->typ . '_' . $numericitem->id, 'value' => 10],
+                ['name' => $textfielditem->typ . '_' . $textfielditem->id, 'value' => 'def'],
         ];
 
         $result = mod_evaluation_external::process_page($this->evaluation->id, 0, $pagedata);
         $result = external_api::clean_returnvalue(mod_evaluation_external::process_page_returns(), $result);
         $this->assertTrue($result['completed']);
-    }
-
-    /**
-     * Test get_responses_analysis for anonymous evaluation.
-     */
-    public function test_get_responses_analysis_anonymous() {
-        self::complete_basic_evaluation();
-
-        // Retrieve the responses analysis.
-        $this->setUser($this->teacher);
-        $result = mod_evaluation_external::get_responses_analysis($this->evaluation->id);
-        $result = external_api::clean_returnvalue(mod_evaluation_external::get_responses_analysis_returns(), $result);
-        $this->assertCount(0, $result['warnings']);
-        $this->assertEquals(0, $result['totalattempts']);
-        $this->assertEquals(2, $result['totalanonattempts']);   // Only see my groups.
-
-        foreach ($result['attempts'] as $attempt) {
-            $this->assertEmpty($attempt['userid']); // Is anonymous.
-        }
     }
 
     /**
@@ -974,12 +976,12 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $DB->set_field('evaluation', 'anonymous', EVALUATION_ANONYMOUS_YES, array('id' => $this->evaluation->id));
         // Add one completion record..
         $record = [
-            'evaluation' => $this->evaluation->id,
-            'userid' => $this->student->id,
-            'timemodified' => time() - DAYSECS,
-            'random_response' => 0,
-            'anonymous_response' => EVALUATION_ANONYMOUS_YES,
-            'courseid' => $this->course->id,
+                'evaluation' => $this->evaluation->id,
+                'userid' => $this->student->id,
+                'timemodified' => time() - DAYSECS,
+                'random_response' => 0,
+                'anonymous_response' => EVALUATION_ANONYMOUS_YES,
+                'courseid' => $this->course->id,
         ];
         $record['id'] = $DB->insert_record('evaluation_completed', (object) $record);
 
@@ -1001,12 +1003,12 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
         $DB->set_field('evaluation', 'anonymous', EVALUATION_ANONYMOUS_NO, array('id' => $this->evaluation->id));
         // Add one completion record..
         $record = [
-            'evaluation' => $this->evaluation->id,
-            'userid' => $this->student->id,
-            'timemodified' => time() - DAYSECS,
-            'random_response' => 0,
-            'anonymous_response' => EVALUATION_ANONYMOUS_NO,
-            'courseid' => $this->course->id,
+                'evaluation' => $this->evaluation->id,
+                'userid' => $this->student->id,
+                'timemodified' => time() - DAYSECS,
+                'random_response' => 0,
+                'anonymous_response' => EVALUATION_ANONYMOUS_NO,
+                'courseid' => $this->course->id,
         ];
         $record['id'] = $DB->insert_record('evaluation_completed', (object) $record);
 
@@ -1068,7 +1070,8 @@ class mod_evaluation_external_testcase extends externallib_advanced_testcase {
 
         $siteevaluation = $this->getDataGenerator()->create_module('evaluation', array('course' => SITEID));
         $this->setUser($this->student);
-        $DB->insert_record('evaluation_sitecourse_map', array('evaluationid' => $siteevaluation->id, 'courseid' => $this->course->id));
+        $DB->insert_record('evaluation_sitecourse_map',
+                array('evaluationid' => $siteevaluation->id, 'courseid' => $this->course->id));
 
         // Access the site evaluation via course where I'm enrolled and mapped.
         $result = mod_evaluation_external::get_evaluation_access_information($siteevaluation->id, $this->course->id);

@@ -39,8 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_analysed extends \core\event\course_module_viewed // \base 
-{
+class course_module_analysed extends \core\event\course_module_viewed // \base  {
     /**
      * Init method.
      */
@@ -60,15 +59,15 @@ class course_module_analysed extends \core\event\course_module_viewed // \base
      */
     public static function create_from_record($evaluation, $cm, $course) {
         $event = self::create(array(
-            'objectid' => $evaluation->id,
-            'context' => \context_module::instance($cm->id),
-            'anonymous' => ($evaluation->anonymous == EVALUATION_ANONYMOUS_YES),
-            'other' => array(
-                'anonymous' => $evaluation->anonymous // Deprecated.
-            )
+                'objectid' => $evaluation->id,
+                'context' => \context_module::instance($cm->id),
+                'anonymous' => ($evaluation->anonymous == EVALUATION_ANONYMOUS_YES),
+                'other' => array(
+                        'anonymous' => $evaluation->anonymous // Deprecated.
+                )
         ));
         $event->add_record_snapshot('course_modules', $cm);
-		$event->add_record_snapshot('course', $course);
+        $event->add_record_snapshot('course', $course);
         $event->add_record_snapshot('evaluation', $evaluation);
         return $event;
     }
@@ -76,10 +75,10 @@ class course_module_analysed extends \core\event\course_module_viewed // \base
     /**
      * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
      *
-     * @deprecated since 2.7
-     *
      * @param int|\stdClass $userorid ID of the user.
      * @return bool True if the user can view the event, false otherwise.
+     * @deprecated since 2.7
+     *
      */
     public function can_view($userorid = null) {
         global $USER;

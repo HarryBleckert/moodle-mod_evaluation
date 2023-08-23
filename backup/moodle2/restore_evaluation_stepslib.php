@@ -49,7 +49,7 @@ class restore_evaluation_activity_structure_step extends restore_activity_struct
     protected function process_evaluation($data) {
         global $DB;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
@@ -67,7 +67,7 @@ class restore_evaluation_activity_structure_step extends restore_activity_struct
     protected function process_evaluation_item($data) {
         global $DB;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
         $data->evaluation = $this->get_new_parentid('evaluation');
 
@@ -78,7 +78,7 @@ class restore_evaluation_activity_structure_step extends restore_activity_struct
     protected function process_evaluation_completed($data) {
         global $DB;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
         $data->evaluation = $this->get_new_parentid('evaluation');
         $data->userid = $this->get_mappingid('user', $data->userid);
@@ -97,7 +97,7 @@ class restore_evaluation_activity_structure_step extends restore_activity_struct
     protected function process_evaluation_value($data) {
         global $DB;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
         $data->completed = $this->get_new_parentid('evaluation_completed');
         $data->item = $this->get_mappingid('evaluation_item', $data->item);

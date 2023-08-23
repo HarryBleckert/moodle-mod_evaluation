@@ -49,11 +49,11 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $cm = get_fast_modinfo($course)->instances['evaluation'][$evaluation->id]; // Instance of cm_info.
 
         $constructorparams = [
-            [$evaluation, null],
-            [null, $pseudocm],
-            [null, $cm],
-            [$evaluation, $pseudocm],
-            [$evaluation, $cm],
+                [$evaluation, null],
+                [null, $pseudocm],
+                [null, $cm],
+                [$evaluation, $pseudocm],
+                [$evaluation, $cm],
         ];
 
         foreach ($constructorparams as $params) {
@@ -129,9 +129,9 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
 
         $this->setCurrentTimeStart();
         $record = array(
-            'course' => $course->id,
-            'custom' => 0,
-            'evaluation' => 1,
+                'course' => $course->id,
+                'custom' => 0,
+                'evaluation' => 1,
         );
         $evaluation = $this->getDataGenerator()->create_module('evaluation', $record);
         $cm = get_coursemodule_from_instance('evaluation', $evaluation->id, $course->id);
@@ -151,15 +151,15 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         }
 
         $record = [
-            'evaluation' => $evaluation->id,
-            'userid' => $student->id,
-            'timemodified' => time(),
-            'random_response' => 0,
-            'anonymous_response' => EVALUATION_ANONYMOUS_NO,
-            'courseid' => $course->id,
+                'evaluation' => $evaluation->id,
+                'userid' => $student->id,
+                'timemodified' => time(),
+                'random_response' => 0,
+                'anonymous_response' => EVALUATION_ANONYMOUS_NO,
+                'courseid' => $course->id,
         ];
-        $DB->insert_record('evaluation_completed', (object)$record);
-        $DB->insert_record('evaluation_completedtmp', (object)$record);
+        $DB->insert_record('evaluation_completed', (object) $record);
+        $DB->insert_record('evaluation_completedtmp', (object) $record);
 
         // Check now for finished and unfinished attempts.
         $updates = evaluation_check_updates_since($cm, $onehourago);
@@ -194,6 +194,27 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Creates an action event.
+     *
+     * @param int $courseid The course id.
+     * @param int $instanceid The evaluation id.
+     * @param string $eventtype The event type. eg. EVALUATION_EVENT_TYPE_OPEN.
+     * @return bool|calendar_event
+     */
+    private function create_action_event($courseid, $instanceid, $eventtype) {
+        $event = new stdClass();
+        $event->name = 'Calendar event';
+        $event->modulename = 'evaluation';
+        $event->courseid = $courseid;
+        $event->instance = $instanceid;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->eventtype = $eventtype;
+        $event->timestart = time();
+
+        return calendar_event::create($event);
+    }
+
+    /**
      * Test calendar event provide action open, viewed by a different user.
      */
     public function test_evaluation_core_calendar_provide_event_action_open_for_user() {
@@ -210,7 +231,7 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
 
         $evaluation = $this->getDataGenerator()->create_module('evaluation', ['course' => $course->id,
-            'timeopen' => $now - DAYSECS, 'timeclose' => $now + DAYSECS]);
+                'timeopen' => $now - DAYSECS, 'timeclose' => $now + DAYSECS]);
         $event = $this->create_action_event($course->id, $evaluation->id, EVALUATION_EVENT_TYPE_OPEN);
         $factory = new \core_calendar\action_factory();
 
@@ -264,7 +285,7 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
 
         $evaluation = $this->getDataGenerator()->create_module('evaluation', array('course' => $course->id,
-            'timeclose' => time() - DAYSECS));
+                'timeclose' => time() - DAYSECS));
         $event = $this->create_action_event($course->id, $evaluation->id, EVALUATION_EVENT_TYPE_OPEN);
         $factory = new \core_calendar\action_factory();
         $this->setUser($user2);
@@ -322,7 +343,7 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
 
         $evaluation = $this->getDataGenerator()->create_module('evaluation', ['course' => $course->id,
-            'timeopen' => time() + DAYSECS]);
+                'timeopen' => time() + DAYSECS]);
         $event = $this->create_action_event($course->id, $evaluation->id, EVALUATION_EVENT_TYPE_OPEN);
 
         $factory = new \core_calendar\action_factory();
@@ -483,12 +504,12 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $this->setUser($user);
 
         $record = [
-            'evaluation' => $evaluation->id,
-            'userid' => $user->id,
-            'timemodified' => time(),
-            'random_response' => 0,
-            'anonymous_response' => EVALUATION_ANONYMOUS_NO,
-            'courseid' => 0,
+                'evaluation' => $evaluation->id,
+                'userid' => $user->id,
+                'timemodified' => time(),
+                'random_response' => 0,
+                'anonymous_response' => EVALUATION_ANONYMOUS_NO,
+                'courseid' => 0,
         ];
         $DB->insert_record('evaluation_completed', (object) $record);
 
@@ -519,12 +540,12 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $this->setUser($user);
 
         $record = [
-            'evaluation' => $evaluation->id,
-            'userid' => $user->id,
-            'timemodified' => time(),
-            'random_response' => 0,
-            'anonymous_response' => EVALUATION_ANONYMOUS_NO,
-            'courseid' => 0,
+                'evaluation' => $evaluation->id,
+                'userid' => $user->id,
+                'timemodified' => time(),
+                'random_response' => 0,
+                'anonymous_response' => EVALUATION_ANONYMOUS_NO,
+                'courseid' => 0,
         ];
         $DB->insert_record('evaluation_completed', (object) $record);
 
@@ -549,14 +570,14 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
         $evaluation = $this->getDataGenerator()->create_module('evaluation', array('course' => $course->id),
-            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+                array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
 
         // Get some additional data.
         $cm = get_coursemodule_from_instance('evaluation', $evaluation->id);
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $evaluation->id,
-            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+                \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed.
         $completion = new completion_info($course);
@@ -580,7 +601,7 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
         $evaluation = $this->getDataGenerator()->create_module('evaluation', array('course' => $course->id),
-            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+                array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
 
         // Enrol a student in the course.
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -590,7 +611,7 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $evaluation->id,
-            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+                \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed for the student.
         $completion = new completion_info($course);
@@ -607,27 +628,6 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
     }
 
     /**
-     * Creates an action event.
-     *
-     * @param int $courseid The course id.
-     * @param int $instanceid The evaluation id.
-     * @param string $eventtype The event type. eg. EVALUATION_EVENT_TYPE_OPEN.
-     * @return bool|calendar_event
-     */
-    private function create_action_event($courseid, $instanceid, $eventtype) {
-        $event = new stdClass();
-        $event->name = 'Calendar event';
-        $event->modulename = 'evaluation';
-        $event->courseid = $courseid;
-        $event->instance = $instanceid;
-        $event->type = CALENDAR_EVENT_TYPE_ACTION;
-        $event->eventtype = $eventtype;
-        $event->timestart = time();
-
-        return calendar_event::create($event);
-    }
-
-    /**
      * Test the callback responsible for returning the completion rule descriptions.
      * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
      * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
@@ -639,14 +639,14 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         // Two activities, both with automatic completion. One has the 'completionsubmit' rule, one doesn't.
         $course = $this->getDataGenerator()->create_course(['enablecompletion' => 2]);
         $evaluation1 = $this->getDataGenerator()->create_module('evaluation', [
-            'course' => $course->id,
-            'completion' => 2,
-            'completionsubmit' => 1
+                'course' => $course->id,
+                'completion' => 2,
+                'completionsubmit' => 1
         ]);
         $evaluation2 = $this->getDataGenerator()->create_module('evaluation', [
-            'course' => $course->id,
-            'completion' => 2,
-            'completionsubmit' => 0
+                'course' => $course->id,
+                'completion' => 2,
+                'completionsubmit' => 0
         ]);
         $cm1 = cm_info::create(get_coursemodule_from_instance('evaluation', $evaluation1->id));
         $cm2 = cm_info::create(get_coursemodule_from_instance('evaluation', $evaluation2->id));
@@ -685,18 +685,18 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $DB->update_record('evaluation', $evaluation);
 
         $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'evaluation',
-            'instance' => $evaluation->id,
-            'eventtype' => 'SOME UNKNOWN EVENT',
-            'timestart' => $timeopen,
-            'timeduration' => 86400,
-            'visible' => 1
+                'name' => 'Test event',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => 2,
+                'modulename' => 'evaluation',
+                'instance' => $evaluation->id,
+                'eventtype' => 'SOME UNKNOWN EVENT',
+                'timestart' => $timeopen,
+                'timeduration' => 86400,
+                'visible' => 1
         ]);
 
         list($min, $max) = mod_evaluation_core_calendar_get_valid_event_timestart_range($event, $evaluation);
@@ -725,18 +725,18 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $DB->update_record('evaluation', $evaluation);
 
         $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'evaluation',
-            'instance' => $evaluation->id,
-            'eventtype' => EVALUATION_EVENT_TYPE_OPEN,
-            'timestart' => $timeopen,
-            'timeduration' => 86400,
-            'visible' => 1
+                'name' => 'Test event',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => 2,
+                'modulename' => 'evaluation',
+                'instance' => $evaluation->id,
+                'eventtype' => EVALUATION_EVENT_TYPE_OPEN,
+                'timestart' => $timeopen,
+                'timeduration' => 86400,
+                'visible' => 1
         ]);
 
         list($min, $max) = mod_evaluation_core_calendar_get_valid_event_timestart_range($event, $evaluation);
@@ -766,18 +766,18 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $DB->update_record('evaluation', $evaluation);
 
         $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'evaluation',
-            'instance' => $evaluation->id,
-            'eventtype' => EVALUATION_EVENT_TYPE_OPEN,
-            'timestart' => $timeopen,
-            'timeduration' => 86400,
-            'visible' => 1
+                'name' => 'Test event',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => 2,
+                'modulename' => 'evaluation',
+                'instance' => $evaluation->id,
+                'eventtype' => EVALUATION_EVENT_TYPE_OPEN,
+                'timestart' => $timeopen,
+                'timeduration' => 86400,
+                'visible' => 1
         ]);
 
         list($min, $max) = mod_evaluation_core_calendar_get_valid_event_timestart_range($event, $evaluation);
@@ -806,18 +806,18 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $DB->update_record('evaluation', $evaluation);
 
         $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'evaluation',
-            'instance' => $evaluation->id,
-            'eventtype' => EVALUATION_EVENT_TYPE_CLOSE,
-            'timestart' => $timeopen,
-            'timeduration' => 86400,
-            'visible' => 1
+                'name' => 'Test event',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => 2,
+                'modulename' => 'evaluation',
+                'instance' => $evaluation->id,
+                'eventtype' => EVALUATION_EVENT_TYPE_CLOSE,
+                'timestart' => $timeopen,
+                'timeduration' => 86400,
+                'visible' => 1
         ]);
 
         list($min, $max) = mod_evaluation_core_calendar_get_valid_event_timestart_range($event, $evaluation);
@@ -847,18 +847,18 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $DB->update_record('evaluation', $evaluation);
 
         $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'evaluation',
-            'instance' => $evaluation->id,
-            'eventtype' => EVALUATION_EVENT_TYPE_CLOSE,
-            'timestart' => $timeopen,
-            'timeduration' => 86400,
-            'visible' => 1
+                'name' => 'Test event',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => 2,
+                'modulename' => 'evaluation',
+                'instance' => $evaluation->id,
+                'eventtype' => EVALUATION_EVENT_TYPE_CLOSE,
+                'timestart' => $timeopen,
+                'timeduration' => 86400,
+                'visible' => 1
         ]);
 
         list($min, $max) = mod_evaluation_core_calendar_get_valid_event_timestart_range($event, $evaluation);
@@ -887,18 +887,18 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
 
         // Create a valid event.
         $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'evaluation',
-            'instance' => $evaluation->id,
-            'eventtype' => EVALUATION_EVENT_TYPE_OPEN . "SOMETHING ELSE",
-            'timestart' => 1,
-            'timeduration' => 86400,
-            'visible' => 1
+                'name' => 'Test event',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => 2,
+                'modulename' => 'evaluation',
+                'instance' => $evaluation->id,
+                'eventtype' => EVALUATION_EVENT_TYPE_OPEN . "SOMETHING ELSE",
+                'timestart' => 1,
+                'timeduration' => 86400,
+                'visible' => 1
         ]);
 
         mod_evaluation_core_calendar_event_timestart_updated($event, $evaluation);
@@ -933,18 +933,18 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
 
         // Create a valid event.
         $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'evaluation',
-            'instance' => $evaluation->id,
-            'eventtype' => EVALUATION_EVENT_TYPE_OPEN,
-            'timestart' => $newtimeopen,
-            'timeduration' => 86400,
-            'visible' => 1
+                'name' => 'Test event',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => 2,
+                'modulename' => 'evaluation',
+                'instance' => $evaluation->id,
+                'eventtype' => EVALUATION_EVENT_TYPE_OPEN,
+                'timestart' => $newtimeopen,
+                'timeduration' => 86400,
+                'visible' => 1
         ]);
 
         mod_evaluation_core_calendar_event_timestart_updated($event, $evaluation);
@@ -983,18 +983,18 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
 
         // Create a valid event.
         $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'evaluation',
-            'instance' => $evaluation->id,
-            'eventtype' => EVALUATION_EVENT_TYPE_CLOSE,
-            'timestart' => $newtimeclose,
-            'timeduration' => 86400,
-            'visible' => 1
+                'name' => 'Test event',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => 2,
+                'modulename' => 'evaluation',
+                'instance' => $evaluation->id,
+                'eventtype' => EVALUATION_EVENT_TYPE_CLOSE,
+                'timestart' => $newtimeclose,
+                'timeduration' => 86400,
+                'visible' => 1
         ]);
 
         mod_evaluation_core_calendar_event_timestart_updated($event, $evaluation);
@@ -1041,18 +1041,18 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
 
         // Create a valid event.
         $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => $user->id,
-            'modulename' => 'evaluation',
-            'instance' => $evaluation->id,
-            'eventtype' => EVALUATION_EVENT_TYPE_CLOSE,
-            'timestart' => $newtimeclose,
-            'timeduration' => 86400,
-            'visible' => 1
+                'name' => 'Test event',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => $user->id,
+                'modulename' => 'evaluation',
+                'instance' => $evaluation->id,
+                'eventtype' => EVALUATION_EVENT_TYPE_CLOSE,
+                'timestart' => $newtimeclose,
+                'timeduration' => 86400,
+                'visible' => 1
         ]);
 
         assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context, true);
@@ -1100,18 +1100,18 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
 
         // Create a valid event.
         $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => $user->id,
-            'modulename' => 'evaluation',
-            'instance' => $evaluation->id,
-            'eventtype' => EVALUATION_EVENT_TYPE_CLOSE,
-            'timestart' => $newtimeclose,
-            'timeduration' => 86400,
-            'visible' => 1
+                'name' => 'Test event',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => $user->id,
+                'modulename' => 'evaluation',
+                'instance' => $evaluation->id,
+                'eventtype' => EVALUATION_EVENT_TYPE_CLOSE,
+                'timestart' => $newtimeclose,
+                'timeduration' => 86400,
+                'visible' => 1
         ]);
 
         assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context, true);
@@ -1153,9 +1153,9 @@ class mod_evaluation_lib_testcase extends advanced_testcase {
         $this->setUser($user);
         $time = time();
         $params = array(
-            'course' => $course->id,
-            'timeopen' => $time + 200,
-            'timeclose' => $time + 2000,
+                'course' => $course->id,
+                'timeopen' => $time + 200,
+                'timeclose' => $time + 2000,
         );
         $generator->create_instance($params);
     }

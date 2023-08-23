@@ -56,20 +56,20 @@ class mod_evaluation_course_select_form extends moodleform {
         $mform = $this->_form;
         $evaluationstructure = $this->evaluationstructure;
 
-		$mform->disable_form_change_checker();
+        $mform->disable_form_change_checker();
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        if (!$this->_form->_freezeAll && ($courses = $evaluationstructure->get_completed_courses()) && count($courses) ) {
+        if (!$this->_form->_freezeAll && ($courses = $evaluationstructure->get_completed_courses()) && count($courses)) {
             $elements = [];
             $elements[] = $mform->createElement('autocomplete', 'courseid', get_string('filter_by_course', 'evaluation'),
-                ['' => get_string('fulllistofcourses')] + $courses);
+                    ['' => get_string('fulllistofcourses')] + $courses);
             $elements[] = $mform->createElement('submit', 'submitbutton', get_string('filter'));
             if ($evaluationstructure->get_courseid()) {
                 $elements[] = $mform->createElement('static', 'showall', '',
-                    html_writer::link($this->action, get_string('show_all', 'evaluation')));
+                        html_writer::link($this->action, get_string('show_all', 'evaluation')));
             }
-            if (0 AND defined('BEHAT_SITE_RUNNING')) {
+            if (0 and defined('BEHAT_SITE_RUNNING')) {
                 // TODO MDL-53734 remove this - behat does not recognise autocomplete element inside a group.
                 foreach ($elements as $element) {
                     $mform->addElement($element);

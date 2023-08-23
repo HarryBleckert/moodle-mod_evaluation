@@ -90,6 +90,7 @@ abstract class evaluation_item_base {
 
     /**
      * Converts the value from complete_form data to the string value that is stored in the db.
+     *
      * @param mixed $value element from mod_evaluation_complete_form::get_data() with the name $item->typ.'_'.$item->id
      * @return string
      */
@@ -110,18 +111,11 @@ abstract class evaluation_item_base {
 
     /**
      * Wether this item type has a value that is expected from the user and saved in the stored values.
+     *
      * @return int
      */
     public function get_hasvalue() {
         return 1;
-    }
-
-    /**
-     * Wether this item can be set as both required and not
-     * @return bool
-     */
-    public function can_switch_require() {
-        return true;
     }
 
     /**
@@ -136,8 +130,8 @@ abstract class evaluation_item_base {
      * @return integer the new row_offset
      */
     abstract public function excelprint_item(&$worksheet, $row_offset,
-                                      $xls_formats, $item,
-                                      $groupid, $courseid = false);
+            $xls_formats, $item,
+            $groupid, $courseid = false);
 
     /**
      * Prints analysis for the current item
@@ -149,7 +143,7 @@ abstract class evaluation_item_base {
      * @return integer the new itemnr
      */
     abstract public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false);
-     
+
     /**
      * Prepares the value for exporting to Excel
      *
@@ -227,10 +221,10 @@ abstract class evaluation_item_base {
 
         $strupdate = get_string('edit_item', 'evaluation');
         $actions['update'] = new action_menu_link_secondary(
-            new moodle_url('/mod/evaluation/edit_item.php', array('id' => $item->id)),
-            new pix_icon('t/edit', $strupdate, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-            $strupdate,
-            array('class' => 'editing_update', 'data-action' => 'update')
+                new moodle_url('/mod/evaluation/edit_item.php', array('id' => $item->id)),
+                new pix_icon('t/edit', $strupdate, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $strupdate,
+                array('class' => 'editing_update', 'data-action' => 'update')
         );
 
         if ($this->can_switch_require()) {
@@ -242,23 +236,33 @@ abstract class evaluation_item_base {
                 $buttonimg = 'notrequired';
             }
             $actions['required'] = new action_menu_link_secondary(
-                new moodle_url('/mod/evaluation/edit.php', array('id' => $cm->id,
-                    'switchitemrequired' => $item->id, 'sesskey' => sesskey())),
-                new pix_icon($buttonimg, $buttontitle, 'evaluation', array('class' => 'iconsmall', 'title' => '')),
-                $buttontitle,
-                array('class' => 'editing_togglerequired', 'data-action' => 'togglerequired')
+                    new moodle_url('/mod/evaluation/edit.php', array('id' => $cm->id,
+                            'switchitemrequired' => $item->id, 'sesskey' => sesskey())),
+                    new pix_icon($buttonimg, $buttontitle, 'evaluation', array('class' => 'iconsmall', 'title' => '')),
+                    $buttontitle,
+                    array('class' => 'editing_togglerequired', 'data-action' => 'togglerequired')
             );
         }
 
         $strdelete = get_string('delete_item', 'evaluation');
         $actions['delete'] = new action_menu_link_secondary(
-            new moodle_url('/mod/evaluation/edit.php', array('id' => $cm->id, 'deleteitem' => $item->id, 'sesskey' => sesskey())),
-            new pix_icon('t/delete', $strdelete, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-            $strdelete,
-            array('class' => 'editing_delete', 'data-action' => 'delete')
+                new moodle_url('/mod/evaluation/edit.php',
+                        array('id' => $cm->id, 'deleteitem' => $item->id, 'sesskey' => sesskey())),
+                new pix_icon('t/delete', $strdelete, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $strdelete,
+                array('class' => 'editing_delete', 'data-action' => 'delete')
         );
 
         return $actions;
+    }
+
+    /**
+     * Wether this item can be set as both required and not
+     *
+     * @return bool
+     */
+    public function can_switch_require() {
+        return true;
     }
 
     /**
@@ -278,9 +282,9 @@ abstract class evaluation_item_base {
     /**
      * Return the analysis data ready for external functions.
      *
-     * @param stdClass $item     the item (question) information
-     * @param int      $groupid  the group id to filter data (optional)
-     * @param int      $courseid the course id (optional)
+     * @param stdClass $item the item (question) information
+     * @param int $groupid the group id to filter data (optional)
+     * @param int $courseid the course id (optional)
      * @return array an array of data with non scalar types json encoded
      * @since  Moodle 3.3
      */
@@ -296,30 +300,39 @@ class evaluation_item_pagebreak extends evaluation_item_base {
 
     /**
      * Checks if the editing form was cancelled
+     *
      * @return bool
      */
     public function is_cancelled() {
     }
+
     public function get_data() {
     }
+
     public function build_editform($item, $evaluation, $cm) {
     }
+
     public function save_item() {
     }
+
     public function create_value($data) {
     }
+
     public function get_hasvalue() {
         return 0;
     }
+
     public function excelprint_item(&$worksheet, $row_offset,
-                            $xls_formats, $item,
-                            $groupid, $courseid = false) {
+            $xls_formats, $item,
+            $groupid, $courseid = false) {
     }
 
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
     }
+
     public function get_printval($item, $value) {
     }
+
     public function can_switch_require() {
         return false;
     }
@@ -332,11 +345,11 @@ class evaluation_item_pagebreak extends evaluation_item_base {
      */
     public function complete_form_element($item, $form) {
         $form->add_form_element($item,
-            ['static',
-                $item->typ.'_'.$item->id,
-                '',
-                html_writer::empty_tag('hr', ['class' => 'evaluation_pagebreak', 'id' => 'evaluation_item_' . $item->id])
-            ]);
+                ['static',
+                        $item->typ . '_' . $item->id,
+                        '',
+                        html_writer::empty_tag('hr', ['class' => 'evaluation_pagebreak', 'id' => 'evaluation_item_' . $item->id])
+                ]);
     }
 
     /**
@@ -351,10 +364,11 @@ class evaluation_item_pagebreak extends evaluation_item_base {
         $actions = array();
         $strdelete = get_string('delete_pagebreak', 'evaluation');
         $actions['delete'] = new action_menu_link_secondary(
-            new moodle_url('/mod/evaluation/edit.php', array('id' => $cm->id, 'deleteitem' => $item->id, 'sesskey' => sesskey())),
-            new pix_icon('t/delete', $strdelete, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-            $strdelete,
-            array('class' => 'editing_delete', 'data-action' => 'delete')
+                new moodle_url('/mod/evaluation/edit.php',
+                        array('id' => $cm->id, 'deleteitem' => $item->id, 'sesskey' => sesskey())),
+                new pix_icon('t/delete', $strdelete, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $strdelete,
+                array('class' => 'editing_delete', 'data-action' => 'delete')
         );
         return $actions;
     }
@@ -362,9 +376,9 @@ class evaluation_item_pagebreak extends evaluation_item_base {
     /**
      * Return the analysis data ready for external functions.
      *
-     * @param stdClass $item     the item (question) information
-     * @param int      $groupid  the group id to filter data (optional)
-     * @param int      $courseid the course id (optional)
+     * @param stdClass $item the item (question) information
+     * @param int $groupid the group id to filter data (optional)
+     * @param int $courseid the course id (optional)
      * @return array an array of data with non scalar types json encoded
      * @since  Moodle 3.3
      */

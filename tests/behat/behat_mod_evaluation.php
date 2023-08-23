@@ -27,8 +27,8 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Mink\Exception\ExpectationException as ExpectationException;
+use Behat\Gherkin\Node\TableNode as TableNode;
+use Behat\Mink\Exception\ExpectationException as ExpectationException;
 
 /**
  * Steps definitions related to mod_evaluation.
@@ -94,7 +94,8 @@ class behat_mod_evaluation extends behat_base {
     /**
      * Quick way to generate answers to a one-page evaluation.
      *
-     * @When /^I log in as "(?P<user_name_string>(?:[^"]|\\")*)" and complete evaluation "(?P<evaluation_name_string>(?:[^"]|\\")*)" in course "(?P<course_name_string>(?:[^"]|\\")*)" with:$/
+     * @When /^I log in as "(?P<user_name_string>(?:[^"]|\\")*)" and complete evaluation
+     *         "(?P<evaluation_name_string>(?:[^"]|\\")*)" in course "(?P<course_name_string>(?:[^"]|\\")*)" with:$/
      * @param string $questiontype
      * @param TableNode $questiondata with data for filling the add question form
      */
@@ -123,7 +124,8 @@ class behat_mod_evaluation extends behat_base {
     /**
      * Exports evaluation and makes sure the export file is the same as in the fixture
      *
-     * @Then /^following "(?P<link_string>(?:[^"]|\\")*)" should export evaluation identical to "(?P<filename_string>(?:[^"]|\\")*)"$/
+     * @Then /^following "(?P<link_string>(?:[^"]|\\")*)" should export evaluation identical to
+     *         "(?P<filename_string>(?:[^"]|\\")*)"$/
      * @param string $link
      * @param string $filename
      */
@@ -134,46 +136,16 @@ class behat_mod_evaluation extends behat_base {
         // It will stop spinning once file is downloaded or time out.
         $behatgeneralcontext = behat_context_helper::get('behat_general');
         $result = $this->spin(
-            function($context, $args) use ($behatgeneralcontext) {
-                $link = $args['link'];
-                return $behatgeneralcontext->download_file_from_link($link);
-            },
-            array('link' => $link),
-            behat_base::get_extended_timeout(),
-            $exception
+                function($context, $args) use ($behatgeneralcontext) {
+                    $link = $args['link'];
+                    return $behatgeneralcontext->download_file_from_link($link);
+                },
+                array('link' => $link),
+                behat_base::get_extended_timeout(),
+                $exception
         );
 
         $this->compare_exports(file_get_contents($CFG->dirroot . '/' . $filename), $result);
-    }
-
-    /**
-     * Clicks on Show chart data to display chart data if not visible.
-     *
-     * @Then /^I show chart data for the "(?P<evaluation_name_string>(?:[^"]|\\")*)" evaluation$/
-     * @param string $evaluationname name of the evaluation for which chart data needs to be shown.
-     */
-    public function i_show_chart_data_for_the_evaluation($evaluationname) {
-
-        $evaluationxpath = "//th[contains(normalize-space(string(.)), \"" . $evaluationname . "\")]/ancestor::table/" .
-            "following-sibling::div[contains(concat(' ', normalize-space(@class), ' '), ' chart-area ')][1]" .
-            "//p[contains(concat(' ', normalize-space(@class), ' '), ' chart-table-expand ') and ".
-            "//a[contains(normalize-space(string(.)), '".get_string('showchartdata')."')]]";
-
-        $charttabledataxpath = $evaluationxpath .
-            "/following-sibling::div[contains(concat(' ', normalize-space(@class), ' '), ' chart-table-data ')][1]";
-
-        // If chart data is not visible then expand.
-        $node = $this->get_selected_node("xpath_element", $charttabledataxpath);
-        if ($node) {
-            if ($node->getAttribute('aria-expanded') === 'false') {
-                $this->execute('behat_general::i_click_on_in_the', array(
-                    get_string('showchartdata'),
-                    'link',
-                    $evaluationxpath,
-                    'xpath_element'
-                ));
-            }
-        }
     }
 
     /**
@@ -229,6 +201,36 @@ class behat_mod_evaluation extends behat_base {
             }
             // Get the next itemactual.
             $itemactual = next($dataactual);
+        }
+    }
+
+    /**
+     * Clicks on Show chart data to display chart data if not visible.
+     *
+     * @Then /^I show chart data for the "(?P<evaluation_name_string>(?:[^"]|\\")*)" evaluation$/
+     * @param string $evaluationname name of the evaluation for which chart data needs to be shown.
+     */
+    public function i_show_chart_data_for_the_evaluation($evaluationname) {
+
+        $evaluationxpath = "//th[contains(normalize-space(string(.)), \"" . $evaluationname . "\")]/ancestor::table/" .
+                "following-sibling::div[contains(concat(' ', normalize-space(@class), ' '), ' chart-area ')][1]" .
+                "//p[contains(concat(' ', normalize-space(@class), ' '), ' chart-table-expand ') and " .
+                "//a[contains(normalize-space(string(.)), '" . get_string('showchartdata') . "')]]";
+
+        $charttabledataxpath = $evaluationxpath .
+                "/following-sibling::div[contains(concat(' ', normalize-space(@class), ' '), ' chart-table-data ')][1]";
+
+        // If chart data is not visible then expand.
+        $node = $this->get_selected_node("xpath_element", $charttabledataxpath);
+        if ($node) {
+            if ($node->getAttribute('aria-expanded') === 'false') {
+                $this->execute('behat_general::i_click_on_in_the', array(
+                        get_string('showchartdata'),
+                        'link',
+                        $evaluationxpath,
+                        'xpath_element'
+                ));
+            }
         }
     }
 }

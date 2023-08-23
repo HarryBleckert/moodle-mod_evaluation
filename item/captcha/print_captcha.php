@@ -18,18 +18,18 @@ require_once('../../../../config.php');
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url('/mod/evaluation/item/captcha/print_captcha.php', array('id'=>$id));
+$PAGE->set_url('/mod/evaluation/item/captcha/print_captcha.php', array('id' => $id));
 
 if ($id) {
-    if (! $cm = get_coursemodule_from_id('evaluation', $id)) {
+    if (!$cm = get_coursemodule_from_id('evaluation', $id)) {
         print_error('invalidcoursemodule');
     }
 
-    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+    if (!$course = $DB->get_record("course", array("id" => $cm->course))) {
         print_error('coursemisconf');
     }
 
-    if (! $evaluation = $DB->get_record("evaluation", array("id"=>$cm->instance))) {
+    if (!$evaluation = $DB->get_record("evaluation", array("id" => $cm->instance))) {
         print_error('invalidcoursemodule');
     }
 }
@@ -40,15 +40,15 @@ if (!isset($SESSION->evaluation->item->captcha)) {
 
 $height = 40;
 $charcount = $SESSION->evaluation->item->captcha->charcount;
-$fontfile = $CFG->libdir.'/default.ttf';
+$fontfile = $CFG->libdir . '/default.ttf';
 
-$ttfbox = imagettfbbox ( 30, 0, $fontfile, 'H' );//the text to measure
+$ttfbox = imagettfbbox(30, 0, $fontfile, 'H');//the text to measure
 $charwidth = $ttfbox[2];
 
 $width = $charcount * $charwidth;
 
 $scale = 0.3;
-$elipsesize = intval((($width + $height)/2) / 5);
+$elipsesize = intval((($width + $height) / 2) / 5);
 $factor_x = intval($width * $scale);
 $factor_y = intval($height * $scale);
 
@@ -99,9 +99,9 @@ $checkchar = '';
 for ($i = 0; $i < $charcount; $i++) {
     $colnum = rand(1, 2);
     $textcol = new stdClass();
-    $textcol->red = get_random_color(${'col_text'.$colnum}[0], ${'col_text'.$colnum}[1]);
-    $textcol->green = get_random_color(${'col_text'.$colnum}[0], ${'col_text'.$colnum}[1]);
-    $textcol->blue = get_random_color(${'col_text'.$colnum}[0], ${'col_text'.$colnum}[1]);
+    $textcol->red = get_random_color(${'col_text' . $colnum}[0], ${'col_text' . $colnum}[1]);
+    $textcol->green = get_random_color(${'col_text' . $colnum}[0], ${'col_text' . $colnum}[1]);
+    $textcol->blue = get_random_color(${'col_text' . $colnum}[0], ${'col_text' . $colnum}[1]);
     $color_text = imagecolorallocate($image, $textcol->red, $textcol->green, $textcol->blue);
     $angle_text = rand(-20, 20);
     $left_text = $i * $charwidth;

@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') OR die('not allowed');
-require_once($CFG->dirroot.'/mod/evaluation/item/evaluation_item_class.php');
+defined('MOODLE_INTERNAL') or die('not allowed');
+require_once($CFG->dirroot . '/mod/evaluation/item/evaluation_item_class.php');
 
 class evaluation_item_captcha extends evaluation_item_base {
     protected $type = "captcha";
@@ -23,10 +23,10 @@ class evaluation_item_captcha extends evaluation_item_base {
     public function build_editform($item, $evaluation, $cm) {
         global $DB;
 
-        $editurl = new moodle_url('/mod/evaluation/edit.php', array('id'=>$cm->id));
+        $editurl = new moodle_url('/mod/evaluation/edit.php', array('id' => $cm->id));
 
         // There are no settings for recaptcha.
-        if (isset($item->id) AND $item->id > 0) {
+        if (isset($item->id) and $item->id > 0) {
             notice(get_string('there_are_no_settings_for_recaptcha', 'evaluation'), $editurl->out());
             exit;
         }
@@ -41,7 +41,7 @@ class evaluation_item_captcha extends evaluation_item_base {
         $this->item = $item;
         $this->item_form = true; // Dummy.
 
-        $lastposition = $DB->count_records('evaluation_item', array('evaluation'=>$evaluation->id));
+        $lastposition = $DB->count_records('evaluation_item', array('evaluation' => $evaluation->id));
 
         $this->item->evaluation = $evaluation->id;
         $this->item->template = 0;
@@ -55,6 +55,16 @@ class evaluation_item_captcha extends evaluation_item_base {
         $this->item->dependitem = 0;
         $this->item->dependvalue = '';
         $this->item->options = '';
+    }
+
+    public function get_hasvalue() {
+        global $CFG;
+
+        // Is recaptcha configured in moodle?
+        if (empty($CFG->recaptchaprivatekey) or empty($CFG->recaptchapublickey)) {
+            return 0;
+        }
+        return 1;
     }
 
     public function show_editform() {
@@ -81,32 +91,22 @@ class evaluation_item_captcha extends evaluation_item_base {
             $DB->update_record('evaluation_item', $this->item);
         }
 
-        return $DB->get_record('evaluation_item', array('id'=>$this->item->id));
+        return $DB->get_record('evaluation_item', array('id' => $this->item->id));
     }
 
     public function get_printval($item, $value) {
         return '';
     }
 
-    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false) {
+    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid = false,
+            $course_of_studies = false) {
         return $itemnr;
     }
 
     public function excelprint_item(&$worksheet, $row_offset,
-                             $xls_formats, $item,
-                             $groupid, $courseid = false, $teacherid=false, $course_of_studies=false ) {
+            $xls_formats, $item,
+            $groupid, $courseid = false, $teacherid = false, $course_of_studies = false) {
         return $row_offset;
-    }
-
-    /**
-     * Returns the formatted name of the item for the complete form or response view
-     *
-     * @param stdClass $item
-     * @param bool $withpostfix
-     * @return string
-     */
-    public function get_display_name($item, $withpostfix = true) {
-        return get_string('captcha', 'evaluation');
     }
 
     /**
@@ -153,19 +153,20 @@ class evaluation_item_captcha extends evaluation_item_base {
 
     }
 
+    /**
+     * Returns the formatted name of the item for the complete form or response view
+     *
+     * @param stdClass $item
+     * @param bool $withpostfix
+     * @return string
+     */
+    public function get_display_name($item, $withpostfix = true) {
+        return get_string('captcha', 'evaluation');
+    }
+
     public function create_value($data) {
         global $USER;
         return $USER->sesskey;
-    }
-
-    public function get_hasvalue() {
-        global $CFG;
-
-        // Is recaptcha configured in moodle?
-        if (empty($CFG->recaptchaprivatekey) OR empty($CFG->recaptchapublickey)) {
-            return 0;
-        }
-        return 1;
     }
 
     public function can_switch_require() {
@@ -201,13 +202,14 @@ class evaluation_item_captcha extends evaluation_item_base {
     /**
      * Return the analysis data ready for external functions.
      *
-     * @param stdClass $item     the item (question) information
-     * @param int      $groupid  the group id to filter data (optional)
-     * @param int      $courseid the course id (optional)
+     * @param stdClass $item the item (question) information
+     * @param int $groupid the group id to filter data (optional)
+     * @param int $courseid the course id (optional)
      * @return array an array of data with non scalar types json encoded
      * @since  Moodle 3.3
      */
-    public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid=false, $course_of_studies=false) {
+    public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid = false,
+            $course_of_studies = false) {
         return [];
     }
 }

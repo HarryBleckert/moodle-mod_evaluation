@@ -10,39 +10,39 @@ extracted from: https://github.com/Ejdamm/chart.js-php/blob/master/js/Chart.min.
 require_once("classes/ChartJS.php");
 
 $values = [
-            [28, 48, 40, 19, 86, 27, 90],
-            [65, 59, 80, 81, 56, 55, 40]
-        ];
+        [28, 48, 40, 19, 86, 27, 90],
+        [65, 59, 80, 81, 56, 55, 40]
+];
 
 $data = [
-    'labels' => ["January", "February", "March", "April", "May", "June", "July"],
-    'datasets' => [] //You can add datasets directly here or add them later with addDataset()
+        'labels' => ["January", "February", "March", "April", "May", "June", "July"],
+        'datasets' => [] //You can add datasets directly here or add them later with addDataset()
 ];
 
 $colors = [
-              //['backgroundColor' => 'rgba(28,116,190,.8)', 'borderColor' => 'blue'],
-			  ['backgroundColor' => 'lightblue', 'borderColor' => 'blue'],
-              ['backgroundColor' => '#f2b21a', 'borderColor' => '#e5801d'],
-              ['backgroundColor' => ['blue', 'purple', 'red', 'black', 'brown', 'pink', 'green']]
-          ];
+    //['backgroundColor' => 'rgba(28,116,190,.8)', 'borderColor' => 'blue'],
+        ['backgroundColor' => 'lightblue', 'borderColor' => 'blue'],
+        ['backgroundColor' => '#f2b21a', 'borderColor' => '#e5801d'],
+        ['backgroundColor' => ['blue', 'purple', 'red', 'black', 'brown', 'pink', 'green']]
+];
 
 //There is a bug in Chart.js that ignores canvas width/height if responsive is not set to false
-$options = ['responsive' => true, indexAxis => 'y','radius' => 8,'hoverRadius' => 14,];
-			//'scales' => ['yAxes' => ['min' => 1], ['yAxes' => ['max' => 5]]]	,];
+$options = ['responsive' => true, indexAxis => 'y', 'radius' => 8, 'hoverRadius' => 14,];
+//'scales' => ['yAxes' => ['min' => 1], ['yAxes' => ['max' => 5]]]	,];
 
 //html attributes fot the canvas element
 //$attributes = ['id' => 'example', 'width' => 500, 'height' => 500, 'style' => 'display:inline;'];
 $gattributes = ['style' => 'display:inline;'];
 
 $datasets = [
-                //['data' => $values[0], 'label' => "Legend1"] + $colors[0],
-				//['data' => $values[0], 'label' => "Legend1", 'radius' => 8,'hoverRadius' => 14]+ $colors[0],
-				['data' => $values[0], 'label' => "Legend1"] + $colors[0],
-                ['data' => $values[1], 'label' => "Legend2"] + $colors[1],
-                ['data' => $values[0], 'label' => "Legend1"] + $colors[1],
-                ['data' => $values[1], 'label' => "Legend2"] + $colors[2],
-                ['data' => $values[0]] + $colors[2],
-            ];
+    //['data' => $values[0], 'label' => "Legend1"] + $colors[0],
+    //['data' => $values[0], 'label' => "Legend1", 'radius' => 8,'hoverRadius' => 14]+ $colors[0],
+        ['data' => $values[0], 'label' => "Legend1"] + $colors[0],
+        ['data' => $values[1], 'label' => "Legend2"] + $colors[1],
+        ['data' => $values[0], 'label' => "Legend1"] + $colors[1],
+        ['data' => $values[1], 'label' => "Legend2"] + $colors[2],
+        ['data' => $values[0]] + $colors[2],
+];
 
 /*
  * Create charts
@@ -50,7 +50,7 @@ $datasets = [
  */
 
 $attributes = $gattributes; $attributes['id'] = 'example_line';
-$Line = new ChartJS('line', $data, $options+array('lineTension' => 0.3), $attributes);
+$Line = new ChartJS('line', $data, $options + array('lineTension' => 0.3), $attributes);
 $Line->addDataset($datasets[0]);
 $Line->addDataset($datasets[1]);
 
@@ -88,8 +88,8 @@ $Doughnut->addDataset($datasets[4]);
 <head>
     <title>Chart.js-PHP</title>
 
-<script src="js/chart.min.js"></script>
-<script src="js/driver.js"></script>
+    <script src="js/chart/chart.min.js"></script>
+    <script src="js/chart/driver.js"></script>
 </head>
 <body>
 <h1>Line</h1>
@@ -110,11 +110,11 @@ echo $PolarArea;
 ?>
 <h1>Pie & Doughnut</h1>
 <?php
-echo $Pie. $Doughnut;
+echo $Pie . $Doughnut;
 ?>
 
-<script src="js/chartjs/chart.min.js"></script>
-<script src="js/chartjs/driver.js"></script>
+<script src="js/chart/chart.min.js"></script>
+<script src="js/chart/driver.js"></script>
 <script>
     (function () {
         loadChartJsPhp();
@@ -126,7 +126,6 @@ require_once("print.js.php");
 ?>
 </body>
 </html>
-
 
 
 <?php
@@ -198,5 +197,4 @@ jQuery.("[aria-controls^=chart-table-data-]").attr("aria-expanded", true);
 jQuery.("[aria-controls^=chart-table-data-]").show();
 </script>';
 */		
-	
 	

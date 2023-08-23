@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot.'/mod/evaluation/item/evaluation_item_form_class.php');
+require_once($CFG->dirroot . '/mod/evaluation/item/evaluation_item_form_class.php');
 
 class evaluation_info_form extends evaluation_item_form {
     protected $type = "info";
@@ -34,18 +34,18 @@ class evaluation_info_form extends evaluation_item_form {
         $mform->setType('required', PARAM_INT);
 
         $mform->addElement('text',
-                            'name',
-                            get_string('item_name', 'evaluation'),
-                            array('size'=>EVALUATION_ITEM_NAME_TEXTBOX_SIZE, 'maxlength'=>255));
+                'name',
+                get_string('item_name', 'evaluation'),
+                array('size' => EVALUATION_ITEM_NAME_TEXTBOX_SIZE, 'maxlength' => 255));
         $mform->addElement('text',
-                            'label',
-                            get_string('item_label', 'evaluation'),
-                            array('size'=>EVALUATION_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
+                'label',
+                get_string('item_label', 'evaluation'),
+                array('size' => EVALUATION_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength' => 255));
 
         $this->infotype = &$mform->addElement('select',
-                                              'presentation',
-                                              get_string('infotype', 'evaluation'),
-                                              $presentationoptions);
+                'presentation',
+                get_string('infotype', 'evaluation'),
+                $presentationoptions);
 
         parent::definition();
         $this->set_data($item);

@@ -43,78 +43,57 @@ defined('MOODLE_INTERNAL') || die();
 
 function xmldb_evaluation_upgrade($oldversion) {
     global $CFG, $DB;
-	$dbman = $DB->get_manager();
+    $dbman = $DB->get_manager();
 
-	$newversion = 2022041403;   
+    $newversion = 2022041403;
     // Put any upgrade step following this.
-    if ( $oldversion < $newversion ) {
+    if ($oldversion < $newversion) {
 
-		// Define field min_results to be added to evaluation.
+        // Define field min_results to be added to evaluation.
         $table = new xmldb_table('evaluation');
         $field = new xmldb_field('min_results', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '0', 'completionsubmit');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-		// Define field privileged_users to be added to evaluation.
+        // Define field privileged_users to be added to evaluation.
         $field = new xmldb_field('privileged_users', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'min_results');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-		// Define field filter_course_of_studies to be added to evaluation.
-        $field = new xmldb_field('filter_course_of_studies', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'privileged_users');
+        // Define field filter_course_of_studies to be added to evaluation.
+        $field = new xmldb_field('filter_course_of_studies', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null,
+                'privileged_users');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-		// Define field filter_courses to be added to evaluation.
-        $field = new xmldb_field('filter_courses', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'filter_course_of_studies');
+        // Define field filter_courses to be added to evaluation.
+        $field = new xmldb_field('filter_courses', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null,
+                'filter_course_of_studies');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-		// Define field teamteaching to be added to table evaluation.
+        // Define field teamteaching to be added to table evaluation.
         $field = new xmldb_field('teamteaching', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'filter_courses');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-		// Define field teacherid to be added to table evaluation_completed.
+        // Define field teacherid to be added to table evaluation_completed.
         $table = new xmldb_table('evaluation_completed');
-		
+
         $field = new xmldb_field('teacherid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'courseid');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-		// add field course_of_studies to various tables
+        // add field course_of_studies to various tables
         $field = new xmldb_field('course_of_studies', XMLDB_TYPE_TEXT, null, null, false, null, '', 'courseid');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-		
-		// Define field teacherid to be added to table evaluation_completedtmp.
+
+        // Define field teacherid to be added to table evaluation_completedtmp.
         $table = new xmldb_table('evaluation_completedtmp');
-		$field = new xmldb_field('course_of_studies', XMLDB_TYPE_TEXT, null, null, false, null, '', 'courseid');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('teacherid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'course_of_studies');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-		
-		// Define field teacherid to be added to table evaluation_value.
-        $table = new xmldb_table('evaluation_value');
-		
-        $field = new xmldb_field('course_of_studies', XMLDB_TYPE_TEXT, null, null, false, null, '', 'courseid');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-		$field = new xmldb_field('teacherid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'course_of_studies');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-		
-        $table = new xmldb_table('evaluation_valuetmp');
-		
         $field = new xmldb_field('course_of_studies', XMLDB_TYPE_TEXT, null, null, false, null, '', 'courseid');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -124,60 +103,92 @@ function xmldb_evaluation_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-		// Define 10 fields to fix evaluation results after timeclose is reached
+        // Define field teacherid to be added to table evaluation_value.
+        $table = new xmldb_table('evaluation_value');
+
+        $field = new xmldb_field('course_of_studies', XMLDB_TYPE_TEXT, null, null, false, null, '', 'courseid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('teacherid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'course_of_studies');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('evaluation_valuetmp');
+
+        $field = new xmldb_field('course_of_studies', XMLDB_TYPE_TEXT, null, null, false, null, '', 'courseid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('teacherid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'course_of_studies');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define 10 fields to fix evaluation results after timeclose is reached
         $table = new xmldb_table('evaluation');
-		
+
         $field = new xmldb_field('possible_evaluations', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'teamteaching');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('possible_active_evaluations', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'possible_evaluations');
+        $field = new xmldb_field('possible_active_evaluations', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0',
+                'possible_evaluations');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('participating_students', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'possible_active_evaluations');
+        $field = new xmldb_field('participating_students', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0',
+                'possible_active_evaluations');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('participating_active_students', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'participating_students');
+        $field = new xmldb_field('participating_active_students', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0',
+                'participating_students');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('participating_teachers', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0', 'participating_active_students');
+        $field = new xmldb_field('participating_teachers', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0',
+                'participating_active_students');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('participating_courses', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'participating_teachers');
+        $field = new xmldb_field('participating_courses', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0',
+                'participating_teachers');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('participating_active_courses', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0', 'participating_courses');
+        $field = new xmldb_field('participating_active_courses', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0',
+                'participating_courses');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('teamteaching_courses', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0', 'participating_active_courses');
+        $field = new xmldb_field('teamteaching_courses', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0',
+                'participating_active_courses');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('courses_of_studies', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0', 'teamteaching_courses');
+        $field = new xmldb_field('courses_of_studies', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0',
+                'teamteaching_courses');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('duplicated_replies', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0', 'courses_of_studies');
+        $field = new xmldb_field('duplicated_replies', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0',
+                'courses_of_studies');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-		// End of Define 6 fields to fix evaluation results after timeclose is reached	
+        // End of Define 6 fields to fix evaluation results after timeclose is reached
 
-		// Evaluation savepoint reached.
-		upgrade_mod_savepoint(true, $newversion, 'evaluation');
+        // Evaluation savepoint reached.
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
     }
 
-	$newversion = 2022041900;   
-    if ( $oldversion < $newversion ) 
-	{
+    $newversion = 2022041900;
+    if ($oldversion < $newversion) {
         $table = new xmldb_table('evaluation');
-        $field = new xmldb_field('participating_active_teachers', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0', 'participating_teachers');
+        $field = new xmldb_field('participating_active_teachers', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0',
+                'participating_teachers');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -198,34 +209,43 @@ function xmldb_evaluation_upgrade($oldversion) {
         // Adding indexes to table evaluation_enrolments.
         $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
         // Conditionally launch create table for evaluation_enrolments.
-        if (!$dbman->table_exists($table)) 
-		{	$dbman->create_table($table); }
-		
-		// add missing indexes to table completed
-		$table = new xmldb_table('evaluation_completed');
-		$index = new xmldb_index('courseid', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
-        if (!$dbman->index_exists($table, $index)) {	$dbman->add_index($table, $index); }
-		$index = new xmldb_index('teacherid', XMLDB_INDEX_NOTUNIQUE, ['teacherid']);
-        if (!$dbman->index_exists($table, $index)) {	$dbman->add_index($table, $index); }
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
 
-		upgrade_mod_savepoint(true, $newversion, 'evaluation');
-	}
-	
-	$newversion = 2022042900;   
-    if ( $oldversion < $newversion ) 
-	{	$table = new xmldb_table('evaluation_enrolments');
+        // add missing indexes to table completed
+        $table = new xmldb_table('evaluation_completed');
+        $index = new xmldb_index('courseid', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        $index = new xmldb_index('teacherid', XMLDB_INDEX_NOTUNIQUE, ['teacherid']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
+
+    $newversion = 2022042900;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation_enrolments');
         // Adding fields to table evaluation_enrolments.	
         $field = new xmldb_field('fullname', XMLDB_TYPE_TEXT, null, null, false, null, '', 'courseid');
-        if ( !$dbman->field_exists( $table, $field ) )	{	$dbman->add_field($table, $field); }
-		$field = new xmldb_field('shortname', XMLDB_TYPE_TEXT, null, null, false, null, '', 'fullname');
-        if ( !$dbman->field_exists( $table, $field ) )	{	$dbman->add_field($table, $field); }
-		
-		upgrade_mod_savepoint(true, $newversion, 'evaluation');
-	}
-	
-	$newversion = 2022072503;   
-    if ( $oldversion < $newversion ) 
-	{   $table = new xmldb_table('evaluation_users');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('shortname', XMLDB_TYPE_TEXT, null, null, false, null, '', 'fullname');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
+
+    $newversion = 2022072503;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation_users');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
         $table->add_field('username', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, '');
@@ -240,151 +260,167 @@ function xmldb_evaluation_upgrade($oldversion) {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         // Adding indexes to table evaluation_users.
         $table->add_index('userid', XMLDB_INDEX_UNIQUE, ['userid']);
-		$table->add_index('username', XMLDB_INDEX_NOTUNIQUE, ['username']);
+        $table->add_index('username', XMLDB_INDEX_NOTUNIQUE, ['username']);
         // Conditionally launch create table for evaluation_users.
-        if (!$dbman->table_exists($table)) 
-		{	$dbman->create_table($table); }
-		
-		upgrade_mod_savepoint(true, $newversion, 'evaluation');
-	}
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
 
-	
-	$newversion = 2022081509;   
-    if ( $oldversion < $newversion ) 
-	{	
-		$table = new xmldb_table('evaluation');
-		$field = new xmldb_field('anonymized', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'anonymous');
-		if (!$dbman->field_exists($table, $field)) {
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
+
+    $newversion = 2022081509;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation');
+        $field = new xmldb_field('anonymized', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'anonymous');
+        if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-		
-		
-		$table = new xmldb_table('evaluation_value');
-		// Rename field names course_id to courseid and teacher_id to teacherid
-		$field = new xmldb_field('course_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', false);
-		if ( $dbman->field_exists($table, $field) )
-		{	$dbman->rename_field($table, $field, "courseid"); }
-		$field = new xmldb_field('teacher_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', false);
-		if ( $dbman->field_exists($table, $field) )
-		{	$dbman->rename_field($table, $field, "teacherid"); }
-		
-		$index = new xmldb_index('completed_item', XMLDB_INDEX_UNIQUE, ['completed, item, courseid, teacherid']);
-		if ( $dbman->index_exists($table, $index) )
-		{	$dbman->drop_index($table, $index); }
-		$dbman->add_index($table, $index);
-		$index = new xmldb_index('course_id', XMLDB_INDEX_NOTUNIQUE, ['course_id']);
-		if ( $dbman->index_exists($table, $index) )
-		{	$dbman->drop_index($table, $index); }
-		$index = new xmldb_index('courseid', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
-		if ( !$dbman->index_exists($table, $index) )
-		{	$dbman->add_index($table, $index); }
-		$index = new xmldb_index('teacher_id', XMLDB_INDEX_NOTUNIQUE, ['teacher_id']);
-		if ( $dbman->index_exists($table, $index) )
-		{	$dbman->drop_index($table, $index); }
-		$index = new xmldb_index('teacherid', XMLDB_INDEX_NOTUNIQUE, ['teacherid']);
-		if ( !$dbman->index_exists($table, $index) )
-		{	$dbman->add_index($table, $index); };
-		
-		
-		$table = new xmldb_table('evaluation_valuetmp');		
+
+        $table = new xmldb_table('evaluation_value');
+        // Rename field names course_id to courseid and teacher_id to teacherid
         $field = new xmldb_field('course_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', false);
-		if ( $dbman->field_exists($table, $field) )
-		{	$dbman->rename_field($table, $field, "courseid"); }
-		$field = new xmldb_field('teacher_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', false);
-		if ( $dbman->field_exists($table, $field) )
-		{	$dbman->rename_field($table, $field, "teacherid"); }
-		
-		$index = new xmldb_index('completed_item', XMLDB_INDEX_UNIQUE, ['completed, item, courseid, teacherid']);
-		if ( $dbman->index_exists($table, $index) )
-		{	$dbman->drop_index($table, $index); }
-		if ( !$dbman->index_exists($table, $index) )
-		{	$dbman->add_index($table, $index); }
-		
-		upgrade_mod_savepoint(true, $newversion, 'evaluation');
-	}
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, "courseid");
+        }
+        $field = new xmldb_field('teacher_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', false);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, "teacherid");
+        }
 
-	$newversion = 2022122402;
-    if ( $oldversion < $newversion ) 
-	{	$table = new xmldb_table('evaluation');
-		$field = new xmldb_field('semester', XMLDB_TYPE_CHAR, '5', null, XMLDB_NOTNULL, null, '');
-		if (!$dbman->field_exists($table, $field)) {
+        $index = new xmldb_index('completed_item', XMLDB_INDEX_UNIQUE, ['completed, item, courseid, teacherid']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        $dbman->add_index($table, $index);
+        $index = new xmldb_index('course_id', XMLDB_INDEX_NOTUNIQUE, ['course_id']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        $index = new xmldb_index('courseid', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        $index = new xmldb_index('teacher_id', XMLDB_INDEX_NOTUNIQUE, ['teacher_id']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        $index = new xmldb_index('teacherid', XMLDB_INDEX_NOTUNIQUE, ['teacherid']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        };
+
+        $table = new xmldb_table('evaluation_valuetmp');
+        $field = new xmldb_field('course_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', false);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, "courseid");
+        }
+        $field = new xmldb_field('teacher_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', false);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, "teacherid");
+        }
+
+        $index = new xmldb_index('completed_item', XMLDB_INDEX_UNIQUE, ['completed, item, courseid, teacherid']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
+
+    $newversion = 2022122402;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation');
+        $field = new xmldb_field('semester', XMLDB_TYPE_CHAR, '5', null, XMLDB_NOTNULL, null, '');
+        if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-		upgrade_mod_savepoint(true, $newversion, 'evaluation');
-	}
-	
-	$newversion = 2023010802;
-    if ( $oldversion < $newversion ) 
-	{	$table = new xmldb_table('evaluation');
-		$field = new xmldb_field('show_on_index', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', false );
-		if (!$dbman->field_exists($table, $field)) 
-		{	$dbman->add_field($table, $field); }
-		$field = new xmldb_field('min_results_text', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '6', false );
-		if (!$dbman->field_exists($table, $field)) 
-		{	$dbman->add_field($table, $field); }
-		$field = new xmldb_field('min_results_priv', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '3', false );
-		if (!$dbman->field_exists($table, $field)) 
-		{	$dbman->add_field($table, $field); }
-		$field = new xmldb_field('filter_add_courses', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, false );
-		if ( $dbman->field_exists($table, $field)) 
-		{	$dbman->rename_field($table, $field, "filter_courses", true, true); }
-		$field = new xmldb_field('evaluation_min_results', XMLDB_TYPE_INTEGER, null, null, XMLDB_NOTNULL, null, '3', false );
-		if ( $dbman->field_exists($table, $field)) 
-		{	$dbman->rename_field($table, $field, "min_results", true, true); }
-		
-		upgrade_mod_savepoint(true, $newversion, 'evaluation');
-	}
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
 
+    $newversion = 2023010802;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation');
+        $field = new xmldb_field('show_on_index', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', false);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('min_results_text', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '6', false);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('min_results_priv', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '3', false);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('filter_add_courses', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, false);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, "filter_courses", true, true);
+        }
+        $field = new xmldb_field('evaluation_min_results', XMLDB_TYPE_INTEGER, null, null, XMLDB_NOTNULL, null, '3', false);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, "min_results", true, true);
+        }
 
-	$newversion = 2023021801;
-	if ( $oldversion < $newversion ) 
-	{	
-		$table = new xmldb_table('evaluation_users');
-		//$table->add_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-		$field = new xmldb_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-		if (!$dbman->field_exists($table, $field)) 
-		{	$dbman->add_field($table, $field); }
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
 
-		$table = new xmldb_table('evaluation_enrolments');
-		$field = new xmldb_field('active_students', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-		if (!$dbman->field_exists($table, $field)) 
-		{	$dbman->add_field($table, $field); }
-		$field = new xmldb_field('active_teachers', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-		if (!$dbman->field_exists($table, $field)) 
-		{	$dbman->add_field($table, $field); }
+    $newversion = 2023021801;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation_users');
+        //$table->add_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $field = new xmldb_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
 
-		$table = new xmldb_table('evaluation_users_la');
+        $table = new xmldb_table('evaluation_enrolments');
+        $field = new xmldb_field('active_students', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('active_teachers', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('evaluation_users_la');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-		$table->add_field('evaluation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-		$table->add_field('role', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, '');
+        $table->add_field('evaluation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('role', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, '');
         $table->add_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         // Adding keys to table evaluation_users.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         // Adding indexes to table evaluation_users.
         $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
-		$table->add_index('evaluation', XMLDB_INDEX_NOTUNIQUE, ['evaluation']);
+        $table->add_index('evaluation', XMLDB_INDEX_NOTUNIQUE, ['evaluation']);
         // Conditionally launch create table for evaluation_users.
-        if (!$dbman->table_exists($table)) 
-		{	$dbman->create_table($table); }
-		upgrade_mod_savepoint(true, $newversion, 'evaluation');
-	}
-	
-	$newversion = 2023021803;
-	if ( $oldversion < $newversion ) 
-	{	
-		$table = new xmldb_table('evaluation_users_la');
-		$index = new xmldb_index('userid', XMLDB_INDEX_UNIQUE, ['userid']);
-		if ( $dbman->index_exists($table, $index) )
-		{	$dbman->drop_index($table, $index); }
-		$table = new xmldb_table('evaluation_users_la');
-		$index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
-        if ( !$dbman->index_exists($table, $index) )
-		{	$dbman->add_index($table,$index); }
-		upgrade_mod_savepoint(true, $newversion, 'evaluation');
-	}
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
 
-	return true;
+    $newversion = 2023021803;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation_users_la');
+        $index = new xmldb_index('userid', XMLDB_INDEX_UNIQUE, ['userid']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        $table = new xmldb_table('evaluation_users_la');
+        $index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
+
+    return true;
 }
 

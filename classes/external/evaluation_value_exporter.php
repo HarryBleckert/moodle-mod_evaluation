@@ -21,6 +21,7 @@
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_evaluation\external;
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,38 +42,38 @@ class evaluation_value_exporter extends exporter {
      */
     protected static function define_properties() {
         return array(
-            'id' => array(
-                'type' => PARAM_INT,
-                'description' => 'The record id.',
-            ),
-            'courseid' => array(
-                'type' => PARAM_INT,
-                'description' => 'The course id this record belongs to.',
-            ),
-            'course_of_studies' => array(
-                'type' => PARAM_ALPHA,
-                'description' => 'The course of studies this record belongs to.',
-            ),
-            'teacherid' => array(
-                'type' => PARAM_INT,
-                'description' => 'The teacher id this record belongs to.',
-            ),
-            'item' => array(
-                'type' => PARAM_INT,
-                'description' => 'The item id that was responded.',
-            ),
-            'completed' => array(
-                'type' => PARAM_INT,
-                'description' => 'Reference to the evaluation_completed table.',
-            ),
-            'tmp_completed' => array(
-                'type' => PARAM_INT,
-                'description' => 'Old field - not used anymore.',
-            ),
-            'value' => array(
-                'type' => PARAM_RAW,
-                'description' => 'The response value.',
-            ),
+                'id' => array(
+                        'type' => PARAM_INT,
+                        'description' => 'The record id.',
+                ),
+                'courseid' => array(
+                        'type' => PARAM_INT,
+                        'description' => 'The course id this record belongs to.',
+                ),
+                'course_of_studies' => array(
+                        'type' => PARAM_ALPHA,
+                        'description' => 'The course of studies this record belongs to.',
+                ),
+                'teacherid' => array(
+                        'type' => PARAM_INT,
+                        'description' => 'The teacher id this record belongs to.',
+                ),
+                'item' => array(
+                        'type' => PARAM_INT,
+                        'description' => 'The item id that was responded.',
+                ),
+                'completed' => array(
+                        'type' => PARAM_INT,
+                        'description' => 'Reference to the evaluation_completed table.',
+                ),
+                'tmp_completed' => array(
+                        'type' => PARAM_INT,
+                        'description' => 'Old field - not used anymore.',
+                ),
+                'value' => array(
+                        'type' => PARAM_RAW,
+                        'description' => 'The response value.',
+                ),
         );
     }
 }

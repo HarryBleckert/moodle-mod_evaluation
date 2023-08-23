@@ -33,7 +33,6 @@ $teacherid = optional_param('teacherid', false, PARAM_INT);
 $course_of_studies = false;
 $url = new moodle_url('/mod/evaluation/analysis_to_excel.php', array('id' => $id));
 
-
 $PAGE->set_url($url);
 
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
@@ -43,51 +42,57 @@ $context = context_module::instance($cm->id);
 $evaluation = $PAGE->activityrecord;
 if ($courseid) {
     $url->param('courseid', $courseid);
-	$course_of_studies = evaluation_get_course_of_studies($courseid,false);
+    $course_of_studies = evaluation_get_course_of_studies($courseid, false);
 }
-if ($teacherid) {	$url->param('teacherid', $teacherid); }
-if ( $course_of_studiesID )
-{	$course_of_studies = evaluation_get_course_of_studies_from_evc( $course_of_studiesID, $evaluation ); 
-	$url->param('course_of_studiesID', $course_of_studiesID);
+if ($teacherid) {
+    $url->param('teacherid', $teacherid);
+}
+if ($course_of_studiesID) {
+    $course_of_studies = evaluation_get_course_of_studies_from_evc($course_of_studiesID, $evaluation);
+    $url->param('course_of_studiesID', $course_of_studiesID);
 }
 
 // patch to allow teachers in sitewide evaluations to evaluate results regarding their specific courses
-list($isPermitted, $CourseTitle, $CourseName, $SiteEvaluation) = evaluation_check_Roles_and_Permissions( $courseid, $evaluation, $cm );
+list($isPermitted, $CourseTitle, $CourseName, $SiteEvaluation) =
+        evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm);
 // 
-$Teacher 	= evaluation_is_teacher( $evaluation, $_SESSION["myEvaluations"], $courseid );
+$Teacher = evaluation_is_teacher($evaluation, $_SESSION["myEvaluations"], $courseid);
 $isPermitted || $Teacher || require_capability('mod/evaluation:viewreports', $context);
 
 // logging
-evaluation_trigger_module_analysedExported( $evaluation, $cm, $courseid );
+evaluation_trigger_module_analysedExported($evaluation, $cm, $courseid);
 
 // Buffering any output. This prevents some output before the excel-header will be send.
 ob_start();
 ob_end_clean();
 
 // Get the questions (item-names).
-if ( $courseid )
-{	$evaluationstructure = new mod_evaluation_structure($evaluation, $cm, $courseid, null, 0, $teacherid, $course_of_studies, $course_of_studiesID); }
-else
-{	$evaluationstructure = new mod_evaluation_structure($evaluation, $cm, false, null, 0, $teacherid, $course_of_studies, $course_of_studiesID); }
+if ($courseid) {
+    $evaluationstructure = new mod_evaluation_structure($evaluation, $cm, $courseid, null, 0, $teacherid, $course_of_studies,
+            $course_of_studiesID);
+} else {
+    $evaluationstructure =
+            new mod_evaluation_structure($evaluation, $cm, false, null, 0, $teacherid, $course_of_studies, $course_of_studiesID);
+}
 
 if (!$items = $evaluationstructure->get_items(true)) {
     print_error('no_items_available_yet', 'evaluation', $cm->url);
 }
 
 $mygroupid = groups_get_activity_group($cm);
-$CourseName_ = empty($CourseName) ?"" :"_". $CourseName;
+$CourseName_ = empty($CourseName) ? "" : "_" . $CourseName;
 // Creating a workbook.
-$filename = "evaluation_" . clean_filename($cm->get_formatted_name() . $CourseName_ ) ." (Auswertung).xlsx";
+$filename = "evaluation_" . clean_filename($cm->get_formatted_name() . $CourseName_) . " (Auswertung).xlsx";
 $workbook = new MoodleExcelWorkbook($filename);
 
 $itemsCounted = 0;
-foreach ($items as $item) 
-{    // export only rateable items
-	if ( !in_array($item->typ, array("numeric","multichoice","multichoicerated") ) )
-	{	continue; }
-	$itemsCounted++;
+foreach ($items as $item) {    // export only rateable items
+    if (!in_array($item->typ, array("numeric", "multichoice", "multichoicerated"))) {
+        continue;
+    }
+    $itemsCounted++;
 }
-$itemsText = safeCount( $items ) - $itemsCounted;
+$itemsText = safeCount($items) - $itemsCounted;
 
 // Creating the worksheet.
 error_reporting(0);
@@ -110,62 +115,57 @@ $xlsformats->procent = $workbook->add_format(['align' => 'left', 'bold' => 1, 'v
 $rowoffset1 = 0;
 $worksheet1->write_string($rowoffset1, 0, $cm->get_formatted_name(), $xlsformats->head1);
 // date of print
-$rowoffset1 ++; $worksheet1->write_string($rowoffset1, 0, userdate(time()), $xlsformats->default);
+$rowoffset1++;
+$worksheet1->write_string($rowoffset1, 0, userdate(time()), $xlsformats->default);
 
 // Abgabefrist
-if ( $evaluation->timeopen)
-{	$rowoffset1 ++;
-	$worksheet1->write_string($rowoffset1, 0, get_string('evaluationopen', 'evaluation').": ", $xlsformats->value_bold);
-	$worksheet1->write_string($rowoffset1, 1, date("d.m.Y",$evaluation->timeopen), $xlsformats->default);
+if ($evaluation->timeopen) {
+    $rowoffset1++;
+    $worksheet1->write_string($rowoffset1, 0, get_string('evaluationopen', 'evaluation') . ": ", $xlsformats->value_bold);
+    $worksheet1->write_string($rowoffset1, 1, date("d.m.Y", $evaluation->timeopen), $xlsformats->default);
 }
-if ( $evaluation->timeclose)
-{	$rowoffset1 ++;
-	$worksheet1->write_string($rowoffset1, 0, get_string('evaluationclose', 'evaluation').": ", $xlsformats->value_bold);
-	$worksheet1->write_string($rowoffset1, 1, date("d.m.Y",$evaluation->timeclose), $xlsformats->default);
-}
-
-
-if ( $courseid && $CourseName )
-{	$rowoffset1 ++;
-	$worksheet1->write_string($rowoffset1, 0, "Kurs ID: ", $xlsformats->default);
-	$worksheet1->write_string($rowoffset1, 1, $courseid, $xlsformats->default);
-	$rowoffset1 ++;
-	$worksheet1->write_string($rowoffset1, 0, $CourseName, $xlsformats->value_bold);
-	if ( !$teacherid )
-	{	$teacher = evaluation_get_user_field( $teacherid, 'fullname' ); 
-		$rowoffset1 ++;
-		$worksheet1->write_string($rowoffset1, 0, get_string("teacher","evaluation").": ", $xlsformats->default);
-		$worksheet1->write_string($rowoffset1, 1, $teacher, $xlsformats->value_bold);
-	}
-}
-else 
-{	$rowoffset1 ++;
-	$worksheet1->write_string($rowoffset1, 0, get_string('fulllistofcourses'), $xlsformats->value_bold);
-	
-	if ( $course_of_studies )
-	{	$rowoffset1 ++;
-		$worksheet1->write_string($rowoffset1, 0, get_string("course_of_studies","evaluation"). ": ", $xlsformats->default);
-		$worksheet1->write_string($rowoffset1, 1, $course_of_studies, $xlsformats->value_bold);
-
-	}
-	else 
-	{	$rowoffset1 ++;
-		$worksheet1->write_string($rowoffset1, 0, get_string('fulllistofstudies','evaluation'), $xlsformats->value_bold);
-	}
+if ($evaluation->timeclose) {
+    $rowoffset1++;
+    $worksheet1->write_string($rowoffset1, 0, get_string('evaluationclose', 'evaluation') . ": ", $xlsformats->value_bold);
+    $worksheet1->write_string($rowoffset1, 1, date("d.m.Y", $evaluation->timeclose), $xlsformats->default);
 }
 
-if ( $teacherid )
-{	$teacher = evaluation_get_user_field( $teacherid, 'fullname' ); 
-	$rowoffset1 ++;
-	$worksheet1->write_string($rowoffset1, 0, get_string("teacher","evaluation"). ": ", $xlsformats->default);
-	$worksheet1->write_string($rowoffset1, 1, $teacher, $xlsformats->value_bold);
-}
-else 
-{	$rowoffset1 ++;
-	$worksheet1->write_string($rowoffset1, 0, get_string('fulllistofteachers','evaluation'), $xlsformats->value_bold);
+if ($courseid && $CourseName) {
+    $rowoffset1++;
+    $worksheet1->write_string($rowoffset1, 0, "Kurs ID: ", $xlsformats->default);
+    $worksheet1->write_string($rowoffset1, 1, $courseid, $xlsformats->default);
+    $rowoffset1++;
+    $worksheet1->write_string($rowoffset1, 0, $CourseName, $xlsformats->value_bold);
+    if (!$teacherid) {
+        $teacher = evaluation_get_user_field($teacherid, 'fullname');
+        $rowoffset1++;
+        $worksheet1->write_string($rowoffset1, 0, get_string("teacher", "evaluation") . ": ", $xlsformats->default);
+        $worksheet1->write_string($rowoffset1, 1, $teacher, $xlsformats->value_bold);
+    }
+} else {
+    $rowoffset1++;
+    $worksheet1->write_string($rowoffset1, 0, get_string('fulllistofcourses'), $xlsformats->value_bold);
+
+    if ($course_of_studies) {
+        $rowoffset1++;
+        $worksheet1->write_string($rowoffset1, 0, get_string("course_of_studies", "evaluation") . ": ", $xlsformats->default);
+        $worksheet1->write_string($rowoffset1, 1, $course_of_studies, $xlsformats->value_bold);
+
+    } else {
+        $rowoffset1++;
+        $worksheet1->write_string($rowoffset1, 0, get_string('fulllistofstudies', 'evaluation'), $xlsformats->value_bold);
+    }
 }
 
-
+if ($teacherid) {
+    $teacher = evaluation_get_user_field($teacherid, 'fullname');
+    $rowoffset1++;
+    $worksheet1->write_string($rowoffset1, 0, get_string("teacher", "evaluation") . ": ", $xlsformats->default);
+    $worksheet1->write_string($rowoffset1, 1, $teacher, $xlsformats->value_bold);
+} else {
+    $rowoffset1++;
+    $worksheet1->write_string($rowoffset1, 0, get_string('fulllistofteachers', 'evaluation'), $xlsformats->value_bold);
+}
 
 // Get the completeds.
 $rowoffset1++;
@@ -174,15 +174,15 @@ $completedscount = $evaluationstructure->count_completed_responses($mygroupid);
 // Keep consistency and write count of completeds even when they are 0.
 $rowoffset1++;
 $worksheet1->write_string($rowoffset1,
-    0,
-    get_string('completed_evaluations', 'evaluation').': '.strval($completedscount),
-    $xlsformats->head1);
+        0,
+        get_string('completed_evaluations', 'evaluation') . ': ' . strval($completedscount),
+        $xlsformats->head1);
 
 $rowoffset1++;
 $worksheet1->write_string($rowoffset1,
-    0,
-    "Ausgewertete ". get_string('questions', 'evaluation').': '. $itemsCounted,
-    $xlsformats->head1);
+        0,
+        "Ausgewertete " . get_string('questions', 'evaluation') . ': ' . $itemsCounted,
+        $xlsformats->head1);
 
 $rowoffset1 += 2;
 $worksheet1->write_string($rowoffset1, 0, get_string('item_label', 'evaluation'), $xlsformats->head1);
@@ -193,16 +193,17 @@ $rowoffset1++;
 
 foreach ($items as $item) {
     // export only rateable items
-	if ( !in_array($item->typ, array("numeric","multichoice","multichoicerated") ) )
-	{	continue; }
-	// Get the class of item-typ.
+    if (!in_array($item->typ, array("numeric", "multichoice", "multichoicerated"))) {
+        continue;
+    }
+    // Get the class of item-typ.
     $itemobj = evaluation_get_item_class($item->typ);
     $rowoffset1 = $itemobj->excelprint_item($worksheet1,
-        $rowoffset1,
-        $xlsformats,
-        $item,
-        $mygroupid, 
-		$courseid, $teacherid, $course_of_studies);
+            $rowoffset1,
+            $xlsformats,
+            $item,
+            $mygroupid,
+            $courseid, $teacherid, $course_of_studies);
 }
 
 $workbook->close();

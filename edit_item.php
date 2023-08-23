@@ -42,7 +42,7 @@ if ($itemid) {
     $item = null;
     list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'evaluation');
     $url = new moodle_url('/mod/evaluation/edit_item.php', array('cmid' => $cm->id, 'typ' => $typ));
-    $item = (object)['id' => null, 'position' => -1, 'typ' => $typ, 'options' => ''];
+    $item = (object) ['id' => null, 'position' => -1, 'typ' => $typ, 'options' => ''];
 }
 
 require_login($course, true, $cm);
@@ -64,11 +64,11 @@ if (!$item->id && $typ === 'pagebreak') {
 
 //get the existing item or create it
 // $formdata->itemid = isset($formdata->itemid) ? $formdata->itemid : NULL;
-if (!$typ || !file_exists($CFG->dirroot.'/mod/evaluation/item/'.$typ.'/lib.php')) {
+if (!$typ || !file_exists($CFG->dirroot . '/mod/evaluation/item/' . $typ . '/lib.php')) {
     print_error('typemissing', 'evaluation', $editurl->out(false));
 }
 
-require_once($CFG->dirroot.'/mod/evaluation/item/'.$typ.'/lib.php');
+require_once($CFG->dirroot . '/mod/evaluation/item/' . $typ . '/lib.php');
 
 $itemobj = evaluation_get_item_class($typ);
 
@@ -88,7 +88,7 @@ if ($itemobj->get_data()) {
 ////////////////////////////////////////////////////////////////////////////////////
 /// Print the page header
 $strevaluations = get_string("modulenameplural", "evaluation");
-$strevaluation  = get_string("modulename", "evaluation");
+$strevaluation = get_string("modulename", "evaluation");
 
 navigation_node::override_active_url(new moodle_url('/mod/evaluation/edit.php',
         array('id' => $cm->id, 'do_show' => 'edit')));

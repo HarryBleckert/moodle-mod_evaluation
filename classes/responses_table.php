@@ -77,9 +77,9 @@ class mod_evaluation_responses_table extends table_sql {
 
     /** @var array the data structure containing the table data for the external function */
     protected $dataforexternal = [];
-	
-	// teacherid from completed
-	//protected $teacherid = 0;
+
+    // teacherid from completed
+    //protected $teacherid = 0;
     /**
      * Constructor
      *
@@ -93,7 +93,7 @@ class mod_evaluation_responses_table extends table_sql {
 
         $this->showall = optional_param($this->showallparamname, 0, PARAM_BOOL);
         $this->define_baseurl(new moodle_url('/mod/evaluation/show_entries.php',
-            ['id' => $this->evaluationstructure->get_cm()->id]));
+                ['id' => $this->evaluationstructure->get_cm()->id]));
         if ($courseid = $this->evaluationstructure->get_courseid()) {
             $this->baseurl->param('courseid', $courseid);
         }
@@ -107,7 +107,7 @@ class mod_evaluation_responses_table extends table_sql {
             $this->baseurl->param($this->showallparamname, $this->showall);
         }
 
-        $name = format_string( $evaluationstructure->get_evaluation()->name . " (Rohdaten)");
+        $name = format_string($evaluationstructure->get_evaluation()->name . " (Rohdaten)");
         $this->is_downloadable(true);
         $this->is_downloading(optional_param($this->downloadparamname, 0, PARAM_ALPHA),
                 $name, get_string('responses', 'evaluation'));
@@ -117,41 +117,43 @@ class mod_evaluation_responses_table extends table_sql {
 
     /**
      * Initialises table
+     *
      * @param int $group retrieve only users from this group (optional)
      */
     protected function init($group = 0) {
 
-		$tablecolumns = array('userpic', 'fullname', 'groups');
+        $tablecolumns = array('userpic', 'fullname', 'groups');
         $tableheaders = array(
-            get_string('userpic'),
-            get_string('fullnameuser'),
-            get_string('groups')
+                get_string('userpic'),
+                get_string('fullnameuser'),
+                get_string('groups')
         );
 
         // TODO Does not support custom user profile fields (MDL-70456).
         $userfieldsapi = \core_user\fields::for_identity($this->get_context(), false)->with_userpic();
         $ufields = $userfieldsapi->get_sql('u', false, '', $this->useridfield, false)->selects;
         $extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
-        $fields = 'c.id, c.timemodified as completed_timemodified, c.courseid, c.course_of_studies, c.teacherid, '.$ufields;
+        $fields = 'c.id, c.timemodified as completed_timemodified, c.courseid, c.course_of_studies, c.teacherid, ' . $ufields;
         $from = '{evaluation_completed} c '
                 . 'JOIN {user} u ON u.id = c.userid'; // ignore deletion status: AND u.deleted = :notdeleted
-				
+
         $where = 'c.anonymous_response = :anon
                 AND c.evaluation = :instance';
 
-		if ($this->evaluationstructure->get_courseid()) {
+        if ($this->evaluationstructure->get_courseid()) {
             $where .= ' AND c.courseid = :courseid';
         }
         if ($this->evaluationstructure->get_course_of_studies()) {
-            $where .= " AND c.course_of_studies = '".$this->evaluationstructure->get_course_of_studies()."'";
+            $where .= " AND c.course_of_studies = '" . $this->evaluationstructure->get_course_of_studies() . "'";
         }
         if ($this->evaluationstructure->get_teacherid()) {
-            $where .= ' AND c.teacherid = '.$this->evaluationstructure->get_teacherid();
+            $where .= ' AND c.teacherid = ' . $this->evaluationstructure->get_teacherid();
         }
-		// handle CoS privileged users
-		$CoS_Filter = evaluation_get_cosPrivileged_filter( $this->evaluationstructure->get_evaluation(), "c" );
-		if ( $CoS_Filter)
-		{	$where .= $CoS_Filter; }
+        // handle CoS privileged users
+        $CoS_Filter = evaluation_get_cosPrivileged_filter($this->evaluationstructure->get_evaluation(), "c");
+        if ($CoS_Filter) {
+            $where .= $CoS_Filter;
+        }
 
         if ($this->is_downloading()) {
             // When downloading data:
@@ -167,27 +169,25 @@ class mod_evaluation_responses_table extends table_sql {
             }
         }
 
-		
         $tablecolumns[] = 'completed_timemodified';
         $tableheaders[] = get_string('date');
-		
-		//if ( $this->evaluationstructure->get_evaluation()->teamteaching )
-        $tablecolumns[] = 'teacherid';
-		$tableheaders[] = get_string('teacher','evaluation');
-		
-		
-        if ($this->evaluationstructure->get_evaluation()->course == SITEID) 
-		{	if ( !$this->evaluationstructure->get_courseid() )
-			{	$tablecolumns[] = 'courseid';
-				$tableheaders[] = get_string('course');
-				$this->no_sorting('courseid');
-			}
-			if ( !$this->evaluationstructure->get_course_of_studies() 
-				AND !evaluation_is_item_course_of_studies($this->evaluationstructure->get_evaluation()->id) )
-			$tablecolumns[] = 'course_of_studies';
-            $tableheaders[] = get_string('course_of_studies','evaluation');
-        }
 
+        //if ( $this->evaluationstructure->get_evaluation()->teamteaching )
+        $tablecolumns[] = 'teacherid';
+        $tableheaders[] = get_string('teacher', 'evaluation');
+
+        if ($this->evaluationstructure->get_evaluation()->course == SITEID) {
+            if (!$this->evaluationstructure->get_courseid()) {
+                $tablecolumns[] = 'courseid';
+                $tableheaders[] = get_string('course');
+                $this->no_sorting('courseid');
+            }
+            if (!$this->evaluationstructure->get_course_of_studies()
+                    and !evaluation_is_item_course_of_studies($this->evaluationstructure->get_evaluation()->id)) {
+                $tablecolumns[] = 'course_of_studies';
+            }
+            $tableheaders[] = get_string('course_of_studies', 'evaluation');
+        }
 
         $this->define_columns($tablecolumns);
         $this->define_headers($tableheaders);
@@ -201,11 +201,11 @@ class mod_evaluation_responses_table extends table_sql {
         $params['anon'] = EVALUATION_ANONYMOUS_NO;
         $params['instance'] = $this->evaluationstructure->get_evaluation()->id;
         // we need to ignore deletion status, else stats will fail
-		//$params['notdeleted'] = 0;
+        //$params['notdeleted'] = 0;
         $params['courseid'] = $this->evaluationstructure->get_courseid();
-		$params['teacherid']= $this->evaluationstructure->get_teacherid();
-		$params['course_of_studies']= $this->evaluationstructure->get_course_of_studies();
-		
+        $params['teacherid'] = $this->evaluationstructure->get_teacherid();
+        $params['course_of_studies'] = $this->evaluationstructure->get_course_of_studies();
+
         $group = (empty($group)) ? groups_get_activity_group($this->evaluationstructure->get_cm(), true) : $group;
         if ($group) {
             $where .= ' AND c.userid IN (SELECT g.userid FROM {groups_members} g WHERE g.groupid = :group)';
@@ -218,33 +218,30 @@ class mod_evaluation_responses_table extends table_sql {
 
     /**
      * Current context
+     *
      * @return context_module
      */
     public function get_context(): context {
         return context_module::instance($this->evaluationstructure->get_cm()->id);
     }
 
-	
     /**
-     * Allows to set the display column value for all columns without "col_xxxxx" method.
-     * @param string $column column name
-     * @param stdClass $row current record result of SQL query
+     * Defines columns
+     *
+     * @param array $columns an array of identifying names for columns. If
+     * columns are sorted then column names must correspond to a field in sql.
      */
-    public function other_cols($column, $row) {
-        if (preg_match('/^val(\d+)$/', $column, $matches)) {
-            $items = $this->evaluationstructure->get_items();
-            $itemobj = evaluation_get_item_class($items[$matches[1]]->typ);
-            $printval = $itemobj->get_printval($items[$matches[1]], (object) ['value' => $row->$column]);
-            if ($this->is_downloading()) {
-                $printval = s($printval);
-            }
-            return trim($printval);
+    public function define_columns($columns) {
+        parent::define_columns($columns);
+        foreach ($this->columns as $column => $column) {
+            // Automatically assign classes to columns.
+            $this->column_class[$column] = ' ' . $column;
         }
-        return parent::other_cols($column, $row);
     }
 
     /**
      * Prepares column userpic for display
+     *
      * @param stdClass $row
      * @return string
      */
@@ -256,6 +253,7 @@ class mod_evaluation_responses_table extends table_sql {
 
     /**
      * Prepares column deleteentry for display
+     *
      * @param stdClass $row
      * @return string
      */
@@ -264,20 +262,12 @@ class mod_evaluation_responses_table extends table_sql {
         $deleteentryurl = new moodle_url($this->baseurl, ['delete' => $row->id, 'sesskey' => sesskey()]);
         $deleteaction = new confirm_action(get_string('confirmdeleteentry', 'evaluation'));
         return $OUTPUT->action_icon($deleteentryurl,
-            new pix_icon('t/delete', get_string('delete_entry', 'evaluation')), $deleteaction);
-    }
-
-    /**
-     * Returns a link for viewing a single response
-     * @param stdClass $row
-     * @return \moodle_url
-     */
-    protected function get_link_single_entry($row) {
-        return new moodle_url($this->baseurl, ['userid' => $row->{$this->useridfield}, 'showcompleted' => $row->id]);
+                new pix_icon('t/delete', get_string('delete_entry', 'evaluation')), $deleteaction);
     }
 
     /**
      * Prepares column completed_timemodified for display
+     *
      * @param stdClass $student
      * @return string
      */
@@ -291,7 +281,18 @@ class mod_evaluation_responses_table extends table_sql {
     }
 
     /**
+     * Returns a link for viewing a single response
+     *
+     * @param stdClass $row
+     * @return \moodle_url
+     */
+    protected function get_link_single_entry($row) {
+        return new moodle_url($this->baseurl, ['userid' => $row->{$this->useridfield}, 'showcompleted' => $row->id]);
+    }
+
+    /**
      * Prepares column courseid for display
+     *
      * @param array $row
      * @return string
      */
@@ -301,15 +302,15 @@ class mod_evaluation_responses_table extends table_sql {
         if (isset($courses[$row->courseid])) {
             $name = $courses[$row->courseid];
             if (!$this->is_downloading()) {
-                $name = html_writer::link(course_get_url($row->courseid), $name,array("target" =>"course"));
+                $name = html_writer::link(course_get_url($row->courseid), $name, array("target" => "course"));
             }
         }
         return $name;
     }
 
-
     /**
      * Prepares column teacherid for display
+     *
      * @param array $row
      * @return string
      */
@@ -317,38 +318,40 @@ class mod_evaluation_responses_table extends table_sql {
         $teachers = $this->evaluationstructure->get_completed_teachers();
         $name = '';
         //if (isset($teachers[$row->teacherid])) {
-		if (isset($teachers[$row->teacherid])) {
+        if (isset($teachers[$row->teacherid])) {
             $name = $teachers[$row->teacherid];
-			if (!$this->is_downloading() AND !empty($name) ) 
-			{	if ( defined( "EVALUATION_OWNER") )
-				{	$name = '<a href="/mod/evaluation/print.php?id='.$this->evaluationstructure->get_cm()->id
-							.'&showTeacher='.$row->teacherid.'&courseid='.$row->courseid.'" target="showteacher">'.$name.'</a>'; 
-				}
-				else
-				{	$name = '<a href="/user/profile.php?id='.$row->teacherid.'" target="teacher">'.$name.'</a>'; }
-			}         
+            if (!$this->is_downloading() and !empty($name)) {
+                if (defined("EVALUATION_OWNER")) {
+                    $name = '<a href="/mod/evaluation/print.php?id=' . $this->evaluationstructure->get_cm()->id
+                            . '&showTeacher=' . $row->teacherid . '&courseid=' . $row->courseid . '" target="showteacher">' .
+                            $name . '</a>';
+                } else {
+                    $name = '<a href="/user/profile.php?id=' . $row->teacherid . '" target="teacher">' . $name . '</a>';
+                }
+            }
         }
-		//print "teachers[row->teacherid]: ".$teachers[$row->teacherid]."<br>".nl2br(var_export($teachers,true));exit;		
+        //print "teachers[row->teacherid]: ".$teachers[$row->teacherid]."<br>".nl2br(var_export($teachers,true));exit;
         return $name;
     }
-	
-	
+
     /**
      * Prepares column studiengang for display
+     *
      * @param array $row
      * @return string
      */
     public function col_course_of_studies($row) {
         //$courses = $this->evaluationstructure->get_completed_course_of_studies();
         $name = '';
-        if ( isset($row->course_of_studies) ) {
-            $name = $row->course_of_studies; 
+        if (isset($row->course_of_studies)) {
+            $name = $row->course_of_studies;
         }
         return $name;
     }
-	
+
     /**
      * Prepares column groups for display
+     *
      * @param array $row
      * @return string
      */
@@ -356,10 +359,55 @@ class mod_evaluation_responses_table extends table_sql {
         $groups = '';
         if ($usergrps = groups_get_all_groups($this->evaluationstructure->get_cm()->course, $row->userid, 0, 'name')) {
             foreach ($usergrps as $group) {
-                $groups .= format_string($group->name). ' ';
+                $groups .= format_string($group->name) . ' ';
             }
         }
         return trim($groups);
+    }
+
+    /**
+     * Displays the table
+     */
+    public function display() {
+        global $OUTPUT;
+        groups_print_activity_menu($this->evaluationstructure->get_cm(), $this->baseurl->out());
+        $grandtotal = $this->get_total_responses_count();
+        if (!$grandtotal) {
+            echo $OUTPUT->box(get_string('nothingtodisplay'), 'generalbox nothingtodisplay');
+            return;
+        }
+
+        if (!isset($_SESSION['questionslimited']) and
+                count($this->evaluationstructure->get_items(true)) > self::PREVIEWCOLUMNSLIMIT) {
+            echo $OUTPUT->notification(get_string('questionslimited', 'evaluation', self::PREVIEWCOLUMNSLIMIT), 'info');
+        }
+        $_SESSION['questionslimited'] = true;
+        $this->out($this->showall ? $grandtotal : EVALUATION_DEFAULT_PAGE_COUNT,
+                $grandtotal > EVALUATION_DEFAULT_PAGE_COUNT);
+
+        // Toggle 'Show all' link.
+        if ($this->totalrows > EVALUATION_DEFAULT_PAGE_COUNT) {
+            if (!$this->use_pages) {
+                echo html_writer::div(html_writer::link(new moodle_url($this->baseurl, [$this->showallparamname => 0]),
+                        get_string('showperpage', '', EVALUATION_DEFAULT_PAGE_COUNT)), 'showall');
+            } else {
+                echo html_writer::div(html_writer::link(new moodle_url($this->baseurl, [$this->showallparamname => 1]),
+                        get_string('showall', '', $this->totalrows)), 'showall');
+            }
+        }
+    }
+
+    /**
+     * Convenience method to call a number of methods for you to display the
+     * table.
+     *
+     * @param int $pagesize
+     * @param bool $useinitialsbar
+     * @param string $downloadhelpbutton
+     */
+    public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
+        $this->add_all_values_to_output();
+        parent::out($pagesize, $useinitialsbar, $downloadhelpbutton);
     }
 
     /**
@@ -388,7 +436,7 @@ class mod_evaluation_responses_table extends table_sql {
                 // the rest will be added in {@link self::build_table()} and {@link self::build_table_chunk()} functions.
                 $this->sql->fields .= ", v{$nr}.value AS val{$nr}";
                 $this->sql->from .= " LEFT OUTER JOIN {evaluation_value} v{$nr} " .
-                    "ON v{$nr}.completed = c.id AND v{$nr}.item = :itemid{$nr}";
+                        "ON v{$nr}.completed = c.id AND v{$nr}.item = :itemid{$nr}";
                 $this->sql->params["itemid{$nr}"] = $item->id;
             }
 
@@ -400,7 +448,7 @@ class mod_evaluation_responses_table extends table_sql {
             }
             if (strval($item->label) !== '') {
                 $columnheader = get_string('nameandlabelformat', 'mod_evaluation',
-                    (object)['label' => format_string($item->label), 'name' => $columnheader]);
+                        (object) ['label' => format_string($item->label), 'name' => $columnheader]);
             }
             $tableheaders[] = $columnheader;
         }
@@ -416,52 +464,8 @@ class mod_evaluation_responses_table extends table_sql {
     }
 
     /**
-     * Query the db. Store results in the table object for use by build_table.
-     *
-     * @param int $pagesize size of page for paginated displayed table.
-     * @param bool $useinitialsbar do you want to use the initials bar. Bar
-     * will only be used if there is a fullname column defined for the table.
-     */
-    public function query_db($pagesize, $useinitialsbar=true) {
-        global $DB;
-        $this->totalrows = $grandtotal = $this->get_total_responses_count();
-        if (!$this->is_downloading()) {
-            $this->initialbars($useinitialsbar);
-
-            list($wsql, $wparams) = $this->get_sql_where();
-            if ($wsql) {
-                $this->countsql .= ' AND '.$wsql;
-                $this->countparams = array_merge($this->countparams, $wparams);
-
-                $this->sql->where .= ' AND '.$wsql;
-                $this->sql->params = array_merge($this->sql->params, $wparams);
-
-                $this->totalrows  = $DB->count_records_sql($this->countsql, $this->countparams);
-            }
-
-            if ($this->totalrows > $pagesize) {
-                $this->pagesize($pagesize, $this->totalrows);
-            }
-        }
-
-        if ($sort = $this->get_sql_sort()) {
-            $sort = "ORDER BY $sort";
-        }
-        $sql = "SELECT
-                {$this->sql->fields}
-                FROM {$this->sql->from}
-                WHERE {$this->sql->where}
-                {$sort}";
-
-        if (!$this->is_downloading()) {
-            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
-        } else {
-            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params);
-        }
-    }
-
-    /**
      * Returns total number of reponses (without any filters applied)
+     *
      * @return int
      */
     public function get_total_responses_count() {
@@ -473,63 +477,8 @@ class mod_evaluation_responses_table extends table_sql {
     }
 
     /**
-     * Defines columns
-     * @param array $columns an array of identifying names for columns. If
-     * columns are sorted then column names must correspond to a field in sql.
-     */
-    public function define_columns($columns) {
-        parent::define_columns($columns);
-        foreach ($this->columns as $column => $column) {
-            // Automatically assign classes to columns.
-            $this->column_class[$column] = ' ' . $column;
-        }
-    }
-
-    /**
-     * Convenience method to call a number of methods for you to display the
-     * table.
-     * @param int $pagesize
-     * @param bool $useinitialsbar
-     * @param string $downloadhelpbutton
-     */
-    public function out($pagesize, $useinitialsbar, $downloadhelpbutton='') {
-        $this->add_all_values_to_output();
-        parent::out($pagesize, $useinitialsbar, $downloadhelpbutton);
-    }
-
-    /**
-     * Displays the table
-     */
-    public function display() {
-        global $OUTPUT;
-        groups_print_activity_menu($this->evaluationstructure->get_cm(), $this->baseurl->out());
-        $grandtotal = $this->get_total_responses_count();
-        if (!$grandtotal) {
-            echo $OUTPUT->box(get_string('nothingtodisplay'), 'generalbox nothingtodisplay');
-            return;
-        }
-		
-        if ( !isset($_SESSION['questionslimited']) AND count($this->evaluationstructure->get_items(true)) > self::PREVIEWCOLUMNSLIMIT) {
-            echo $OUTPUT->notification(get_string('questionslimited', 'evaluation', self::PREVIEWCOLUMNSLIMIT), 'info');
-        }
-		$_SESSION['questionslimited'] = true;
-        $this->out($this->showall ? $grandtotal : EVALUATION_DEFAULT_PAGE_COUNT,
-                $grandtotal > EVALUATION_DEFAULT_PAGE_COUNT);
-
-        // Toggle 'Show all' link.
-        if ($this->totalrows > EVALUATION_DEFAULT_PAGE_COUNT) {
-            if (!$this->use_pages) {
-                echo html_writer::div(html_writer::link(new moodle_url($this->baseurl, [$this->showallparamname => 0]),
-                        get_string('showperpage', '', EVALUATION_DEFAULT_PAGE_COUNT)), 'showall');
-            } else {
-                echo html_writer::div(html_writer::link(new moodle_url($this->baseurl, [$this->showallparamname => 1]),
-                        get_string('showall', '', $this->totalrows)), 'showall');
-            }
-        }
-    }
-
-    /**
      * Returns links to previous/next responses in the list
+     *
      * @param stdClass $record
      * @return array array of three elements [$prevresponseurl, $returnurl, $nextresponseurl]
      */
@@ -558,10 +507,55 @@ class mod_evaluation_responses_table extends table_sql {
             $lastrow = null;
         }
         return [
-            $lastrow ? $this->get_link_single_entry($lastrow) : null,
-            new moodle_url($this->baseurl, [$this->request[TABLE_VAR_PAGE] => $page]),
-            $nextrow ? $this->get_link_single_entry($nextrow) : null,
+                $lastrow ? $this->get_link_single_entry($lastrow) : null,
+                new moodle_url($this->baseurl, [$this->request[TABLE_VAR_PAGE] => $page]),
+                $nextrow ? $this->get_link_single_entry($nextrow) : null,
         ];
+    }
+
+    /**
+     * Query the db. Store results in the table object for use by build_table.
+     *
+     * @param int $pagesize size of page for paginated displayed table.
+     * @param bool $useinitialsbar do you want to use the initials bar. Bar
+     * will only be used if there is a fullname column defined for the table.
+     */
+    public function query_db($pagesize, $useinitialsbar = true) {
+        global $DB;
+        $this->totalrows = $grandtotal = $this->get_total_responses_count();
+        if (!$this->is_downloading()) {
+            $this->initialbars($useinitialsbar);
+
+            list($wsql, $wparams) = $this->get_sql_where();
+            if ($wsql) {
+                $this->countsql .= ' AND ' . $wsql;
+                $this->countparams = array_merge($this->countparams, $wparams);
+
+                $this->sql->where .= ' AND ' . $wsql;
+                $this->sql->params = array_merge($this->sql->params, $wparams);
+
+                $this->totalrows = $DB->count_records_sql($this->countsql, $this->countparams);
+            }
+
+            if ($this->totalrows > $pagesize) {
+                $this->pagesize($pagesize, $this->totalrows);
+            }
+        }
+
+        if ($sort = $this->get_sql_sort()) {
+            $sort = "ORDER BY $sort";
+        }
+        $sql = "SELECT
+                {$this->sql->fields}
+                FROM {$this->sql->from}
+                WHERE {$this->sql->where}
+                {$sort}";
+
+        if (!$this->is_downloading()) {
+            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
+        } else {
+            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params);
+        }
     }
 
     /**
@@ -571,6 +565,48 @@ class mod_evaluation_responses_table extends table_sql {
         \core\session\manager::write_close();
         $this->out($this->get_total_responses_count(), false);
         exit;
+    }
+
+    /**
+     * Returns html code for displaying "Download" button if applicable.
+     */
+    public function download_buttons() {
+        global $OUTPUT;
+
+        if ($this->is_downloadable() && !$this->is_downloading()) {
+            return $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'),
+                    $this->baseurl->out_omit_querystring(), $this->downloadparamname, $this->baseurl->params());
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Exports the table as an external structure handling pagination.
+     *
+     * @param int $page page number (for pagination)
+     * @param int $perpage elements per page
+     * @return array returns the table ready to be used by an external function
+     * @since Moodle 3.3
+     */
+    public function export_external_structure($page = 0, $perpage = 0) {
+
+        $this->buildforexternal = true;
+        $this->add_all_values_to_output();
+        // Set-up.
+        $this->setup();
+        // Override values, if needed.
+        if ($perpage > 0) {
+            $this->pageable = true;
+            $this->currpage = $page;
+            $this->pagesize = $perpage;
+        } else {
+            $this->pagesize = $this->get_total_responses_count();
+        }
+        $this->query_db($this->pagesize, false);
+        $this->build_table();
+        $this->close_recordset();
+        return $this->dataforexternal;
     }
 
     /**
@@ -640,11 +676,11 @@ class mod_evaluation_responses_table extends table_sql {
             foreach ($columnsgroup as $nr => $item) {
                 $fields .= ", v{$nr}.value AS val{$nr}";
                 $from .= " LEFT OUTER JOIN {evaluation_value} v{$nr} " .
-                    "ON v{$nr}.completed = c.id AND v{$nr}.item = :itemid{$nr}";
+                        "ON v{$nr}.completed = c.id AND v{$nr}.item = :itemid{$nr}";
                 $params["itemid{$nr}"] = $item->id;
             }
             list($idsql, $idparams) = $DB->get_in_or_equal(array_keys($rows), SQL_PARAMS_NAMED);
-            $sql = "SELECT $fields FROM $from WHERE c.id ".$idsql;
+            $sql = "SELECT $fields FROM $from WHERE c.id " . $idsql;
             $results = $DB->get_records_sql($sql, $params + $idparams);
             foreach ($results as $result) {
                 foreach ($result as $key => $value) {
@@ -663,17 +699,22 @@ class mod_evaluation_responses_table extends table_sql {
     }
 
     /**
-     * Returns html code for displaying "Download" button if applicable.
+     * Add data for the external structure that will be returned.
+     *
+     * @param stdClass $row a database query record row
+     * @since Moodle 3.3
      */
-    public function download_buttons() {
-        global $OUTPUT;
-
-        if ($this->is_downloadable() && !$this->is_downloading()) {
-            return $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'),
-                    $this->baseurl->out_omit_querystring(), $this->downloadparamname, $this->baseurl->params());
-        } else {
-            return '';
-        }
+    protected function add_data_for_external($row) {
+        $this->dataforexternal[] = [
+                'id' => $row->id,
+                'courseid' => $row->courseid,
+                'course_of_studies' => $row->course_of_studies,
+                'teacherid' => $row->teacherid,
+                'userid' => $row->userid,
+                'fullname' => fullname($row),
+                'timemodified' => $row->completed_timemodified,
+                'responses' => $this->get_responses_for_external($row),
+        ];
     }
 
     /**
@@ -691,10 +732,10 @@ class mod_evaluation_responses_table extends table_sql {
                 $id = $matches[1];
 
                 $responses[] = [
-                    'id' => $id,
-                    'name' => $this->headers[$this->columns[$el]],
-                    'printval' => $this->other_cols($el, $row),
-                    'rawval' => $val,
+                        'id' => $id,
+                        'name' => $this->headers[$this->columns[$el]],
+                        'printval' => $this->other_cols($el, $row),
+                        'rawval' => $val,
                 ];
             }
         }
@@ -702,49 +743,21 @@ class mod_evaluation_responses_table extends table_sql {
     }
 
     /**
-     * Add data for the external structure that will be returned.
+     * Allows to set the display column value for all columns without "col_xxxxx" method.
      *
-     * @param stdClass $row a database query record row
-     * @since Moodle 3.3
+     * @param string $column column name
+     * @param stdClass $row current record result of SQL query
      */
-    protected function add_data_for_external($row) {
-        $this->dataforexternal[] = [
-            'id' => $row->id,
-            'courseid' => $row->courseid,
-            'course_of_studies' => $row->course_of_studies,
-			'teacherid' => $row->teacherid,
-            'userid' => $row->userid,
-            'fullname' => fullname($row),
-            'timemodified' => $row->completed_timemodified,
-            'responses' => $this->get_responses_for_external($row),
-        ];
-    }
-
-    /**
-     * Exports the table as an external structure handling pagination.
-     *
-     * @param int $page page number (for pagination)
-     * @param int $perpage elements per page
-     * @since Moodle 3.3
-     * @return array returns the table ready to be used by an external function
-     */
-    public function export_external_structure($page = 0, $perpage = 0) {
-
-        $this->buildforexternal = true;
-        $this->add_all_values_to_output();
-        // Set-up.
-        $this->setup();
-        // Override values, if needed.
-        if ($perpage > 0) {
-            $this->pageable = true;
-            $this->currpage = $page;
-            $this->pagesize = $perpage;
-        } else {
-            $this->pagesize = $this->get_total_responses_count();
+    public function other_cols($column, $row) {
+        if (preg_match('/^val(\d+)$/', $column, $matches)) {
+            $items = $this->evaluationstructure->get_items();
+            $itemobj = evaluation_get_item_class($items[$matches[1]]->typ);
+            $printval = $itemobj->get_printval($items[$matches[1]], (object) ['value' => $row->$column]);
+            if ($this->is_downloading()) {
+                $printval = s($printval);
+            }
+            return trim($printval);
         }
-        $this->query_db($this->pagesize, false);
-        $this->build_table();
-        $this->close_recordset();
-        return $this->dataforexternal;
+        return parent::other_cols($column, $row);
     }
 }

@@ -27,10 +27,10 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use core_privacy\tests\provider_testcase;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
+use core_privacy\tests\provider_testcase;
 use mod_evaluation\privacy\provider;
 
 require_once($CFG->dirroot . '/mod/evaluation/lib.php');
@@ -113,6 +113,52 @@ class mod_evaluation_privacy_testcase extends provider_testcase {
         $this->assertTrue(in_array(context_module::instance($cm1b->cmid)->id, $contextids));
         $this->assertFalse(in_array(context_module::instance($cm2b->cmid)->id, $contextids));
         $this->assertTrue(in_array(context_module::instance($cm2c->cmid)->id, $contextids));
+    }
+
+    /**
+     * Create an submission with answers.
+     *
+     * @param object $evaluation The evaluation.
+     * @param object $user The user.
+     * @param array $answers Answers.
+     * @param int $submissioncount The number of submissions expected after this entry.
+     * @return void
+     */
+    protected function create_submission_with_answers($evaluation, $user, $answers, $submissioncount = 1) {
+        global $DB;
+
+        $modinfo = get_fast_modinfo($evaluation->course);
+        $cm = $modinfo->get_cm($evaluation->cmid);
+
+        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $evaluation->course, false, null, null, $user->id);
+        $evaluationcompletion->save_response_tmp((object) $answers);
+        $evaluationcompletion->save_response();
+        $this->assertEquals($submissioncount, $DB->count_records('evaluation_completed', ['evaluation' => $evaluation->id,
+                'userid' => $user->id]));
+        $this->assertEquals(count($answers), $DB->count_records('evaluation_value', [
+                'completed' => $evaluationcompletion->get_completed()->id]));
+    }
+
+    /**
+     * Create a temporary submission with answers.
+     *
+     * @param object $evaluation The evaluation.
+     * @param object $user The user.
+     * @param array $answers Answers.
+     * @return void
+     */
+    protected function create_tmp_submission_with_answers($evaluation, $user, $answers) {
+        global $DB;
+
+        $modinfo = get_fast_modinfo($evaluation->course);
+        $cm = $modinfo->get_cm($evaluation->cmid);
+
+        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $evaluation->course, false, null, null, $user->id);
+        $evaluationcompletion->save_response_tmp((object) $answers);
+        $this->assertEquals(1,
+                $DB->count_records('evaluation_completedtmp', ['evaluation' => $evaluation->id, 'userid' => $user->id]));
+        $this->assertEquals(2, $DB->count_records('evaluation_valuetmp', [
+                'completed' => $evaluationcompletion->get_current_completed_tmp()->id]));
     }
 
     /**
@@ -226,8 +272,8 @@ class mod_evaluation_privacy_testcase extends provider_testcase {
         }
 
         $appctx = new approved_contextlist($u1, 'mod_evaluation', [
-            context_module::instance($cm0a->cmid)->id,
-            context_module::instance($cm1a->cmid)->id
+                context_module::instance($cm0a->cmid)->id,
+                context_module::instance($cm1a->cmid)->id
         ]);
         provider::delete_data_for_user($appctx);
 
@@ -244,6 +290,65 @@ class mod_evaluation_privacy_testcase extends provider_testcase {
         $this->assert_evaluation_data_for_user($cm2a, $u1);
         $this->assert_evaluation_tmp_data_for_user($cm2a, $u1);
 
+    }
+
+    /**
+     * Assert there is no evaluation data for a user.
+     *
+     * @param object $evaluation The evaluation.
+     * @param object $user The user.
+     * @return void
+     */
+    protected function assert_no_evaluation_data_for_user($evaluation, $user) {
+        global $DB;
+        $this->assertFalse($DB->record_exists('evaluation_completed', ['evaluation' => $evaluation->id, 'userid' => $user->id]));
+        $this->assertFalse($DB->record_exists('evaluation_completedtmp', ['evaluation' => $evaluation->id, 'userid' => $user->id]));
+
+        // Check that there aren't orphan values because we can't check by userid.
+        $sql = "
+            SELECT fv.id
+              FROM {%s} fv
+         LEFT JOIN {%s} fc
+                ON fc.id = fv.completed
+             WHERE fc.id IS NULL";
+        $this->assertFalse($DB->record_exists_sql(sprintf($sql, 'evaluation_value', 'evaluation_completed'), []));
+        $this->assertFalse($DB->record_exists_sql(sprintf($sql, 'evaluation_valuetmp', 'evaluation_completedtmp'), []));
+    }
+
+    /**
+     * Assert there are submissions and answers for user.
+     *
+     * @param object $evaluation The evaluation.
+     * @param object $user The user.
+     * @param int $submissioncount The number of submissions.
+     * @param int $valuecount The number of values per submission.
+     * @return void
+     */
+    protected function assert_evaluation_data_for_user($evaluation, $user, $submissioncount = 1, $valuecount = 2) {
+        global $DB;
+        $completeds = $DB->get_records('evaluation_completed', ['evaluation' => $evaluation->id, 'userid' => $user->id]);
+        $this->assertCount($submissioncount, $completeds);
+        foreach ($completeds as $record) {
+            $this->assertEquals($valuecount, $DB->count_records('evaluation_value', ['completed' => $record->id]));
+        }
+    }
+
+    /**
+     * Assert there are temporary submissions and answers for user.
+     *
+     * @param object $evaluation The evaluation.
+     * @param object $user The user.
+     * @param int $submissioncount The number of submissions.
+     * @param int $valuecount The number of values per submission.
+     * @return void
+     */
+    protected function assert_evaluation_tmp_data_for_user($evaluation, $user, $submissioncount = 1, $valuecount = 2) {
+        global $DB;
+        $completedtmps = $DB->get_records('evaluation_completedtmp', ['evaluation' => $evaluation->id, 'userid' => $user->id]);
+        $this->assertCount($submissioncount, $completedtmps);
+        foreach ($completedtmps as $record) {
+            $this->assertEquals($valuecount, $DB->count_records('evaluation_valuetmp', ['completed' => $record->id]));
+        }
     }
 
     /**
@@ -357,7 +462,8 @@ class mod_evaluation_privacy_testcase extends provider_testcase {
         $c2 = $dg->create_course();
         $cm0a = $dg->create_module('evaluation', ['course' => SITEID]);
         $cm1a = $dg->create_module('evaluation', ['course' => $c1, 'anonymous' => EVALUATION_ANONYMOUS_NO]);
-        $cm2a = $dg->create_module('evaluation', ['course' => $c2, 'anonymous' => EVALUATION_ANONYMOUS_YES, 'multiple_submit' => 1]);
+        $cm2a = $dg->create_module('evaluation',
+                ['course' => $c2, 'anonymous' => EVALUATION_ANONYMOUS_YES, 'multiple_submit' => 1]);
         $cm2b = $dg->create_module('evaluation', ['course' => $c2]);
         $cm2c = $dg->create_module('evaluation', ['course' => $c2]);
 
@@ -389,10 +495,10 @@ class mod_evaluation_privacy_testcase extends provider_testcase {
         }
 
         $appctx = new approved_contextlist($u1, 'mod_evaluation', [
-            context_module::instance($cm0a->cmid)->id,
-            context_module::instance($cm1a->cmid)->id,
-            context_module::instance($cm2a->cmid)->id,
-            context_module::instance($cm2b->cmid)->id,
+                context_module::instance($cm0a->cmid)->id,
+                context_module::instance($cm1a->cmid)->id,
+                context_module::instance($cm2a->cmid)->id,
+                context_module::instance($cm2b->cmid)->id,
         ]);
         provider::export_user_data($appctx);
 
@@ -453,109 +559,5 @@ class mod_evaluation_privacy_testcase extends provider_testcase {
         // CM2C (not exported).
         $data = writer::with_context(context_module::instance($cm2b->cmid))->get_data();
         $this->assertEmpty($data);
-    }
-
-    /**
-     * Assert there is no evaluation data for a user.
-     *
-     * @param object $evaluation The evaluation.
-     * @param object $user The user.
-     * @return void
-     */
-    protected function assert_no_evaluation_data_for_user($evaluation, $user) {
-        global $DB;
-        $this->assertFalse($DB->record_exists('evaluation_completed', ['evaluation' => $evaluation->id, 'userid' => $user->id]));
-        $this->assertFalse($DB->record_exists('evaluation_completedtmp', ['evaluation' => $evaluation->id, 'userid' => $user->id]));
-
-        // Check that there aren't orphan values because we can't check by userid.
-        $sql = "
-            SELECT fv.id
-              FROM {%s} fv
-         LEFT JOIN {%s} fc
-                ON fc.id = fv.completed
-             WHERE fc.id IS NULL";
-        $this->assertFalse($DB->record_exists_sql(sprintf($sql, 'evaluation_value', 'evaluation_completed'), []));
-        $this->assertFalse($DB->record_exists_sql(sprintf($sql, 'evaluation_valuetmp', 'evaluation_completedtmp'), []));
-    }
-
-    /**
-     * Assert there are submissions and answers for user.
-     *
-     * @param object $evaluation The evaluation.
-     * @param object $user The user.
-     * @param int $submissioncount The number of submissions.
-     * @param int $valuecount The number of values per submission.
-     * @return void
-     */
-    protected function assert_evaluation_data_for_user($evaluation, $user, $submissioncount = 1, $valuecount = 2) {
-        global $DB;
-        $completeds = $DB->get_records('evaluation_completed', ['evaluation' => $evaluation->id, 'userid' => $user->id]);
-        $this->assertCount($submissioncount, $completeds);
-        foreach ($completeds as $record) {
-            $this->assertEquals($valuecount, $DB->count_records('evaluation_value', ['completed' => $record->id]));
-        }
-    }
-
-    /**
-     * Assert there are temporary submissions and answers for user.
-     *
-     * @param object $evaluation The evaluation.
-     * @param object $user The user.
-     * @param int $submissioncount The number of submissions.
-     * @param int $valuecount The number of values per submission.
-     * @return void
-     */
-    protected function assert_evaluation_tmp_data_for_user($evaluation, $user, $submissioncount = 1, $valuecount = 2) {
-        global $DB;
-        $completedtmps = $DB->get_records('evaluation_completedtmp', ['evaluation' => $evaluation->id, 'userid' => $user->id]);
-        $this->assertCount($submissioncount, $completedtmps);
-        foreach ($completedtmps as $record) {
-            $this->assertEquals($valuecount, $DB->count_records('evaluation_valuetmp', ['completed' => $record->id]));
-        }
-    }
-
-    /**
-     * Create an submission with answers.
-     *
-     * @param object $evaluation The evaluation.
-     * @param object $user The user.
-     * @param array $answers Answers.
-     * @param int $submissioncount The number of submissions expected after this entry.
-     * @return void
-     */
-    protected function create_submission_with_answers($evaluation, $user, $answers, $submissioncount = 1) {
-        global $DB;
-
-        $modinfo = get_fast_modinfo($evaluation->course);
-        $cm = $modinfo->get_cm($evaluation->cmid);
-
-        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $evaluation->course, false, null, null, $user->id);
-        $evaluationcompletion->save_response_tmp((object) $answers);
-        $evaluationcompletion->save_response();
-        $this->assertEquals($submissioncount, $DB->count_records('evaluation_completed', ['evaluation' => $evaluation->id,
-            'userid' => $user->id]));
-        $this->assertEquals(count($answers), $DB->count_records('evaluation_value', [
-            'completed' => $evaluationcompletion->get_completed()->id]));
-    }
-
-    /**
-     * Create a temporary submission with answers.
-     *
-     * @param object $evaluation The evaluation.
-     * @param object $user The user.
-     * @param array $answers Answers.
-     * @return void
-     */
-    protected function create_tmp_submission_with_answers($evaluation, $user, $answers) {
-        global $DB;
-
-        $modinfo = get_fast_modinfo($evaluation->course);
-        $cm = $modinfo->get_cm($evaluation->cmid);
-
-        $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $evaluation->course, false, null, null, $user->id);
-        $evaluationcompletion->save_response_tmp((object) $answers);
-        $this->assertEquals(1, $DB->count_records('evaluation_completedtmp', ['evaluation' => $evaluation->id, 'userid' => $user->id]));
-        $this->assertEquals(2, $DB->count_records('evaluation_valuetmp', [
-            'completed' => $evaluationcompletion->get_current_completed_tmp()->id]));
     }
 }

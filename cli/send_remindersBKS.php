@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * CLI script to mail reminder to all evaluation participants
  *
@@ -23,29 +22,31 @@
  * @subpackage  cli
  * @copyright   2021 Harry@Bleckert.com for ASH Berlin
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-
-Purpose:
-send mails to evaluation participants. Default: Students
-
+ *
+ * Purpose:
+ * send mails to evaluation participants. Default: Students
  */
 
 // primary location for this script: mod/evaluation/cli
-
 
 define('CLI_SCRIPT', true);
 $PHP_SELF = basename($_SERVER['PHP_SELF']);
 
 $configFile = '../../../config.php';
-if ( !is_file($configFile) )
-{	print "ERROR: Script $PHP_SELF must be located in folder mod/evaluation/cli of Moodle instance.\nCurrent location is: ".__DIR__."\n\n"; exit; }
+if (!is_file($configFile)) {
+    print "ERROR: Script $PHP_SELF must be located in folder mod/evaluation/cli of Moodle instance.\nCurrent location is: " .
+            __DIR__ . "\n\n";
+    exit;
+}
 
 require($configFile);
-require_once($CFG->libdir.'/clilib.php');
-require_once($CFG->dirroot.'/course/modlib.php');
-require_once($CFG->dirroot.'/mod/evaluation/lib.php');
+require_once($CFG->libdir . '/clilib.php');
+require_once($CFG->dirroot . '/course/modlib.php');
+require_once($CFG->dirroot . '/mod/evaluation/lib.php');
 global $CFG, $DB, $USER;
-if ( empty($USER) OR !isset($USER->username) )
-{ $USER = core_user::get_user(30421); }
+if (empty($USER) or !isset($USER->username)) {
+    $USER = core_user::get_user(30421);
+}
 
 // usage need be updated to fit!
 $usage = "
@@ -73,142 +74,167 @@ Examples:
 ";
 
 list($options, $unrecognised) = cli_get_params([
-    'help' => false,
-    'evaluation' => false,
-	'send' => false,
-	'role' => false,
-	'verbose' => false,	
+        'help' => false,
+        'evaluation' => false,
+        'send' => false,
+        'role' => false,
+        'verbose' => false,
 ], [
-    'h' => 'help',
-    'f' => 'evaluation',
-	's' => 'send',
-	'r' => 'role',
-	'v' => 'verbose',
+        'h' => 'help',
+        'f' => 'evaluation',
+        's' => 'send',
+        'r' => 'role',
+        'v' => 'verbose',
 ]);
 
 if ($unrecognised) {
-    $unrecognised = implode(PHP_EOL.'  ', $unrecognised);
+    $unrecognised = implode(PHP_EOL . '  ', $unrecognised);
     cli_error(get_string('cliunknowoption', 'core_admin', $unrecognised));
 }
 
 $DB->set_debug(false);
-if ($options['verbose']) {	$DB->set_debug(true); }
-if (!$options['evaluation']) { echo "error! Evaluation ID missing\n"; echo $usage; exit;}
-if (!$options['role']) { echo "error! Role not provided\n"; echo $usage; exit;}
+if ($options['verbose']) {
+    $DB->set_debug(true);
+}
+if (!$options['evaluation']) {
+    echo "error! Evaluation ID missing\n";
+    echo $usage;
+    exit;
+}
+if (!$options['role']) {
+    echo "error! Role not provided\n";
+    echo $usage;
+    exit;
+}
 
 $role = $options['role'];
-if ( ($role !== "student" AND $role !== "teacher" ) )
-{	{ echo "error! Role is invalid\n"; echo $usage; exit;} }
+if (($role !== "student" and $role !== "teacher")) {
+    {
+        echo "error! Role is invalid\n";
+        echo $usage;
+        exit;
+    }
+}
 
-if ($options['help'] )
-{   cli_writeln($usage);
+if ($options['help']) {
+    cli_writeln($usage);
     exit(2);
 }
-$test = ($CFG->dbname  == 'moodle_production' ?!$options['send'] :true );
+$test = ($CFG->dbname == 'moodle_production' ? !$options['send'] : true);
 
 $evaluationid = $options["evaluation"];
-$evaluation = $DB->get_record_sql( "SELECT * FROM {evaluation} WHERE id=".$evaluationid);
-if ( !isset($evaluation->id) )
-{ show_log( "ERROR: Evaluation with ID $evaluationid not found!"); exit; }
+$evaluation = $DB->get_record_sql("SELECT * FROM {evaluation} WHERE id=" . $evaluationid);
+if (!isset($evaluation->id)) {
+    show_log("ERROR: Evaluation with ID $evaluationid not found!");
+    exit;
+}
 
-show_log("\n".date("Ymd H:m:s")."\n$PHP_SELF: Sending reminders to all participants with role $role in evaluation $evaluation->name (ID: $evaluationid)");
+show_log("\n" . date("Ymd H:m:s") .
+        "\n$PHP_SELF: Sending reminders to all participants with role $role in evaluation $evaluation->name (ID: $evaluationid)");
 
-if ( $test )
-{	show_log("Test Mode"); }
-else
-{	
+if ($test) {
+    show_log("Test Mode");
+} else {
 
-	// uncomment this AFTER validating all settings in this script, mail message and mail header details suit your needs.
-	//echo $usage; "\n\nScript is currently blocked. You need to validate settings and uncomment this line of code before you can run it!\n";  exit;
+    // uncomment this AFTER validating all settings in this script, mail message and mail header details suit your needs.
+    //echo $usage; "\n\nScript is currently blocked. You need to validate settings and uncomment this line of code before you can run it!\n";  exit;
 
 }
 
 //set_time_limit(44000);
-$start=time();	
+$start = time();
 
 //get all participating students/teachers
-$evaluation_users = get_evaluation_participants( $evaluation, false, false, ($role=="teacher"), ($role=="student") ); 
+$evaluation_users = get_evaluation_participants($evaluation, false, false, ($role == "teacher"), ($role == "student"));
 $minResults = evaluation_min_results($evaluation);
-$remaining_evaluation_days = round( remaining_evaluation_days($evaluation),0);
-$current_evaluation_day = round( current_evaluation_day($evaluation),0);
+$remaining_evaluation_days = round(remaining_evaluation_days($evaluation), 0);
+$current_evaluation_day = round(current_evaluation_day($evaluation), 0);
 $total_evaluation_days = total_evaluation_days($evaluation);
-$lastEvaluationDay = date("d. m.Y",$evaluation->timeclose);
-$minResultsTeacher = $minResults+2;
-$date_ending = date("d. M",$evaluation->timeclose);
+$lastEvaluationDay = date("d. m.Y", $evaluation->timeclose);
+$minResultsTeacher = $minResults + 2;
+$date_ending = date("d. M", $evaluation->timeclose);
 $cmid = get_evaluation_cmid_from_id($evaluation);
-$evUrl = "https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=" .$cmid;
+$evUrl = "https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=" . $cmid;
 
 //$subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
 $subject = '=?UTF-8?Q?' . quoted_printable_encode($evaluation->name) . '?=';
 $cntStudents = $cntTeachers = 0;
 $cnt = 1;
-foreach ( $evaluation_users as $key => $evaluation_user )
-{	//if ( $cnt<280) { $cnt++; continue; }   // set start counter
-	//print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
-	$username = $evaluation_user["username"];
-	$fullname = trim($evaluation_user["fullname"]);
-	$email = trim($evaluation_user["email"]);
-	$userid = $evaluation_user["id"];
-	//$role = $evaluation_user["role"];
-	$to = "$fullname <$email>";
-	$sender = "BKS Team <bks@ash-berlin.eu>";
-	$headers = array( "From" => $sender, "Return-Path" => $sender, "Reply-To" => $sender, "MIME-Version" => "1.0",
-					  "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable" );
-	$start2=time();		
-	// get student courses to evaluate
-	$USER = core_user::get_user($userid);
-	$myEvaluations = get_evaluation_participants($evaluation, $userid ); 
-	if ( empty($myEvaluations) )
-	{	show_log( "$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
-					."Teilnehmende Kurse: " .count(evaluation_is_user_enrolled($evaluation, $userid )) );
-		continue; 
-	}
-	if ( empty($email) OR strtolower($email) == "unknown" OR !strstr($email, "@") OR stristr( $email, "unknown@"))
-	{	show_log( "$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to unknown@" );
-		continue; 
-	}
-	if ( $role == "student" || $role == "participants" )
-	{	$myCourses = show_user_evaluation_courses( $evaluation, $myEvaluations, $cmid, true, false ); }
-	else
-	{	$myCourses = show_user_evaluation_courses( $evaluation, $myEvaluations, $cmid, true, true, true ); 
-		//$myCourses .= "<p><b>Ergebnisse für alle evaluierten Dozent_innen Ihrer Kurse:</b></p>\n";
-		//$myCourses .= show_user_evaluation_courses( $evaluation, $myEvaluations, $cmid, true, false, false );	
-	}
-	//$evaluation, $myEvaluations, $id, true, true, true 
-	$testMsg = "";
+foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
+    //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
+    $username = $evaluation_user["username"];
+    $fullname = trim($evaluation_user["fullname"]);
+    $email = trim($evaluation_user["email"]);
+    $userid = $evaluation_user["id"];
+    //$role = $evaluation_user["role"];
+    $to = "$fullname <$email>";
+    $sender = "BKS Team <bks@ash-berlin.eu>";
+    $headers = array("From" => $sender, "Return-Path" => $sender, "Reply-To" => $sender, "MIME-Version" => "1.0",
+            "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
+    $start2 = time();
+    // get student courses to evaluate
+    $USER = core_user::get_user($userid);
+    $myEvaluations = get_evaluation_participants($evaluation, $userid);
+    if (empty($myEvaluations)) {
+        show_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
+                . "Teilnehmende Kurse: " . count(evaluation_is_user_enrolled($evaluation, $userid)));
+        continue;
+    }
+    if (empty($email) or strtolower($email) == "unknown" or !strstr($email, "@") or stristr($email, "unknown@")) {
+        show_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to unknown@");
+        continue;
+    }
+    if ($role == "student" || $role == "participants") {
+        $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
+    } else {
+        $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, true, true);
+        //$myCourses .= "<p><b>Ergebnisse für alle evaluierten Dozent_innen Ihrer Kurse:</b></p>\n";
+        //$myCourses .= show_user_evaluation_courses( $evaluation, $myEvaluations, $cmid, true, false, false );
+    }
+    //$evaluation, $myEvaluations, $id, true, true, true
+    $testMsg = "";
 
-	if ( 0 AND $cnt <2 )
-	{	show_log( "time used get_participants: ".date("i:s",time()-$start) . " - get_participant_courses: " . date("i:s",time()-$start2) ); }
+    if (0 and $cnt < 2) {
+        show_log("time used get_participants: " . date("i:s", time() - $start) . " - get_participant_courses: " .
+                date("i:s", time() - $start2));
+    }
 
-	if ( $test )
-	{	if ($role == "student" || $role == "participants")  
-		{	$testMsg = "<p>Dies ist ein Entwurf für die Mail an die Studierenden, deren Kurse an der Evaluation teilnehmen.</p><hr>"; }
-		else {	$testMsg = "<p>Dies ist ein Entwurf für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen.</p><hr>"; }
-		$to = "Harry Bleckert <Harry@Bleckert.com>";
-		$fullname = "Harry Bleckert";
-		//if ( $cnt==2 ) {
-		//$to = "Berthe Khayat <khayat@ash-berlin.eu>";
-		//$fullname = "Berthe Khayat";
-		//}
-		//$to = "BKS Team <bks@ash-berlin.eu>";
-		//$fullname = "BKS Team";
-		if ( $cnt>1 ) { break; }
-	}
-	/*
+    if ($test) {
+        if ($role == "student" || $role == "participants") {
+            $testMsg =
+                    "<p>Dies ist ein Entwurf für die Mail an die Studierenden, deren Kurse an der Evaluation teilnehmen.</p><hr>";
+        } else {
+            $testMsg = "<p>Dies ist ein Entwurf für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen.</p><hr>";
+        }
+        $to = "Harry Bleckert <Harry@Bleckert.com>";
+        $fullname = "Harry Bleckert";
+        //if ( $cnt==2 ) {
+        //$to = "Berthe Khayat <khayat@ash-berlin.eu>";
+        //$fullname = "Berthe Khayat";
+        //}
+        //$to = "BKS Team <bks@ash-berlin.eu>";
+        //$fullname = "BKS Team";
+        if ($cnt > 1) {
+            break;
+        }
+    }
+    /*
 wir möchten Sie daran erinnern,
-	dass noch die Möglichkeit besteht, sich an der <a href="https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=270154">laufenden
-	  Lehrveranstaltungsevaluation</a> zu beteiligen!<br>
-	Mit Ihren Antworten helfen Sie uns, die Lehre zu verbessern und Sie können ggf. noch im
-	laufenden Semester in einen Austausch mit den Lehrenden treten.</p>
+    dass noch die Möglichkeit besteht, sich an der <a href="https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=270154">laufenden
+      Lehrveranstaltungsevaluation</a> zu beteiligen!<br>
+    Mit Ihren Antworten helfen Sie uns, die Lehre zu verbessern und Sie können ggf. noch im
+    laufenden Semester in einen Austausch mit den Lehrenden treten.</p>
 */
-	if ( $role == "student" || $role == "participants" )
-	{	//$user = core_user::get_user($userid);
-		if ( hasUserEvaluationCompleted( $evaluation, $userid ) )
-		{ show_log( "$cnt. $fullname - $username - $userid - $email - COMPLETED ALL!!" ); $cnt++; continue; }
-		$testStudent = true;
-		$cntStudents++;
-		$also = ( evaluation_has_user_participated($evaluation, $userid ) ?"" :"auch");
-		$message = <<<HEREDOC
+    if ($role == "student" || $role == "participants") {    //$user = core_user::get_user($userid);
+        if (hasUserEvaluationCompleted($evaluation, $userid)) {
+            show_log("$cnt. $fullname - $username - $userid - $email - COMPLETED ALL!!");
+            $cnt++;
+            continue;
+        }
+        $testStudent = true;
+        $cntStudents++;
+        $also = (evaluation_has_user_participated($evaluation, $userid) ? "" : "auch");
+        $message = <<<HEREDOC
 <html>
 <head>
 <title>$subject</title>
@@ -235,13 +261,13 @@ Alice-Salomon-Platz 5, 12627 Berlin
 </body>
 </html>
 HEREDOC;
-	}
-	else   // role = teacher
-	{	$testTeacher = true;
-		$cntTeachers++;
-		//$subject = "Auswertung der ".$subject; 
-		//an der noch $remaining_evaluation_days Tage laufenden 
-		$message = <<<HEREDOC
+    } else   // role = teacher
+    {
+        $testTeacher = true;
+        $cntTeachers++;
+        //$subject = "Auswertung der ".$subject;
+        //an der noch $remaining_evaluation_days Tage laufenden
+        $message = <<<HEREDOC
 <html>
 <head>
 <title>$subject</title>
@@ -268,25 +294,26 @@ Alice-Salomon-Platz 5, 12627 Berlin
 </body>
 </html>
 HEREDOC;
-	}
+    }
 
-	//mail($to,$subject,quoted_printable_encode($message),implode("\n",$headers)); //,"-r '$sender'");
-	mail($to,$subject,quoted_printable_encode($message),$headers); //,"-r '$sender'");
-	show_log( "$cnt. $fullname - $username - $email - ID: $userid" );	
-	$cnt++;
+    //mail($to,$subject,quoted_printable_encode($message),implode("\n",$headers)); //,"-r '$sender'");
+    mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
+    show_log("$cnt. $fullname - $username - $email - ID: $userid");
+    $cnt++;
 }
-$elapsed = time()-$start;
+$elapsed = time() - $start;
 echo "";
-if ( $role == "student")
-{	show_log( "Sent reminder to $cntStudents students" ); }
-else
-{	show_log( "Sent reminder to $cntTeachers teachers" ); }
+if ($role == "student") {
+    show_log("Sent reminder to $cntStudents students");
+} else {
+    show_log("Sent reminder to $cntTeachers teachers");
+}
 echo "\n";
-show_log( "Total time elapsed : ".(round($elapsed/60,0))." minutes and ".($elapsed%60)  . " seconds. " .date("Ymd H:m:s") ); 
+show_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
+        date("Ymd H:m:s"));
 
-
-function show_log( $msg )
-{	$logfile = "/var/log/moodle/evaluation_send_reminders.log";
-	echo $msg . "\n";
-	system( "echo \"$msg\">>$logfile" );
+function show_log($msg) {
+    $logfile = "/var/log/moodle/evaluation_send_reminders.log";
+    echo $msg . "\n";
+    system("echo \"$msg\">>$logfile");
 }

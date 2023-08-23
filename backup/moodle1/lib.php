@@ -50,33 +50,33 @@ class moodle1_mod_evaluation_handler extends moodle1_mod_handler {
      */
     public function get_paths() {
         return array(
-            new convert_path(
-                'evaluation', '/MOODLE_BACKUP/COURSE/MODULES/MOD/EVALUATION',
-                array(
-                    'renamefields' => array(
-                        'summary' => 'intro',
-                        'pageaftersub' => 'page_after_submit',
-                    ),
-                    'newfields' => array(
-                        'autonumbering' => 1,
-                        'site_after_submit' => '',
-                        'introformat' => 0,
-                        'page_after_submitformat' => 0,
-                        'completionsubmit' => 0,
-                    ),
-                )
-            ),
-            new convert_path(
-                'evaluation_item', '/MOODLE_BACKUP/COURSE/MODULES/MOD/EVALUATION/ITEMS/ITEM',
-                array (
-                    'newfields' => array(
-                        'label' => '',
-                        'options' => '',
-                        'dependitem' => 0,
-                        'dependvalue' => '',
-                    ),
-                )
-            ),
+                new convert_path(
+                        'evaluation', '/MOODLE_BACKUP/COURSE/MODULES/MOD/EVALUATION',
+                        array(
+                                'renamefields' => array(
+                                        'summary' => 'intro',
+                                        'pageaftersub' => 'page_after_submit',
+                                ),
+                                'newfields' => array(
+                                        'autonumbering' => 1,
+                                        'site_after_submit' => '',
+                                        'introformat' => 0,
+                                        'page_after_submitformat' => 0,
+                                        'completionsubmit' => 0,
+                                ),
+                        )
+                ),
+                new convert_path(
+                        'evaluation_item', '/MOODLE_BACKUP/COURSE/MODULES/MOD/EVALUATION/ITEMS/ITEM',
+                        array(
+                                'newfields' => array(
+                                        'label' => '',
+                                        'options' => '',
+                                        'dependitem' => 0,
+                                        'dependvalue' => '',
+                                ),
+                        )
+                ),
         );
     }
 
@@ -88,19 +88,17 @@ class moodle1_mod_evaluation_handler extends moodle1_mod_handler {
         global $CFG;
 
         // get the course module id and context id
-        $instanceid     = $data['id'];
-        $cminfo         = $this->get_cminfo($instanceid);
+        $instanceid = $data['id'];
+        $cminfo = $this->get_cminfo($instanceid);
         $this->moduleid = $cminfo['id'];
-        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
-
-
+        $contextid = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
         // get a fresh new file manager for this instance
         $this->fileman = $this->converter->get_file_manager($contextid, 'mod_evaluation');
 
         // convert course files embedded into the intro
         $this->fileman->filearea = 'intro';
-        $this->fileman->itemid   = 0;
+        $this->fileman->itemid = 0;
         $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
 
         // Convert the introformat if necessary.
@@ -112,7 +110,7 @@ class moodle1_mod_evaluation_handler extends moodle1_mod_handler {
         // start writing evaluation.xml
         $this->open_xml_writer("activities/evaluation_{$this->moduleid}/evaluation.xml");
         $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
-            'modulename' => 'evaluation', 'contextid' => $contextid));
+                'modulename' => 'evaluation', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('evaluation', array('id' => $instanceid));
 
         foreach ($data as $field => $value) {

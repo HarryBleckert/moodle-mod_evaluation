@@ -39,17 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_viewed extends \core\event\course_module_viewed 
-{
-
-    /**
-     * Init method.
-     */
-    protected function init() {
-        $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->data['objecttable'] = 'evaluation';
-    }
+class course_module_viewed extends \core\event\course_module_viewed {
 
     /**
      * Creates an instance from evaluation record
@@ -59,14 +49,14 @@ class course_module_viewed extends \core\event\course_module_viewed
      * @param stdClass $course
      * @return course_module_viewed
      */
-    public static function create_from_record($evaluation, $cm, $course) 
-	{	$event = self::create(array(
-            'objectid' => $evaluation->id,
-            'context' => \context_module::instance($cm->id),
-            'anonymous' => ($evaluation->anonymous == EVALUATION_ANONYMOUS_YES),
-            'other' => array(
-                'anonymous' => $evaluation->anonymous // Deprecated.
-            )
+    public static function create_from_record($evaluation, $cm, $course) {
+        $event = self::create(array(
+                'objectid' => $evaluation->id,
+                'context' => \context_module::instance($cm->id),
+                'anonymous' => ($evaluation->anonymous == EVALUATION_ANONYMOUS_YES),
+                'other' => array(
+                        'anonymous' => $evaluation->anonymous // Deprecated.
+                )
         ));
         $event->add_record_snapshot('course_modules', $cm);
         $event->add_record_snapshot('course', $course);
@@ -74,13 +64,22 @@ class course_module_viewed extends \core\event\course_module_viewed
         return $event;
     }
 
+    public static function get_objectid_mapping() {
+        return array('db' => 'evaluation', 'restore' => 'evaluation');
+    }
+
+    public static function get_other_mapping() {
+        // No need to map the 'anonymous' flag.
+        return false;
+    }
+
     /**
      * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
      *
-     * @deprecated since 2.7
-     *
      * @param int|\stdClass $userorid ID of the user.
      * @return bool True if the user can view the event, false otherwise.
+     * @deprecated since 2.7
+     *
      */
     public function can_view($userorid = null) {
         global $USER;
@@ -94,6 +93,15 @@ class course_module_viewed extends \core\event\course_module_viewed
         } else {
             return has_capability('mod/evaluation:viewreports', $this->context, $userorid);
         }
+    }
+
+    /**
+     * Init method.
+     */
+    protected function init() {
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['objecttable'] = 'evaluation';
     }
 
     /**
@@ -121,15 +129,6 @@ class course_module_viewed extends \core\event\course_module_viewed
         if (!isset($this->other['anonymous'])) {
             throw new \coding_exception('The \'anonymous\' value must be set in other.');
         }
-    }
-
-    public static function get_objectid_mapping() {
-        return array('db' => 'evaluation', 'restore' => 'evaluation');
-    }
-
-    public static function get_other_mapping() {
-        // No need to map the 'anonymous' flag.
-        return false;
     }
 }
 

@@ -46,18 +46,6 @@ defined('MOODLE_INTERNAL') || die();
 class response_submitted extends \core\event\base {
 
     /**
-     * Set basic properties for the event.
-     */
-    protected function init() {
-        global $CFG;
-
-        require_once($CFG->dirroot.'/mod/evaluation/lib.php');
-        $this->data['objecttable'] = 'evaluation_completed';
-        $this->data['crud'] = 'c';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-    }
-
-    /**
      * Creates an instance from the record from db table evaluation_completed
      *
      * @param stdClass $completed
@@ -66,15 +54,15 @@ class response_submitted extends \core\event\base {
      */
     public static function create_from_record($completed, $cm) {
         $event = self::create(array(
-            'relateduserid' => $completed->userid,
-            'objectid' => $completed->id,
-            'context' => \context_module::instance($cm->id),
-            'anonymous' => ($completed->anonymous_response == EVALUATION_ANONYMOUS_YES),
-            'other' => array(
-                'cmid' => $cm->id,
-                'instanceid' => $completed->evaluation,
-                'anonymous' => $completed->anonymous_response // Deprecated.
-            )
+                'relateduserid' => $completed->userid,
+                'objectid' => $completed->id,
+                'context' => \context_module::instance($cm->id),
+                'anonymous' => ($completed->anonymous_response == EVALUATION_ANONYMOUS_YES),
+                'other' => array(
+                        'cmid' => $cm->id,
+                        'instanceid' => $completed->evaluation,
+                        'anonymous' => $completed->anonymous_response // Deprecated.
+                )
         ));
         $event->add_record_snapshot('evaluation_completed', $completed);
         return $event;
@@ -89,6 +77,18 @@ class response_submitted extends \core\event\base {
         return get_string('eventresponsesubmitted', 'mod_evaluation');
     }
 
+    public static function get_objectid_mapping() {
+        return array('db' => 'evaluation_completed', 'restore' => 'evaluation_completed');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['cmid'] = array('db' => 'course_modules', 'restore' => 'course_module');
+        $othermapped['instanceid'] = array('db' => 'evaluation', 'restore' => 'evaluation');
+
+        return $othermapped;
+    }
+
     /**
      * Returns non-localised event description with id's for admin use only.
      *
@@ -101,6 +101,7 @@ class response_submitted extends \core\event\base {
 
     /**
      * Returns relevant URL based on the anonymous mode of the response.
+     *
      * @return \moodle_url
      */
     public function get_url() {
@@ -108,9 +109,43 @@ class response_submitted extends \core\event\base {
             return new \moodle_url('/mod/evaluation/show_entries.php', array('id' => $this->other['cmid'],
                     'showcompleted' => $this->objectid));
         } else {
-            return new \moodle_url('/mod/evaluation/show_entries.php' , array('id' => $this->other['cmid'],
+            return new \moodle_url('/mod/evaluation/show_entries.php', array('id' => $this->other['cmid'],
                     'userid' => $this->userid, 'showcompleted' => $this->objectid));
         }
+    }
+
+    /**
+     * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
+     *
+     * @param int|\stdClass $userorid ID of the user.
+     * @return bool True if the user can view the event, false otherwise.
+     * @deprecated since 2.7
+     *
+     */
+    public function can_view($userorid = null) {
+        global $USER;
+        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
+
+        if (empty($userorid)) {
+            $userorid = $USER;
+        }
+        if ($this->anonymous) {
+            return is_siteadmin($userorid);
+        } else {
+            return has_capability('mod/evaluation:viewreports', $this->context, $userorid);
+        }
+    }
+
+    /**
+     * Set basic properties for the event.
+     */
+    protected function init() {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/mod/evaluation/lib.php');
+        $this->data['objecttable'] = 'evaluation_completed';
+        $this->data['crud'] = 'c';
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -125,28 +160,6 @@ class response_submitted extends \core\event\base {
         } else {
             return array($this->courseid, 'evaluation', 'submit', 'view.php?id=' . $this->other['cmid'],
                     $this->other['instanceid'], $this->other['cmid'], $this->relateduserid);
-        }
-    }
-
-    /**
-     * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
-     *
-     * @deprecated since 2.7
-     *
-     * @param int|\stdClass $userorid ID of the user.
-     * @return bool True if the user can view the event, false otherwise.
-     */
-    public function can_view($userorid = null) {
-        global $USER;
-        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
-
-        if (empty($userorid)) {
-            $userorid = $USER;
-        }
-        if ($this->anonymous) {
-            return is_siteadmin($userorid);
-        } else {
-            return has_capability('mod/evaluation:viewreports', $this->context, $userorid);
         }
     }
 
@@ -170,18 +183,6 @@ class response_submitted extends \core\event\base {
         if (!isset($this->other['instanceid'])) {
             throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
-    }
-
-    public static function get_objectid_mapping() {
-        return array('db' => 'evaluation_completed', 'restore' => 'evaluation_completed');
-    }
-
-    public static function get_other_mapping() {
-        $othermapped = array();
-        $othermapped['cmid'] = array('db' => 'course_modules', 'restore' => 'course_module');
-        $othermapped['instanceid'] = array('db' => 'evaluation', 'restore' => 'evaluation');
-
-        return $othermapped;
     }
 }
 

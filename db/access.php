@@ -26,146 +26,146 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
-    'mod/evaluation:addinstance' => array(
-        'riskbitmask' => RISK_XSS,
+        'mod/evaluation:addinstance' => array(
+                'riskbitmask' => RISK_XSS,
 
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            //'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_COURSE,
+                'archetypes' => array(
+                    //'editingteacher' => CAP_ALLOW,
+                        'manager' => CAP_ALLOW
+                ),
+                'clonepermissionsfrom' => 'moodle/course:manageactivities'
         ),
-        'clonepermissionsfrom' => 'moodle/course:manageactivities'
-    ),
 
-    'mod/evaluation:view' => array(
+        'mod/evaluation:view' => array(
 
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            //'guest' => CAP_ALLOW,
-            'frontpage' => CAP_ALLOW,
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'read',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                    //'guest' => CAP_ALLOW,
+                        'frontpage' => CAP_ALLOW,
+                        'student' => CAP_ALLOW,
+                        'teacher' => CAP_ALLOW,
+                        'editingteacher' => CAP_ALLOW,
+                        'manager' => CAP_ALLOW
+                )
+        ),
 
-    'mod/evaluation:complete' => array(
+        'mod/evaluation:complete' => array(
 
-        'riskbitmask' => RISK_SPAM,
+                'riskbitmask' => RISK_SPAM,
 
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'frontpage' => CAP_ALLOW,
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-			'editingteacher' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                        'frontpage' => CAP_ALLOW,
+                        'student' => CAP_ALLOW,
+                        'teacher' => CAP_ALLOW,
+                        'editingteacher' => CAP_ALLOW
+                )
+        ),
 
-    'mod/evaluation:viewanalysepage' => array(
+        'mod/evaluation:viewanalysepage' => array(
 
-        'riskbitmask' => RISK_PERSONAL,
+                'riskbitmask' => RISK_PERSONAL,
 
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'read',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                        'student' => CAP_ALLOW,
+                        'teacher' => CAP_ALLOW,
+                        'editingteacher' => CAP_ALLOW,
+                        'manager' => CAP_ALLOW
+                )
+        ),
 
-    'mod/evaluation:deletesubmissions' => array(
+        'mod/evaluation:deletesubmissions' => array(
 
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            //'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                    //'editingteacher' => CAP_ALLOW,
+                        'manager' => CAP_ALLOW
+                )
+        ),
 
-    'mod/evaluation:mapcourse' => array(
+        'mod/evaluation:mapcourse' => array(
 
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                        'manager' => CAP_ALLOW
+                )
+        ),
 
-    'mod/evaluation:edititems' => array(
+        'mod/evaluation:edititems' => array(
 
-        'riskbitmask' => RISK_SPAM | RISK_XSS,
+                'riskbitmask' => RISK_SPAM | RISK_XSS,
 
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                        'manager' => CAP_ALLOW
+                )
+        ),
 
-    'mod/evaluation:createprivatetemplate' => array(
+        'mod/evaluation:createprivatetemplate' => array(
 
-        'riskbitmask' => RISK_SPAM,
+                'riskbitmask' => RISK_SPAM,
 
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                        'manager' => CAP_ALLOW
+                )
+        ),
 
-    'mod/evaluation:createpublictemplate' => array(
+        'mod/evaluation:createpublictemplate' => array(
 
-        'riskbitmask' => RISK_SPAM,
+                'riskbitmask' => RISK_SPAM,
 
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            //'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                    //'editingteacher' => CAP_ALLOW,
+                        'manager' => CAP_ALLOW
+                )
+        ),
 
-    'mod/evaluation:deletetemplate' => array(
+        'mod/evaluation:deletetemplate' => array(
 
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                        'manager' => CAP_ALLOW
+                )
+        ),
 
-    'mod/evaluation:viewreports' => array(
+        'mod/evaluation:viewreports' => array(
 
-        'riskbitmask' => RISK_PERSONAL,
+                'riskbitmask' => RISK_PERSONAL,
 
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'read',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                        'teacher' => CAP_ALLOW,
+                        'editingteacher' => CAP_ALLOW,
+                        'manager' => CAP_ALLOW
+                )
+        ),
 
-    'mod/evaluation:receivemail' => array(
+        'mod/evaluation:receivemail' => array(
 
-        'riskbitmask' => RISK_PERSONAL,
+                'riskbitmask' => RISK_PERSONAL,
 
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW
-        )
-    ),
+                'captype' => 'read',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                        'teacher' => CAP_ALLOW,
+                        'editingteacher' => CAP_ALLOW
+                )
+        ),
 
 );
 

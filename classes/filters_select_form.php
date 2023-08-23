@@ -59,64 +59,69 @@ class mod_evaluation_filters_select_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        if (!$this->_form->_freezeAll ) 
-		{   
-			if ( !$evaluationstructure->get_courseid() AND ($courses = $evaluationstructure->get_completed_course_of_studies()) && count($courses) ) 
-            {	$elements = [];
-				$elements[] = $mform->createElement('autocomplete', 'course_of_studies', get_string('filter_by_course_of_studies', 'evaluation'),
-					['' => get_string('fulllistofstudies','evaluation')] + $courses);
-				
-				if ($evaluationstructure->get_course_of_studies()) {
-					$elements[] = $mform->createElement('static', 'showall', '',
-						html_writer::link($this->action, get_string('show_all', 'evaluation')));
-				}
-				if (1|| defined('BEHAT_SITE_RUNNING')) 
-				{	// TODO MDL-53734 remove this - behat does not recognise autocomplete element inside a group.
-					foreach ($elements as $element) {
-						$mform->addElement($element);
-					}
-				} else {
-					$mform->addGroup($elements, 'studiesfilter', get_string('filter_by_course_of_studies', 'evaluation'), array(' '), false);
-				}
-			}
-			if ( !$evaluationstructure->get_course_of_studies() AND ($courses = $evaluationstructure->get_completed_courses()) && count($courses) )
-			{	$elements = [];
-				$elements[] = $mform->createElement('autocomplete', 'courseid', get_string('filter_by_course', 'evaluation'),
-					['' => get_string('fulllistofcourses')] + $courses);          
-				if ($evaluationstructure->get_courseid()) 
-				{	$elements[] = $mform->createElement('static', 'showall', '',
-					html_writer::link($this->action, get_string('show_all', 'evaluation')));
-				}
-				if (1|| defined('BEHAT_SITE_RUNNING')) 
-				{	// TODO MDL-53734 remove this - behat does not recognise autocomplete element inside a group.
-					foreach ($elements as $element) {
-						$mform->addElement($element);
-					}
-				} else {
-					$mform->addGroup($elements, 'studiesfilter', get_string('filter_by_course_of_studies', 'evaluation'), array(' '), false);
-				}
-			}
-			if ( ($courses = $evaluationstructure->get_completed_teachers()) && count($courses) ) 
-			{	$elements = [];
-				$elements[] = $mform->createElement('autocomplete', 'teacherid', get_string('filter_by_teacher', 'evaluation'),
-					['' => get_string('fulllistofteachers','evaluation')] + $courses);
-				$elements[] = $mform->createElement('submit', 'submitbutton', get_string('filter'));
-				if ($evaluationstructure->get_teacherid()) {
-					$elements[] = $mform->createElement('static', 'showall', '',
-						html_writer::link($this->action, get_string('show_all', 'evaluation')));
-				}
-				if (1|| defined('BEHAT_SITE_RUNNING')) {
-					// TODO MDL-53734 remove this - behat does not recognise autocomplete element inside a group.
-					foreach ($elements as $element) {
-						$mform->addElement($element);
-					}
-				} else {
-					$mform->addGroup($elements, 'teacherfilter', get_string('filter_by_teacher', 'evaluation'), array(' '), false);
-				}
-			}
-			$mform->addElement($mform->createElement('submit', 'submitbutton', get_string('filter')));
+        if (!$this->_form->_freezeAll) {
+            if (!$evaluationstructure->get_courseid() and
+                    ($courses = $evaluationstructure->get_completed_course_of_studies()) && count($courses)) {
+                $elements = [];
+                $elements[] = $mform->createElement('autocomplete', 'course_of_studies',
+                        get_string('filter_by_course_of_studies', 'evaluation'),
+                        ['' => get_string('fulllistofstudies', 'evaluation')] + $courses);
+
+                if ($evaluationstructure->get_course_of_studies()) {
+                    $elements[] = $mform->createElement('static', 'showall', '',
+                            html_writer::link($this->action, get_string('show_all', 'evaluation')));
+                }
+                if (1 ||
+                        defined('BEHAT_SITE_RUNNING')) {    // TODO MDL-53734 remove this - behat does not recognise autocomplete element inside a group.
+                    foreach ($elements as $element) {
+                        $mform->addElement($element);
+                    }
+                } else {
+                    $mform->addGroup($elements, 'studiesfilter', get_string('filter_by_course_of_studies', 'evaluation'),
+                            array(' '), false);
+                }
+            }
+            if (!$evaluationstructure->get_course_of_studies() and
+                    ($courses = $evaluationstructure->get_completed_courses()) && count($courses)) {
+                $elements = [];
+                $elements[] = $mform->createElement('autocomplete', 'courseid', get_string('filter_by_course', 'evaluation'),
+                        ['' => get_string('fulllistofcourses')] + $courses);
+                if ($evaluationstructure->get_courseid()) {
+                    $elements[] = $mform->createElement('static', 'showall', '',
+                            html_writer::link($this->action, get_string('show_all', 'evaluation')));
+                }
+                if (1 ||
+                        defined('BEHAT_SITE_RUNNING')) {    // TODO MDL-53734 remove this - behat does not recognise autocomplete element inside a group.
+                    foreach ($elements as $element) {
+                        $mform->addElement($element);
+                    }
+                } else {
+                    $mform->addGroup($elements, 'studiesfilter', get_string('filter_by_course_of_studies', 'evaluation'),
+                            array(' '), false);
+                }
+            }
+            if (($courses = $evaluationstructure->get_completed_teachers()) && count($courses)) {
+                $elements = [];
+                $elements[] = $mform->createElement('autocomplete', 'teacherid', get_string('filter_by_teacher', 'evaluation'),
+                        ['' => get_string('fulllistofteachers', 'evaluation')] + $courses);
+                $elements[] = $mform->createElement('submit', 'submitbutton', get_string('filter'));
+                if ($evaluationstructure->get_teacherid()) {
+                    $elements[] = $mform->createElement('static', 'showall', '',
+                            html_writer::link($this->action, get_string('show_all', 'evaluation')));
+                }
+                if (1 || defined('BEHAT_SITE_RUNNING')) {
+                    // TODO MDL-53734 remove this - behat does not recognise autocomplete element inside a group.
+                    foreach ($elements as $element) {
+                        $mform->addElement($element);
+                    }
+                } else {
+                    $mform->addGroup($elements, 'teacherfilter', get_string('filter_by_teacher', 'evaluation'), array(' '), false);
+                }
+            }
+            $mform->addElement($mform->createElement('submit', 'submitbutton', get_string('filter')));
         }
-		$this->set_data(['id' => $evaluationstructure->get_cm()->id, 'course_of_studies' => $evaluationstructure->get_course_of_studies(),  //]);
-						 'courseid' => $evaluationstructure->get_courseid, 'teacherid' => $evaluationstructure->get_teacherid()]);
+        $this->set_data(['id' => $evaluationstructure->get_cm()->id,
+                'course_of_studies' => $evaluationstructure->get_course_of_studies(),  //]);
+                'courseid' => $evaluationstructure->get_courseid, 'teacherid' => $evaluationstructure->get_teacherid()]);
     }
 }

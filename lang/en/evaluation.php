@@ -50,7 +50,8 @@ $string['filter_courses'] = 'Select courses instead of courses of studies';
 $string['filter_courses_desc'] = 'Select courses instead of courses of studies. (1 id/line)';
 $string['filter_by_course_of_studies'] = 'Filter course of studies';
 $string['filter_by_teacher'] = 'Filter teacher';
-$string['filter_course_of_studies_desc'] = 'Course of studies for this evaluation (1 name/line). Add privileged persons following "||" and separate multiple usernames by commata';
+$string['filter_course_of_studies_desc'] =
+        'Course of studies for this evaluation (1 name/line). Add privileged persons following "||" and separate multiple usernames by commata';
 $string['fulllistofstudies'] = 'Alle course of studies';
 $string['fulllistofteachers'] = 'Alle teachers';
 $string['global_evaluations'] = 'Global evaluations';
@@ -58,7 +59,8 @@ $string['min_results'] = 'Less than {$a} evaluations have been completed. No res
 $string['min_results_desc'] = 'Privacy: No of evaluations required to show results.';
 $string['min_results_text'] = 'Less than {$a} evaluations have been completed. No text results displayed to protect privacy!';
 $string['min_results_text_desc'] = 'Privacy: No of evaluations required to show free text results.';
-$string['min_results_priv'] = 'Less than {$a} evaluations have been completed. No results displayed to privileged users to protect privacy!';
+$string['min_results_priv'] =
+        'Less than {$a} evaluations have been completed. No results displayed to privileged users to protect privacy!';
 $string['min_results_priv_desc'] = 'Privacy: No of evaluations required to show results to privileged users.';
 $string['no_course_selected'] = "No course for evaluation selectedt!";
 $string['no_data'] = "No data found for this view!";
@@ -74,10 +76,10 @@ $string['privileged_users'] = 'Privileged users';
 $string['privileged_users_desc'] = 'Privileged users (1 username/line)';
 $string['select_teacher'] = '<b>Please select a teacher for this evaluation!</b><br>Note: 
 		You can give a separate evaluation of each teacher<b>';
-$string['semesters'] = 'Semesters';		
-$string['sexes'] = 'Sexes';	
-$string['show_on_index'] = 'Show Evaluation on Evaluation index page';	
-$string['statistics'] = 'Statistics';	
+$string['semesters'] = 'Semesters';
+$string['sexes'] = 'Sexes';
+$string['show_on_index'] = 'Show Evaluation on Evaluation index page';
+$string['statistics'] = 'Statistics';
 $string['students_only'] = 'Only students coming from course pages can participate in this evaluation!';
 $string['submittedEvaluations'] = 'submitted evaluations';
 $string['teacher'] = 'Teacher';
@@ -99,7 +101,6 @@ $string['config_summer_semester'] = 'Summer semester months';
 
 // $string[''] = '';
 
- 
 $string['add_item'] = 'Add question';
 $string['add_pagebreak'] = 'Add a page break';
 $string['adjustment'] = 'Adjustment';
@@ -133,7 +134,8 @@ $string['complete_the_form'] = 'Answer the questions';
 $string['completed'] = 'Completed';
 $string['completedon'] = 'Completed on {$a}';
 $string['completionsubmit'] = 'View as completed if the evaluation is submitted';
-$string['configallowfullanonymous'] = 'If set to \'yes\', users can complete a evaluation activity on the front page without being required to log in.';
+$string['configallowfullanonymous'] =
+        'If set to \'yes\', users can complete a evaluation activity on the front page without being required to log in.';
 $string['confirmdeleteentry'] = 'Are you sure you want to delete this entry?';
 $string['confirmdeleteitem'] = 'Are you sure you want to delete this element?';
 $string['confirmdeletetemplate'] = 'Are you sure you want to delete this template?';
@@ -235,14 +237,18 @@ $string['import_successfully'] = 'Import successfully';
 $string['importfromthisfile'] = 'Import from this file';
 $string['includeuserinrecipientslist'] = 'Include {$a} in the list of recipients';
 $string['indicator:cognitivedepth'] = 'Evaluation cognitive';
-$string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Evaluation activity.';
+$string['indicator:cognitivedepth_help'] =
+        'This indicator is based on the cognitive depth reached by the student in a Evaluation activity.';
 $string['indicator:cognitivedepthdef'] = 'Evaluation cognitive';
-$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Evaluation activities during this analysis interval (Levels = No view, View, Submit)';
+$string['indicator:cognitivedepthdef_help'] =
+        'The participant has reached this percentage of the cognitive engagement offered by the Evaluation activities during this analysis interval (Levels = No view, View, Submit)';
 $string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'Evaluation social';
-$string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Evaluation activity.';
+$string['indicator:socialbreadth_help'] =
+        'This indicator is based on the social breadth reached by the student in a Evaluation activity.';
 $string['indicator:socialbreadthdef'] = 'Evaluation social';
-$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Evaluation activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
+$string['indicator:socialbreadthdef_help'] =
+        'The participant has reached this percentage of the social engagement offered by the Evaluation activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['info'] = 'Information';
 $string['infotype'] = 'Information type';
@@ -253,12 +259,14 @@ $string['item_label'] = 'Label';
 $string['item_name'] = 'Question';
 $string['label'] = 'Label';
 $string['labelcontents'] = 'Contents';
-$string['mapcourseinfo'] = 'This is a site-wide evaluation that is available to all courses using the evaluation block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this evaluation.';
+$string['mapcourseinfo'] =
+        'This is a site-wide evaluation that is available to all courses using the evaluation block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this evaluation.';
 $string['mapcoursenone'] = 'No courses mapped. Evaluation available to all courses';
 $string['mapcourse'] = 'Map evaluation to courses';
 $string['mapcourse_help'] = 'By default, evaluation forms created on your homepage are available site-wide
 and will appear in all courses using the evaluation block. You can force the evaluation form to appear by making it a sticky block or limit the courses in which a evaluation form will appear by mapping it to specific courses.';
-$string['mapcourseinfo'] = 'This is a site-wide evaluation that is available to all courses using the evaluation block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this evaluation.';
+$string['mapcourseinfo'] =
+        'This is a site-wide evaluation that is available to all courses using the evaluation block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this evaluation.';
 $string['mapcoursenone'] = 'No courses mapped. Evaluation available to all courses';
 $string['mapcourses'] = 'Map evaluation to courses';
 $string['mappedcourses'] = 'Mapped courses';
@@ -386,7 +394,8 @@ $string['this_evaluation_is_already_submitted'] = 'You\'ve already completed thi
 $string['typemissing'] = 'Missing value "type"';
 $string['update_item'] = 'Save changes to question';
 $string['url_for_continue'] = 'Link to next activity';
-$string['url_for_continue_help'] = 'After submitting the evaluation, a continue button is displayed, which links to the course page. Alternatively, it may link to the next activity if the URL of the activity is entered here.';
+$string['url_for_continue_help'] =
+        'After submitting the evaluation, a continue button is displayed, which links to the course page. Alternatively, it may link to the next activity if the URL of the activity is entered here.';
 $string['use_one_line_for_each_value'] = 'Use one line for each answer!';
 $string['use_this_template'] = 'Use this template';
 $string['using_templates'] = 'Use a template';

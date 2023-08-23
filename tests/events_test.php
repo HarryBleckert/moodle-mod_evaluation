@@ -127,7 +127,8 @@ class mod_evaluation_events_testcase extends advanced_testcase {
         $this->assertEquals($this->eventevaluation, $event->get_record_snapshot('evaluation', $event->other['instanceid']));
 
         // Test legacy data.
-        $arr = array($this->eventcourse->id, 'evaluation', 'delete', 'view.php?id=' . $this->eventcm->id, $this->eventevaluation->id,
+        $arr = array($this->eventcourse->id, 'evaluation', 'delete', 'view.php?id=' . $this->eventcm->id,
+                $this->eventevaluation->id,
                 $this->eventevaluation->id);
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
@@ -183,9 +184,9 @@ class mod_evaluation_events_testcase extends advanced_testcase {
         // Test not setting other['anonymous'].
         try {
             \mod_evaluation\event\response_submitted::create(array(
-                'context'  => $context,
-                'objectid' => $this->eventevaluationcompleted->id,
-                'relateduserid' => 2,
+                    'context' => $context,
+                    'objectid' => $this->eventevaluationcompleted->id,
+                    'relateduserid' => 2,
             ));
             $this->fail("Event validation should not allow \\mod_evaluation\\event\\response_deleted to be triggered without
                     other['anonymous']");
@@ -263,8 +264,9 @@ class mod_evaluation_events_testcase extends advanced_testcase {
         $sink->close();
 
         // Test legacy data.
-        $arr = array($this->eventcourse->id, 'evaluation', 'submit', 'view.php?id=' . $this->eventcm->id, $this->eventevaluation->id,
-                     $this->eventcm->id, $this->eventuser->id);
+        $arr = array($this->eventcourse->id, 'evaluation', 'submit', 'view.php?id=' . $this->eventcm->id,
+                $this->eventevaluation->id,
+                $this->eventcm->id, $this->eventuser->id);
         $this->assertEventLegacyLogData($arr, $event);
 
         // Test can_view().
@@ -288,11 +290,11 @@ class mod_evaluation_events_testcase extends advanced_testcase {
         // Test not setting instanceid.
         try {
             \mod_evaluation\event\response_submitted::create(array(
-                'context'  => $context,
-                'objectid' => $this->eventevaluationcompleted->id,
-                'relateduserid' => 2,
-                'anonymous' => 0,
-                'other'    => array('cmid' => $this->eventcm->id, 'anonymous' => 2)
+                    'context' => $context,
+                    'objectid' => $this->eventevaluationcompleted->id,
+                    'relateduserid' => 2,
+                    'anonymous' => 0,
+                    'other' => array('cmid' => $this->eventcm->id, 'anonymous' => 2)
             ));
             $this->fail("Event validation should not allow \\mod_evaluation\\event\\response_deleted to be triggered without
                     other['instanceid']");
@@ -303,11 +305,11 @@ class mod_evaluation_events_testcase extends advanced_testcase {
         // Test not setting cmid.
         try {
             \mod_evaluation\event\response_submitted::create(array(
-                'context'  => $context,
-                'objectid' => $this->eventevaluationcompleted->id,
-                'relateduserid' => 2,
-                'anonymous' => 0,
-                'other'    => array('instanceid' => $this->eventevaluation->id, 'anonymous' => 2)
+                    'context' => $context,
+                    'objectid' => $this->eventevaluationcompleted->id,
+                    'relateduserid' => 2,
+                    'anonymous' => 0,
+                    'other' => array('instanceid' => $this->eventevaluation->id, 'anonymous' => 2)
             ));
             $this->fail("Event validation should not allow \\mod_evaluation\\event\\response_deleted to be triggered without
                     other['cmid']");
@@ -318,10 +320,10 @@ class mod_evaluation_events_testcase extends advanced_testcase {
         // Test not setting anonymous.
         try {
             \mod_evaluation\event\response_submitted::create(array(
-                 'context'  => $context,
-                 'objectid' => $this->eventevaluationcompleted->id,
-                 'relateduserid' => 2,
-                 'other'    => array('cmid' => $this->eventcm->id, 'instanceid' => $this->eventevaluation->id)
+                    'context' => $context,
+                    'objectid' => $this->eventevaluationcompleted->id,
+                    'relateduserid' => 2,
+                    'other' => array('cmid' => $this->eventcm->id, 'instanceid' => $this->eventevaluation->id)
             ));
             $this->fail("Event validation should not allow \\mod_evaluation\\event\\response_deleted to be triggered without
                     other['anonymous']");

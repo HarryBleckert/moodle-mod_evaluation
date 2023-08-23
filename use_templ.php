@@ -30,10 +30,10 @@ $id = required_param('id', PARAM_INT);
 $templateid = optional_param('templateid', false, PARAM_INT);
 
 if (!$templateid) {
-    redirect('edit.php?id='.$id);
+    redirect('edit.php?id=' . $id);
 }
 
-$url = new moodle_url('/mod/evaluation/use_templ.php', array('id'=>$id, 'templateid'=>$templateid));
+$url = new moodle_url('/mod/evaluation/use_templ.php', array('id' => $id, 'templateid' => $templateid));
 $PAGE->set_url($url);
 
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
@@ -50,7 +50,7 @@ $mform = new mod_evaluation_use_templ_form();
 $mform->set_data(array('id' => $id, 'templateid' => $templateid));
 
 if ($mform->is_cancelled()) {
-    redirect('edit.php?id='.$id.'&do_show=templates');
+    redirect('edit.php?id=' . $id . '&do_show=templates');
 } else if ($formdata = $mform->get_data()) {
     evaluation_items_from_template($evaluation, $templateid, $formdata->deleteolditems);
     redirect('edit.php?id=' . $id);
@@ -58,7 +58,7 @@ if ($mform->is_cancelled()) {
 
 /// Print the page header
 $strevaluations = get_string("modulenameplural", "evaluation");
-$strevaluation  = get_string("modulename", "evaluation");
+$strevaluation = get_string("modulename", "evaluation");
 
 navigation_node::override_active_url(new moodle_url('/mod/evaluation/edit.php',
         array('id' => $id, 'do_show' => 'templates')));
@@ -70,9 +70,8 @@ echo $OUTPUT->header();
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-$icon = '<img src="pix/icon120.png" height="30" alt="'.$evaluation->name.'">';
-echo $OUTPUT->heading( $icon. "&nbsp;" .format_string($evaluation->name) );
-
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
 
 echo $OUTPUT->heading(get_string('confirmusetemplate', 'evaluation'), 4);
 

@@ -29,21 +29,21 @@ require_once("lib.php");
 $id = required_param('id', PARAM_INT);
 $action = optional_param('action', false, PARAM_ALPHA);
 
-$url = new moodle_url('/mod/evaluation/export.php', array('id'=>$id));
+$url = new moodle_url('/mod/evaluation/export.php', array('id' => $id));
 if ($action !== false) {
     $url->param('action', $action);
 }
 $PAGE->set_url($url);
 
-if (! $cm = get_coursemodule_from_id('evaluation', $id)) {
+if (!$cm = get_coursemodule_from_id('evaluation', $id)) {
     print_error('invalidcoursemodule');
 }
 
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+if (!$course = $DB->get_record("course", array("id" => $cm->course))) {
     print_error('coursemisconf');
 }
 
-if (! $evaluation = $DB->get_record("evaluation", array("id"=>$cm->instance))) {
+if (!$evaluation = $DB->get_record("evaluation", array("id" => $cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
@@ -57,11 +57,11 @@ if ($action == 'exportfile') {
     if (!$exportdata = evaluation_get_xml_data($evaluation->id)) {
         print_error('nodata');
     }
-    @evaluation_send_xml_data($exportdata, 'evaluation_'.$evaluation->id.'.xml');
+    @evaluation_send_xml_data($exportdata, 'evaluation_' . $evaluation->id . '.xml');
     exit;
 }
 
-redirect('view.php?id='.$id);
+redirect('view.php?id=' . $id);
 exit;
 
 function evaluation_get_xml_data($evaluationid) {
@@ -69,103 +69,103 @@ function evaluation_get_xml_data($evaluationid) {
 
     $space = '     ';
     //get all items of the evaluation
-    if (!$items = $DB->get_records('evaluation_item', array('evaluation'=>$evaluationid), 'position')) {
+    if (!$items = $DB->get_records('evaluation_item', array('evaluation' => $evaluationid), 'position')) {
         return false;
     }
 
     //writing the header of the xml file including the charset of the currrent used language
-    $data = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
-    $data .= '<EVALUATION VERSION="200701" COMMENT="XML-Importfile for mod/evaluation">'."\n";
-    $data .= $space.'<ITEMS>'."\n";
+    $data = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n";
+    $data .= '<EVALUATION VERSION="200701" COMMENT="XML-Importfile for mod/evaluation">' . "\n";
+    $data .= $space . '<ITEMS>' . "\n";
 
     //writing all the items
     foreach ($items as $item) {
         //start of item
-        $data .= $space.$space.'<ITEM TYPE="'.$item->typ.'" REQUIRED="'.$item->required.'">'."\n";
+        $data .= $space . $space . '<ITEM TYPE="' . $item->typ . '" REQUIRED="' . $item->required . '">' . "\n";
 
         //start of itemid
-        $data .= $space.$space.$space.'<ITEMID>'."\n";
+        $data .= $space . $space . $space . '<ITEMID>' . "\n";
         //start of CDATA
-        $data .= $space.$space.$space.$space.'<![CDATA[';
+        $data .= $space . $space . $space . $space . '<![CDATA[';
         $data .= $item->id;
         //end of CDATA
-        $data .= ']]>'."\n";
+        $data .= ']]>' . "\n";
         //end of itemid
-        $data .= $space.$space.$space.'</ITEMID>'."\n";
+        $data .= $space . $space . $space . '</ITEMID>' . "\n";
 
         //start of itemtext
-        $data .= $space.$space.$space.'<ITEMTEXT>'."\n";
+        $data .= $space . $space . $space . '<ITEMTEXT>' . "\n";
         //start of CDATA
-        $data .= $space.$space.$space.$space.'<![CDATA[';
+        $data .= $space . $space . $space . $space . '<![CDATA[';
         $data .= $item->name;
         //end of CDATA
-        $data .= ']]>'."\n";
+        $data .= ']]>' . "\n";
         //end of itemtext
-        $data .= $space.$space.$space.'</ITEMTEXT>'."\n";
+        $data .= $space . $space . $space . '</ITEMTEXT>' . "\n";
 
         //start of itemtext
-        $data .= $space.$space.$space.'<ITEMLABEL>'."\n";
+        $data .= $space . $space . $space . '<ITEMLABEL>' . "\n";
         //start of CDATA
-        $data .= $space.$space.$space.$space.'<![CDATA[';
+        $data .= $space . $space . $space . $space . '<![CDATA[';
         $data .= $item->label;
         //end of CDATA
-        $data .= ']]>'."\n";
+        $data .= ']]>' . "\n";
         //end of itemtext
-        $data .= $space.$space.$space.'</ITEMLABEL>'."\n";
+        $data .= $space . $space . $space . '</ITEMLABEL>' . "\n";
 
         //start of presentation
-        $data .= $space.$space.$space.'<PRESENTATION>'."\n";
+        $data .= $space . $space . $space . '<PRESENTATION>' . "\n";
         //start of CDATA
-        $data .= $space.$space.$space.$space.'<![CDATA[';
+        $data .= $space . $space . $space . $space . '<![CDATA[';
         $data .= $item->presentation;
         //end of CDATA
-        $data .= ']]>'."\n";
+        $data .= ']]>' . "\n";
         //end of presentation
-        $data .= $space.$space.$space.'</PRESENTATION>'."\n";
+        $data .= $space . $space . $space . '</PRESENTATION>' . "\n";
 
         //start of options
-        $data .= $space.$space.$space.'<OPTIONS>'."\n";
+        $data .= $space . $space . $space . '<OPTIONS>' . "\n";
         //start of CDATA
-        $data .= $space.$space.$space.$space.'<![CDATA[';
+        $data .= $space . $space . $space . $space . '<![CDATA[';
         $data .= $item->options;
         //end of CDATA
-        $data .= ']]>'."\n";
+        $data .= ']]>' . "\n";
         //end of options
-        $data .= $space.$space.$space.'</OPTIONS>'."\n";
+        $data .= $space . $space . $space . '</OPTIONS>' . "\n";
 
         //start of dependitem
-        $data .= $space.$space.$space.'<DEPENDITEM>'."\n";
+        $data .= $space . $space . $space . '<DEPENDITEM>' . "\n";
         //start of CDATA
-        $data .= $space.$space.$space.$space.'<![CDATA[';
+        $data .= $space . $space . $space . $space . '<![CDATA[';
         $data .= $item->dependitem;
         //end of CDATA
-        $data .= ']]>'."\n";
+        $data .= ']]>' . "\n";
         //end of dependitem
-        $data .= $space.$space.$space.'</DEPENDITEM>'."\n";
+        $data .= $space . $space . $space . '</DEPENDITEM>' . "\n";
 
         //start of dependvalue
-        $data .= $space.$space.$space.'<DEPENDVALUE>'."\n";
+        $data .= $space . $space . $space . '<DEPENDVALUE>' . "\n";
         //start of CDATA
-        $data .= $space.$space.$space.$space.'<![CDATA[';
+        $data .= $space . $space . $space . $space . '<![CDATA[';
         $data .= $item->dependvalue;
         //end of CDATA
-        $data .= ']]>'."\n";
+        $data .= ']]>' . "\n";
         //end of dependvalue
-        $data .= $space.$space.$space.'</DEPENDVALUE>'."\n";
+        $data .= $space . $space . $space . '</DEPENDVALUE>' . "\n";
 
         //end of item
-        $data .= $space.$space.'</ITEM>'."\n";
+        $data .= $space . $space . '</ITEM>' . "\n";
     }
 
     //writing the footer of the xml file
-    $data .= $space.'</ITEMS>'."\n";
-    $data .= '</EVALUATION>'."\n";
+    $data .= $space . '</ITEMS>' . "\n";
+    $data .= '</EVALUATION>' . "\n";
 
     return $data;
 }
 
 function evaluation_send_xml_data($data, $filename) {
     @header('Content-Type: application/xml; charset=UTF-8');
-    @header('Content-Disposition: attachment; filename="'.$filename.'"');
+    @header('Content-Disposition: attachment; filename="' . $filename . '"');
     print($data);
 }

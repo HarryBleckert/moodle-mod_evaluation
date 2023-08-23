@@ -32,23 +32,8 @@ require_once($CFG->dirroot . '/mod/evaluation/classes/completion.php');
  */
 class mod_evaluation_completion_testcase extends advanced_testcase {
     /**
-     * Returns the number of pages with visible elements for the current state of the evaluation completion.
-     * @param mod_evaluation_completion $completion
-     * @return int number of pages with at least one visible item.
-     */
-    private function get_number_of_visible_pages(mod_evaluation_completion $completion) {
-        $pages = $completion->get_pages();
-        $result = 0;
-        foreach ($pages as $items) {
-            if (count($items) > 0) {
-                $result++;
-            }
-        }
-        return $result;
-    }
-
-    /**
      * Tests get_pages for transitive dependencies.
+     *
      * @throws coding_exception
      */
     public function test_get_pages() {
@@ -58,7 +43,7 @@ class mod_evaluation_completion_testcase extends advanced_testcase {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $evaluation = $this->getDataGenerator()->create_module('evaluation',
-            array('course' => $course->id));
+                array('course' => $course->id));
         $cm = get_coursemodule_from_instance('evaluation', $evaluation->id);
 
         $evaluationgenerator = $this->getDataGenerator()->get_plugin_generator('mod_evaluation');
@@ -66,22 +51,22 @@ class mod_evaluation_completion_testcase extends advanced_testcase {
 
         // Create at least one page.
         $itemscreated[] = $evaluationgenerator->create_item_multichoice($evaluation,
-            $record = ['values' => "y\nn"]);
+                $record = ['values' => "y\nn"]);
         $itemscreated[] = $evaluationgenerator->create_item_pagebreak($evaluation);
         $itemscreated[] = $evaluationgenerator->create_item_multichoice($evaluation,
-            $record = ['values' => "y\nn", 'dependitem' => $itemscreated[0]->id, 'dependvalue' => 'n']);
+                $record = ['values' => "y\nn", 'dependitem' => $itemscreated[0]->id, 'dependvalue' => 'n']);
         $itemscreated[] = $evaluationgenerator->create_item_pagebreak($evaluation);
         $itemscreated[] = $evaluationgenerator->create_item_multichoice($evaluation,
-            $record = ['values' => "y\nn", 'dependitem' => $itemscreated[0]->id, 'dependvalue' => 'y']);
+                $record = ['values' => "y\nn", 'dependitem' => $itemscreated[0]->id, 'dependvalue' => 'y']);
         $itemscreated[] = $evaluationgenerator->create_item_pagebreak($evaluation);
         $itemscreated[] = $evaluationgenerator->create_item_multichoice($evaluation,
-            $record = ['values' => "y\nn", 'dependitem' => $itemscreated[2]->id, 'dependvalue' => 'y']);
+                $record = ['values' => "y\nn", 'dependitem' => $itemscreated[2]->id, 'dependvalue' => 'y']);
 
         // Test hiding item since transitive dependency is not met.
         // Answering the first multichoice with 'y', should hide the second and therefor also the fourth.
         $user1 = $this->getDataGenerator()->create_and_enrol($course);
         $completion = new mod_evaluation_completion($evaluation, $cm, $course,
-            false, null, $user1->id);
+                false, null, $user1->id);
 
         // Initially, all pages should be visible.
         $this->assertEquals(4, $this->get_number_of_visible_pages($completion));
@@ -104,7 +89,7 @@ class mod_evaluation_completion_testcase extends advanced_testcase {
         // Answering the first multichoice with 'n' should hide the third multichoice.
         $user2 = $this->getDataGenerator()->create_and_enrol($course);
         $completion2 = new mod_evaluation_completion($evaluation, $cm, $course,
-            false, null, $user2->id);
+                false, null, $user2->id);
 
         // Initially, all pages should be visible.
         $this->assertEquals(4, $this->get_number_of_visible_pages($completion2));
@@ -120,6 +105,23 @@ class mod_evaluation_completion_testcase extends advanced_testcase {
         $completion2->save_response_tmp((object) $answers);
 
         $this->assertEquals(2, $this->get_number_of_visible_pages($completion2));
+    }
+
+    /**
+     * Returns the number of pages with visible elements for the current state of the evaluation completion.
+     *
+     * @param mod_evaluation_completion $completion
+     * @return int number of pages with at least one visible item.
+     */
+    private function get_number_of_visible_pages(mod_evaluation_completion $completion) {
+        $pages = $completion->get_pages();
+        $result = 0;
+        foreach ($pages as $items) {
+            if (count($items) > 0) {
+                $result++;
+            }
+        }
+        return $result;
     }
 
 }

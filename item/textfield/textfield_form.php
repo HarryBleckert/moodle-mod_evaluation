@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot.'/mod/evaluation/item/evaluation_item_form_class.php');
+require_once($CFG->dirroot . '/mod/evaluation/item/evaluation_item_form_class.php');
 
 class evaluation_textfield_form extends evaluation_item_form {
     protected $type = "textfield";
@@ -28,25 +28,25 @@ class evaluation_textfield_form extends evaluation_item_form {
         $mform =& $this->_form;
 
         $mform->addElement('header', 'general', get_string($this->type, 'evaluation'));
-        $mform->addElement('advcheckbox', 'required', get_string('required', 'evaluation'), '' , null , array(0, 1));
+        $mform->addElement('advcheckbox', 'required', get_string('required', 'evaluation'), '', null, array(0, 1));
 
         $mform->addElement('text',
-                            'name',
-                            get_string('item_name', 'evaluation'),
-                            array('size'=>EVALUATION_ITEM_NAME_TEXTBOX_SIZE, 'maxlength'=>255));
+                'name',
+                get_string('item_name', 'evaluation'),
+                array('size' => EVALUATION_ITEM_NAME_TEXTBOX_SIZE, 'maxlength' => 255));
         $mform->addElement('text',
-                            'label',
-                            get_string('item_label', 'evaluation'),
-                            array('size'=>EVALUATION_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
+                'label',
+                get_string('item_label', 'evaluation'),
+                array('size' => EVALUATION_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength' => 255));
 
         $mform->addElement('select',
-                            'itemsize',
-                            get_string('textfield_size', 'evaluation').'&nbsp;',
-                            array_slice(range(0, 255), 5, 255, true));
+                'itemsize',
+                get_string('textfield_size', 'evaluation') . '&nbsp;',
+                array_slice(range(0, 255), 5, 255, true));
 
         $mform->addElement('text',
-                            'itemmaxlength',
-                            get_string('textfield_maxlength', 'evaluation'));
+                'itemmaxlength',
+                get_string('textfield_maxlength', 'evaluation'));
         $mform->setType('itemmaxlength', PARAM_INT);
         $mform->addRule('itemmaxlength', null, 'numeric', null, 'client');
 
@@ -60,7 +60,7 @@ class evaluation_textfield_form extends evaluation_item_form {
             return false;
         }
 
-        $item->presentation = $item->itemsize . '|'. $item->itemmaxlength;
+        $item->presentation = $item->itemsize . '|' . $item->itemmaxlength;
         return $item;
     }
 }

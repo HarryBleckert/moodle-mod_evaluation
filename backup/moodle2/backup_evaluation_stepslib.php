@@ -37,54 +37,54 @@ class backup_evaluation_activity_structure_step extends backup_activity_structur
 
         // Define each element separated
         $evaluation = new backup_nested_element('evaluation', array('id'), array(
-                                                'name',
-                                                'intro',
-                                                'introformat',
-                                                'anonymous',
-                                                'email_notification',
-                                                'multiple_submit',
-                                                'autonumbering',
-                                                'site_after_submit',
-                                                'page_after_submit',
-                                                'page_after_submitformat',
-                                                'publish_stats',
-                                                'timeopen',
-                                                'timeclose',
-                                                'timemodified',
-                                                'completionsubmit'));
+                'name',
+                'intro',
+                'introformat',
+                'anonymous',
+                'email_notification',
+                'multiple_submit',
+                'autonumbering',
+                'site_after_submit',
+                'page_after_submit',
+                'page_after_submitformat',
+                'publish_stats',
+                'timeopen',
+                'timeclose',
+                'timemodified',
+                'completionsubmit'));
 
         $completeds = new backup_nested_element('completeds');
 
         $completed = new backup_nested_element('completed', array('id'), array(
-                                                'userid',
-                                                'timemodified',
-                                                'random_response',
-                                                'anonymous_response',
-                                                'courseid'));
+                'userid',
+                'timemodified',
+                'random_response',
+                'anonymous_response',
+                'courseid'));
 
         $items = new backup_nested_element('items');
 
         $item = new backup_nested_element('item', array('id'), array(
-                                                'template',
-                                                'name',
-                                                'label',
-                                                'presentation',
-                                                'typ',
-                                                'hasvalue',
-                                                'position',
-                                                'required',
-                                                'dependitem',
-                                                'dependvalue',
-                                                'options'));
+                'template',
+                'name',
+                'label',
+                'presentation',
+                'typ',
+                'hasvalue',
+                'position',
+                'required',
+                'dependitem',
+                'dependvalue',
+                'options'));
 
         $values = new backup_nested_element('values');
 
         $value = new backup_nested_element('value', array('id'), array(
-                                                'item',
-                                                'template',
-                                                'completed',
-                                                'value',
-                                                'courseid'));
+                'item',
+                'template',
+                'completed',
+                'value',
+                'courseid'));
 
         // Build the tree
         $evaluation->add_child($items);
@@ -107,7 +107,7 @@ class backup_evaluation_activity_structure_step extends backup_activity_structur
                 SELECT *
                   FROM {evaluation_completed}
                  WHERE evaluation = ?',
-                array(backup::VAR_PARENTID));
+                    array(backup::VAR_PARENTID));
 
             $value->set_source_table('evaluation_value', array('completed' => backup::VAR_PARENTID));
         }

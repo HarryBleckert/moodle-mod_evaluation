@@ -84,9 +84,9 @@ class mod_evaluation_generator_testcase extends advanced_testcase {
         $item1 = $evaluationgenerator->create_item_label($evaluation);
 
         $editor = array(
-            'text' => "Custom editor",
-            'format' => FORMAT_HTML,
-            'itemid' => 0
+                'text' => "Custom editor",
+                'format' => FORMAT_HTML,
+                'itemid' => 0
         );
         $item2 = $evaluationgenerator->create_item_label($evaluation, array('presentation_editor' => $editor));
         $records = $DB->get_records('evaluation_item', array('evaluation' => $evaluation->id), 'id');
@@ -128,7 +128,7 @@ class mod_evaluation_generator_testcase extends advanced_testcase {
 
         $item1 = $evaluationgenerator->create_item_multichoicerated($evaluation);
         $item2 = $evaluationgenerator->create_item_multichoicerated($evaluation, array(
-                    'values' => "0/1\n1/2\n2/3\n3/4\n4/5", 'horizontal' => 1));
+                'values' => "0/1\n1/2\n2/3\n3/4\n4/5", 'horizontal' => 1));
         $records = $DB->get_records('evaluation_item', array('evaluation' => $evaluation->id), 'id');
         $this->assertCount(2, $records);
         $this->assertEquals($item1->id, $records[$item1->id]->id);

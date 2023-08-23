@@ -20,20 +20,20 @@
  * @author Harry.Bleckert@ASH-Berlin.eu for ASH Berlin
  */
 // current location: mod/evaluation/cli
-require_once( "../../../config.php"); //__DIR__ .
+require_once("../../../config.php"); //__DIR__ .
 //require_once($CFG->dirroot ."lib/lib.php");
 defined('MOODLE_INTERNAL') || die();
 
 $validation = optional_param('validation', 0, PARAM_INT);
-$contextid  = 1; // site wide context required_param('contextid', PARAM_INT);
-$roleid     = optional_param('roleid', 0, PARAM_INT);
+$contextid = 1; // site wide context required_param('contextid', PARAM_INT);
+$roleid = optional_param('roleid', 0, PARAM_INT);
 $capability = optional_param('capability', false, PARAM_CAPABILITY);
-$confirm    = optional_param('confirm', 0, PARAM_BOOL);
-$prevent    = optional_param('prevent', 0, PARAM_BOOL);
-$allow      = optional_param('allow', 0, PARAM_BOOL);
+$confirm = optional_param('confirm', 0, PARAM_BOOL);
+$prevent = optional_param('prevent', 0, PARAM_BOOL);
+$allow = optional_param('allow', 0, PARAM_BOOL);
 $unprohibit = optional_param('unprohibit', 0, PARAM_BOOL);
-$prohibit   = optional_param('prohibit', 0, PARAM_BOOL);
-$returnurl  = optional_param('returnurl', null, PARAM_LOCALURL);
+$prohibit = optional_param('prohibit', 0, PARAM_BOOL);
+$returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 //$context = context_module::instance($cm->id);
@@ -49,15 +49,18 @@ $urlparams = array();
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 $pageurl = new moodle_url('/mod/evaluation/cli/ASH_change_permissions.php');
-$PAGE->set_url($pageurl, $urlparams );
+$PAGE->set_url($pageurl, $urlparams);
 $PAGE->set_title($course->fullname);
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 echo "<h1>ASH global Permissions Change</h1>\n";
 
-if ( !is_siteadmin() )
-{	echo get_string("error");echo $OUTPUT->footer();exit;}
+if (!is_siteadmin()) {
+    echo get_string("error");
+    echo $OUTPUT->footer();
+    exit;
+}
 $cap = "moodle/role:review";
 //load_all_capabilities();
 //require_capability($cap, $context) || print_error( "$cap: Not allowed!");
@@ -98,61 +101,66 @@ report/outline:viewuserreport
 ToDo: remove all records with contextid >1 for same caps (Austausch- und Info Kurse)
 */
 
-
-$roleids = array(1,2,3,4,9,10,12,14);
+$roleids = array(1, 2, 3, 4, 9, 10, 12, 14);
 $caps = array("report/participation:view", "report/progress:view", "report/outline:view", "report/outline:viewuserreport");
 $action = CAP_PROHIBIT; //CAP_ALLOW; //CAP_PROHIBIT; CAP_INHERIT
-echo "Current Settings to be applied<br>Roles:"; 
-echo print_r($roleids);echo "<br>Capabilities:"; 
-echo print_r($caps); 
+echo "Current Settings to be applied<br>Roles:";
+echo print_r($roleids);
+echo "<br>Capabilities:";
+echo print_r($caps);
 echo "<br>Action: $action (CAP_PROHIBIT)<br>\n";
 
-if ( !$validation )
-{	echo "<br><hr><b style=\"color:red;\">Permission Changes can only proceed if you add '?validation=1' to URL</b><br>";
-	echo $OUTPUT->footer();
-	exit;
+if (!$validation) {
+    echo "<br><hr><b style=\"color:red;\">Permission Changes can only proceed if you add '?validation=1' to URL</b><br>";
+    echo $OUTPUT->footer();
+    exit;
 }
 
-foreach ( $caps AS $cap )
-{	echo "<b>Before</b>:<br>\n";
-	show_cap_records( $cap );
-	foreach ( $roleids AS $roleid )
-	{ role_change_permission($roleid, $context, $cap, $action); }
-	echo "<br><b>After</b>:<br>\n";
-	show_cap_records( $cap );
+foreach ($caps as $cap) {
+    echo "<b>Before</b>:<br>\n";
+    show_cap_records($cap);
+    foreach ($roleids as $roleid) {
+        role_change_permission($roleid, $context, $cap, $action);
+    }
+    echo "<br><b>After</b>:<br>\n";
+    show_cap_records($cap);
 
 }
 echo $OUTPUT->footer();
 
 // show current permission settings
-function show_cap_records( $cap )
-{	global $DB;
-	$fields = "id,contextid,roleid,capability,permission,timemodified,modifierid";
-	$sql = "SELECT $fields FROM {role_capabilities} WHERE contextid=1 AND capability=? ORDER by roleid";
-	//echo "<hr>sql: $sql<br>";	
-	$perms = $DB->get_records_sql($sql,array($cap));
-	$fieldsA = explode(",", $fields);
-	echo "<table>\n";
-	$header = 1;
-	foreach ( $perms AS $perm )
-	{	echo "\n<tr>";
-		if ( $header)
-		{	foreach ( $fieldsA AS $field ) { echo "<td><b>$field</b></td>"; } 
-			echo "</tr>\n<tr>"; $header = 0;
-		}
-		foreach ( $fieldsA AS $field )
-		{	echo "<td style=\"text-align:right;\">".$perm->{$field}."</td>"; }		
-		echo "\n</tr>";
-	}
-	echo "</table>\n";
+function show_cap_records($cap) {
+    global $DB;
+    $fields = "id,contextid,roleid,capability,permission,timemodified,modifierid";
+    $sql = "SELECT $fields FROM {role_capabilities} WHERE contextid=1 AND capability=? ORDER by roleid";
+    //echo "<hr>sql: $sql<br>";
+    $perms = $DB->get_records_sql($sql, array($cap));
+    $fieldsA = explode(",", $fields);
+    echo "<table>\n";
+    $header = 1;
+    foreach ($perms as $perm) {
+        echo "\n<tr>";
+        if ($header) {
+            foreach ($fieldsA as $field) {
+                echo "<td><b>$field</b></td>";
+            }
+            echo "</tr>\n<tr>";
+            $header = 0;
+        }
+        foreach ($fieldsA as $field) {
+            echo "<td style=\"text-align:right;\">" . $perm->{$field} . "</td>";
+        }
+        echo "\n</tr>";
+    }
+    echo "</table>\n";
 }
 
-function ASH_role_change_permission($roleid, $context, $cap, $action)
-{	role_change_permission($roleid, $context, $cap, $action);
-	return true;
-	global $DB, $USER;
-	$sql = "UPDATE {role_capabilities} SET permission=$action, timemodified=".time().", modifierid=$USER->id 
+function ASH_role_change_permission($roleid, $context, $cap, $action) {
+    role_change_permission($roleid, $context, $cap, $action);
+    return true;
+    global $DB, $USER;
+    $sql = "UPDATE {role_capabilities} SET permission=$action, timemodified=" . time() . ", modifierid=$USER->id 
 			WHERE roleid=$roleid AND contextid=$context->id AND capability='$cap'";
-	echo "<hr>sql: $sql<hr>";	
-	return $DB->execute($sql); //, array("capability" => $cap));
+    echo "<hr>sql: $sql<hr>";
+    return $DB->execute($sql); //, array("capability" => $cap));
 }

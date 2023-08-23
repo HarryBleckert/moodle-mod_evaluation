@@ -80,11 +80,11 @@ class mod_evaluation_complete_form extends moodleform {
         $mform = $this->_form;
         $mform->addElement('hidden', 'id', $this->get_cm()->id);
         $mform->setType('id', PARAM_INT);
-        $mform->addElement('hidden', 'courseid', $this->get_current_courseid() );
+        $mform->addElement('hidden', 'courseid', $this->get_current_courseid());
         $mform->setType('courseid', PARAM_INT);
         /*$mform->addElement('hidden', 'course_of_studies', $this->structure->course_of_studies() );
         $mform->setType('course_of_studies', PARAM_RAW);*/
-		$mform->addElement('hidden', 'teacherid', $this->get_teacherid() ); 
+        $mform->addElement('hidden', 'teacherid', $this->get_teacherid());
         $mform->setType('teacherid', PARAM_INT);
         $mform->addElement('hidden', 'gopage');
         $mform->setType('gopage', PARAM_INT);
@@ -96,7 +96,7 @@ class mod_evaluation_complete_form extends moodleform {
         $mform->setType('lastitempos', PARAM_INT);
 
         if (isloggedin() && !isguestuser() && $this->mode != self::MODE_EDIT && $this->mode != self::MODE_VIEW_TEMPLATE &&
-                    $this->mode != self::MODE_VIEW_RESPONSE) {
+                $this->mode != self::MODE_VIEW_RESPONSE) {
             // Output information about the current mode (anonymous or not) in some modes.
             if ($this->structure->is_anonymous()) {
                 $anonymousmodeinfo = get_string('anonymous', 'evaluation');
@@ -130,6 +130,59 @@ class mod_evaluation_complete_form extends moodleform {
 
         // Set data.
         $this->set_data(array('gopage' => $this->gopage));
+    }
+
+    /**
+     * Returns the current course module
+     *
+     * @return cm_info
+     */
+    public function get_cm() {
+        return $this->structure->get_cm();
+    }
+
+    /**
+     * Returns the course where user was before taking the evaluation.
+     *
+     * For evaluations inside the course it will be the same as $this->get_evaluation()->course.
+     * For evaluations on the frontpage it will be the same as $this->get_courseid()
+     *
+     * @return int
+     */
+    public function get_current_courseid() {
+        return $this->structure->get_courseid() ?: $this->get_evaluation()->course;
+    }
+
+    /**
+     * Can be used by the items to get the course id for which evaluation is taken
+     *
+     * This function returns 0 for evaluations that are located inside the courses.
+     * $this->get_evaluation()->course will return the course where evaluation is located.
+     * $this->get_current_courseid() will return the course where user was before taking the evaluation
+     *
+     * @return int
+     */
+    public function get_courseid() {
+        return $this->structure->get_courseid();
+    }
+
+    /**
+     * Record from 'evaluation' table corresponding to the current evaluation
+     *
+     * @return stdClass
+     */
+    public function get_evaluation() {
+        return $this->structure->get_evaluation();
+    }
+
+    /**
+     * Can be used by the items to get the teacher id for which evaluation is taken
+     *      *
+     *
+     * @return int
+     */
+    public function get_teacherid() {
+        return $this->structure->get_teacherid();
     }
 
     /**
@@ -167,18 +220,6 @@ class mod_evaluation_complete_form extends moodleform {
     }
 
     /**
-     * Called from definition_after_data() in all modes except for completion
-     *
-     * This will add all items to the form, including pagebreaks as horizontal rules.
-     */
-    protected function definition_preview() {
-        foreach ($this->structure->get_items() as $evaluationitem) {
-            $itemobj = evaluation_get_item_class($evaluationitem->typ);
-            $itemobj->complete_form_element($evaluationitem, $this);
-        }
-    }
-
-    /**
      * Removes the button that is not applicable for the current page
      *
      * @param string $buttonname
@@ -194,61 +235,31 @@ class mod_evaluation_complete_form extends moodleform {
     }
 
     /**
-     * Returns value for this element that is already stored in temporary or permanent table,
-     * usually only available when user clicked "Previous page". Null means no value is stored.
+     * Called from definition_after_data() in all modes except for completion
      *
-     * @param stdClass $item
-     * @return string
+     * This will add all items to the form, including pagebreaks as horizontal rules.
      */
-    public function get_item_value($item) {
-        if ($this->structure instanceof mod_evaluation_completion) {
-            return $this->structure->get_item_value($item);
+    protected function definition_preview() {
+        foreach ($this->structure->get_items() as $evaluationitem) {
+            $itemobj = evaluation_get_item_class($evaluationitem->typ);
+            $itemobj->complete_form_element($evaluationitem, $this);
         }
-        return null;
-    }
-
-    /**
-     * Can be used by the items to get the course id for which evaluation is taken
-     *
-     * This function returns 0 for evaluations that are located inside the courses.
-     * $this->get_evaluation()->course will return the course where evaluation is located.
-     * $this->get_current_courseid() will return the course where user was before taking the evaluation
-     *
-     * @return int
-     */
-    public function get_courseid() {
-        return $this->structure->get_courseid();
     }
 
     /**
      * Can be used by the items to get the course_of_studies of course for which evaluation is taken
      *      *
+     *
      * @return int
      */
 
     public function get_course_of_Studies() {
-		return $this->structure->course_of_studies;
-    }
-
-    /**
-     * Can be used by the items to get the teacher id for which evaluation is taken
-     *      *
-     * @return int
-     */
-    public function get_teacherid() {
-        return $this->structure->get_teacherid();
-    }
-	
-    /**
-     * Record from 'evaluation' table corresponding to the current evaluation
-     * @return stdClass
-     */
-    public function get_evaluation() {
-        return $this->structure->get_evaluation();
+        return $this->structure->course_of_studies;
     }
 
     /**
      * Current evaluation mode, see constants on the top of this class
+     *
      * @return int
      */
     public function get_mode() {
@@ -256,53 +267,33 @@ class mod_evaluation_complete_form extends moodleform {
     }
 
     /**
-     * Returns whether the form is frozen, some items may prefer to change the element
-     * type in case of frozen form. For example, text or textarea element does not look
-     * nice when frozen
+     * Adds a group element to this form - to be used by items in their complete_form_element() method
      *
-     * @return bool
-     */
-    public function is_frozen() {
-        return $this->mode == self::MODE_VIEW_RESPONSE;
-    }
-
-    /**
-     * Returns the current course module
-     * @return cm_info
-     */
-    public function get_cm() {
-        return $this->structure->get_cm();
-    }
-
-    /**
-     * Returns the course where user was before taking the evaluation.
-     *
-     * For evaluations inside the course it will be the same as $this->get_evaluation()->course.
-     * For evaluations on the frontpage it will be the same as $this->get_courseid()
-     *
-     * @return int
-     */
-    public function get_current_courseid() {
-        return $this->structure->get_courseid() ?: $this->get_evaluation()->course;
-    }
-
-    /**
-     * CSS class for the item
      * @param stdClass $item
-     * @return string
+     * @param string $groupinputname name for the form element
+     * @param string $name question text
+     * @param array $elements array of arrays that can be passed to $this->_form->createElement()
+     * @param string $separator separator between group elements
+     * @param string $class additional CSS classes for the form element
+     * @return HTML_QuickForm_element
      */
-    protected function get_suggested_class($item) {
-        $class = "evaluation_itemlist evaluation-item-{$item->typ}";
-        if ($item->dependitem) {
-            $class .= " evaluation_is_dependent";
+    public function add_form_group_element($item, $groupinputname, $name, $elements, $separator,
+            $class = '') {
+        $objects = array();
+        foreach ($elements as $element) {
+            $object = call_user_func_array(array($this->_form, 'createElement'), $element);
+            $objects[] = $object;
         }
-        if ($item->typ !== 'pagebreak') {
-            $itemobj = evaluation_get_item_class($item->typ);
-            if ($itemobj->get_hasvalue()) {
-                $class .= " evaluation_hasvalue";
-            }
+        $element = $this->add_form_element($item,
+                ['group', $groupinputname, $name, $objects, $separator, false],
+                false,
+                false);
+        if ($class !== '') {
+            $attributes = $element->getAttributes();
+            $attributes['class'] .= ' ' . $class;
+            $element->setAttributes($attributes);
         }
-        return $class;
+        return $element;
     }
 
     /**
@@ -375,62 +366,67 @@ class mod_evaluation_complete_form extends moodleform {
     }
 
     /**
-     * Adds a group element to this form - to be used by items in their complete_form_element() method
+     * Returns whether the form is frozen, some items may prefer to change the element
+     * type in case of frozen form. For example, text or textarea element does not look
+     * nice when frozen
      *
-     * @param stdClass $item
-     * @param string $groupinputname name for the form element
-     * @param string $name question text
-     * @param array $elements array of arrays that can be passed to $this->_form->createElement()
-     * @param string $separator separator between group elements
-     * @param string $class additional CSS classes for the form element
-     * @return HTML_QuickForm_element
+     * @return bool
      */
-    public function add_form_group_element($item, $groupinputname, $name, $elements, $separator,
-            $class = '') {
-        $objects = array();
-        foreach ($elements as $element) {
-            $object = call_user_func_array(array($this->_form, 'createElement'), $element);
-            $objects[] = $object;
-        }
-        $element = $this->add_form_element($item,
-                ['group', $groupinputname, $name, $objects, $separator, false],
-                false,
-                false);
-        if ($class !== '') {
-            $attributes = $element->getAttributes();
-            $attributes['class'] .= ' ' . $class;
-            $element->setAttributes($attributes);
-        }
-        return $element;
+    public function is_frozen() {
+        return $this->mode == self::MODE_VIEW_RESPONSE;
     }
 
     /**
-     * Adds an item number to the question name (if evaluation autonumbering is on)
+     * CSS class for the item
+     *
      * @param stdClass $item
-     * @param HTML_QuickForm_element $element
+     * @return string
      */
-    protected function add_item_number($item, $element) {
-        if ($this->get_evaluation()->autonumbering && !empty($item->itemnr)) {
-            $name = $element->getLabel();
-            $element->setLabel(html_writer::span($item->itemnr. '.', 'itemnr') . ' ' . $name);
+    protected function get_suggested_class($item) {
+        $class = "evaluation_itemlist evaluation-item-{$item->typ}";
+        if ($item->dependitem) {
+            $class .= " evaluation_is_dependent";
         }
+        if ($item->typ !== 'pagebreak') {
+            $itemobj = evaluation_get_item_class($item->typ);
+            if ($itemobj->get_hasvalue()) {
+                $class .= " evaluation_hasvalue";
+            }
+        }
+        return $class;
+    }
+
+    /**
+     * Returns value for this element that is already stored in temporary or permanent table,
+     * usually only available when user clicked "Previous page". Null means no value is stored.
+     *
+     * @param stdClass $item
+     * @return string
+     */
+    public function get_item_value($item) {
+        if ($this->structure instanceof mod_evaluation_completion) {
+            return $this->structure->get_item_value($item);
+        }
+        return null;
     }
 
     /**
      * Adds an item label to the question name
+     *
      * @param stdClass $item
      * @param HTML_QuickForm_element $element
      */
     protected function add_item_label($item, $element) {
         if (strlen($item->label) && ($this->mode == self::MODE_EDIT || $this->mode == self::MODE_VIEW_TEMPLATE)) {
             $name = get_string('nameandlabelformat', 'mod_evaluation',
-                (object)['label' => format_string($item->label), 'name' => $element->getLabel()]);
+                    (object) ['label' => format_string($item->label), 'name' => $element->getLabel()]);
             $element->setLabel($name);
         }
     }
 
     /**
      * Adds a dependency description to the question name
+     *
      * @param stdClass $item
      * @param HTML_QuickForm_element $element
      */
@@ -440,7 +436,7 @@ class mod_evaluation_complete_form extends moodleform {
             if (isset($allitems[$item->dependitem])) {
                 $dependitem = $allitems[$item->dependitem];
                 $name = $element->getLabel();
-                $name .= html_writer::span(' ('.format_string($dependitem->label).'-&gt;'.$item->dependvalue.')',
+                $name .= html_writer::span(' (' . format_string($dependitem->label) . '-&gt;' . $item->dependvalue . ')',
                         'evaluation_depend');
                 $element->setLabel($name);
             }
@@ -448,44 +444,39 @@ class mod_evaluation_complete_form extends moodleform {
     }
 
     /**
-     * Returns the CSS id attribute that will be assigned by moodleform later to this element
+     * Adds an item number to the question name (if evaluation autonumbering is on)
+     *
      * @param stdClass $item
      * @param HTML_QuickForm_element $element
      */
-    protected function guess_element_id($item, $element) {
-        if (!$id = $element->getAttribute('id')) {
-            $attributes = $element->getAttributes();
-            $id = $attributes['id'] = 'evaluation_item_' . $item->id;
-            $element->setAttributes($attributes);
+    protected function add_item_number($item, $element) {
+        if ($this->get_evaluation()->autonumbering && !empty($item->itemnr)) {
+            $name = $element->getLabel();
+            $element->setLabel(html_writer::span($item->itemnr . '.', 'itemnr') . ' ' . $name);
         }
-        if ($element->getType() === 'group') {
-            return 'fgroup_' . $id;
-        }
-        return 'fitem_' . $id;
     }
 
     /**
      * Adds editing actions to the question name in the edit mode
+     *
      * @param stdClass $item
      * @param HTML_QuickForm_element $element
      */
     protected function enhance_name_for_edit($item, $element) {
         global $CFG, $OUTPUT;
-		$menu = new action_menu();
-		
-		if ( substr( $CFG->release,0,1) < "4")
-        { 	// Depreciated with 4.3: 
-			$menu->set_owner_selector('#' . $this->guess_element_id($item, $element));
-			$menu->set_constraint('.evaluation_form');
-			$menu->set_alignment(action_menu::TR, action_menu::BR);
-			$menu->set_menu_trigger(get_string('edit'));
-			$menu->prioritise = true;
-		}
-		else{
-			$menu->set_owner_selector('#' . $this->guess_element_id($item, $element));
-			$menu->set_menu_trigger(get_string('edit'));
-			$menu->prioritise = true;
-		}
+        $menu = new action_menu();
+
+        if (substr($CFG->release, 0, 1) < "4") {    // Depreciated with 4.3:
+            $menu->set_owner_selector('#' . $this->guess_element_id($item, $element));
+            $menu->set_constraint('.evaluation_form');
+            $menu->set_alignment(action_menu::TR, action_menu::BR);
+            $menu->set_menu_trigger(get_string('edit'));
+            $menu->prioritise = true;
+        } else {
+            $menu->set_owner_selector('#' . $this->guess_element_id($item, $element));
+            $menu->set_menu_trigger(get_string('edit'));
+            $menu->prioritise = true;
+        }
 
         $itemobj = evaluation_get_item_class($item->typ);
         $actions = $itemobj->edit_actions($item, $this->get_evaluation(), $this->get_cm());
@@ -503,7 +494,26 @@ class mod_evaluation_complete_form extends moodleform {
     }
 
     /**
+     * Returns the CSS id attribute that will be assigned by moodleform later to this element
+     *
+     * @param stdClass $item
+     * @param HTML_QuickForm_element $element
+     */
+    protected function guess_element_id($item, $element) {
+        if (!$id = $element->getAttribute('id')) {
+            $attributes = $element->getAttributes();
+            $id = $attributes['id'] = 'evaluation_item_' . $item->id;
+            $element->setAttributes($attributes);
+        }
+        if ($element->getType() === 'group') {
+            return 'fgroup_' . $id;
+        }
+        return 'fitem_' . $id;
+    }
+
+    /**
      * Sets the default value for form element - alias to $this->_form->setDefault()
+     *
      * @param HTML_QuickForm_element|string $element
      * @param mixed $defaultvalue
      */
@@ -514,9 +524,9 @@ class mod_evaluation_complete_form extends moodleform {
         $this->_form->setDefault($element, $defaultvalue);
     }
 
-
     /**
      * Sets the default value for form element - wrapper to $this->_form->setType()
+     *
      * @param HTML_QuickForm_element|string $element
      * @param int $type
      */
@@ -586,7 +596,8 @@ class mod_evaluation_complete_form extends moodleform {
 
         // Add "This form has required fields" text in the bottom of the form.
         if (($mform->_required || $this->hasrequired) &&
-               ($this->mode == self::MODE_COMPLETE || $this->mode == self::MODE_PRINT || $this->mode == self::MODE_VIEW_TEMPLATE)) {
+                ($this->mode == self::MODE_COMPLETE || $this->mode == self::MODE_PRINT ||
+                        $this->mode == self::MODE_VIEW_TEMPLATE)) {
             $element = $mform->addElement('static', 'requiredfields', '',
                     get_string('somefieldsrequired', 'form',
                             $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'))));

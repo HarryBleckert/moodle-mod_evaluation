@@ -35,20 +35,6 @@ require_once($CFG->dirroot . '/mod/evaluation/backup/moodle2/backup_evaluation_s
 class backup_evaluation_activity_task extends backup_activity_task {
 
     /**
-     * No specific settings for this activity
-     */
-    protected function define_my_settings() {
-    }
-
-    /**
-     * Defines a backup step to store the instance data in the evaluation.xml file
-     */
-    protected function define_my_steps() {
-        // evaluation only has one structure step
-        $this->add_step(new backup_evaluation_activity_structure_step('evaluation structure', 'evaluation.xml'));
-    }
-
-    /**
      * Encodes URLs to the index.php and view.php scripts
      *
      * @param string $content some HTML text that eventually contains URLs to the activity instance scripts
@@ -60,21 +46,35 @@ class backup_evaluation_activity_task extends backup_activity_task {
         $base = preg_quote($CFG->wwwroot, "/");
 
         // Link to the list of evaluations
-        $search="/(".$base."\/mod\/evaluation\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@EVALUATIONINDEX*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/evaluation\/index.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@EVALUATIONINDEX*$2@$', $content);
 
         // Link to evaluation view by moduleid
-        $search="/(".$base."\/mod\/evaluation\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@EVALUATIONVIEWBYID*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/evaluation\/view.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@EVALUATIONVIEWBYID*$2@$', $content);
 
         // Link to evaluation analyis by moduleid
-        $search="/(".$base."\/mod\/evaluation\/analysis.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@EVALUATIONANALYSISBYID*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/evaluation\/analysis.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@EVALUATIONANALYSISBYID*$2@$', $content);
 
         // Link to evaluation entries by moduleid
-        $search="/(".$base."\/mod\/evaluation\/show_entries.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@EVALUATIONSHOWENTRIESBYID*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/evaluation\/show_entries.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@EVALUATIONSHOWENTRIESBYID*$2@$', $content);
 
         return $content;
+    }
+
+    /**
+     * No specific settings for this activity
+     */
+    protected function define_my_settings() {
+    }
+
+    /**
+     * Defines a backup step to store the instance data in the evaluation.xml file
+     */
+    protected function define_my_steps() {
+        // evaluation only has one structure step
+        $this->add_step(new backup_evaluation_activity_structure_step('evaluation structure', 'evaluation.xml'));
     }
 }

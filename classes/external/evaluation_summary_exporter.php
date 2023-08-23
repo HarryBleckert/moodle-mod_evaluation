@@ -21,13 +21,14 @@
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_evaluation\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
-use renderer_base;
-use external_util;
 use external_files;
+use external_util;
+use renderer_base;
 
 /**
  * Class for exporting partial evaluation data (some fields are only viewable by admins).
@@ -39,150 +40,150 @@ class evaluation_summary_exporter extends exporter {
 
     protected static function define_properties() {
         return array(
-            'id' => array(
-                'type' => PARAM_INT,
-                'description' => 'The primary key of the record.',
-            ),
-            'course' => array(
-                'type' => PARAM_INT,
-                'description' => 'Course id this evaluation is part of.',
-            ),
-            'name' => array(
-                'type' => PARAM_TEXT,
-                'description' => 'Evaluation name.',
-            ),
-            'intro' => array(
-                'default' => '',
-                'type' => PARAM_RAW,
-                'description' => 'Evaluation introduction text.',
-            ),
-            'introformat' => array(
-                'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
-                'type' => PARAM_INT,
-                'default' => FORMAT_MOODLE,
-                'description' => 'Evaluation intro text format.',
-            ),
-            'anonymous' => array(
-                'type' => PARAM_INT,
-                'description' => 'Whether the evaluation is anonymous.',
-            ),
-            'email_notification' => array(
-                'type' => PARAM_BOOL,
-                'optional' => true,
-                'description' => 'Whether email notifications will be sent to teachers.',
-            ),
-            'multiple_submit' => array(
-                'default' => 1,
-                'type' => PARAM_BOOL,
-                'description' => 'Whether multiple submissions are allowed.',
-            ),
-            'autonumbering' => array(
-                'default' => 1,
-                'type' => PARAM_BOOL,
-                'description' => 'Whether questions should be auto-numbered.',
-            ),
-            'site_after_submit' => array(
-                'type' => PARAM_TEXT,
-                'optional' => true,
-                'description' => 'Link to next page after submission.',
-            ),
-            'page_after_submit' => array(
-                'type' => PARAM_RAW,
-                'optional' => true,
-                'description' => 'Text to display after submission.',
-            ),
-            'page_after_submitformat' => array(
-                'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
-                'type' => PARAM_INT,
-                'default' => FORMAT_MOODLE,
-                'description' => 'Text to display after submission format.',
-            ),
-            'publish_stats' => array(
-                'default' => 0,
-                'type' => PARAM_BOOL,
-                'description' => 'Whether stats should be published.',
-            ),
-            'timeopen' => array(
-                'type' => PARAM_INT,
-                'optional' => true,
-                'description' => 'Allow answers from this time.',
-            ),
-            'timeclose' => array(
-                'type' => PARAM_INT,
-                'optional' => true,
-                'description' => 'Allow answers until this time.',
-            ),
-            'timemodified' => array(
-                'type' => PARAM_INT,
-                'optional' => true,
-                'description' => 'The time this record was modified.',
-            ),
-            'completionsubmit' => array(
-                'default' => 0,
-                'type' => PARAM_BOOL,
-                'description' => 'If this field is set to 1, then the activity will be automatically marked as complete on submission.',
-			),
-            'min_results' => array(
-                'default' => 3,
-                'type' => PARAM_INT,
-                'optional' => true,
-				'description' => 'Privacy: No of evaluations required to show results',
-			),
-            'min_results_text' => array(
-                'default' => 3,
-                'type' => PARAM_INT,
-                'optional' => true,
-				'description' => 'Privacy: No of evaluations required to show text results to teachers',
-			),
-            'min_results_priv' => array(
-                'default' => 3,
-                'type' => PARAM_INT,
-                'optional' => true,
-				'description' => 'Privacy: No of evaluations required to show results',
-			),
-            'privileged_users' => array(
-                'type' => PARAM_TEXT,
-				'optional' => true,
-                'description' => 'Global evaluations: define privileged users',
-            ),
-			'filter_course_of_studies' => array(
-                'type' => PARAM_TEXT,
-				'optional' => true,
-                'description' => 'Global evaluations: define privileged users',
-			),
-			'filter_courses' => array(
-                'type' => PARAM_TEXT,
-				'optional' => true,
-                'description' => 'Global evaluations: select cadditional courses outside of courses of studies',
-			),
-			'teamteaching' => array(
-                'type' => PARAM_INT,
-				'optional' => true,
-                'description' => 'Global evaluations: select cadditional courses outside of courses of studies',
-			),
+                'id' => array(
+                        'type' => PARAM_INT,
+                        'description' => 'The primary key of the record.',
+                ),
+                'course' => array(
+                        'type' => PARAM_INT,
+                        'description' => 'Course id this evaluation is part of.',
+                ),
+                'name' => array(
+                        'type' => PARAM_TEXT,
+                        'description' => 'Evaluation name.',
+                ),
+                'intro' => array(
+                        'default' => '',
+                        'type' => PARAM_RAW,
+                        'description' => 'Evaluation introduction text.',
+                ),
+                'introformat' => array(
+                        'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
+                        'type' => PARAM_INT,
+                        'default' => FORMAT_MOODLE,
+                        'description' => 'Evaluation intro text format.',
+                ),
+                'anonymous' => array(
+                        'type' => PARAM_INT,
+                        'description' => 'Whether the evaluation is anonymous.',
+                ),
+                'email_notification' => array(
+                        'type' => PARAM_BOOL,
+                        'optional' => true,
+                        'description' => 'Whether email notifications will be sent to teachers.',
+                ),
+                'multiple_submit' => array(
+                        'default' => 1,
+                        'type' => PARAM_BOOL,
+                        'description' => 'Whether multiple submissions are allowed.',
+                ),
+                'autonumbering' => array(
+                        'default' => 1,
+                        'type' => PARAM_BOOL,
+                        'description' => 'Whether questions should be auto-numbered.',
+                ),
+                'site_after_submit' => array(
+                        'type' => PARAM_TEXT,
+                        'optional' => true,
+                        'description' => 'Link to next page after submission.',
+                ),
+                'page_after_submit' => array(
+                        'type' => PARAM_RAW,
+                        'optional' => true,
+                        'description' => 'Text to display after submission.',
+                ),
+                'page_after_submitformat' => array(
+                        'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
+                        'type' => PARAM_INT,
+                        'default' => FORMAT_MOODLE,
+                        'description' => 'Text to display after submission format.',
+                ),
+                'publish_stats' => array(
+                        'default' => 0,
+                        'type' => PARAM_BOOL,
+                        'description' => 'Whether stats should be published.',
+                ),
+                'timeopen' => array(
+                        'type' => PARAM_INT,
+                        'optional' => true,
+                        'description' => 'Allow answers from this time.',
+                ),
+                'timeclose' => array(
+                        'type' => PARAM_INT,
+                        'optional' => true,
+                        'description' => 'Allow answers until this time.',
+                ),
+                'timemodified' => array(
+                        'type' => PARAM_INT,
+                        'optional' => true,
+                        'description' => 'The time this record was modified.',
+                ),
+                'completionsubmit' => array(
+                        'default' => 0,
+                        'type' => PARAM_BOOL,
+                        'description' => 'If this field is set to 1, then the activity will be automatically marked as complete on submission.',
+                ),
+                'min_results' => array(
+                        'default' => 3,
+                        'type' => PARAM_INT,
+                        'optional' => true,
+                        'description' => 'Privacy: No of evaluations required to show results',
+                ),
+                'min_results_text' => array(
+                        'default' => 3,
+                        'type' => PARAM_INT,
+                        'optional' => true,
+                        'description' => 'Privacy: No of evaluations required to show text results to teachers',
+                ),
+                'min_results_priv' => array(
+                        'default' => 3,
+                        'type' => PARAM_INT,
+                        'optional' => true,
+                        'description' => 'Privacy: No of evaluations required to show results',
+                ),
+                'privileged_users' => array(
+                        'type' => PARAM_TEXT,
+                        'optional' => true,
+                        'description' => 'Global evaluations: define privileged users',
+                ),
+                'filter_course_of_studies' => array(
+                        'type' => PARAM_TEXT,
+                        'optional' => true,
+                        'description' => 'Global evaluations: define privileged users',
+                ),
+                'filter_courses' => array(
+                        'type' => PARAM_TEXT,
+                        'optional' => true,
+                        'description' => 'Global evaluations: select cadditional courses outside of courses of studies',
+                ),
+                'teamteaching' => array(
+                        'type' => PARAM_INT,
+                        'optional' => true,
+                        'description' => 'Global evaluations: select cadditional courses outside of courses of studies',
+                ),
         );
     }
 
     protected static function define_related() {
         return array(
-            'context' => 'context'
+                'context' => 'context'
         );
     }
 
     protected static function define_other_properties() {
         return array(
-            'coursemodule' => array(
-                'type' => PARAM_INT
-            ),
-            'introfiles' => array(
-                'type' => external_files::get_properties_for_exporter(),
-                'multiple' => true
-            ),
-            'pageaftersubmitfiles' => array(
-                'type' => external_files::get_properties_for_exporter(),
-                'multiple' => true,
-                'optional' => true
-            ),
+                'coursemodule' => array(
+                        'type' => PARAM_INT
+                ),
+                'introfiles' => array(
+                        'type' => external_files::get_properties_for_exporter(),
+                        'multiple' => true
+                ),
+                'pageaftersubmitfiles' => array(
+                        'type' => external_files::get_properties_for_exporter(),
+                        'multiple' => true,
+                        'optional' => true
+                ),
         );
     }
 
@@ -190,7 +191,7 @@ class evaluation_summary_exporter extends exporter {
         $context = $this->related['context'];
 
         $values = array(
-            'coursemodule' => $context->instanceid,
+                'coursemodule' => $context->instanceid,
         );
 
         $values['introfiles'] = external_util::get_area_files($context->id, 'mod_evaluation', 'intro', false, false);
@@ -209,9 +210,9 @@ class evaluation_summary_exporter extends exporter {
      */
     protected function get_format_parameters_for_intro() {
         return [
-            'component' => 'mod_evaluation',
-            'filearea' => 'intro',
-            'options' => array('noclean' => true),
+                'component' => 'mod_evaluation',
+                'filearea' => 'intro',
+                'options' => array('noclean' => true),
         ];
     }
 
@@ -222,9 +223,9 @@ class evaluation_summary_exporter extends exporter {
      */
     protected function get_format_parameters_for_page_after_submit() {
         return [
-            'component' => 'mod_evaluation',
-            'filearea' => 'page_after_submit',
-            'itemid' => 0
+                'component' => 'mod_evaluation',
+                'filearea' => 'page_after_submit',
+                'itemid' => 0
         ];
     }
 }

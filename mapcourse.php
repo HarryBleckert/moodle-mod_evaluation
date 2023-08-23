@@ -28,7 +28,7 @@ require_once("$CFG->libdir/tablelib.php");
 
 $id = required_param('id', PARAM_INT); // Course Module ID.
 
-$url = new moodle_url('/mod/evaluation/mapcourse.php', array('id'=>$id));
+$url = new moodle_url('/mod/evaluation/mapcourse.php', array('id' => $id));
 $PAGE->set_url($url);
 
 $current_tab = 'mapcourse';
@@ -53,16 +53,16 @@ if ($form->is_cancelled()) {
 
 // Print the page header.
 $strevaluations = get_string("modulenameplural", "evaluation");
-$strevaluation  = get_string("modulename", "evaluation");
+$strevaluation = get_string("modulename", "evaluation");
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($evaluation->name);
 echo $OUTPUT->header();
 
-if ( substr( $CFG->release,0,1) < "4")
-{	$icon = '<img src="pix/icon120.png" height="30" alt="'.$evaluation->name.'">';
-	echo $OUTPUT->heading( $icon. "&nbsp;" .format_string($evaluation->name) );
-	require('tabs.php');
+if (substr($CFG->release, 0, 1) < "4") {
+    $icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
+    echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+    require('tabs.php');
 }
 echo $OUTPUT->box(get_string('mapcourseinfo', 'evaluation'));
 

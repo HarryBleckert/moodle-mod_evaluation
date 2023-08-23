@@ -31,7 +31,7 @@ $id = required_param('id', PARAM_INT);
 $choosefile = optional_param('choosefile', false, PARAM_PATH);
 $action = optional_param('action', false, PARAM_ALPHA);
 
-$url = new moodle_url('/mod/evaluation/import.php', array('id'=>$id));
+$url = new moodle_url('/mod/evaluation/import.php', array('id' => $id));
 if ($choosefile !== false) {
     $url->param('choosefile', $choosefile);
 }
@@ -40,15 +40,15 @@ if ($action !== false) {
 }
 $PAGE->set_url($url);
 
-if (! $cm = get_coursemodule_from_id('evaluation', $id)) {
+if (!$cm = get_coursemodule_from_id('evaluation', $id)) {
     print_error('invalidcoursemodule');
 }
 
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+if (!$course = $DB->get_record("course", array("id" => $cm->course))) {
     print_error('coursemisconf');
 }
 
-if (! $evaluation = $DB->get_record("evaluation", array("id"=>$cm->instance))) {
+if (!$evaluation = $DB->get_record("evaluation", array("id" => $cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
@@ -59,16 +59,16 @@ require_login($course, true, $cm);
 require_capability('mod/evaluation:edititems', $context);
 
 $mform = new evaluation_import_form();
-$newformdata = array('id'=>$id,
-                    'deleteolditems'=>'1',
-                    'action'=>'choosefile',
-                    'confirmadd'=>'1',
-                    'do_show'=>'templates');
+$newformdata = array('id' => $id,
+        'deleteolditems' => '1',
+        'action' => 'choosefile',
+        'confirmadd' => '1',
+        'do_show' => 'templates');
 $mform->set_data($newformdata);
 $formdata = $mform->get_data();
 
 if ($mform->is_cancelled()) {
-    redirect('edit.php?id='.$id.'&do_show=templates');
+    redirect('edit.php?id=' . $id . '&do_show=templates');
 }
 
 // process if we are happy file is ok
@@ -76,27 +76,26 @@ if ($choosefile) {
     $xmlcontent = $mform->get_file_content('choosefile');
 
     if (!$xmldata = evaluation_load_xml_data($xmlcontent)) {
-        print_error('cannotloadxml', 'evaluation', 'edit.php?id='.$id);
+        print_error('cannotloadxml', 'evaluation', 'edit.php?id=' . $id);
     }
 
     $importerror = evaluation_import_loaded_data($xmldata, $evaluation->id);
     if ($importerror->stat == true) {
-        $url = 'edit.php?id='.$id.'&do_show=templates';
+        $url = 'edit.php?id=' . $id . '&do_show=templates';
         redirect($url, get_string('import_successfully', 'evaluation'), 3);
         exit;
     }
 }
 
-
 /// Print the page header
 $strevaluations = get_string("modulenameplural", "evaluation");
-$strevaluation  = get_string("modulename", "evaluation");
+$strevaluation = get_string("modulename", "evaluation");
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($evaluation->name);
 echo $OUTPUT->header();
-$icon = '<img src="pix/icon120.png" height="30" alt="'.$evaluation->name.'">';
-echo $OUTPUT->heading( $icon. "&nbsp;" .format_string($evaluation->name) );
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
 
 /// print the tabs
 $current_tab = 'templates';
@@ -108,10 +107,10 @@ require('tabs.php');
 ///////////////////////////////////////////////////////////////////////////
 echo $OUTPUT->heading(get_string('import_questions', 'evaluation'), 3);
 
-if (isset($importerror->msg) AND is_array($importerror->msg)) {
+if (isset($importerror->msg) and is_array($importerror->msg)) {
     echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter');
     foreach ($importerror->msg as $msg) {
-        echo $msg.'<br />';
+        echo $msg . '<br />';
     }
     echo $OUTPUT->box_end();
 }
@@ -122,7 +121,7 @@ echo $OUTPUT->footer();
 
 function evaluation_load_xml_data($xmlcontent) {
     global $CFG;
-    require_once($CFG->dirroot.'/lib/xmlize.php');
+    require_once($CFG->dirroot . '/lib/xmlize.php');
 
     if (!$xmlcontent = evaluation_check_xml_utf8($xmlcontent)) {
         return false;
@@ -159,7 +158,7 @@ function evaluation_import_loaded_data(&$data, $evaluationid) {
         $position = 0;
     } else {
         //items will be add to the end of the existing items
-        $position = $DB->count_records('evaluation_item', array('evaluation'=>$evaluationid));
+        $position = $DB->count_records('evaluation_item', array('evaluation' => $evaluationid));
     }
 
     //depend items we are storing temporary in an mapping list array(new id => dependitem)
@@ -172,7 +171,7 @@ function evaluation_import_loaded_data(&$data, $evaluationid) {
         $typ = $item['@']['TYPE'];
 
         //check oldtypes first
-        switch($typ) {
+        switch ($typ) {
             case 'radio':
                 $typ = 'multichoice';
                 $oldtyp = 'radio';
@@ -197,10 +196,10 @@ function evaluation_import_loaded_data(&$data, $evaluationid) {
                 $oldtyp = $typ;
         }
 
-        $itemclass = 'evaluation_item_'.$typ;
-        if ($typ != 'pagebreak' AND !class_exists($itemclass)) {
+        $itemclass = 'evaluation_item_' . $typ;
+        if ($typ != 'pagebreak' and !class_exists($itemclass)) {
             $error->stat = false;
-            $error->msg[] = 'type ('.$typ.') not found';
+            $error->msg[] = 'type (' . $typ . ') not found';
             continue;
         }
         $itemobj = new $itemclass();
@@ -218,21 +217,21 @@ function evaluation_import_loaded_data(&$data, $evaluationid) {
         $newitem->options = trim($item['#']['OPTIONS'][0]['#']);
         $newitem->presentation = trim($item['#']['PRESENTATION'][0]['#']);
         //check old types of radio, check, and so on
-        switch($oldtyp) {
+        switch ($oldtyp) {
             case 'radio':
-                $newitem->presentation = 'r>>>>>'.$newitem->presentation;
+                $newitem->presentation = 'r>>>>>' . $newitem->presentation;
                 break;
             case 'dropdown':
-                $newitem->presentation = 'd>>>>>'.$newitem->presentation;
+                $newitem->presentation = 'd>>>>>' . $newitem->presentation;
                 break;
             case 'check':
-                $newitem->presentation = 'c>>>>>'.$newitem->presentation;
+                $newitem->presentation = 'c>>>>>' . $newitem->presentation;
                 break;
             case 'radiorated':
-                $newitem->presentation = 'r>>>>>'.$newitem->presentation;
+                $newitem->presentation = 'r>>>>>' . $newitem->presentation;
                 break;
             case 'dropdownrated':
-                $newitem->presentation = 'd>>>>>'.$newitem->presentation;
+                $newitem->presentation = 'd>>>>>' . $newitem->presentation;
                 break;
         }
 
@@ -265,7 +264,7 @@ function evaluation_import_loaded_data(&$data, $evaluationid) {
     }
     //remapping the dependency
     foreach ($dependitemsmap as $key => $dependitem) {
-        $newitem = $DB->get_record('evaluation_item', array('id'=>$key));
+        $newitem = $DB->get_record('evaluation_item', array('id' => $key));
         $newitem->dependitem = $itembackup[$newitem->dependitem];
         $DB->update_record('evaluation_item', $newitem);
     }
@@ -284,12 +283,12 @@ function evaluation_check_xml_utf8($text) {
     //$match[0] = \<\? xml ... \?\> (without \)
     //$match[1] = encoding="...."
     //$match[2] = ISO-8859-1 or so on
-    if (isset($match[0]) AND !isset($match[1])) { //no encoding given. we assume utf-8
+    if (isset($match[0]) and !isset($match[1])) { //no encoding given. we assume utf-8
         return $text;
     }
 
     //encoding is given in $match[2]
-    if (isset($match[0]) AND isset($match[1]) AND isset($match[2])) {
+    if (isset($match[0]) and isset($match[1]) and isset($match[2])) {
         $enc = $match[2];
         return core_text::convert($text, $enc);
     }
