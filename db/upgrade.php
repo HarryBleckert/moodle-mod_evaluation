@@ -334,7 +334,7 @@ function xmldb_evaluation_upgrade($oldversion) {
     $newversion = 2022122402;
     if ($oldversion < $newversion) {
         $table = new xmldb_table('evaluation');
-        $field = new xmldb_field('semester', XMLDB_TYPE_CHAR, '5', null, XMLDB_NOTNULL, null, '');
+        $field = new xmldb_field('semester', XMLDB_TYPE_CHAR, '5', null, null, null, '');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
