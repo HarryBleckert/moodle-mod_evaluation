@@ -96,8 +96,8 @@ if (has_capability('mod/evaluation:edititems', $context)) {
     $jssn = "document.getElementsByClassName('secondary-navigation')[0].style.display='inline';";
     // $msg = '&nbsp;<a href="/course/modedit.php?update='.$id.'&return=1"><i class="fa fa-cog fa-solid" style="color:blue;" aria-hidden="true"></i></a>';
     $msg = '&nbsp;<span onclick="' . $jssn . '"><i class="fa fa-cog fa-solid" style="color:blue;" aria-hidden="true"></i></span>';
-    echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name) . "&nbsp;" . $preview . $msg);
 }
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name) . "&nbsp;" . $preview . $msg);
 
 list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation);
 $previewimg = $OUTPUT->pix_icon('t/preview', get_string('course_of_studies_list', 'evaluation'));
@@ -687,9 +687,7 @@ if ($isNonResponStudent) {
 // show current user all participating courses
 // print print_r($_SESSION["myEvaluations"]);
 $isEnrolled = !empty(evaluation_is_user_enrolled($evaluation, $USER->id));
-if (!($isPermitted or defined('EVALUATION_OWNER')) and
-        empty($_SESSION["myEvaluations"])) //if (  empty($_SESSION["myEvaluations"]) )
-{
+if ((!$isPermitted AND !defined('EVALUATION_OWNER')) and empty($_SESSION["myEvaluations"])) {
     if (!$is_open and $isEnrolled) {
         echo "<p style=\"color:red;font-weight:bold;align:center;\">Sie haben "
                 . ($SiteEvaluation ? "für keinen Ihrer Kurse" : "nicht") . " an dieser Evaluation teilgenommen
@@ -698,7 +696,8 @@ if (!($isPermitted or defined('EVALUATION_OWNER')) and
         echo "<p style=\"color:red;font-weight:bold;align:center;\">Keiner Ihrer Kurse " . ($evaluation->timeclose < time()
                         ? "nahm" : "nimmt") . " an dieser Evaluation Teil!</p>";
     }
-} else if ($evaluation->course == SITEID) {
+} 
+elseif ($SiteEvaluation) {
     if (($isTeacher and !$isStudent) or ($teacheridSaved > 0 and defined('EVALUATION_OWNER'))) {
         $tEvaluations = $_SESSION["myEvaluations"];
         $showTeacher = $USER->id;

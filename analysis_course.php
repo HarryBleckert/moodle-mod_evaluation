@@ -267,7 +267,9 @@ if (has_capability('mod/evaluation:viewreports', $context) || defined('EVALUATIO
     if (is_siteadmin()) {
         echo '<span id="evFiltersMsg"></span>';
     } //<b>'.EVALUATION_OWNER.'</b>
-    if ($SiteEvaluation and !$courseid) {    // Process course of studies select form.
+	
+	// Process course of studies select form.
+    if ($SiteEvaluation and !$courseid AND (isset($_SESSION["participating_courses_of_studies"]) ?$_SESSION["participating_courses_of_studies"] >1 :true)) {
         $studyselectform =
                 new mod_evaluation_course_of_studies_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
         if ($data = $studyselectform->get_data()) {

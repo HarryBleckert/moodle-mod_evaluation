@@ -271,12 +271,13 @@ if ($userid || $showcompleted) {
         }
         print '</div>';
     }
-
+	
+	// process filters by forms
     if (!$downloading and defined('EVALUATION_OWNER')) {
-        // process filters by forms
-        //echo "\n".'<div style="display:none;" id="evFilters" class="d-print-none d-inline">';
         echo "\n" . '<div style="display:none;" id="evFilters" class="d-print-none">';
-        if (!$courseid and $SiteEvaluation) {    // Process course of studies select form.
+		
+        // Process course of studies select form.
+		if ($SiteEvaluation and !$courseid AND (isset($_SESSION["participating_courses_of_studies"]) ?$_SESSION["participating_courses_of_studies"] >1 :true)) {
             $studyselectform =
                     new mod_evaluation_course_of_studies_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
             if ($data = $studyselectform->get_data()) {
