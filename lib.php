@@ -21,9 +21,9 @@
  * @package mod_evaluation
  * @copyright Andreas Grabs for mod_evaluation
  * @copyright by Harry.Bleckert@ASH-Berlin.eu for ASH Berlin
- * + forked from mod_evaluation 12/2021
+ * + forked from mod_feedback 12/2021
  *
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -744,7 +744,8 @@ function ev_courses_of_id($evaluation, $userid) {
             $evaluation_semester = get_evaluation_semester($evaluation);
             $filter = " AND RIGHT(c.idnumber,5) = '$evaluation_semester'";
         }
-        $sql = "SELECT DISTINCT ON (e.courseid) e.courseid, e.id, c.shortname, c.fullname, c.idnumber FROM {enrol} e, {course} c 
+        $sql = "SELECT DISTINCT ON (e.courseid) e.courseid, e.id, c.shortname, c.fullname, c.idnumber 
+                FROM {enrol} e, {course} c 
 				WHERE e.courseid=c.id AND c.visible=1 $filter AND e.id IN " .
                 "(SELECT enrolid FROM {user_enrolments} ue WHERE ue.userid=$userid) ORDER BY e.courseid DESC";
     }
@@ -1562,7 +1563,6 @@ function evaluation_get_course_of_studies($courseid, $link = false, $showsemeste
         }
     }
     if ($showsemester or $link or !isset($studiengang->name) or empty($studiengang->name)) {
-        $course = $cat = array();
         $course = $DB->get_record('course', array('id' => $courseid), '*'); //get_course($courseid);
         if (!isset($course->category) and !$showsemester) {
             return "";
