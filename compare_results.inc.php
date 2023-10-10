@@ -33,7 +33,7 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         <?php
     }
     $isOpen = evaluation_is_open($evaluation);
-    $maxCharts = 21;
+    $maxCharts = intval(ev_session_request("maxCharts", 21));
     $allSelected = ev_session_request("allSelected", "");
     $ChartAxis = ev_session_request("ChartAxis", "x");
     $sortOrder = intval(ev_session_request("sortOrder", SORT_ASC));
@@ -279,6 +279,12 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                                 echo $label; ?></button>
 
                             <?php
+							if ( defined('EVALUATION_OWNER') OR is_siteadmin() ){
+								print '<input type="number" name="maxCharts" value="' . $maxCharts 
+									. '" style="width:42px;font-size:100%;color:white;background-color:teal;" min="3" ondblclick="this.form.submit();" 
+									title="maximale Anzahl für die grafische Anzeige">';
+							}
+							
                         }
                         if ($isFilter and $allSelected and $allSelected !== "useFilter")  // filter conditions set
                         {
@@ -339,11 +345,9 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                             } // if !teacherid
                             //defined('EVALUATION_OWNER') AND
                             if (($allSelected == "allCourses" or $allSelected == "allTeachers")) {
-                                print '- mindestens 
-			<input type="number" name="minReplies" value="' . $minReplies . '"
-			style="width:42px;font-size:100%;color:white;background-color:teal;"
-			min="$minResults">
-			Abgaben';
+                                print '- mindestens <input type="number" name="minReplies" value="' . $minReplies . '"
+									style="width:42px;font-size:100%;color:white;background-color:teal;" ondblclick="this.form.submit();" 
+									min="$minResults"> Abgaben';
                             }
                             //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
                             print        "\n<br>";
