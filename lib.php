@@ -563,8 +563,8 @@ function evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, $se
                         . $CourseRec->fullname . " (" . $CourseRec->shortname . ")</span>";
             }
             if ($evaluation_is_open) {    //(3,4,5,9,12);" ); // get all teachers and students
-                $roleT =
-                        $DB->get_records_sql("SELECT * FROM {role} WHERE id IN (3,4,12,5);"); // get only editingteachers, teachers and students
+                // get editingteachers, teachers and students
+                $roleT = $DB->get_records_sql("SELECT * FROM {role} WHERE id IN (3,4,12,5);");
                 $contextC = context_course::instance($courseid);
                 if (is_array($contextC) or is_object($contextC)) {
                     foreach ($roleT as $role) {
@@ -589,7 +589,6 @@ function evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, $se
 														WHERE evaluation = $evaluation->id AND userid = $user->id"));
                 }
             }
-            //$roleT->close();
             if ($isStudent && !$isTeacher) {
                 $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $courseid);
                 if ($setD and !defined("isStudent")) {
@@ -989,7 +988,7 @@ function evaluation_LoginAs() {
     }
     // position output to page top right
     //print '<style>.LoginAs { color: red; position: absolute; top: 6px; right: 69px; font-weight: bold; font-size: 14px; }</style>'; //a:link {color:darkred;}
-    print '<style>.LoginAs { color: red; float: right; font-weight: bold; font-size: 14px; }</style>'; //a:link {color:darkred;}
+    print '<style>.LoginAs { color: #131313; float: right; font-weight: bold; font-size: 14px; }</style>'; //a:link {color:darkred;}
     $msg = $priv = "";
     // moved to view.php: $msg = '<a href="/course/modedit.php?update='.$id.'&return=1"><i class="fa fa-cog fa-1x" aria-hidden="true"></i></a>&nbsp;';
     if (!empty($_SESSION["LoggedInAs"])) {

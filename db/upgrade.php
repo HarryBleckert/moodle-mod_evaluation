@@ -51,7 +51,7 @@ function xmldb_evaluation_upgrade($oldversion) {
 
         // Define field min_results to be added to evaluation.
         $table = new xmldb_table('evaluation');
-        $field = new xmldb_field('min_results', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '0', 'completionsubmit');
+        $field = new xmldb_field('min_results', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '3', 'completionsubmit');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -63,6 +63,7 @@ function xmldb_evaluation_upgrade($oldversion) {
         // Define field filter_course_of_studies to be added to evaluation.
         $field = new xmldb_field('filter_course_of_studies', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null,
                 'privileged_users');
+
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -199,7 +200,7 @@ function xmldb_evaluation_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('evaluation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('course_of_studies', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('course_of_studies', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_field('students', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('teacherids', XMLDB_TYPE_CHAR, '600', null, null, null, '');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
@@ -247,7 +248,7 @@ function xmldb_evaluation_upgrade($oldversion) {
     if ($oldversion < $newversion) {
         $table = new xmldb_table('evaluation_users');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_NOTNULL, null, null, null);
         $table->add_field('username', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, '');
         $table->add_field('firstname', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, '');
         $table->add_field('lastname', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, '');
@@ -255,7 +256,7 @@ function xmldb_evaluation_upgrade($oldversion) {
         $table->add_field('email', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, '');
         $table->add_field('teacher', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('student', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         // Adding keys to table evaluation_users.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         // Adding indexes to table evaluation_users.
@@ -372,7 +373,7 @@ function xmldb_evaluation_upgrade($oldversion) {
     if ($oldversion < $newversion) {
         $table = new xmldb_table('evaluation_users');
         //$table->add_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $field = new xmldb_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $field = new xmldb_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -389,11 +390,11 @@ function xmldb_evaluation_upgrade($oldversion) {
 
         $table = new xmldb_table('evaluation_users_la');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('evaluation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('evaluation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('role', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, '');
-        $table->add_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         // Adding keys to table evaluation_users.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         // Adding indexes to table evaluation_users.

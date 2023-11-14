@@ -28,6 +28,6 @@ $plugin->version = 2023091600;    // The current module version (Date: YYYYMMDDX
 $plugin->requires = 2020101100;    // Requires this Moodle version (3.9))
 $plugin->component = 'mod_evaluation';   // Full name of the plugin (used for diagnostics)
 $plugin->cron = 0;
-$plugin->maturity = MATURITY_BETA; //MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC or MATURITY_STABLE
+$plugin->maturity = MATURITY_STABLE; //MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC or MATURITY_STABLE
 $plugin->release = '1.3.3';
 $evaluation_version_intern = 1; //this version is used for restore older backups -- NOT YET UPDATED !!
