@@ -772,6 +772,11 @@ if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
 
 }
 
+$pluginfo = ev_get_plugin_version();
+$info = "\n<hr>\nPlugin: ".$pluginfo->component.". Version: "
+        .$pluginfo->release ." (Build: ".$pluginfo->version.")<hr>\n";
+print $info;
+
 if (is_siteadmin()) {
     print "<br>Evaluation->id: $evaluation->id";
     if ($SiteEvaluation and (!isset($_SESSION["make_block_evaluation_visible"]) or
@@ -781,14 +786,6 @@ if (is_siteadmin()) {
     }
 }
 
-//echo "\n</div>\n";  // closing div for this page (ev_view))
-// js code for loafing spinner
-//evaluation_spinnerJS();		
-
-$pluginfo = ev_get_plugin_version();
-$info = "\n<hr>\nPlugin: ".$pluginfo->component.". Version: "
-        .$pluginfo->release ." (Build: ".$pluginfo->version.")<hr>\n";
-print $info;
 echo $OUTPUT->footer();
 require_once("print.js.php");
 evaluation_trigger_module_viewed($evaluation, $cm, $courseid);
