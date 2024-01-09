@@ -1157,7 +1157,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
 }
 
 function possible_active_evaluations($evaluation) {
-    return possible_evaluations($evaluation, false, true);
+    // return possible_evaluations($evaluation, false, true);
     $possible_evaluations = 0;
     if (empty($_SESSION["allteachers"])) {
         evaluation_get_all_teachers($evaluation);
@@ -2032,7 +2032,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 
         //$contextC = get_context_instance(CONTEXT_COURSE, $course->id);
         $contextC = context_course::instance($course->id);
-        if ($evaluation_is_open AND is_array($contextC) or is_object($contextC)) {
+        if ($evaluation_is_open AND (is_array($contextC) or is_object($contextC))) {
             foreach ($roleT as $role) {
                 $rolesC = get_role_users($role->id, $contextC);
                 foreach ($rolesC as $roleC) {
