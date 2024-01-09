@@ -51,6 +51,15 @@ function evaluation_debug($msg = false): bool {
     return false;
 }
 
+function ev_get_plugin_version($component = "mod_evaluation") {
+    list($plugintype, $pluginname) = core_component::normalize_component($component);
+    $pluginpath = core_component::get_plugin_directory($plugintype, $pluginname);
+    $plugin = new \stdClass();
+    require $pluginpath.'/version.php';
+    //return $plugin->version;
+    return $plugin;
+}
+
 // Wrapper for PHP 8.x to catch uncountable parameters of safeCount()
 function safeCount($value) {
     if (is_numeric($value)) {

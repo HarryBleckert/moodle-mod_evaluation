@@ -785,7 +785,7 @@ if (is_siteadmin()) {
 // js code for loafing spinner
 //evaluation_spinnerJS();		
 
-$pluginfo = mod_evaluation::get_plugin_version();
+$pluginfo = ev_get_plugin_version();
 $info = "\n<hr>\n".$this->get_name()." Plugin Version: ".$pluginfo->version." - Release: "
         .$pluginfo->release ."<hr>\n";
 print $info;
