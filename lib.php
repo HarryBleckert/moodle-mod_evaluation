@@ -40,7 +40,7 @@ define('COURSE_OF_STUDIES_PATH', 2);
 //define('EVALUATION_DEBUG', TRUE );
 define('EVALUATION_DEBUG', false);
 
-function evaluation_debug($msg = false) {
+function evaluation_debug($msg = false): bool {
     if (EVALUATION_DEBUG and is_siteadmin()) {
         if ($msg) {
             print "<hr>EVALUATION_DEBUG<br>\n$msg<br><hr>";
@@ -294,7 +294,8 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
 
         // store per course evaulation details in tables evaluation_enrolments
         if ($forceCourse or
-                !$DB->count_records_sql("SELECT COUNT(*) from {evaluation_enrolments} WHERE evaluation=$evaluation->id")) {    // set evaluation to Open for allowing set_results
+                !$DB->count_records_sql("SELECT COUNT(*) from {evaluation_enrolments} WHERE evaluation=$evaluation->id")
+            ) {    // set evaluation to Open for allowing set_results
             $evaluation->timeclose = time() + 86400;
             $courses = evaluation_participating_courses($evaluation);
             ini_set("output_buffering", 256);
@@ -310,6 +311,7 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
                 $students = get_evaluation_participants($evaluation, false, $courseid, false, true);
                 $teachers = get_evaluation_participants($evaluation, false, $courseid, true, false);
                 $course_of_studies = evaluation_get_course_of_studies($courseid, false);
+                $department = get_department_from_cos($course_of_studies);
                 $teacherids = $active_teacherids = array();
                 foreach ($teachers as $teacher) {
                     $teacherids[] = $teacher['id'];
@@ -336,10 +338,11 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
                     //evaluation_user_lastaccess($evaluation, $student["id"], $student["lastaccess"], "student");
                 }
                 $fields =
-                        array("evaluation", "courseid", "fullname", "shortname", "course_of_studies", "students", "active_students",
+                        array("evaluation", "courseid", "fullname", "shortname", "course_of_studies",
+                                "department", "students", "active_students",
                                 "teacherids", "active_teachers", "active_teacherids", "timemodified");
-                $values = array($evaluation->id, $courseid, $fullname, $shortname, $course_of_studies, safeCount($students),
-                        $numStudentsActiveCourse,
+                $values = array($evaluation->id, $courseid, $fullname, $shortname, $course_of_studies,
+                        $department, safeCount($students), $numStudentsActiveCourse,
                         $teacherids, $numTeachersActiveCourse, $active_teacherids, time());
 
                 $recObj = new stdClass();
@@ -635,11 +638,6 @@ function evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, $se
 function evaluation_isPrivilegedUser($evaluation, $user = false) {
     global $USER;
     $privileged_users = array();
-    if (is_siteadmin()) //$evaluation->course !== SITEID AND defined( "isTeacher") )
-    {
-        $_SESSION["EVALUATION_OWNER"] = $USER->id;
-        return true;
-    }
     if (empty($user) or !isset($user->username)) {
         $user = $USER;
     }
@@ -653,8 +651,15 @@ function evaluation_isPrivilegedUser($evaluation, $user = false) {
         $_SESSION["EVALUATION_OWNER"] = $user->username;
         return true;
     }
+    if ( !isset($_SESSION["privileged_global_users"]) OR !is_array($_SESSION["privileged_global_users"])) {
+        ev_set_privileged_users();
+    }
     if (in_array($user->username, $_SESSION["privileged_global_users"])) {
         $_SESSION["EVALUATION_OWNER"] = $user->username;
+        return true;
+    }
+    if (is_siteadmin()) {
+        $_SESSION["EVALUATION_OWNER"] = $USER->id;
         return true;
     }
     return false;
@@ -666,6 +671,7 @@ function evaluation_cosPrivileged($evaluation) {
     // get CoS privileged users
     if (!isset($_SESSION['CoS_privileged'])) {
         $_SESSION['CoS_privileged'] = array();
+        ev_set_privileged_users();
         get_evaluation_filters($evaluation);
     }
     if (false and evaluation_debug(false)) {
@@ -680,6 +686,7 @@ function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
     $filter = ""; //" AND true";
     // get CoS privileged users
     if (!isset($_SESSION['CoS_privileged'])) {
+        ev_set_privileged_users();
         get_evaluation_filters($evaluation);
     }
     if (false) //evaluation_debug( false ) )
@@ -819,9 +826,22 @@ function ev_roles_in_course($userid, $courseid) {
     return implode(", ", $rolenames);
 }
 
+function get_department_from_cos($cos) {
+    if ( isset($_SESSION['CoS_department']) AND safeCount($_SESSION['CoS_department']) ) {
+        $keys = array_keys($_SESSION['CoS_department']);
+        $dept = array_search($cos, $keys);
+        if ($dept AND isset($_SESSION['CoS_department'][$keys[$dept]]) ) {
+            $department = $_SESSION['CoS_department'][$keys[$dept]];
+            return $department;
+        }
+    }
+    return "";
+}
+
 // view as teacher, student or standard user
 function evaluation_LoginAs() {
-    global $CFG, $DB, $USER, $PAGE, $OUTPUT, $id, $teacheridSaved, $courseid, $teacherid, $course_of_studiesID, $evaluation, $downloading;
+    global $CFG, $DB, $USER, $PAGE, $OUTPUT, $id, $teacheridSaved,
+           $courseid, $teacherid, $course_of_studiesID, $evaluation, $downloading;
 
     //if ( $USER->username !=="fuchsb" AND !evaluation_debug( false ) AND empty($_SESSION["LoggedInAs"]) ) //AND empty($USER->realuser)
     if (!is_siteadmin() and empty($_SESSION["LoggedInAs"])) {
@@ -835,8 +855,18 @@ function evaluation_LoginAs() {
     $userid = false;
     $role = optional_param('LoginAs', "", PARAM_ALPHANUM);
     $cmid = $id;
+    $isActive = "deleted=0 AND suspended=0 AND ";
+    list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation);
     evaluation_cosPrivileged($evaluation);
-    $CoS_privileged_cnt = safeCount($_SESSION['CoS_privileged']);
+    $CoS_privileged = array();
+    foreach ($_SESSION['CoS_privileged'] AS $CoSuser=>$CoSA){
+        foreach ( $CoSA AS $cusername => $CoS){
+            if ( in_array($CoS, $sg_filter)){
+                $CoS_privileged[$CoSuser] = $CoS;
+            }
+        }
+    }
+    $CoS_privileged_cnt = safeCount($CoS_privileged);
 
     if ($role == "logout" and !empty($USER->realuser)) {
         $userid = $_SESSION["EVALUATION_OWNER"] = $USER->realuser;
@@ -855,7 +885,7 @@ function evaluation_LoginAs() {
             }
             foreach ($privileged_users as $username) {
                 if ($cnt == $choice) {    //print "<br><hr>Current choice: '$username'<hr>\n";
-                    $user = $DB->get_record_sql("SELECT id,username from {user} WHERE username='" . trim($username) . "'");
+                    $user = $DB->get_record_sql("SELECT id,username from {user} WHERE $isActive username='" . trim($username) . "'");
                     if (isset($user->id)) {
                         $userid = $user->id;
                         break;
@@ -872,16 +902,16 @@ function evaluation_LoginAs() {
         if ($CoS_privileged_cnt) {
             $cnt = 0;
             $choice = random_int(0, $CoS_privileged_cnt);
-            if (false) //evaluation_debug( false ) )
+            if (true) //evaluation_debug( false ) )
             {
-                print "<br><hr>\$CoS_privileged_cnt: $CoS_privileged_cnt:\n_SESSION['CoS_privileged']: "
-                        . nl2br(var_export($_SESSION['CoS_privileged'], true)) . "<hr>\n";
+                print "<br><hr>\$CoS_privileged_cnt: $CoS_privileged_cnt:\n_CoS_privileged: "
+                        . nl2br(var_export($CoS_privileged, true)) . "<hr>\n";
             }
-            foreach (array_keys($_SESSION['CoS_privileged']) as $uKey) {
+            foreach (array_keys($CoS_privileged) as $uKey) {
                 if ($cnt == $choice) {
                     $username = $uKey;
-                    //print "<br><hr>:\n" .nl2br(var_export($uKey,true))."<hr>\n";
-                    if ($user = $DB->get_record_sql("SELECT id from {user} WHERE username='$username'") and isset($user->id)) {
+                    print "<br><hr>uKey: \n" .nl2br(var_export($uKey,true))."<hr>\n";
+                    if ($user = $DB->get_record_sql("SELECT id from {user} WHERE $isActive username='$username'") and isset($user->id)) {
                         $userid = $user->id;
                         break;
                     } else if ($CoS_privileged_cnt > $cnt) {
@@ -893,42 +923,46 @@ function evaluation_LoginAs() {
         }
     } else if (strstr($role, "teacher")) {
         $role = "editingteacher";
-        if ($teacheridSaved) {
+        if (false AND $teacheridSaved) {
             $userid = $teacheridSaved;
         } else {
-            $teachers = $DB->get_records_sql("SELECT DISTINCT ON (teacherid) teacherid, id from {evaluation_completed} 
-												WHERE evaluation=$evaluation->id ORDER BY teacherid");
-            $choice = random_int(1, intval(safeCount($teachers)));
+            $teachers = $DB->get_records_sql("SELECT DISTINCT ON (teacherid) teacherid, id 
+                                from {evaluation_completed} 
+								WHERE evaluation=$evaluation->id ORDER BY teacherid");
+            if ( $teachers ) {
+                $choice = random_int(1, intval(safeCount($teachers)));
+                $cnt = 1;
+                foreach ($teachers as $teacher) {
+                    if ($cnt == $choice) {
+                        if ($user = $DB->get_record_sql("SELECT id from {user} WHERE $isActive id='$teacher->teacherid'") and isset($user->id)) {
+                            $userid = $user->id;
+                            break;
+                        } else if (safeCount($teachers) > $cnt) {
+                            $choice++;
+                        }
+                    }
+                    $cnt++;
+                }
+            }
+        }
+    } else if ($role == "student") {
+        $students = $DB->get_records_sql("SELECT DISTINCT ON (userid) userid, 
+                            id from {evaluation_completed} 
+							WHERE evaluation=$evaluation->id ORDER BY userid");
+        if ( $students ) {
+            $choice = random_int(1, intval(safeCount($students)));
             $cnt = 1;
-            foreach ($teachers as $teacher) {
+            foreach ($students as $student) {
                 if ($cnt == $choice) {
-                    $userid = $teacher->teacherid;
-                    if ($user = $DB->get_record_sql("SELECT id from {user} WHERE id='$userid'") and isset($user->id)) {
+                    if ($user = $DB->get_record_sql("SELECT id from {user} WHERE $isActive id='$student->userid'") and isset($user->id)) {
                         $userid = $user->id;
                         break;
-                    } else if (safeCount($teachers) > $cnt) {
+                    } else if (safeCount($students) > $cnt) {
                         $choice++;
                     }
                 }
                 $cnt++;
             }
-        }
-    } else if ($role == "student") {
-        $students = $DB->get_records_sql("SELECT DISTINCT ON (userid) userid, id from {evaluation_completed} 
-											WHERE evaluation=$evaluation->id ORDER BY userid");
-        $choice = random_int(1, intval(safeCount($students)));
-        $cnt = 1;
-        foreach ($students as $student) {
-            if ($cnt == $choice) {
-                $userid = $student->userid;
-                if ($user = $DB->get_record_sql("SELECT id from {user} WHERE id='$userid'") and isset($user->id)) {
-                    $userid = $user->id;
-                    break;
-                } else if (safeCount($students) > $cnt) {
-                    $choice++;
-                }
-            }
-            $cnt++;
         }
     } else if ($role == "user") {
         $role = "user";
@@ -945,7 +979,7 @@ function evaluation_LoginAs() {
 	if ( $course_of_studiesID )
 	{	$url .= "&course_of_studiesID=".$course_of_studiesID; }
 	*/
-    if (!empty($role) and $userid) {
+    if (!empty($role) AND is_numeric($userid) AND $userid) {
         if ($role == "logout") //\core\session\manager::is_loggedinas() )
         {
             $realuser = \core\session\manager::get_realuser();
@@ -954,18 +988,21 @@ function evaluation_LoginAs() {
             redirect(new moodle_url($url), "", 0);
         } else {
             require_once(__DIR__ . '/../../course/lib.php');
-            $course = $DB->get_record('course', array('id' => SITEID), '*', MUST_EXIST);
-            $context = context_course::instance($course->id);
-            $systemcontext = context_system::instance();
-            //$PAGE->set_context($context);
-            //\core\session\manager::loginas( $userid, $systemcontext, true );
+            // $course = $DB->get_record('course', array('id' => SITEID), '*', MUST_EXIST);
+            // $context = context_course::instance($course->id);
+            // $systemcontext = context_system::instance();
+            // $PAGE->set_context($context);
+            // \core\session\manager::loginas( $userid, $systemcontext, true );
+            $context = context_course::instance(SITEID);
             \core\session\manager::loginas($userid, $context, true);
-            //$PAGE->set_context($context);
-            //user_can_view_profile($user, null, $context))
-            if (substr($CFG->release, 0, 1) < "4") // Moodle Version <4
+            // $PAGE->set_context($context);
+            // user_can_view_profile($user, null, $context))
+
+            /*if (substr($CFG->release, 0, 1) < "4") // Moodle Version <4
             {
                 set_user_preference("drawer-open-nav", false, $USER);
-            }
+            }*/
+
             $_SESSION["LoggedInAs"] = $role;
             //$CFG->additionalhtmlfooter = evaluation_additional_html();
             //$CFG->additionalhtmlfooter = "";
@@ -975,7 +1012,7 @@ function evaluation_LoginAs() {
                     : (stristr($role, "dekan") ? "Dekan_in"
                             : $DB->get_record('role', array('shortname' => $role), '*')->name);
             $roleuser = $DB->get_record_sql("SELECT id,firstname,lastname from {user} WHERE id=$userid");
-            print '<br><h2 style="font-weight:bold;color:darkred;background-color:white;">Sie sind jetzt im Kontext der Evaluationen als '
+            print '<br><h2 style="font-weight:bold;color:#131313;background-color:#131314;">Sie sind jetzt im Kontext der Evaluationen als '
                     . trim($roleuser->firstname) . " " . trim($roleuser->lastname) . " in der Rolle "
                     . $role . ' angemeldet.<br>'
                     . "</h2>Hinweis: <b>Die Auswahl des Moodle Kontos erfolgt randomisiert.</b><br>";
@@ -1070,6 +1107,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
     if (empty($evaluation->possible_evaluations)) {
         if (empty($_SESSION["allteachers"])) {
             evaluation_get_all_teachers($evaluation);
+            //evaluation_get_course_teachers($courseid)
         }
         if (!isset($_SESSION["possible_evaluations"]) or !is_array($_SESSION["possible_evaluations"])) {
             get_evaluation_participants($evaluation);
@@ -1170,7 +1208,7 @@ function evaluation_get_course_teachers($courseid) {
             $evaluation_is_open =
                     (evaluation_is_open($evaluation) or intval(date("Ymd", $evaluation->timeopen)) > intval(date("Ymd")));
         }
-        if (true) //$evaluation_is_open )
+        if ( $evaluation_is_open )
         {
             $course = $DB->get_record('course', array('id' => $courseid), '*');
             if ($evaluation_is_open and (empty($course) or !isset($course->id))) //OR safeCount($course)<1
@@ -1194,7 +1232,7 @@ function evaluation_get_course_teachers($courseid) {
                 }
             }
         }
-        if (!$evaluation_is_open) {
+        else { // if (!$evaluation_is_open) {
             $CourseRec = $DB->get_record_sql("SELECT DISTINCT ON (courseid) courseid, fullname, shortname, teacherids, id 
 												FROM {evaluation_enrolments} 
 												WHERE evaluation = $evaluation->id AND courseid = $courseid");
@@ -1235,7 +1273,7 @@ function evaluation_showteachers($evaluation, $courseid, $cmid = false, $user = 
     if (empty($cmid)) {
         $cmid = get_evaluation_cmid_from_id($evaluation);
     }
-    //evaluation_get_all_teachers( $evaluation, $user );
+    // evaluation_get_all_teachers( $evaluation, $user );
     evaluation_get_course_teachers($courseid);
     $teachers = $_SESSION["teachers"] = $_SESSION["allteachers"][$courseid];
     //print '<br>teachers: ';var_dump($teachers); print "<br>\n";
@@ -1265,15 +1303,15 @@ function evaluation_showteachers($evaluation, $courseid, $cmid = false, $user = 
 
 // unset evaluation sessions if required
 function validate_evaluation_sessions($evaluation) {
-    if (!isset($_SESSION["EvaluationsName"]) or strcmp($_SESSION["EvaluationsName"], $evaluation->name)) {
-        unset($_SESSION["EvaluationsName"], $_SESSION["myEvaluations"], $_SESSION['anonresponsestable'], $_SESSION['responsestable'],
-                $_SESSION["allteachers"], $_SESSION["numStudents"], $_SESSION["teachers"], $_SESSION["showTeachers"],
+    if (!isset($_SESSION["EvaluationsName"]) || $_SESSION["EvaluationsName"] != $evaluation->name) {
+        unset($_SESSION["myEvaluations"], $_SESSION['anonresponsestable'], $_SESSION['responsestable'],
+                $_SESSION["numStudents"], $_SESSION["teachers"], $_SESSION["showTeachers"],
                 $_SESSION["participating_courses"], $_SESSION["participating_empty_courses"],
                 $_SESSION["distinct_s"], $_SESSION["distinct_s_active"], $_SESSION["students"], $_SESSION["students_active"], $_SESSION["active_student"],
                 $_SESSION["distinct_t"], $_SESSION["distinct_t_active"], $_SESSION["Teachers"], $_SESSION["Teachers_active"], $_SESSION["active_teacher"],
                 $_SESSION["teamteaching_courses"], $_SESSION["teamteaching_courseids"], $_SESSION["questions"],
                 $_SESSION["participating_courses_of_studies"], $_SESSION['EVALUATION_OWNER'],
-                $_SESSION['filter_course_of_studies'], $_SESSION['course_of_studies'], $_SESSION["notevaluated"],
+                $_SESSION['filter_course_of_studies'], $_SESSION['course_of_studies'], $_SESSION["notevaluated"], $_SESSION['CoS_department'],
                 $_SESSION['CoS_privileged'], $_SESSION['filter_courses'], $_SESSION["numStudents"], $_SESSION["possible_evaluations"],
                 $_SESSION["possible_active_evaluations"], $_SESSION["active_teacher"], $_SESSION["active_student"],
                 $_SESSION["num_courses_of_studies"], $_SESSION["duplicated"], $_SESSION["orderBy"],
@@ -1303,7 +1341,7 @@ function evaluation_showLoading() {    //evaluation_spinnerJS();
 	.spinner, #spinner {
     position: fixed;
     left: 0px;
-    top: 0px;
+    top: 60px;
     width: 100%;
     height: 100%;
     z-index: 9999; 
@@ -1311,8 +1349,8 @@ function evaluation_showLoading() {    //evaluation_spinnerJS();
 	}
 	</style>
 	";
-    echo '<div id="spinner" class="d-print-none" style="display:block;float:center;text-align:center;font-weeigt:bold;font-size:12em;">			
-			<i style="color:blue;" class="d-print-none fa fa-spinner fa-pulse fa-6x fa-fw"></i></div>';
+    echo '<div id="spinner" class="d-print-none" style="display:block;float:center;text-align:center;font-weight:bold;font-size:12em;">			
+			<i style="color:blue;" class="d-print-none fa fa-spinner fa-pulse fa-2x fa-fw"></i></div>';
     echo "\n<script>
 	function ev_spinner_disable()
 	{	if ( document.getElementById('spinner')  !== null ) 
@@ -1474,11 +1512,11 @@ function remaining_evaluation_days($evaluation) {
 function evaluation_get_course_studies($evaluation, $link = false, $raw = false) {
     global $DB;
     $is_closed = (!evaluation_is_open($evaluation) and $evaluation->timeopen < time());
-    list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation);
+    list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation, false);
     if (!empty($courses_filter)) {
         $sg_courses_filter = evaluation_get_course_of_studies_from_courseids($courses_filter);
     }
-    $sgTmp = $sgNtmp = array();
+    $sgTmp = $sgNtmp = $studynames = array();
     /*if ( $is_closed ) {
 		$course_studies_raw = $DB->get_records_sql( "select DISTINCT ON (course_of_studies) completed.* from {evaluation_completed} AS completed
 														WHERE evaluation=$evaluation->id ORDER BY course_of_studies");
@@ -1493,8 +1531,7 @@ function evaluation_get_course_studies($evaluation, $link = false, $raw = false)
     }
     $course_studies_raw =
             $DB->get_records_sql("select id,idnumber,name AS course_of_studies from {course_categories} where path like '" .
-                    $cat->path . "/%'
-											AND array_length(string_to_array(path, '/'), 1)-1 =2");
+                    $cat->path . "/%' AND array_length(string_to_array(path, '/'), 1)-1 =2");
     if (empty($course_studies_raw)) {
         return array();
     }
@@ -1502,38 +1539,37 @@ function evaluation_get_course_studies($evaluation, $link = false, $raw = false)
         return strcmp($a->course_of_studies, $b->course_of_studies);
     });
     //}
-
-    foreach ($course_studies_raw as $course_studies) {
-        if (empty($course_studies->course_of_studies)) {
-            continue;
-        }
-        if (!empty($sg_filter)) {
-            if (!in_array($course_studies->course_of_studies, $sg_filter)) {
-                continue;
-            }
-            if (!empty($courses_filter) and in_array($course_studies->course_of_studies, $sg_courses_filter)) {
-                continue;
-            }
-        } else if (!empty($courses_filter)) {
-            $sg_filter = evaluation_get_course_of_studies_from_courseids($courses_filter);
-            if (!in_array($course_studies->course_of_studies, $sg_filter)) {
-                continue;
-            }
-        }
-        $sgTmp[$course_studies->course_of_studies] = $course_studies;
-        $sgNtmp[$course_studies->course_of_studies] = $course_studies->course_of_studies;
-    }
     if ($raw) {
+        foreach ($course_studies_raw as $course_studies) {
+            if (empty($course_studies->course_of_studies)) {
+                continue;
+            }
+            if (!empty($sg_filter)) {
+                if (!in_array($course_studies->course_of_studies, $sg_filter)) {
+                    continue;
+                }
+                /*if (!empty($courses_filter) and in_array($course_studies->course_of_studies, $sg_courses_filter)) {
+                    continue;
+                }*/
+            } else if (!empty($courses_filter)) {
+                $sg_filter = evaluation_get_course_of_studies_from_courseids($courses_filter);
+                if (!in_array($course_studies->course_of_studies, $sg_filter)) {
+                    continue;
+                }
+            }
+            $sgTmp[$course_studies->course_of_studies] = $course_studies;
+            $sgNtmp[$course_studies->course_of_studies] = $course_studies->course_of_studies;
+        }
+
         foreach ($sgNtmp as $studyname) {
-            $studynames[] = $studyname;
+            $studynames[$studyname] = $studyname;
         }
         return $studynames;
     }
 
     $course_studies = array();
     foreach ($course_studies_raw as $studiengang) {
-        if (!$raw and
-                ($studiengang->course_of_studies == "weitere Veranstaltungen" or
+        if ( ($studiengang->course_of_studies == "weitere Veranstaltungen" or
                         $studiengang->course_of_studies == "Zusatzveranstaltungen"
                         or $studiengang->course_of_studies == "Alle Studiengänge und Semester")) {
             $studiengang->course_of_studies = '<span style="font-style: italic;">' . $studiengang->course_of_studies . '</span>';
@@ -1987,7 +2023,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 
         //$contextC = get_context_instance(CONTEXT_COURSE, $course->id);
         $contextC = context_course::instance($course->id);
-        if (is_array($contextC) or is_object($contextC)) {
+        if ($evaluation_is_open AND is_array($contextC) or is_object($contextC)) {
             foreach ($roleT as $role) {
                 $rolesC = get_role_users($role->id, $contextC);
                 foreach ($rolesC as $roleC) {
@@ -2391,11 +2427,13 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
     }
 
     // handle CoS privileged User
-    $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation, "completed");
+    $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation,"completed");
     //$completed_responses = evaluation_countCourseEvaluations( $evaluation );
     $evaluationstructure = new mod_evaluation_structure($evaluation, false, null, $courseid, null, 0, $teacherid);
     $completed_responses = $evaluationstructure->count_completed_responses();
-    evaluation_get_all_teachers($evaluation);
+    // if ( $courseid AND !isset($_SESSION['allteachers'][$courseid])) {
+        evaluation_get_all_teachers($evaluation);
+    // }
 
     if (!isset($_SESSION["orderBy"])) {
         $_SESSION["orderBy"] = "ASC";
@@ -2411,7 +2449,7 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
         $notevaluated = true;
         $ids = evaluation_participating_courses($evaluation);
         $evaluated =
-                $DB->get_records_sql("SELECT distinct courseid FROM mdl_evaluation_completed WHERE evaluation=$evaluation->id $cosPrivileged_filter");
+                $DB->get_records_sql("SELECT distinct courseid FROM mdl_evaluation_completed AS completed WHERE evaluation=$evaluation->id $cosPrivileged_filter ORDER BY courseid");
         foreach ($evaluated as $course) {
             if (isset($ids[$course->courseid])) {
                 unset($ids[$course->courseid]);
@@ -2440,7 +2478,8 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
         //print "$query<br>";
         // get all Results
         if ($cosPrivileged_filter) {
-            $allResults = safeCount($DB->get_records_sql("SELECT  c.id, c.fullname, c.shortname, count(completed.courseid) AS evaluations 
+            $allResults = safeCount($DB->get_records_sql("SELECT  c.id, c.fullname, c.shortname, 
+                        count(completed.courseid) AS evaluations 
 						FROM {evaluation_completed} AS completed
 						LEFT JOIN {course} AS c ON c.id = completed.courseid
 						WHERE evaluation=$evaluation->id AND coalesce(c.fullname, '') != '' 
@@ -2457,6 +2496,9 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
             continue;
         }
         if (!isset($_SESSION["allteachers"][$result->id])) {
+            evaluation_get_course_teachers($result->id);
+        }
+        if ( !isset($_SESSION["allteachers"][$result->id])) {
             evaluation_get_course_teachers($result->id);
         }
         $results[$key]->numTeachers = safeCount($_SESSION["allteachers"][$result->id]);
@@ -2713,7 +2755,7 @@ function showEvaluationTeacherResults($evaluation, $showMin = 6, $sortBy = "last
     }
 
     // handle CoS privileged User
-    $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation, "completed");
+    $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation,"completed");
 
     //$completed_responses = evaluation_countCourseEvaluations( $evaluation );
     $evaluationstructure = new mod_evaluation_structure($evaluation, false, null, $courseid, null, 0, $teacherid);
@@ -3159,7 +3201,7 @@ function pass_evaluation_filters($evaluation, $courseid) {
     }
     $sg_filter = $_SESSION['filter_course_of_studies'];
     $courses_filter = $_SESSION['filter_courses'];
-    if (!empty($sg_filter)) {
+    if (!empty($sg_filter) and is_array($sg_filter)) {
         $Studiengang = evaluation_get_course_of_studies($courseid);
         $passed = ((!empty($Studiengang) and in_array($Studiengang, $sg_filter)) ? true : false);
         // courses in courses_filter are to be excluded
@@ -3167,7 +3209,8 @@ function pass_evaluation_filters($evaluation, $courseid) {
             $passed = false;
         }
         //print "<br><br><hr>Evaluation: $evaluation->name - Studiengang: $Studiengang - ".var_export($sg_filter,true)." - showEval: ".($showEval ?"Yes" :"No") ."<br>\n";
-    } else if (!empty($courses_filter) and !in_array($courseid, $courses_filter)) {
+    } else if (!empty($courses_filter) and is_array($courses_filter)
+            and !in_array($courseid, $courses_filter)) {
         $passed = false;
     }
     if (false and is_siteadmin() and $passed) {
@@ -3176,16 +3219,18 @@ function pass_evaluation_filters($evaluation, $courseid) {
     return $passed;
 }
 
-function ev_set_privileged_users() {
+function ev_set_privileged_users($show = false) {
     global $CFG, $USER;
     $cfgFile = $CFG->dirroot . "/mod/evaluation/privileged_users.csv";
     if (is_readable($cfgFile)) {
         $cfgA = explode("\n", file_get_contents($cfgFile));
-        $privileged_users = $_SESSION["privileged_global_users"] =
-        $_SESSION["privileged_global_users_wm"] = $_SESSION["course_of_studies_wm"] = array();
+        $privileged_users = $_SESSION["privileged_global_users"]
+                = $_SESSION["privileged_global_users_wm"] = $_SESSION["course_of_studies_wm"]
+                = $_SESSION['CoS_department'] = $_SESSION['CoS_privileged'] = array();
         foreach ($cfgA as $line) {
             $CoS = "";
             $WM = "Nein";
+            $department = 0;
             if (substr(trim($line), 0, 1) == "#" or empty(trim($line))) {
                 continue;
             }
@@ -3196,11 +3241,17 @@ function ev_set_privileged_users() {
             {
                 continue;
             }
+            // Course of Studies
             if (isset($parts[1])) {
                 $CoS = trim($parts[1]);
             }
+            // Department (FB, Fachbereich)
             if (isset($parts[2])) {
-                $WM = trim($parts[2]);
+                $department = trim($parts[2]);
+            }
+            // Master CoS
+            if (isset($parts[3])) {
+                $WM = trim($parts[3]);
             }
             $is_WM = (strtolower($WM) == "ja");
             // if global privileged user
@@ -3214,9 +3265,10 @@ function ev_set_privileged_users() {
                 if ($is_WM) {
                     $_SESSION["privileged_global_users_wm"][$username] = $username;
                 }
-            } else if (is_array($_SESSION['filter_course_of_studies']) and !empty($_SESSION['filter_course_of_studies'])
-                    and in_array($CoS, $_SESSION['filter_course_of_studies'])
-            ) {
+            } else {
+                //if (is_array($_SESSION['filter_course_of_studies']) and !empty($_SESSION['filter_course_of_studies'])
+                 //   and in_array($CoS, $_SESSION['filter_course_of_studies'])
+                // ) {
                 $_SESSION['CoS_privileged'][$username][$CoS] = $CoS;
                 //print "<hr>\$users: " .var_export($users,true) .$user[0].": ". $_SESSION['CoS_privileged'][$user[0]][$user[1]] = $user[1]."<hr>";
             }
@@ -3224,6 +3276,53 @@ function ev_set_privileged_users() {
             if (!empty($CoS) and substr($CoS, 0, 1) != "#") {
                 $_SESSION["course_of_studies_wm"][$CoS] = $is_WM;
             }
+
+            /*if ( $is_WM AND empty($department)){
+                $department = "WM";
+            }*/
+
+            if ( !empty($department)) {
+                $_SESSION['CoS_department'][$CoS] = $department;
+            }
+        }
+        // display list as html table
+        if ( $show){
+            $cfgData = file_get_contents($cfgFile);
+            $pos = strpos($cfgData,"#Anmeldename");
+            if ( $pos){
+                $cfgData = substr($cfgData, $pos+1);
+            }
+            $rows = explode("\n", $cfgData);
+            print "<style>tr:nth-child(odd) {background-color:lightgrey;}</style>";
+            $out = "<b>Übersicht privilegierte Personen</b> (alle Evaluationen)<br><br>\n";
+            $out .= '<table style="">'."\n";
+            $first = true;
+            foreach ($rows as $srow) {
+                $CoS = "";
+                $row = explode(",", $srow);
+                if (isset($row[1])) {
+                    $CoS = trim($row[1]);
+                }
+                if ( !$first AND !empty($CoS) AND isset($_SESSION['CoS_privileged'][$USER->username])){
+                    if (!isset($_SESSION['CoS_privileged'][$USER->username][$CoS])) {
+                        continue;
+                    }
+                }
+                $out .= "<tr>\n";
+                if ($first) {
+                    foreach ($row as $col) {
+                        $out .=  '<th style="font-weight:bold;">'.htmlspecialchars($col)."</th>\n";
+                    }
+                    $first = false;
+                } else {
+                    foreach ($row as $col) {
+                        $out .=  "<td>".htmlspecialchars($col)."</td>\n";
+                    }
+                }
+                $out .= "</tr>\n";
+            }
+            $out .=  "</table>";
+            return $out;
         }
         return $privileged_users;
     } else if (!isset($_SESSION['ev_global_cfgfile'])) {
@@ -3231,8 +3330,9 @@ function ev_set_privileged_users() {
         print "<br><hr><b>Datei für Liste der privilegierten Personen ($cfgFile) kann nicht eingelesen werden!</b><br>
 				Format: comma separated csv file. No text delimiters<br>
 				Kommentare: vorangestelltes '#'.<br>
-				Header: Anmeldename,Exakter Moodle Name des Studiengangs,Weiterbildende Master,Vorname,Name,Funktion<br>
+				Header: Anmeldename,Exakter Moodle Name des Studiengangs,Fachbereich,Weiterbildende Master,Vorname,Name,Funktion<br>
 				- Wenn die Spalte Studiengang leer bleibt sind die Privilegien Global auf alle evaluierten Studiengänge.<br>
+				- Wenn die Spalte Fachbereich (FB) leer bleibt gilt der Fachbereich als nicht gesetzt.
 				- Wenn bei Personen mit globalen Privilegien die Spalte Weiterbildende Master auf \"Nein\" gesetzt ist, ist der Zugriff auf WM Studiengänge ausgeschlossen.<br>
 				- Wenn die Spalte Weiterbildende Master auf \"Ja\" gesetzt ist, gilt der Studiengang als WM Studiengang.<br>
 				- Wenn die Spalte Studiengang einen evaluierten Studiengang benennt, dann sind die Privilegien auf diesen Studiengang begrenzt.<hr><br>
@@ -3241,15 +3341,12 @@ function ev_set_privileged_users() {
 }
 
 // get filters set for evaluation and set CoS_privileged users
-function get_evaluation_filters($evaluation) {
+function get_evaluation_filters($evaluation, $get_course_studies=true) {
     global $CFG, $USER;
     $filter = $sg_filter = $courses_filter = array();
     if (isset($_SESSION['filter_course_of_studies']) and
-            isset($_SESSION['filter_courses']) and isset($_SESSION['CoS_privileged'])) {
+            isset($_SESSION['filter_courses']) AND isset($_SESSION["privileged_global_users"])) {
         return array($_SESSION['filter_course_of_studies'], $_SESSION['filter_courses']);
-    }
-    if (!isset($_SESSION['CoS_privileged'])) {
-        $_SESSION['CoS_privileged'] = array();
     }
 
     // initialize arrays
@@ -3278,13 +3375,18 @@ function get_evaluation_filters($evaluation) {
             $sg_filter = $filter;
         }
     }
+    else if($get_course_studies){
+        $sg_filter = evaluation_get_course_studies($evaluation, false, true);
+    }
     // get courses filter if any
     if (isset($evaluation->filter_courses) and !empty($evaluation->filter_courses)) {
         $courses_filter = explode("\n", $evaluation->filter_courses);
     }
     $_SESSION['filter_course_of_studies'] = $sg_filter;
     $_SESSION['filter_courses'] = $courses_filter;
-    ev_set_privileged_users();
+    if ( !isset($_SESSION["privileged_global_users"]) AND !isset($_SESSION['CoS_privileged'])) {
+        ev_set_privileged_users();
+    }
     return array($_SESSION['filter_course_of_studies'], $_SESSION['filter_courses']);
 }
 
@@ -3685,6 +3787,7 @@ function evaluation_trigger_module_statistics($evaluation, $cm = false, $coursei
         }
         $course = $DB->get_record('course', array('id' => $courseid), '*'); //get_course($courseid);
         if (!$cm) {
+            $id = get_evaluation_cmid_from_id($evaluation);
             list($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
         }
         $event = \mod_evaluation\event\course_module_statistics::create_from_record($evaluation, $cm, $course);
@@ -3715,6 +3818,10 @@ function evaluation_autofill_item_studiengang($evaluation) {
     global $DB;
     $position = 1; //default position
     $itemid = 0;
+    $completed_responses = evaluation_countCourseEvaluations($evaluation);
+    if ( !$completed_responses ){
+        return false;
+    }
 
     // don't run before evaluation is closed
     if (evaluation_is_open($evaluation)) {
@@ -3754,6 +3861,12 @@ function evaluation_autofill_item_studiengang($evaluation) {
         } else {
             $sg_arr = evaluation_get_course_studies($evaluation, false);
         }
+        if ( empty($sg_arr)) {
+            return false;
+        }
+        if ( is_object($sg_arr)){
+            $sg_arr = (array) $sg_arr;
+        }
         //print "<br><br>\nsg_arr: ".var_export($sg_arr, true) ."<br><br>\n";
         $template = $item->id;
         unset($item->id);
@@ -3764,7 +3877,8 @@ function evaluation_autofill_item_studiengang($evaluation) {
         $item->required = 0;
         $item->dependitem = 0;
         $item->options = "h";
-        $item->presentation = "r>>>>>" . str_replace("\n", "\n|", implode("\n", $sg_arr) . "<<<<<1");
+        $item->presentation = "r>>>>>" . str_replace("\n", "\n|",
+                        implode("\n", $sg_arr) . "<<<<<1");
         $itemid = $DB->insert_record('evaluation_item', $item);
     }
     // make sure this is never run twice!
@@ -5999,6 +6113,7 @@ function evaluation_get_group_values($item,
         $courseid = false,
         $teacherid = false,
         $course_of_studies = false,
+        $department = false,
         $ignore_empty = false) {
     global $CFG, $DB;
 
@@ -6047,6 +6162,11 @@ function evaluation_get_group_values($item,
         if ($course_of_studies) {
             $select .= " AND course_of_studies = :course_of_studies ";
             $params += array('course_of_studies' => $course_of_studies);
+        }
+        if ($department) {
+            global $evaluationstructure;
+            $filterD = str_ireplace("completed.", "",$evaluationstructure->get_department_filter());
+            $select .= "$filterD ";
         }
         $values = $DB->get_records_select('evaluation_value', $select, $params);
     }
@@ -6681,7 +6801,7 @@ function evaluation_extend_settings_navigation(settings_navigation $settings,
     global $PAGE;
 
     if (!$context = context_module::instance($PAGE->cm->id, IGNORE_MISSING)) {
-        print_error('badcontext');
+        throw new moodle_exception('badcontext');
     }
 
     if (has_capability('mod/evaluation:edititems', $context)) {

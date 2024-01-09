@@ -48,6 +48,8 @@ class mod_evaluation_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements(get_string('description', 'evaluation'));
 
+
+
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('availability'));
 
@@ -56,6 +58,8 @@ class mod_evaluation_mod_form extends moodleform_mod {
 
         $mform->addElement('date_time_selector', 'timeclose', get_string('evaluationclose', 'evaluation'),
                 array('optional' => true));
+
+
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'evaluationhdr', get_string('questionandsubmission', 'evaluation'));
@@ -101,7 +105,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
 
         $mform->addElement('selectyesno', 'email_notification', get_string('email_notification', 'evaluation'));
         $mform->addHelpButton('email_notification', 'email_notification', 'evaluation');
-
+        $mform->setDefault('autonumbering', 1);
         $mform->addElement('selectyesno', 'autonumbering', get_string('autonumbering', 'evaluation'));
         $mform->addHelpButton('autonumbering', 'autonumbering', 'evaluation');
 
@@ -170,6 +174,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
             $mform->setType('teamteaching', PARAM_INT);
             $mform->addHelpButton('teamteaching_static', 'teamteaching', 'evaluation');
         } else {
+            $mform->setDefault('teamteaching', 1);
             $mform->addElement('selectyesno',
                     'teamteaching',
                     get_string('teamteaching', 'evaluation'));

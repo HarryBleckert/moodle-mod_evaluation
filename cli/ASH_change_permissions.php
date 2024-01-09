@@ -63,7 +63,7 @@ if (!is_siteadmin()) {
 }
 $cap = "moodle/role:review";
 //load_all_capabilities();
-//require_capability($cap, $context) || print_error( "$cap: Not allowed!");
+//require_capability($cap, $context) || throw new moodle_exception( "$cap: Not allowed!");
 
 /*
  id |               name               |       shortname        |   archetype

@@ -200,8 +200,8 @@ class evaluation_item_label extends evaluation_item_base {
             $courseid = false, $teacherid = false, $course_of_studies = false) {
     }
 
-    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid = false,
-            $course_of_studies = false) {
+    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false,
+            $teacherid = false, $course_of_studies = false) {
     }
 
     public function get_printval($item, $value) {

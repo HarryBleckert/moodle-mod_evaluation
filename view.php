@@ -30,7 +30,9 @@ global $DB, $USER;
 $id = required_param('id', PARAM_INT);
 $courseid = optional_param('courseid', false, PARAM_INT);
 $course_of_studiesID = optional_param('course_of_studiesID', false, PARAM_INT);
+$course_of_studies = optional_param('course_of_studies', false, PARAM_TEXT);
 $teacherid = optional_param('teacherid', false, PARAM_INT);
+$department = optional_param('department', false, PARAM_TEXT);
 $urlparams = ['id' => $id];  //$usedid];
 
 $teacheridSaved = $teacherid;
@@ -38,9 +40,12 @@ if ($teacherid) {
     $urlparams['teacherid'] = $teacherid;
     $teacherid = 0;
 }
-$course_of_studies = false;
+// $course_of_studies = false;
 if ($course_of_studiesID) {
     $urlparams['course_of_studiesID'] = $course_of_studiesID;
+}
+if ($department) {
+    $urlparams['department'] = $department;
 }
 
 // show loading spinner
@@ -58,9 +63,11 @@ if ($evaluation->course == SITEID and $courseid) {
     $urlparams['courseid'] = $courseid;
 }
 
+
 evaluation_get_all_teachers($evaluation);
 list($isPermitted, $CourseTitle, $CourseName, $SiteEvaluation) =
         evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, true);
+list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation);
 
 // Check access to the given courseid.
 if ($courseid and $course->id !== SITEID and !defined('EVALUATION_OWNER')) {
@@ -77,9 +84,6 @@ evSetPage($url);
 $minresults = evaluation_min_results($evaluation);
 $minresultsText = min_results_text($evaluation);
 $minresultsPriv = min_results_priv($evaluation);
-if (defined('EVALUATION_OWNER') and !evaluation_cosPrivileged($evaluation)) {
-    $minresults = $minresultsText = $minresultsPriv;
-}
 
 //$previewimg = '<i style="color:blue;" class="fa fa-search-plus fa-fw fa-2x" title="'.get_string('preview').'">';
 $previewimg = $OUTPUT->pix_icon('t/preview', get_string('preview'));
@@ -99,7 +103,6 @@ if (has_capability('mod/evaluation:edititems', $context)) {
 }
 echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name) . "&nbsp;" . $preview . $msg);
 
-list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation);
 $previewimg = $OUTPUT->pix_icon('t/preview', get_string('course_of_studies_list', 'evaluation'));
 $previewlnk->param('showCourses_of_studies', 1);
 $view_courses_of_studies = html_writer::link($previewlnk, $previewimg);
@@ -190,9 +193,13 @@ if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
             . " können Sie alle Auswertungen " . ($cosPrivileged ? "" : "und Rohdaten ")
             . (!empty($_SESSION['CoS_privileged'][$USER->username])
                     ? '<span style="font-weight:600;white-space:pre-line;text-decoration:underline;" title="'
-                    . implode("\n", $_SESSION['CoS_privileged'][$USER->username]) .
-                    "\">Ihrer Studiengänge einsehen und herunterladen.</span><br>\n"
-                    : " einsehen und herunterladen.$evaluation_is_WM_disabled<br>\n")
+                    . implode("\n", $_SESSION['CoS_privileged'][$USER->username])
+                    . "\">Ihrer Studiengänge einsehen und herunterladen.</span><br>\n"
+                    : " einsehen und herunterladen.$evaluation_is_WM_disabled<br>\n"
+                )
+            . '<a href="print.php?id='.$id.'&showPrivUsers=1">'
+            . "<b>Übersicht privilegierte Personen</b></a> - "
+
             . '<a href="/downloads/Evaluationen mit ASH Moodle -Dokumentation.pdf" target="doku">'
             . "<b>Dokumentation öffnen/herunterladen</b></a><hr>\n";
     echo $msg_privPersons;
@@ -277,26 +284,27 @@ if ($SiteEvaluation and !$courseid) {
 }
 
 $fullname = ($USER->alternatename ? $USER->alternatename : $USER->firstname) . " " . $USER->lastname;
-if ($is_open) {    // make get_string!
-    $msg_student_all_courses = "Guten Tag $fullname<br>Bitte beteiligen " . ($evaluation_has_user_participated ? "" : "auch ")
-            . "Sie sich " .
-            ($evaluation_has_user_participated ? "für jeden Ihrer Kurse " : "") . "an dieser Lehrevaluation. "
-            . ($evaluation_has_user_participated ? ""
-                    : "Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs.<br>
-							Klicken Sie unten für jeden Ihrer noch nicht evaluierten Kurse auf “<b>"
-                    . get_string("evaluate_now", "evaluation") . "</b>“” 
-							und füllen Sie dann jeweils den Fragebogen aus.<br>\n$teamteachingTxt
-							Ihre Evaluation ist uns eine große Hilfe!<br>"
-            )
-            . "Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald $minresults Abgaben vorliegen.<br>
-							Herzliche Grüße vom Team der Lehrveranstaltungsevaluation<br>\n";
-    $msg_teachers = "Guten Tag $fullname<br>
-							Sie haben Kurse, die an dieser Evaluation teil" . ($is_open
-                    ? "nehmen. Bitte motivieren Sie die Studierenden zur Teilnahme" : "genommen haben") . ".<br>
-							Für Ihre eigenen Kurse können Sie die statistische Auswertung einsehen, sobald $minresults Abgaben vorliegen. 
-							Ab $minresultsText Abgaben können Sie auch die Textantworten einsehen.<br>\n
-							Herzliche Grüße vom Team der Lehrveranstaltungsevaluation<br>\n";
-
+// make get_string!
+$msg_student_all_courses = "Guten Tag $fullname<br>Bitte beteiligen " . ($evaluation_has_user_participated ? "" : "auch ")
+        . "Sie sich " .
+        ($evaluation_has_user_participated ? "für jeden Ihrer Kurse " : "")
+        . "an dieser Lehrveranstaltungsevaluation. "
+        . ($evaluation_has_user_participated ? ""
+                : "Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs.<br>
+                        Klicken Sie unten für jeden Ihrer noch nicht evaluierten Kurse auf '<b>"
+                . get_string("evaluate_now", "evaluation") . "</b>'
+                        und füllen Sie dann jeweils den Fragebogen aus.<br>\n$teamteachingTxt
+                        Ihre Evaluation ist uns eine große Hilfe!<br>"
+        )
+        . "Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald $minresults Abgaben vorliegen.<br>
+                        Herzliche Grüße vom Team der Lehrveranstaltungsevaluation<br>\n";
+$msg_teachers = "Guten Tag $fullname<br>
+                        Sie haben Kurse, die an dieser Evaluation teil" . ($is_open
+                ? "nehmen. Bitte motivieren Sie die Studierenden zur Teilnahme" : "genommen haben") . ".<br>
+                        Für Ihre eigenen Kurse können Sie die statistische Auswertung einsehen, sobald $minresults Abgaben vorliegen. 
+                        Ab $minresultsText Abgaben können Sie auch die Textantworten einsehen.<br>\n
+                        Herzliche Grüße vom Team der Lehrveranstaltungsevaluation<br>\n";
+if ($is_open) {
     $days = remaining_evaluation_days($evaluation);
     $alert = "";
     if ($days < 7 and $days >= 0) {
@@ -314,6 +322,11 @@ if ($is_open) {    // make get_string!
     } else if (!$isStudent and $isTeacher and $SiteEvaluation) {
         echo $msg_teachers . $alert;
     }
+}
+
+
+if (defined('EVALUATION_OWNER') and !evaluation_cosPrivileged($evaluation)) {
+    $minresults = $minresultsText = $minresultsPriv;
 }
 
 //show loading spinner - not working at this stage as page
@@ -337,7 +350,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
         $timeopen = ($evaluation->timeopen > 0) ? $evaluation->timeopen : (time() - 80600);
         //else  // if evalation is closed
         if (!isset($_SESSION["teamteaching_courses"]) or !isset($_SESSION["num_courses_of_studies"])) {
-            $_SESSION["num_courses_of_studies"] = safeCount(evaluation_get_course_studies($evaluation));
+            $_SESSION["num_courses_of_studies"] = safeCount(evaluation_get_course_studies($evaluation,false,false));
             $_SESSION["duplicated"] = evaluation_count_duplicated_replies($evaluation);
             $_SESSION["teamteaching_courses"] = evaluation_count_teamteaching_courses($evaluation);
             $_SESSION["distinct_users"] =
@@ -351,7 +364,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
         }
         // $_SESSION["num_courses_of_studies"] = safeCount(evaluation_get_course_studies($evaluation));
         $get_from_table = false;
-        if (!$is_open and $evaluation->timeopen < time() and $is_closed) {
+        if (!$is_open and $evaluation->timeopen < time() and $is_closed AND $completed_responses) {
             if (evaluation_set_results($evaluation)) {
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} WHERE id=$evaluation->id");
             }
@@ -571,6 +584,24 @@ if (is_siteadmin()) //OR !empty($_SESSION["LoggedInAs"]) )
         evaluation_set_results($evaluation, false, true, false);
         ///evaluation_set_results( $evaluation);
     }
+    if (isset($_GET['course_of_studies'])) {
+        $keys = array();
+        $dept = $departmentF = "";
+        if ( $dept AND isset($_SESSION['CoS_department']) AND safeCount($_SESSION['CoS_department']) ) {
+            $keys = array_keys($_SESSION['CoS_department']);
+            $dept = array_search($course_of_studies, $keys);
+            if (isset($_SESSION['CoS_department'][$keys[$dept]]) ) {
+                $departmentF = $_SESSION['CoS_department'][$keys[$dept]];
+                //return $department;
+            }
+        }
+
+        $department = get_department_from_cos($course_of_studies);
+        print "<hr>course_of_studies: $course_of_studies - key: $dept - F: $departmentF - department: $department
+                - ".$_SESSION['CoS_department'][$keys[$dept]]."<hr>";
+        print nl2br(var_export($_SESSION['CoS_department'], true));
+        print nl2br(var_export(array_keys($_SESSION['CoS_department']), true));
+    }
     /*$sg_filter = $courses_filter = array();
     list( $sg_filter, $courses_filter ) = get_evaluation_filters( $evaluation );
     echo "<hr>evaluation:\n" . nl2br(var_export($evaluation,true)) . "<hr>sg_filter:\n" . nl2br(var_export($sg_filter,true))
@@ -722,12 +753,22 @@ elseif ($SiteEvaluation) {
     }
 }
 
-if ($isPermitted) //AND $is_open )
+if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
 {    // Show intro and page_after_submit.
-    echo $OUTPUT->heading(get_string('welcome_text', 'evaluation'), 3);
-    print "Guten Tag $fullname<br>\n" . $evaluation->intro;
+    echo $OUTPUT->heading(get_string('welcome_text', 'evaluation') ." für Teilnehmer_innen", 3);
+    if ( !empty($msg_student_all_courses)){
+        print $msg_student_all_courses;
+    }
+    else{
+        print "Guten Tag $fullname<br>\n";
+        print $evaluation->intro;
+    }
     echo $OUTPUT->heading(get_string('page_after_submit', 'evaluation'), 3);
     print $evaluation->page_after_submit;
+    if (!empty($msg_teachers) AND defined('EVALUATION_OWNER')){
+        echo $OUTPUT->heading("Begrüßungstext für Dozent_innen", 3);
+        print $msg_teachers;
+    }
 
 }
 

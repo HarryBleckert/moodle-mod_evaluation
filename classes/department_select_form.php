@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_evaluation_course_of_studies_select_form extends moodleform {
+class mod_evaluation_department_select_form extends moodleform {
     /** @var moodle_url */
     protected $action;
     /** @var mod_evaluation_structure $evaluationstructure */
@@ -44,9 +44,9 @@ class mod_evaluation_course_of_studies_select_form extends moodleform {
      * @param bool $editable
      */
     public function __construct($action, mod_evaluation_structure $evaluationstructure, $editable = true) {
-        $this->action = new moodle_url($action, ['course_of_studiesID' => null]);
+        $this->action = new moodle_url($action, ['department' => null]);
         $this->evaluationstructure = $evaluationstructure;
-        parent::__construct($action, null, 'post', '', ['id' => 'evaluation_course_of_studies_filter'], $editable);
+        parent::__construct($action, null, 'post', '', ['id' => 'evaluation_departments_filter'], $editable);
     }
 
     /**
@@ -60,28 +60,20 @@ class mod_evaluation_course_of_studies_select_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        if (!$this->_form->_freezeAll &&
-                ($courses = $evaluationstructure->get_completed_course_of_studies()) && count($courses)) {
+        if (!$this->_form->_freezeAll && ($departments = $evaluationstructure->get_completed_departments()) && count($departments)) {
             $elements = [];
-            $elements[] = $mform->createElement('autocomplete', 'course_of_studiesID',
-                    get_string('filter_by_course_of_studies', 'evaluation'),
-                    ['' => get_string('fulllistofstudies', 'evaluation')] + $courses);
+            $elements[] = $mform->createElement('autocomplete', 'department',
+                    get_string('filter_by_department', 'evaluation'),
+                    ['' => get_string('fulllistofdepartments', 'evaluation')] + $departments);
             $elements[] = $mform->createElement('submit', 'submitbutton', get_string('filter'));
-            if ($evaluationstructure->get_course_of_studies()) {
+            if ($evaluationstructure->get_department()) {
                 $elements[] = $mform->createElement('static', 'showall', '',
                         html_writer::link($this->action, get_string('show_all', 'evaluation')));
             }
-            if (0 and defined('BEHAT_SITE_RUNNING')) {
-                // TODO MDL-53734 remove this - behat does not recognise autocomplete element inside a group.
-                foreach ($elements as $element) {
-                    $mform->addElement($element);
-                }
-            } else {
-                $mform->addGroup($elements, 'studiesfilter', get_string('filter_by_course_of_studies', 'evaluation'),
-                        array(' '),false);
-            }
+            $mform->addGroup($elements, 'departmentfilter', get_string('filter_by_department',
+                    'evaluation'), array(' '), false);
         }
-        $this->set_data(['course_of_studiesID' => $evaluationstructure->get_course_of_studiesID(),
+        $this->set_data(['department' => $evaluationstructure->get_department(),
                 'id' => $evaluationstructure->get_cm()->id]);
     }
 }

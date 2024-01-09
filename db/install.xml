@@ -201,6 +201,7 @@
 		<FIELD NAME="fullname" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
 		<FIELD NAME="shortname" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="course_of_studies" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
+        <FIELD NAME="department" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
 		<FIELD NAME="students" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
 		<FIELD NAME="active_students" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
 		<FIELD NAME="teacherids" TYPE="char" LENGTH="600" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>

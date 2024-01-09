@@ -22,14 +22,28 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('evaluation_allowfullanonymous',
             get_string('allowfullanonymous', 'evaluation'),
             $str, 0, $options));
-    if (is_siteadmin()) {
 
-        /*
-        Monate des Sommersemesters: sommermonths (  Januar Februar März April Mai Juni Juli August September Oktober November Dezember
-
-        Semester identifier in course records: SUBSTRING(idnumber,1,5) or substr(shortname, -1, 5)
-        */
-
+    // set default role(s) of participants. Defaults to role 5 (student)
+    global $DB;
+    $roles = $DB->get_records_sql("SELECT id,shortname FROM {role} WHERE trim(name) <> '' ORDER BY name asc");
+    $participant_roles = array();
+    foreach ( $roles as $role ){
+        $participant_roles[$role->id] = ucfirst(trim($role->shortname));
     }
+    /*
+    $name = new lang_string('participant_roles', 'evaluation');
+    $description = new lang_string('participant_roles_help', 'evaluation');
+    $element = new admin_setting_configmultiselect('evaluation_participant_roles',
+            $name,
+            $description,
+            array(5), $participant_roles);
+    $settings->add($element);
+    */
+    /*
+    Monate des Sommersemesters: sommermonths (  Januar Februar März April Mai Juni Juli August September Oktober November Dezember
+
+    Semester identifier in course records: SUBSTRING(idnumber,1,5) or substr(shortname, -1, 5)
+    */
+
 
 }

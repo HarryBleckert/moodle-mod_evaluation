@@ -31,7 +31,7 @@ evaluation_init_evaluation_session();
 $id = required_param('id', PARAM_INT);
 
 if (($formdata = data_submitted()) and !confirm_sesskey()) {
-    print_error('invalidsesskey');
+    throw new moodle_exception('invalidsesskey');
 }
 
 $do_show = optional_param('do_show', 'edit', PARAM_ALPHA);
@@ -75,7 +75,7 @@ $create_template_form = new evaluation_edit_create_template_form(null, array('id
 if ($data = $create_template_form->get_data()) {
     // Check the capabilities to create templates.
     if (!$cancreatetemplates) {
-        print_error('cannotsavetempl', 'evaluation', $url);
+        throw new moodle_exception('cannotsavetempl', 'evaluation', $url);
     }
     $ispublic = !empty($data->ispublic) ? 1 : 0;
     if (!evaluation_save_as_template($evaluation, $data->templatename, $ispublic)) {

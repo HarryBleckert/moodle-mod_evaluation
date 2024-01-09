@@ -33,6 +33,7 @@ $courseitemfiltertyp = optional_param('courseitemfiltertyp', '0', PARAM_ALPHANUM
 $courseid = optional_param('courseid', false, PARAM_INT);
 $course_of_studiesID = optional_param('course_of_studiesID', false, PARAM_INT);
 $teacherid = optional_param('teacherid', false, PARAM_INT);
+$department = optional_param('department', false, PARAM_INT);
 $TextOnly = optional_param('TextOnly', false, PARAM_INT);
 
 $Chart = optional_param('Chart', false, PARAM_ALPHANUM);
@@ -98,13 +99,17 @@ if ($teacherid) {
     $url->param('teacherid', $teacherid);
     $urlparams['teacherid'] = $teacherid;
 }
+if ($department) {
+    $url->param('department', $department);
+    $urlparams['department'] = $department;
+}
 
 // set PAGE layout and print the page header
 $evurl = new moodle_url('/mod/evaluation/analysis_course.php', array('id' => $id)); //,'courseid' => $courseid ) );
 evSetPage($url, $evurl, get_string("analysis", "evaluation"));
 
 // handle CoS priveleged user
-if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
+if (isset($_SESSION['CoS_privileged'][$USER->username])) {
     print "Auswertungen der Studiengänge: " . '<span style="font-weight:600;white-space:pre-line;">'
             . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span><br>\n";
 }
@@ -112,15 +117,22 @@ if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
 $icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
 echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
 
+if (!isset($_SESSION["participating_courses_of_studies"])) {
+    $_SESSION["participating_courses_of_studies"] = 3;
+    if (!empty($sg_filter)) {
+        $_SESSION["participating_courses_of_studies"] = safeCount($sg_filter);
+    }
+}
+
 list($isPermitted, $CourseTitle, $CourseName, $SiteEvaluation) =
         evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, true);
+list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation);
 if (!isset($_SESSION['myEvaluations'])) {
     $_SESSION["myEvaluations"] = get_evaluation_participants($evaluation, $USER->id);
     $_SESSION["myEvaluationsName"] = $evaluation->name;
 }
-
-$evaluationstructure = new mod_evaluation_structure($evaluation, $PAGE->cm, $courseid, null, 0, $teacherid, $course_of_studies,
-        $course_of_studiesID);
+$evaluationstructure = new mod_evaluation_structure($evaluation, $PAGE->cm, $courseid, null, 0,
+        $teacherid, $course_of_studies, $course_of_studiesID,$department);
 
 $completed_responses = $evaluationstructure->count_completed_responses();
 $minresults = evaluation_min_results($evaluation);
@@ -194,16 +206,14 @@ if ($courseid and $courseid !== SITEID) {
 }
 
 //if ( $is_open AND $Teacher )
-if ($Teacher) // and !$courseid )
+/*if ($Teacher) // and !$courseid )
 {
-    $Teacher = !evaluation_is_student($evaluation, $_SESSION["myEvaluations"], $courseid);
-}
+    $Teacher = evaluation_is_teacher($evaluation, $_SESSION["myEvaluations"], $courseid);
+}*/
 if ($Teacher) {    //if ( !defined( "isTeacher") ) { define( "isTeacher", true ); }
-
-    if (($is_open) and $teacherid != $USER->id) // OR $courseid
+    if ($is_open and $teacherid AND $teacherid != $USER->id) // OR $courseid
     {
-        $teacherid = $USER->id;
-        redirect(new moodle_url($url, ['teacherid' => $teacherid, 'courseid' => $courseid]));
+        redirect(new moodle_url($url, ['teacherid' => $USER->id, 'courseid' => $courseid]));
     } else {
         if ($teacherid == $USER->id and $numTeachers > 1) // $evaluation->teamteaching )
         {
@@ -222,7 +232,7 @@ if ($Teacher) {    //if ( !defined( "isTeacher") ) { define( "isTeacher", true )
     }
 }
 if ($numTextQ and $showUnmatched_minResults) {
-    echo '<br><b style="color:red;">Für diese Auswertung wurden weniger als ' . ($minresultsText)
+    echo '<br><b style="color:#000065;">Für diese Auswertung wurden weniger als ' . ($minresultsText)
             . " Abgaben gemacht. Daher können Sie keine Textantworten einsehen!</b><br>\n";
 }
 
@@ -262,21 +272,35 @@ if (!$courseid) {
 evaluation_showLoading();
 
 // set filter forms
-if (has_capability('mod/evaluation:viewreports', $context) || defined('EVALUATION_OWNER')) {
+if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context) || defined('EVALUATION_OWNER'))) {
     echo "\n" . '<div style="display:none;" id="evFilters" class="d-print-none">';
     if (is_siteadmin()) {
         echo '<span id="evFiltersMsg"></span>';
     } //<b>'.EVALUATION_OWNER.'</b>
 	
-	// Process course of studies select form.
-    if ($SiteEvaluation and !$courseid AND (isset($_SESSION["participating_courses_of_studies"]) ?$_SESSION["participating_courses_of_studies"] >1 :true)) {
+	// process department (Fachbereich) select form $_SESSION['CoS_department'][$CoS]
+    if ($SiteEvaluation and $_SESSION["participating_courses_of_studies"]>1 AND
+            !$cosPrivileged and !$courseid AND !$course_of_studiesID AND !$teacherid
+            AND (isset($_SESSION['CoS_department']) ?$_SESSION['CoS_department'] >1 :true)) {
+        $deptselectform =
+                new mod_evaluation_department_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
+        if ($data = $deptselectform->get_data()) {
+            evaluation_spinnerJS(false);
+            redirect(new moodle_url($url, ['department' => $data->department]), "", 0);
+        }
+        echo "\n" . '<div style="padding: 2px; border:teal solid 1px;display:inline;float:left;" class="d-print-none">'; // do not print
+        $deptselectform->display();
+        echo "</div>\n";
+    }
+    // Process course of studies select form.
+    if ($SiteEvaluation and !$cosPrivileged AND !$courseid AND $_SESSION["participating_courses_of_studies"]>1) {
         $studyselectform =
                 new mod_evaluation_course_of_studies_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
         if ($data = $studyselectform->get_data()) {
             evaluation_spinnerJS(false);
             redirect(new moodle_url($url, ['course_of_studiesID' => $data->course_of_studiesID]), "", 0);
         }
-        echo "\n" . '<div style="display:inline;float:left;" class="d-print-none">'; // do not print
+        echo "\n" . '<div style="padding: 2px; border:teal solid 1px;display:inline;float:left;" class="d-print-none">'; // do not print
         $studyselectform->display();
         echo "</div>\n";
     }
@@ -286,7 +310,7 @@ if (has_capability('mod/evaluation:viewreports', $context) || defined('EVALUATIO
             evaluation_spinnerJS(false);
             redirect(new moodle_url($url, ['courseid' => $data->courseid]), "", 0); // );
         }
-        echo "\n" . '<div style="display:inline;float:left;" class="d-print-none">'; // do not print
+        echo "\n" . '<div style="padding: 2px; border:teal solid 1px;display:inline;float:left;" class="d-print-none">'; // do not print
         $courseselectform->display();
         echo "</div>\n";
     }
@@ -298,7 +322,7 @@ if (has_capability('mod/evaluation:viewreports', $context) || defined('EVALUATIO
             evaluation_spinnerJS(false);
             redirect(new moodle_url($url, ['teacherid' => $data->teacherid]), "", 0); //  );
         }
-        echo "\n" . '<div style="display:inline;float:left;" class="d-print-none">'; // do not print
+        echo "\n" . '<div style="padding: 2px; border:teal solid 1px;display:inline;float:left;" class="d-print-none">'; // do not print
         $teacherselectform->display();
         echo "</div>\n";
     }
@@ -396,7 +420,7 @@ if (($isPermitted or ($Teacher and $teacherid)) and $evaluationstructure->count_
 }
 
 // show / print only text
-if ($numTextQ and (((!$showUnmatched_minResults and ($cosPrivileged or $Teacher))) or
+if ($numTextQ and (((!$showUnmatched_minResults and ($completed_responses >= $minresultsText AND ($cosPrivileged or $Teacher)))) or
                 (defined('EVALUATION_OWNER') ? !$cosPrivileged : false))) {
     ?>
     <div style="float:left;">
@@ -492,15 +516,6 @@ if ($courseitemfilter > 0) {
 } else {
 
 
-    //  get all results to compare if single course selected
-    if (false and is_siteadmin() and $courseid >
-            0) {    //mod_evaluation_structure($evaluation, $PAGE->cm, $courseid, null, 0, $teacherid, $course_of_studies);
-        $evaluationstructure2 = new mod_evaluation_structure($evaluation, $PAGE->cm, false);
-        //$items2 = $evaluationstructure2->get_items(true);
-        //print print_r($items);
-        //print "<br><hr><br>";
-        //print print_r($items2);
-    }
     // new feature to compare results -- not working, need print - function to compare average values
     $compare = false; // is_siteadmin() AND ( $courseid OR $course_of_studiesID OR $teacherid);
     //echo "<br>Studiengang: $course_of_studies<br>";
@@ -538,10 +553,12 @@ if ($courseitemfilter > 0) {
         echo "<tr><td>\n";
         if (in_array($item->typ, array("multichoice", "multichoicerated"))) {
             $itemobj->print_analysed($item, $printnr, $mygroupid, $evaluationstructure->get_courseid(),
-                    $evaluationstructure->get_teacherid(), $evaluationstructure->get_course_of_studies(), $Chart, $compare);
+                    $evaluationstructure->get_teacherid(),
+                    $evaluationstructure->get_course_of_studies(), $evaluationstructure->get_department(), $Chart );
         } else {
             $itemobj->print_analysed($item, $printnr, $mygroupid, $evaluationstructure->get_courseid(),
-                    $evaluationstructure->get_teacherid(), $evaluationstructure->get_course_of_studies());
+                    $evaluationstructure->get_teacherid(),
+                    $evaluationstructure->get_course_of_studies(), $evaluationstructure->get_department());
         }
         if (false and is_siteadmin() and $courseid) {
             if ($course->id == SITEID and defined("SiteEvaluation") and

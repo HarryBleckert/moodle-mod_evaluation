@@ -422,6 +422,16 @@ function xmldb_evaluation_upgrade($oldversion) {
         upgrade_mod_savepoint(true, $newversion, 'evaluation');
     }
 
+    $newversion = 2023122700;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation_enrolments');
+        $field = new xmldb_field('department', XMLDB_TYPE_CHAR, '100', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
+
     return true;
 }
 

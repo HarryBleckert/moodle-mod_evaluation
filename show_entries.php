@@ -38,7 +38,8 @@ $deleteid = optional_param('delete', null, PARAM_INT);
 $courseid = optional_param('courseid', false, PARAM_INT);
 $course_of_studiesID = optional_param('course_of_studiesID', false, PARAM_INT);
 $teacherid = optional_param('teacherid', false, PARAM_INT);
-$downloading = optional_param('adownload', false, PARAM_TEXT);  // 
+$department = optional_param('department', false, PARAM_TEXT);
+$downloading = optional_param('adownload', false, PARAM_TEXT);
 //$urlparams = ['id' => $userid];
 
 $goBack = '<div style="display:block;text-align:center;">' .
@@ -90,13 +91,25 @@ if ($teacherid) {
     $urlparams['teacherid'] = $teacherid;
 }
 
+if ($department) {
+    $url->param('department', $department);
+    $urlparams['department'] = $department;
+}
 // set PAGE layout and print the page header
 $evurl = new moodle_url('/mod/evaluation/show_entries.php', array('id' => $cm->id));
 evSetPage($url, $evurl, get_string("show_entries", "evaluation"));
 $PAGE->set_url(new moodle_url($url, array('userid' => $userid, 'showcompleted' => $showcompleted, 'delete' => $deleteid)));
 
+if (!isset($_SESSION["participating_courses_of_studies"])) {
+    $_SESSION["participating_courses_of_studies"] = 3;
+    if (!empty($sg_filter)) {
+        $_SESSION["participating_courses_of_studies"] = safeCount($sg_filter);
+    }
+}
 list($isPermitted, $CourseTitle, $CourseName, $SiteEvaluation) =
         evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm);
+list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation);
+
 if (!isset($_SESSION['myEvaluations'])) {
     $_SESSION["myEvaluations"] = get_evaluation_participants($evaluation, $USER->id);
     $_SESSION["myEvaluationsName"] = $evaluation->name;
@@ -169,8 +182,8 @@ if ($deleteid) {
             $teacherid, $course_of_studies, $course_of_studiesID);
 } else {
     // Viewing list of reponses.
-    $evaluationstructure = new mod_evaluation_structure($evaluation, $cm, $courseid, null, 0, $teacherid, $course_of_studies,
-            $course_of_studiesID);
+    $evaluationstructure = new mod_evaluation_structure($evaluation, $cm, $courseid, null, 0,
+            $teacherid, $course_of_studies, $course_of_studiesID, $department);
 }
 
 $responsestable = new mod_evaluation_responses_table($evaluationstructure);
@@ -273,28 +286,45 @@ if ($userid || $showcompleted) {
     }
 	
 	// process filters by forms
-    if (!$downloading and defined('EVALUATION_OWNER')) {
+    $completed_responses = $evaluationstructure->count_completed_responses();
+    if (!$downloading and $completed_responses AND defined('EVALUATION_OWNER')) {
         echo "\n" . '<div style="display:none;" id="evFilters" class="d-print-none">';
-		
+
+
+        // process department (Fachbereich) select form $_SESSION['CoS_department'][$CoS]
+        if (!$cosPrivileged and $SiteEvaluation and !$courseid AND !$course_of_studiesID AND !$teacherid
+                AND safeCount($_SESSION['participating_courses_of_studies'] )> 1
+                AND (!isset($_SESSION['CoS_department']) || $_SESSION['CoS_department'] > 1)) {
+            $deptselectform =
+                    new mod_evaluation_department_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
+            if ($data = $deptselectform->get_data()) {
+                evaluation_spinnerJS(false);
+                redirect(new moodle_url($url, ['department' => $data->department]), "", 0);
+            }
+            echo "\n" . '<div style="padding: 2px; border:teal solid 1px;display:inline;float:left;" class="d-print-none">'; // do not print
+            $deptselectform->display();
+            echo "</div>\n";
+        }
         // Process course of studies select form.
-		if ($SiteEvaluation and !$courseid AND (isset($_SESSION["participating_courses_of_studies"]) ?$_SESSION["participating_courses_of_studies"] >1 :true)) {
+        if ($SiteEvaluation and !$cosPrivileged AND !$courseid AND safeCount($_SESSION['participating_courses_of_studies']) > 1) {
             $studyselectform =
                     new mod_evaluation_course_of_studies_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
             if ($data = $studyselectform->get_data()) {
                 evaluation_spinnerJS(false);
-                redirect(new moodle_url($url, ['course_of_studiesID' => $data->course_of_studiesID]));
+                redirect(new moodle_url($url, ['course_of_studiesID' => $data->course_of_studiesID]), "", 0);
             }
-            echo "\n" . '<div style="display:inline;float:left;" class="d-print-none">'; // do not print
+            echo "\n" . '<div style="padding: 2px; border:teal solid 1px;display:inline;float:left;" class="d-print-none">'; // do not print
             $studyselectform->display();
             echo "</div>\n";
         }
+
         if ($SiteEvaluation) {    // Process course select form.
             $courseselectform = new mod_evaluation_course_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
             if ($data = $courseselectform->get_data()) {
                 evaluation_spinnerJS(false);
                 redirect(new moodle_url($url, ['courseid' => $data->courseid]));
             }
-            echo "\n" . '<div style="display:inline;float:left;" class="d-print-none">'; // do not print
+            echo "\n" . '<div style="padding: 2px; border:teal solid 1px;display:inline;float:left;" class="d-print-none">'; // do not print
             $courseselectform->display();
             echo "</div>\n";
         }
@@ -305,7 +335,7 @@ if ($userid || $showcompleted) {
                 evaluation_spinnerJS(false);
                 redirect(new moodle_url($url, ['teacherid' => $data->teacherid]));
             }
-            echo "\n" . '<div style="display:inline;float:left;" class="d-print-none">'; // do not print
+            echo "\n" . '<div style="padding: 2px; border:teal solid 1px;display:inline;float:left;" class="d-print-none">'; // do not print
             $teacherselectform->display();
             echo "</div>\n";
         }
@@ -324,7 +354,8 @@ if ($userid || $showcompleted) {
         $minResults = $minResultsText = $minResultsPriv;
     }
 
-    /*$completed_responses = $evaluationstructure->count_completed_responses();
+    $completed_responses = $evaluationstructure->count_completed_responses();
+    /*
     $minresults = evaluation_min_results($evaluation);
     if ( $cosPrivileged )
     {	if ( $completed_responses < $minresults )

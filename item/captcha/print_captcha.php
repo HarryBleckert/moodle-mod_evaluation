@@ -22,20 +22,20 @@ $PAGE->set_url('/mod/evaluation/item/captcha/print_captcha.php', array('id' => $
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('evaluation', $id)) {
-        print_error('invalidcoursemodule');
+        throw new moodle_exception('invalidcoursemodule');
     }
 
     if (!$course = $DB->get_record("course", array("id" => $cm->course))) {
-        print_error('coursemisconf');
+        throw new moodle_exception('coursemisconf');
     }
 
     if (!$evaluation = $DB->get_record("evaluation", array("id" => $cm->instance))) {
-        print_error('invalidcoursemodule');
+        throw new moodle_exception('invalidcoursemodule');
     }
 }
 
 if (!isset($SESSION->evaluation->item->captcha)) {
-    print_error('captchanotset', 'evaluation');
+    throw new moodle_exception('captchanotset', 'evaluation');
 }
 
 $height = 40;

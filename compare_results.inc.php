@@ -12,7 +12,8 @@ define('EVALUATION_MULTICHOICE_HIDENOSELECT', 'h');
 */
 
 // get average results of all answers fore selected items or all course_of_studies, courses and teachers
-function evaluation_compare_results($evaluation, $courseid = false, $course_of_studiesID = false, $teacherid = false) {
+function evaluation_compare_results($evaluation, $courseid = false,
+        $teacherid = false, $course_of_studiesID = false, $department =false) {
     global $DB, $OUTPUT, $USER;
     if (!isset($_SESSION["duplicated"])) {
         $_SESSION["duplicated"] = evaluation_count_duplicated_replies($evaluation);
@@ -26,8 +27,9 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
             <input type="hidden" name="id" value="<?php echo $id; ?>">
             <input type="hidden" name="showCompare" value="1">
             <input type="hidden" name="courseid" value="<?php echo $courseid; ?>">
-            <input type="hidden" name="course_of_studiesID" value="<?php echo $course_of_studiesID; ?>">
             <input type="hidden" name="teacherid" value="<?php echo $teacherid; ?>">
+            <input type="hidden" name="course_of_studiesID" value="<?php echo $course_of_studiesID; ?>">
+            <input type="hidden" name="department" value="<?php echo $department; ?>">
             <script>document.getElementById("postForm").submit();</script>
         </form>
         <?php
@@ -48,15 +50,16 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
     $sortKey = ev_session_request("sortKey", "values");
     $validation = intval(ev_session_request("validation", 0));
     $hideInvalid = intval(ev_session_request("hideInvalid", 1));
-
-    $isFilter = ($teacherid or $courseid or $course_of_studiesID);
+    $applysubquery = intval(ev_session_request("applysubquery", 0));
+    $subqueries = ev_session_request("subqueries", array());
+    $isFilter = ($teacherid or $courseid or $course_of_studiesID or $department);
     /*if ( $isFilter AND $allSelected == "useFilter" )
     {	if ( $courseid ) { $allSelected = "allCourses"; }
         $isFilter = false; $course_of_studiesID=false; $teacherid=false; $courseid = false;
     }*/
     $isStudent = $isTeacher = false;
-    $allSubject = "";
-    $data = array();
+    $allSubject = $subquery = $subqueryC = $subquerytxt = $filterDept = "";
+    $data = $subqueryids = array();
     $zeroReplies = $invalidReplies = array();
 
     // handle CoS privileged user
@@ -70,10 +73,17 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         $course_of_studies = evaluation_get_course_of_studies_from_evc($course_of_studiesID, $evaluation);
     }
 
+    if (!isset($_SESSION["participating_courses_of_studies"])) {
+        $_SESSION["participating_courses_of_studies"] = 0;
+        if (!empty($sg_filter)) {
+            $_SESSION["participating_courses_of_studies"] = safeCount($sg_filter);
+        }
+    }
+
     $boldStyle = "font-size:12pt;font-weight:bold;display:inline;";
     $buttonstyle = 'font-size:125%;color:white;background-color:black;text-align:center;';
     $goBack = html_writer::tag('button', "Zurück", array('class' => "d-print-none", 'style' => $buttonstyle,
-            'type' => 'button', 'onclick' => '(window.history.back()?window.history.back():window.close());'));
+            'type' => 'button', 'onclick' => 'window.history.back();'));
     $goBack .= "&nbsp;&nbsp;" . html_writer::tag('a', "Überblick", array('class' => "d-print-none", 'style' => $buttonstyle,
                     'type' => 'button', 'href' => 'view.php?id=' . $id . '&courseid=' . $courseid . '&teacherid=' . $teacherid
                             . '&course_of_studiesID=' . $course_of_studiesID));
@@ -98,7 +108,9 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
             "Es gibt 3 Varianten von automatisch bewertbaren Fragen: Radio und Dropdown (Single Choice) oder Checkbox (Multi Choice). Bei Single Choice Fragen kann aus mehreren Antwortoptionen genau eine Antwort ausgewählt werden. Multi Choice Fragen erlauben eine beliebige Auswahl von Antworten";
     echo '<h1 title="' . $hint . '" style="display:inline;color:darkgreen;text-align:left;font-weight:bolder;">Statistik</h1><br>';
 
-    if ($allSelected == "allStudies") {
+    if ($allSelected == "allDepartments") {
+        $allSubject = get_string("departments", "evaluation");
+    } else if ($allSelected == "allStudies") {
         $allSubject = get_string("courses_of_studies", "evaluation");
     } else if ($allSelected == "allCourses") {
         $allSubject = get_string("courses", "evaluation");
@@ -107,12 +119,19 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
     }
 
     // access control
-    if (!defined('EVALUATION_OWNER')) {
+    if (defined('EVALUATION_OWNER')) {
+        get_evaluation_filters($evaluation);
+        if ($department AND isset($_SESSION['CoS_department']) and safeCount($_SESSION['CoS_department'])) {
+            $CoS = "'" . implode("','", array_keys($_SESSION['CoS_department'], $department)) . "'";
+            $filterDept = " AND course_of_studies IN($CoS)";
+        }
+    }else {
+        $department = false;
         $myEvaluations = get_evaluation_participants($evaluation, $USER->id);
         if ($isOpen or $course_of_studiesID or ($teacherid and $teacherid != $USER->id)
                 or ($courseid and !evaluation_is_my_courseid($myEvaluations, $courseid))
         ) {
-            print '<br><h2 style="font-weight:bold;color:darkred;background-color:white;">'
+            print '<br><h2 style="font-weight:bold;color:#000000;background-color:#000000;">'
                     . get_string('no_permission_analysis', 'evaluation') . "</h2><br>";
             echo $OUTPUT->continue_button("/mod/evaluation/view.php?id=$id");
             echo $OUTPUT->footer();
@@ -139,23 +158,38 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
 
     $presentation = array();
     $scheme = $numQuestions = "";
+
     if ($qSelected) {
+
         $query = "SELECT * FROM {evaluation_item} WHERE id = $qSelected AND evaluation=$evaluation->id ORDER by position ASC";
         $question = array();
         $questions = $DB->get_records_sql($query);
         //extract presentation list
         foreach ($questions as $question) {    //$question = $question1; break; }
-
             $itemobj = evaluation_get_item_class($question->typ);
             $itemInfo = $itemobj->get_info($question);
 
-            $presentation =
-                    explode("|", str_replace(array("<<<<<1", "r>>>>>", "c>>>>>", "r>>>>>", "\n"), "", $question->presentation));
+            $presentationraw = $presentation =
+                    explode("|", str_replace(array("<<<<<1", "r>>>>>", "c>>>>>", "r>>>>>", "\n"), "",
+                            $question->presentation));
+
+            // sub queries
+
+            if (intval($_REQUEST['sqfilter']) == 1 and $_REQUEST['subreply']) {
+                $applysubquery = 1;
+                $_SESSION['subqueries'][$qSelected]['item'] = $qSelected;
+                $_SESSION['subqueries'][$qSelected]['name'] = trim($question->name);
+                $_SESSION['subqueries'][$qSelected]['value'] = $_REQUEST['subreply'];
+                $_SESSION['subqueries'][$qSelected]['reply'] = trim($presentationraw[intval($_REQUEST['subreply']) - 1]);
+            } else if (intval($_REQUEST['sqfilter']) == 2) {
+                unset($_SESSION['subqueries'][$qSelected]);
+            }
+
             if (in_array("k.b.", $presentation) or in_array("keine Angabe", $presentation) or
                     in_array("Kann ich nicht beantworten", $presentation)) {
                 array_pop($presentation);
             }
-
+            // $presentationraw = $presentation; // used for subqueries
             $qfValues = "";
             for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
                 $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
@@ -201,6 +235,29 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         flush();
         exit;
     }
+
+    if (!empty($_SESSION['subqueries'])) {
+        $subquerytxt = "Filter auf Fragen: ";
+        foreach ($_SESSION['subqueries'] as $subqueryid) {
+            $subqueryids[] = $subqueryid['item'];
+            if ($applysubquery) {
+                /*$subquery .= " AND completed IN ((SELECT completed AS done FROM {evaluation_value}
+		                        WHERE item=" .$subqueryid['item'] ." and value='".$subqueryid['value']."'))";
+                // not working...
+                $subquery .= " AND EXISTS (SELECT completed AS done FROM {evaluation_value}
+		                        WHERE item=" .$subqueryid['item'] ." and value='".$subqueryid['value']."')";
+                */
+                $subquery .= " AND completed IN ((SELECT completed AS done FROM {evaluation_value}
+		                        WHERE item=" . $subqueryid['item'] . " and value='" . $subqueryid['value'] . "'))";
+                $subqueryC .= str_ireplace("AND completed", "AND id", $subquery);
+            }
+            $subquerytxt .= " '" . $subqueryid['name'] . "' mit Antwort: '" . $subqueryid['reply'] . "', ";
+        }
+        $subquerytxt = substr($subquerytxt, 0, -2);
+        // print "subqueries: ".nl2br(var_dump($_SESSION['subqueries'], true));
+        // print "subquery: " . $subquery;
+    }
+
     $numAnswers = safeCount($presentation);
     echo "<b>Antwort - Schema</b>: $scheme<br>\n";
     //echo "<b>\$presentation ".var_export($presentation,true) . "</b><br>\n";
@@ -210,175 +267,235 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
     ?>
     <div style="display:block;">
         <form style="display:inline;" id="statsForm" method="POST" action="print.php">
-
             <?php
 
             // validation needs more research
-            if (!is_siteadmin()) //AND !defined('EVALUATION_OWNER') )
-            {
+            if (!is_siteadmin()){  //AND !defined('EVALUATION_OWNER') )
                 $validation = $hideInvalid = true;
             }
-            else if (!$qSelected)
-            {
-            $label = ($validation ? "V" : "Nicht V") . "alidiert";
-            $value = ($validation ? 0 : 1);
-            ?>
-            <button name="validation" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
-                    onclick="this.form.submit();">
+            else if (!$qSelected){
+                $label = ($validation ? "V" : "Nicht V") . "alidiert";
+                $value = ($validation ? 0 : 1);
+                ?>
+                <button name="validation" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
+                        onclick="this.form.submit();">
                 <?php
                 echo '<span title="Abgaben werden auf Plausibilität geprüft. Abgaben, bei denen immer die erste Antwort gewählt wurde, werden als ungültig markiert!">'
                         . $label . '</span>';
                 echo "</button>\n";
-                if ($validation)
-                {
-                $label = "Invalide " . ($hideInvalid ? "verbergen" : "anzeigen");
-                $value = ($hideInvalid ? 0 : 1);
-                ?>
-                <button name="hideInvalid" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
-                        onclick="this.form.submit();">
+                if ($validation) {
+                    $label = "Invalide " . ($hideInvalid ? "verbergen" : "anzeigen");
+                    $value = ($hideInvalid ? 0 : 1);
+                    ?>
+                    <button name="hideInvalid" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
+                            onclick="this.form.submit();">
                     <?php
                     echo '<span title="Es werden nur ' . ($hideInvalid ? "validierte" : "ungültige")
                             . ' Auswertungen angezeigt">' . $label . '</span>'
                             . "</button>\n";
 
-                    }
-                    }
+                }
+            }
 
-                    if ($allSelected and $allSelected !== "useFilter")
-                    {
+            if ($allSelected and $allSelected !== "useFilter"){
+                $label = ($sortOrder == SORT_ASC ? "up" : "down");
+                $value = ($sortOrder == SORT_DESC ? SORT_ASC : SORT_DESC);
+                ?>
+                <button name="sortOrder" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
+                        onclick="this.form.submit();"><?php
+                    echo '<span style="width:21px;color:white;" class="fa fa-arrow-' . $label . ' fa-1x" 
+                  title="Sortierung zwischen Aufsteigend und Absteigend wechseln"></span>'; ?>
+                </button>
+                <?php
+                $label = ($sortKey == "replies" ? "Abgaben" : "Mittelwert");
+                $value = ($sortKey == "values" ? "replies" : "values");
+                ?>
+                <button name="sortKey" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
+                        onclick="this.form.submit();">
+                <?php
+                echo '<span title="Sortierung nach Abgaben oder nach AMittwlwerten">' . $label . '</span></button>';
 
-                    $label = ($sortOrder == SORT_ASC ? "up" : "down");
-                    $value = ($sortOrder == SORT_DESC ? SORT_ASC : SORT_DESC);
+            }
+        if (!$qSelected){  //AND ($allSelected AND $allSelected !== "allCourses" AND $allSelected !== "allTeachers" ) )
+            ?>
+            <div style="display:inline;" id="showGraf" title="Hier Klicken um direkt zur Grafik zu scrollen"><b>Grafik</b>:
+            </div>
+            <?php
+            $label = ($ChartAxis == "x" ? "Horizonal" : "Vertikal");
+            $value = ($ChartAxis == "x" ? "y" : "x");
+            ?>
+            <button name="ChartAxis" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
+                    onclick="this.form.submit();"><?php
+                echo $label; ?></button>
+
+            <?php
+            if (defined('EVALUATION_OWNER') or is_siteadmin()) {
+                print '<input type="number" name="maxCharts" value="' . $maxCharts
+                        . '" style="width:42px;font-size:100%;color:white;background-color:teal;" min="3" ondblclick="this.form.submit();" 
+                    title="maximale Anzahl für die grafische Anzeige">';
+            }
+
+        }
+        if ($isFilter and $allSelected and $allSelected !== "useFilter"){ // filter conditions set
+            ?>
+            <button name="allSelected" style="<?php echo $buttonStyle; ?>" value="useFilter"
+                    onclick="this.form.submit();"><?php
+                echo $filterSubject; ?></button>
+            <?php
+        }
+
+        if (($isTeacher or $isStudent) or defined('EVALUATION_OWNER')){
+            print $isFilter ? "" : "- alle: ";
+
+            if (defined('EVALUATION_OWNER') AND !$cosPrivileged
+                AND $_SESSION["participating_courses_of_studies"]>1
+            ) {
+                if ($allSelected == "allDepartments") {
+                    $style = $selectStyle;
+                    $value = "";
+                } else {
+                    $style = $buttonStyle;
+                    $value = "allDepartments";
+                }
+                ?>
+                <button name="allSelected" style="<?php echo $style; ?>" value="<?php
+                    echo $value; ?>" onclick="this.form.submit();"><?php
+                    echo get_string("departments", "evaluation");
+                    ?></button>
+                <?php
+            }
+
+            if ($allSelected == "allStudies") {
+                $style = $selectStyle;
+                $value = "";
+            } else {
+                $style = $buttonStyle;
+                $value = "allStudies";
+            }
+            ?>
+            <button name="allSelected" style="<?php echo $style; ?>" value="<?php
+            echo $value; ?>" onclick="this.form.submit();"><?php
+                echo get_string("courses_of_studies", "evaluation"); ?></button>
+
+            <?php
+            //if (defined('EVALUATION_OWNER')){
+            if ($allSelected == "allCourses") {
+                $style = $selectStyle;
+                $value = "";
+            } else {
+                $style = $buttonStyle;
+                $value = "allCourses";
+            }
+
+            ?>
+            <button name="allSelected" style="<?php
+                    echo $style; ?>" value="<?php
+                    echo $value; ?>" onclick="this.form.submit();">
+            <?php
+            echo get_string("courses", "evaluation");
+            echo "</button>";
+
+            if (($isTeacher and $teacherid) or
+                    defined('EVALUATION_OWNER')) {
+                if ($allSelected == "allTeachers") {
+                    $style = $selectStyle;
+                    $value = "";
+                } else {
+                    $style = $buttonStyle;
+                    $value = "allTeachers";
+                }
+                ?>
+                <button name="allSelected" style="<?php echo $style; ?>" value="<?php echo $value; ?>"
+                        onclick="this.form.submit();"><?php
+                    echo get_string("teachers", "evaluation"); ?></button>
+                <?php
+            } // if !teacherid
+            //defined('EVALUATION_OWNER') AND
+            if (($allSelected == "allCourses" or $allSelected == "allTeachers")) {
+                print '- mindestens <input type="number" name="minReplies" value="' . $minReplies . '"
+                    style="width:42px;font-size:100%;color:white;background-color:teal;" ondblclick="this.form.submit();" 
+                    min="$minResults"> Abgaben';
+            }
+            //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
+            print        "\n<br>";
+
+            if ($qSelected) {
+                print "<b>Ausgewertete Frage</b>: ";
+            }
+
+            print    '<select name="qSelected" style="' . $buttonStyle . '" onchange="this.form.submit();">' . "\n"
+                    . '<option value="">' . get_string("all") . " " . $numQuestions
+                    . " vergleichbar auswertbaren " .
+                    get_string("questions", "evaluation") . "</option>\n"; //. $numAllQuestions ." "
+            foreach ($allQuestions as $question) {
+                $selected = "";
+                if ($question->id == $qSelected) {
+                    $selected = ' selected="' . $selected . '" ';
+                }
+                $qname = $question->name;
+                if (strlen($qname) > 90) {
+                    $qname = substr($qname, 0, 87) . "...";
+                }
+                print '<option value="' . $question->id . '"' . $selected
+                        . ' title="' . htmlentities($question->name) . '">' . $qname
+                        . "</option>\n";
+            }
+            print "</select>\n";
+            if ($qSelected) {
+                if (defined('EVALUATION_OWNER')) {
+                    $value = in_array($qSelected, $subqueryids) ? "2" : "1";
+                    $label = "Filter " . (in_array($qSelected, $subqueryids) ? "entfernen" : "setzen");
                     ?>
-                    <button name="sortOrder" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
+                    <button name="sqfilter" style="<?php echo $style; ?>" value="<?php echo $value; ?>"
                             onclick="this.form.submit();"><?php
-                        echo '<span style="width:21px;color:white;" class="fa fa-arrow-' . $label . ' fa-1x" 
-					  title="Sortierung zwischen Aufsteigend und Absteigend wechseln"></i>'; ?>
-                    </button>
+                        echo $label; ?></button>
                     <?php
-                    $label = ($sortKey == "replies" ? "Abgaben" : "Mittelwert");
-                    $value = ($sortKey == "values" ? "replies" : "values");
-                    ?>
-                    <button name="sortKey" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
-                            onclick="this.form.submit();">
-                        <?php
-                        echo '<span title="Sortierung nach Abgaben oder nach AMittwlwerten">' . $label . '</span></button>';
-
-                        }
-                        if (!$qSelected) //AND ($allSelected AND $allSelected !== "allCourses" AND $allSelected !== "allTeachers" ) )
-                        {
-                            ?>
-                            <div style="display:inline;" id="showGraf" title="Hier Klicken um direkt zur Grafik zu scrollen"><b>Grafik</b>:
-                            </div>
-                            <?php
-                            $label = ($ChartAxis == "x" ? "Horizonal" : "Vertikal");
-                            $value = ($ChartAxis == "x" ? "y" : "x");
-                            ?>
-                            <button name="ChartAxis" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
-                                    onclick="this.form.submit();"><?php
-                                echo $label; ?></button>
-
-                            <?php
-							if ( defined('EVALUATION_OWNER') OR is_siteadmin() ){
-								print '<input type="number" name="maxCharts" value="' . $maxCharts 
-									. '" style="width:42px;font-size:100%;color:white;background-color:teal;" min="3" ondblclick="this.form.submit();" 
-									title="maximale Anzahl für die grafische Anzeige">';
-							}
-							
-                        }
-                        if ($isFilter and $allSelected and $allSelected !== "useFilter")  // filter conditions set
-                        {
-                            ?>
-                            <button name="allSelected" style="<?php echo $buttonStyle; ?>" value="useFilter"
-                                    onclick="this.form.submit();"><?php
-                                echo $filterSubject; ?></button>
-                            <?php
-                        }
-
-                        //if ( $isFilter OR defined('EVALUATION_OWNER') )
-                        if (($isTeacher or $isStudent) or defined('EVALUATION_OWNER'))
-                        {
-                        print $isFilter ? "" : "- alle: ";
-                        if ($allSelected == "allStudies") {
-                            $style = $selectStyle;
-                            $value = "";
-                        } else {
-                            $style = $buttonStyle;
-                            $value = "allStudies";
-                        }
-                        ?>
-                        <button name="allSelected" style="<?php echo $style; ?>" value="<?php echo $value; ?>"
-                                onclick="this.form.submit();"><?php
-                            echo get_string("courses_of_studies", "evaluation"); ?></button>
-
-                        <?php
-                        if ($allSelected == "allCourses") {
-                            $style = $selectStyle;
-                            $value = "";
-                        } else {
-                            $style = $buttonStyle;
-                            $value = "allCourses";
-                        }
-
-                        ?>
-                        <button name="allSelected" style="<?php echo $style; ?>" value="<?php echo $value; ?>"
-                                onclick="this.form.submit();">
-                            <?php
-                            echo get_string("courses", "evaluation");
-                            echo "</button>";
-
-                            if (($isTeacher and $teacherid) or
-                                    defined('EVALUATION_OWNER')) //( !$teacherid AND !$isStudent AND !$isTeacher ) OR defined('EVALUATION_OWNER') )
-                            {
-                                if ($allSelected == "allTeachers") {
-                                    $style = $selectStyle;
-                                    $value = "";
-                                } else {
-                                    $style = $buttonStyle;
-                                    $value = "allTeachers";
-                                }
-                                ?>
-                                <button name="allSelected" style="<?php echo $style; ?>" value="<?php echo $value; ?>"
-                                        onclick="this.form.submit();"><?php
-                                    echo get_string("teachers", "evaluation"); ?></button>
-                                <?php
-                            } // if !teacherid
-                            //defined('EVALUATION_OWNER') AND
-                            if (($allSelected == "allCourses" or $allSelected == "allTeachers")) {
-                                print '- mindestens <input type="number" name="minReplies" value="' . $minReplies . '"
-									style="width:42px;font-size:100%;color:white;background-color:teal;" ondblclick="this.form.submit();" 
-									min="$minResults"> Abgaben';
+                    if ($value == 1) {
+                        print '<span id="replies">';
+                        $cnt = 1;
+                        $hide_reply = array("k.b.", "keine Angabe", "Kann ich nicht beantworten");
+                        foreach ($presentationraw as $reply) {
+                            if ( !in_array($reply, $hide_reply)) {
+                                print '<label>';
+                                print '<input type="radio" name="subreply" value="' . $cnt . '">';
+                                print "$reply&nbsp;</label>";
                             }
-                            //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
-                            print        "\n<br>";
+                            $cnt++;
+                        }
+                        print "</span>\n";
+                    }
+                }
+                if ($itemInfo->subtype == 'c') {
+                    print '<br><span style="color:blue;">Dies ist eine Multi Choice Frage. 
+                            Es können nur Single Choice Antworten sinnvoll ausgwertet werden'
+                            . "</span><br>\n";
+                }
+            }
+            // subqueries
+            if (!empty($_SESSION['subqueries'])) {
+                ?><br><b>Filter</b> anwenden:&nbsp;
+                <label><input type="radio" name="applysubquery" <?php echo($applysubquery ? "checked" : ""); ?>
+                              value="1">Ja</label>&nbsp;
+                <label><input type="radio" name="applysubquery" <?php echo(!$applysubquery ? "checked" : ""); ?>
+                              value="0">Nein</label>
+                <?php
 
-                            if ($qSelected) {
-                                print "<b>Ausgwertete Frage</b>.: ";
-                            }
+                // results for subqueries
+                if ($subquerytxt) {
+                    print '<span style="font-weight:normal;color:blue;"> - ' . $subquerytxt . "</span>";
+                } else {
+                    print "&nbsp;&nbsp;";
+                }
+            }
 
-                            print    '<select name="qSelected" style="' . $buttonStyle . '" onchange="this.form.submit();">' . "\n"
-                                    . '<option value="">' . get_string("all") . " " . $numQuestions . " " .
-                                    get_string("questions", "evaluation") . "</option>\n"; //. $numAllQuestions ." "
-                            foreach ($allQuestions as $question) {
-                                $selected = "";
-                                if ($question->id == $qSelected) {
-                                    $selected = ' selected="' . $selected . '" ';
-                                }
-                                print '<option value="' . $question->id . '"' . $selected . '>' . $question->name . "</option>\n";
-                            }
-                            print "</select>\n";
-                            if ($qSelected and $itemInfo->subtype == 'c') {
-                                print '<br><span style="color:blue;">Dies ist eine Multi Choice Frage. 
-				Es können nur Single Choice Antworten sinnvoll ausgwertet werden' . "</span><br>\n";
-                            }
-
-                            } // if isTeacher OR Owner
-                            ?>
-                            <input type="hidden" name="id" value="<?php echo $id; ?>">
-                            <input type="hidden" name="showCompare" value="1">
-                            <input type="hidden" name="courseid" value="<?php echo $courseid; ?>">
-                            <input type="hidden" name="course_of_studiesID" value="<?php echo $course_of_studiesID; ?>">
-                            <input type="hidden" name="teacherid" value="<?php echo $teacherid; ?>">
+            } // if isTeacher OR isStudent or Owner
+            ?>
+            <input type="hidden" name="id" value="<?php echo $id; ?>">
+            <input type="hidden" name="showCompare" value="1">
+            <input type="hidden" name="courseid" value="<?php echo $courseid; ?>">
+            <input type="hidden" name="teacherid" value="<?php echo $teacherid; ?>">
+            <input type="hidden" name="course_of_studiesID" value="<?php echo $course_of_studiesID; ?>">
+            <input type="hidden" name="department" value="<?php echo $department; ?>">
         </form>
     </div>
 
@@ -407,8 +524,9 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         if (defined('EVALUATION_OWNER')) {
             print '<a href="print.php?id=' . $id . '&showTeacher=' . $teacherid . '" target="teacher">' . $anker . '</a>';
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
-                    . $id . '&courseid=' . $courseid . '&course_of_studiesID='
-                    . $course_of_studiesID . '">' . "Filter entfernen" . '</a>)';
+                    . $id . '&courseid=' . $courseid
+                    . '&course_of_studiesID=' . $course_of_studiesID
+                    . '&department=' .$department . '">' . "Filter entfernen" . '</a>)';
         } else {
             print $anker;
         }
@@ -437,8 +555,9 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         // option to remove filter
         if (defined('EVALUATION_OWNER')) {
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
-                    . $id . '&teacherid=' . $teacherid . '&course_of_studiesID='
-                    . $course_of_studiesID . '">' . "Filter entfernen" . '</a>)';
+                    . $id . '&teacherid=' . $teacherid
+                    . '&course_of_studiesID=' . $course_of_studiesID
+                    . '&department=' .$department . '">' . "Filter entfernen" . '</a>)';
         }
         //$msg = ($evaluation->teamteaching AND $numTeachers>1) ?" (Team Teaching)" :" (Eine Abgabe pro Teilnehmer_in und Kurs)";
         $msg = ($numTeachers > 1) ? " (Team Teaching)" : " (Eine Abgabe pro Teilnehmer_in und Kurs)";
@@ -463,18 +582,37 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                 . '" target="course_of_studies">' . $anker . '</a>';
         if (defined('EVALUATION_OWNER')) {
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
-                    . $id . '&teacherid=' . $teacherid . '&courseid='
-                    . $courseid . '">' . "Filter entfernen" . '</a>)';
+                    . $id . '&teacherid=' . $teacherid
+                    . '&courseid=' . $courseid
+                    . '&department=' .$department . '">' . "Filter entfernen" . '</a>)';
         }
         print "<br>\n";
     }
+    if ($department  AND !empty($filterDept)){
+        $filterC = $filter .= $filterDept;
+        $fTitle[] = get_string("department", "evaluation") . ":  $department";
+        $anker = get_string("department", "evaluation") .
+                ': <span style="font-size:12pt;font-weight:bold;display:inline;">'
+                . $department . "</span>\n";
+        print '<a href="analysis_course.php?id=' . $id . '&department=' . $department
+                . '" target="department">' . $anker . '</a>';
+        if (defined('EVALUATION_OWNER')) {
+            print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
+                    . $id . '&teacherid=' . $teacherid
+                    . '&courseid=' . $courseid
+                    . '&course_of_studiesID=' . $course_of_studiesID . '">' . "Filter entfernen" . '</a>)';
+        }
+        print "<br>\n";;
+    }
+
 
     $numresultsF =
-            safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} WHERE evaluation=$evaluation->id $filterC"));
+            safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
+                WHERE evaluation=$evaluation->id $filterC $subqueryC"));
     if ($filterC and $numresultsF < $minResults) {
-        if (!is_siteadmin()) {
+        /*if (!is_siteadmin()) {
             $filter = $filterC = "";
-        }
+        }*/
         print '<span style="color:red;font-weight:bold;">' . "Es gibt für</span> '" . implode(", ", $fTitle) . "' "
                 . '<span style="color:red;font-weight:bold;">' . "weniger als $minResults Abgaben</span>. "
                 . "<b>Daher wird keine Auswertung angezeigt!</b><br>" . (is_siteadmin() ? "- except for siteadmin" : "") . "<br>\n";
@@ -483,16 +621,85 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
     $filter .= $cosPrivileged_filter;
     $filterC .= $cosPrivileged_filter;
 
-    $numresultsF =
-            safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} WHERE evaluation=$evaluation->id $filterC"));
+    // subquery needs filter
+    if ($isFilter and !empty($subquery)) {
+        $subquery = str_ireplace("))", " $filter))", $subquery);
+        $subqueryC = str_ireplace("))", " $filterC))", $subqueryC);
+    }
 
-    if ($allSelected == "allStudies") {
+    $numresultsF =
+            safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
+                WHERE evaluation=$evaluation->id $filterC $subqueryC"));
+
+    if ($allSelected == "allDepartments"  ) {
+        $allKey = "course_of_studies";
+        $allKeyV = "course_of_studies";
+        $aFilter = "course_of_studies <>''";
+        // $evaluationResults = safeCount($_SESSION['CoS_department']);
+        $departments = array();
+        foreach ($_SESSION['CoS_department'] AS $CoS){
+            $departments[$CoS] =  $CoS;
+        }
+        $evaluationResults = safeCount($departments);
+        $aFilter = "";
+        if ($isFilter) {
+            if ($course_of_studies) {
+                $aFilter .= " AND course_of_studies='$course_of_studies'";
+            }
+            if ($teacherid) {
+                $aFilter .= " AND teacherid=" . $teacherid;
+            }
+            if ($courseid) {
+                $aFilter .= " AND courseid=" . $courseid;
+            }
+            $aFilter = $filter;
+        }
+        $aFilter .= $cosPrivileged_filter;
+        $allResults = $DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
+											 FROM {evaluation_completed} 
+											 WHERE evaluation=$evaluation->id $aFilter $subqueryC
+											 GROUP BY course_of_studies ORDER BY course_of_studies");
+        $evaluatedResults = 0;
+        foreach ($allResults as $allResult) {
+            if ($allResult->count >= $minReplies) {
+                // array_keys($_SESSION['CoS_department'], $department)
+                $dept = $_SESSION['CoS_department'][$allResult->course_of_studies];
+                if ($dept) {
+                    $allIDs[$dept] = $allValues[$dept] = $dept;
+                    if (defined('EVALUATION_OWNER')) {
+                        $links = '<a href="analysis_course.php?id=' . $id
+                                . '&department='
+                                . $dept
+                                . '" target="analysis">' . $dept . "</a>";
+                    } else {
+                        $links = $dept;
+                    }
+                    $allLinks[$dept] = $links;
+                    if (false && $isFilter) {
+                        $Result = $DB->get_record_sql("select count(*) AS count 
+						FROM {evaluation_completed}
+						WHERE evaluation=$evaluation->id $filter $subqueryC");
+                        //GROUP BY course_of_studies ORDER BY course_of_studies");
+                        $Counts = $Result->count;
+                        //print 	"<br>Result= ".nl2br(var_export( $Result, true)) ."<br>";
+                    } else {
+                        $Counts = $allResult->count;
+                    }
+                    $allCounts[$dept] += $Counts;
+                    $sortArray[$dept] = array("allIDs" => $dept, "allValues" => $dept,
+                            "allLinks" => $links, "allCounts" => $Counts);
+                    $evaluatedResults++;
+                }
+            }
+        }
+        $evaluatedResults = safeCount($allCounts);
+    }else if ($allSelected == "allStudies") {
         $allKey = "course_of_studiesID";
         $allKeyV = "course_of_studies";
         $aFilter = "course_of_studies <>''"; // . $cosPrivileged_filter;
         $evaluationResults = safeCount($DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
-											 FROM {evaluation_completed} 
-											 WHERE evaluation=$evaluation->id AND $aFilter
+											 FROM {evaluation_completed}
+											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY course_of_studies ORDER BY course_of_studies"));
         $aFilter = "";
         if ($isFilter) {
@@ -505,11 +712,12 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
             if ($courseid) {
                 $aFilter .= " AND courseid=" . $courseid;
             }
+            $aFilter = $filter;
         }
         $aFilter .= $cosPrivileged_filter;
         $allResults = $DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
-											 FROM {evaluation_completed} 
-											 WHERE evaluation=$evaluation->id $aFilter
+											 FROM {evaluation_completed}
+											 WHERE evaluation=$evaluation->id $aFilter $subqueryC
 											 GROUP BY course_of_studies ORDER BY course_of_studies");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
@@ -529,8 +737,8 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                 $allLinks[] = $links;
                 if ($isFilter) {
                     $Result = $DB->get_record_sql("select count(*) AS count 
-													FROM {evaluation_completed} 
-													WHERE evaluation=$evaluation->id AND course_of_studies='$allResult->course_of_studies'");
+						FROM {evaluation_completed}
+						WHERE evaluation=$evaluation->id AND course_of_studies='$allResult->course_of_studies' $subqueryC");
                     //GROUP BY course_of_studies ORDER BY course_of_studies");
                     $Counts = $Result->count;
                     //print 	"<br>Result= ".nl2br(var_export( $Result, true)) ."<br>";
@@ -543,14 +751,13 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                 $evaluatedResults++;
             }
         }
-
     } else if ($allSelected == "allCourses") {
         $allKey = "courseid";
         $allKeyV = "courseid";
         $aFilter = "courseid >0"; // .$cosPrivileged_filter;
         $evaluationResults = safeCount($DB->get_records_sql("SELECT courseid AS courseid, count(*) AS count
 											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id AND $aFilter
+											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY courseid ORDER BY courseid"));
         $aFilter = "";
         if ($isFilter) {
@@ -563,11 +770,12 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
             if ($course_of_studies) {
                 $aFilter .= " AND course_of_studies='$course_of_studies'";
             }
+            $aFilter = $filter;
         }
         $aFilter .= $cosPrivileged_filter;
         $allResults = $DB->get_records_sql("SELECT courseid AS courseid, count(*) AS count
 											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id $aFilter
+											 WHERE evaluation=$evaluation->id $aFilter $subqueryC
 											 GROUP BY courseid ORDER BY courseid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
@@ -595,8 +803,8 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                 $allValues[] = $fullname;
                 if ($isFilter) {
                     $Result = $DB->get_record_sql("select count(*) AS count
-											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id AND courseid=$allResult->courseid");
+									FROM {evaluation_completed}
+									WHERE evaluation=$evaluation->id AND courseid=$allResult->courseid $subqueryC");
                     //GROUP BY courseid ORDER BY courseid");
                     $Counts = $Result->count;
                 } else {
@@ -614,7 +822,7 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         $aFilter = "teacherid >0"; // .$cosPrivileged_filter;
         $evaluationResults = safeCount($DB->get_records_sql("SELECT teacherid AS teacherid, count(*) AS count
 											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id AND $aFilter
+											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY teacherid ORDER BY teacherid"));
         $aFilter = "";
         if ($isFilter) {
@@ -627,11 +835,12 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
             if ($course_of_studies) {
                 $aFilter .= " AND course_of_studies='$course_of_studies'";
             }
+            $aFilter = $filter;
         }
         $aFilter .= $cosPrivileged_filter;
         $allResults = $DB->get_records_sql("SELECT teacherid AS teacherid, count(*) AS count
 											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id $aFilter
+											 WHERE evaluation=$evaluation->id $aFilter $subqueryC
 											 GROUP BY teacherid ORDER BY teacherid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
@@ -654,7 +863,7 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                 if ($isFilter) {
                     $Result = $DB->get_record_sql("select count(*) AS count
 											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id AND teacherid=$allResult->teacherid");
+											 WHERE evaluation=$evaluation->id AND teacherid=$allResult->teacherid $subqueryC");
                     //GROUP BY courseid ORDER BY courseid");
                     $Counts = $Result->count;
                 } else {
@@ -730,7 +939,8 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         }
         print "Ausgewertete "
                 . '<span style="font-size:12pt;font-weight:bold;display:inline;">' . $allSubject . ': ' . $evaluatedResults
-                . ($evaluatedResults == $evaluationResults ? "" : " von insgesamt " . $evaluationResults) . $hint . "</span><br>\n";
+                . ($evaluatedResults == $evaluationResults
+                        ? "" : " von insgesamt " . $evaluationResults) . $hint . "</span><br>\n";
     }
 
     $numresults = safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} WHERE evaluation=$evaluation->id"));
@@ -745,21 +955,41 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
 				<td>' . $numresults . '</td>
 				<td style="text-align:left;"><span id="totalPresentaion"></span></td>
 				<td><span id="totalAvg"></span></td></tr>' . "\n";
+    $title = "";
     if ($filter) {
         if (empty($fTitle) and $cosPrivileged_filter) {
             $fTitle[] = "Einsehbare Studiengänge";
         }
+        $numresultsF =
+                safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
+                WHERE evaluation=$evaluation->id $filterC"));
+
         $title = implode("<br>\n", $fTitle);
-        print '<tr><td style="text-align:left;">' . "Alle Abgaben für: " . $title . '</td>'
+        print '<tr id="showFilter" style="display:table-row;"><td style="text-align:left;">' . "Alle Abgaben für: " . $title .
+                '</td>'
                 . '<td>' . $numresultsF . '</td>'
-                .
-                '<td style="text-align:left;"><span id="filterPresentation"></span></td><td><span id="filterAvg"></span></td></tr>' .
-                "\n";
+                . '<td style="text-align:left;"><span id="filterPresentation"></span></td>'
+                . '<td><span id="filterAvg"></span></td></tr>'
+                . "\n";
+    }
+    if ($subquery) {
+        $numresultsSq =
+                safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
+                WHERE evaluation=$evaluation->id $filterC $subqueryC"));
+        $sqTitle = "Alle gefilterten Abgaben" . (!empty($title) ? " für $title" : "");
+        print '<tr id="showSqFilter" style="display:table-row;"><td style="text-align:left;">'
+                . '<span title="' . htmlentities($subquerytxt) . '"><b>' . $sqTitle . '</b></span></td>'
+                . '<td>' . $numresultsSq . '</td>'
+                . '<td style="text-align:left;"><span id="SqPresentation"></span></td>'
+                . '<td><span id="SqAvg"></span></td></tr>'
+                . "\n";
     }
     print '</table><div style="display:block;" id="chartResultsList"></div>' . "\n";
 
-    // Question Loop
 
+
+
+    // Question Loop
     $qCount = $validCount = $validFCount = $maxval = 0;
     $minval = $filterValid = $allKeyValid = 1;
     $allKeyValidCount = array();
@@ -778,11 +1008,11 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
 				  WHERE item=$question->id AND coalesce(value, '') = ''";
             $zeroReplies[$question->name][$qCount] = $DB->get_record_sql($query)->count;
             $query = "SELECT count (*) as count FROM {evaluation_value} 
-				  WHERE item=$question->id AND value NOT IN ($fValues)";
+				  WHERE item=$question->id AND value NOT IN ($fValues) ";
             $ignoredReplies[$question->name][$qCount] = $DB->get_record_sql($query)->count;
         }
         $query = "SELECT AVG (value::INTEGER)::NUMERIC(10,2) as average FROM {evaluation_value} 
-				  WHERE item=$question->id AND value IN ($fValues)";
+				  WHERE item=$question->id AND value IN ($fValues) ";
         $answer = $DB->get_record_sql($query);
         if (empty($answer)) {
             continue;
@@ -804,29 +1034,44 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         if ($allKeyV) {
             if ($validation) {
                 $query = "SELECT $allKeyV AS $allKeyV, COUNT(*) as count FROM {evaluation_value} 
-							WHERE item=$question->id AND coalesce(value, '') = '' $filter
+							WHERE item=$question->id AND coalesce(value, '') = '' 
 							GROUP BY $allKeyV ORDER BY $allKeyV";
                 $_zeroReplies[$qCount] = $DB->get_records_sql($query);
                 $query = "SELECT $allKeyV AS $allKeyV, COUNT(*) as count FROM {evaluation_value} 
-							WHERE item=$question->id AND value NOT IN ($fValues) $filter
+							WHERE item=$question->id AND value NOT IN ($fValues) 
 							GROUP BY $allKeyV ORDER BY $allKeyV";
                 $_ignoredReplies[$qCount] = $DB->get_records_sql($query);
             }
-            $query = "SELECT $allKeyV AS $allKeyV, AVG (value::INTEGER)::NUMERIC(10,2) as average
+            if ($allSelected == "allDepartments") {
+                $query = "SELECT e.department AS department, AVG (v.value::INTEGER)::NUMERIC(10,2) as average
+					  FROM {evaluation_value} v, {evaluation_enrolments} e  
+					  WHERE item=$question->id AND value IN ($fValues) $subquery 
+					    AND e.courseid=v.courseid
+					  GROUP BY e.department ORDER BY e.department";
+            } else {
+                $query = "SELECT $allKeyV AS $allKeyV, AVG (value::INTEGER)::NUMERIC(10,2) as average
 					  FROM {evaluation_value} 
-					  WHERE item=$question->id AND value IN ($fValues)
+					  WHERE item=$question->id AND value IN ($fValues) $subquery
 					  GROUP BY $allKeyV ORDER BY $allKeyV";
+            }
+
             $records = $DB->get_records_sql($query);
+            $average = 0;
+            $cnt = 0;
+            $averageA = array();
             if (count($records)) {
                 foreach ($records as $key) {
-                    $average = round($key->average, 2);
-                    $aKey = array_search($key->$allKeyV, $allIDs);
-                    if (isset($allIDs[$aKey])) {
-                        $value = $allIDs[$aKey];
-                        if (!isset($allKeyValidCount[$value])) {
-                            $allKeyValidCount[$value] = 0;
-                        }
-                        if (isset($key->$allKeyV) and $key->$allKeyV == $value) {
+                    // $_SESSION['CoS_department']
+                    if ($allSelected == "allDepartments"){
+                        $cnt ++;
+                        $aKey = $key->department;
+                        $average = round($key->average, 2);
+
+                        if (isset($allIDs[$aKey])) {
+                            $value = $allIDs[$aKey];
+                            if (!isset($allKeyValidCount[$value])) {
+                                $allKeyValidCount[$value] = 0;
+                            }
                             if ($YesNo) {
                                 $hint = "Ja/Nein (1-2)";
                             } else {
@@ -843,8 +1088,37 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                             $data['labels_' . $value][$qCount] = $hint . " ($average)";
                             $minval = min($minval, $average);
                             $maxval = max($maxval, $average);
-
                             $allKeyValidCount[$value]++;
+                        }
+                    } else {
+                        $aKey = array_search($key->$allKeyV, $allIDs);
+                        $average = round($key->average, 2);
+
+                        if (isset($allIDs[$aKey])) {
+                            $value = $allIDs[$aKey];
+                            if (!isset($allKeyValidCount[$value])) {
+                                $allKeyValidCount[$value] = 0;
+                            }
+                            if (isset($key->$allKeyV) and $key->$allKeyV == $value) {
+                                if ($YesNo) {
+                                    $hint = "Ja/Nein (1-2)";
+                                } else {
+                                    if (!isset($presentation[max(0, round($average))])) {
+                                        $presentation[max(0, round($average))] = 0;
+                                    }
+                                    $hint = $presentation[max(0, round($average))];
+                                }
+                                if (!isset($data['average_' . $value][$qCount])) {
+                                    $data['average_' . $value][$qCount] = 0;
+                                }
+                                $data['average_' . $value][$qCount] = $average;
+                                $data['average_presentation' . $value][$qCount] = $hint;
+                                $data['labels_' . $value][$qCount] = $hint . " ($average)";
+                                $minval = min($minval, $average);
+                                $maxval = max($maxval, $average);
+
+                                $allKeyValidCount[$value]++;
+                            }
                         }
                     }
                 }
@@ -869,8 +1143,8 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                     } else {
                         $hint = $presentation[max(0, round($average))];
                     }
-                    $data['average_' . $value][$qCount] =
-                            $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
+                    // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
+                    $data['average_' . $value][$qCount] = $average;
                     $data['average_presentation' . $value][$qCount] = $hint;
                     $data['labels_' . $value][$qCount] = $hint . " (0)";
                 }
@@ -880,13 +1154,13 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         if ($filter) {
             if ($validation) {
                 $query = "SELECT COUNT (*) as count FROM {evaluation_value} 
-						WHERE item=$question->id AND coalesce(value, '') = ''  $filter";
+						WHERE item=$question->id AND coalesce(value, '') = ''  $filter $subquery";
                 $tmp = $DB->get_record_sql($query)->count;
                 if ($tmp > 0) {
                     $zeroReplies[$question->name . "_F"][$qCount] = $tmp;
                 }
                 $query = "SELECT COUNT (*) as count FROM {evaluation_value} 
-						WHERE item=$question->id AND value NOT IN ($fValues) $filter";
+						WHERE item=$question->id AND value NOT IN ($fValues) $filter $subquery";
                 $tmp = $DB->get_record_sql($query)->count;
                 if ($tmp > 0) {
                     $ignoredReplies[$question->name . "_F"][$qCount] = $tmp;
@@ -895,7 +1169,7 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
             $query = "SELECT AVG (value::INTEGER)::NUMERIC(10,2) as average FROM {evaluation_value}
 					  WHERE item=$question->id AND value IN ($fValues) $filter";
             $record = $DB->get_record_sql($query);
-            //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter")->count;
+            //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter" $subquery)->count;
             if (!empty($record) and $numresultsF >= $minResults and $record->average >= 1) {
                 $average = round($record->average, 2);
                 if ($YesNo) {
@@ -916,17 +1190,48 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                 }
                 if ($numresultsF >= $minResults) {
                     $data['averageF'][$qCount] = $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
-                    $data['averageF_presentationF'][$qCount] = $hint;
+                    $data['averageF_presentation'][$qCount] = $hint;
                     $data['averageF_labels'][$qCount] = $hint . " (0)";
                 }
             }
-            $filterValid = max($filterValid, $average);
         }
+        if ($subquery) {
+            $query = "SELECT AVG (value::INTEGER)::NUMERIC(10,2) as average FROM {evaluation_value}
+			    		  WHERE item=$question->id AND value IN ($fValues) $filter $subquery";
+            $record = $DB->get_record_sql($query);
+            //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter" $subquery)->count;
+            if (!empty($record) and $numresultsSq >= $minResults and $record->average >= 1) {
+                $average = round($record->average, 2);
+                if ($YesNo) {
+                    $hint = "Ja/Nein (1-2)";
+                } else {
+                    $hint = $presentation[max(0, round($average))];
+                }
+                $data['averageSq'][$qCount] = $average;
+                $data['averageSq_presentation'][$qCount] = $hint;
+                $data['averageSq_labels'][$qCount] = $hint . " ($average)";
+                $validFCount++;
+            } else {
+                $average = $data['average'][$qCount];
+                if ($YesNo) {
+                    $hint = "Ja/Nein (1-2)";
+                } else {
+                    $hint = $presentation[max(0, round($average))];
+                }
+                if ($numresultsSq >= $minResults) {
+                    $data['averageSq'][$qCount] = $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
+                    $data['averageSq_presentation'][$qCount] = $hint;
+                    $data['averageSq_labels'][$qCount] = $hint . " (0)";
+                }
+            }
+        }
+
         $minval = min($minval, $average);
         $maxval = max($maxval, $average);
 
         $qCount++;
     }
+
 
     // get total averages
     $totalAvg = 0;
@@ -941,9 +1246,9 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
     $hint = $presentation[max(0, round($totalAvg))];
     $tags["totalPresentaion"] = trim($hint);
     $invalidItems = 0;
+    $rowsA = array();
     if ($allKey) {
         $allAvg = array();
-        $rowsA = array();
         $filterAVGsum = $repliesSum = 0;
         foreach ($allIDs as $key => $value) {
             $validated = true;
@@ -993,11 +1298,12 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
             if ($sortKey == "replies") {
                 $sortCol = $allCounts[$allValues[$key]];
             }
-            if (defined('EVALUATION_OWNER') ||
-                    $allSelected == "allCourses") //{	$hintLink = '<a href="print.php?showCompare=1&allSelected=useFilter&id='
-            {
+            if (defined('EVALUATION_OWNER') || $allSelected == "allCourses"){
+                //{	$hintLink = '<a href="print.php?showCompare=1&allSelected=useFilter&id='
+                $selector = ($allSelected == "allDepartments") ?"department" : $allKey;
+
                 $hintLink = '<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
-                        . $id . '&' . $allKey . '=' . $value . '" target="compare">' . $hint . '</a>';
+                        . $id . '&' . $selector . '=' . $value . '" target="compare">' . $hint . '</a>';
             } else {
                 $hintLink = $hint;
             }
@@ -1034,7 +1340,10 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
             }
             $hint = trim($hint);
             $label = "Verprobung";
-            if ($allSelected == "allStudies") {
+            if ($allSelected == "allDepartments") {
+                $label = "Alle Abgaben für " . (($evaluatedResults != $evaluationResults) ? "ausgwählte " : "") .
+                        get_string("departments", "evaluation");
+            } else if ($allSelected == "allStudies") {
                 $label = "Alle Abgaben für " . (($evaluatedResults != $evaluationResults) ? "ausgwählte " : "") .
                         get_string("courses_of_studies", "evaluation");
             } else if ($allSelected == "allCourses") {
@@ -1060,7 +1369,8 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         foreach ($rowsA as $val) {
             $rows .= $val['row'];
         }
-        print '<script>var table = document.getElementById("chartResultsTable");var row = ncell = "";' . $rows . '</script>';
+        print '<script>var table = document.getElementById("chartResultsTable");var row = ncell = "";'
+                . $rows . '</script>';
     }
     if ($filter and $numresultsF >= $minResults) {
         $filterAvg = $replypattern = 0;
@@ -1091,7 +1401,42 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
             $tags["filterAvg"] = 0;
         }
     }
+    // subquery
+    if ($subquery and $numresultsSq >= $minResults) {
+
+        $filterAvg = $replypattern = 0;
+        $validated = false;
+        foreach ($data['averageSq'] as $reply) {
+            $replypattern = max($replypattern, $reply);
+        }
+        if (($replypattern > 1 or $qSelected or !$validation) and $validCount) {
+            $filterAvg = round(array_sum($data['averageSq']) / $validCount, 2);
+            $validated = true;
+        }
+        $hint = $presentation[max(0, round($filterAvg))];
+
+        if ($validation) {
+            if ($hideInvalid and !$validated) {
+                unset($data['average_Fsq']);
+            } else if (!$hideInvalid and $validated) {
+                unset($data['average_Fsq']);
+            } else if ($filterAvg or $qSelected) {
+                $tags["SqAvg"] = $filterAvg;
+                $tags["SqPresentation"] = $hint;
+            }
+        } else if ($filterAvg or $qSelected) {
+            $tags["SqAvg"] = $filterAvg;
+            $tags["SqPresentation"] = $hint;
+        } else {
+            $hint = "ungültig ($filterAvg)";
+            $tags["SqAvg"] = 0;
+        }
+    }
+    if (count($rowsA) < 2 AND !$filter) { //  and empty($subquery)
+        print "\n<script>document.getElementById('showFilter').style.display='none';</script>\n";
+    }
     print "<script>\n";
+    // print 'document.getElementById("showFilter").display="table-row";'. "\n";
     foreach ($tags as $key => $value) {
         print 'document.getElementById("' . $key . '").innerHTML="' . $value . '";' . "\n";
     }
@@ -1116,10 +1461,13 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
             ChartAxis.helpers.color(color).lighten(0.2);
         */
 
-        $colors = array("#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
+        $colors0 = array("#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
                 "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11",
-                "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#651067", "#661067", "#691067"
+                "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#651067", "#661067", "#691067",
+                "lightblue", "yellow", "amber", "cyan", "darkblue", "grey", "red", "darkred",
+                "magenta", "blue", "navy", "#AC3912",
         );
+        $colors = ($colors0 + $colors0 + $colors0 + $colors0 + $colors0);
         $labelAxis = ($ChartAxis == "x" ? "y" : "x");
         $options = ['responsive' => true, 'indexAxis' => $ChartAxis, 'lineTension' => 0.3,
                 'radius' => 4, 'hoverRadius' => 8,
@@ -1156,8 +1504,15 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
 
         if ($filter and isset($data["averageF"])) {
             $JSdata['datasets'][] =
-                    ['data' => $data["averageF"], 'label' => implode(", ", $fTitle), 'labels' => $data['averageF_labels'],
+                    ['data' => $data["averageF"], 'label' => implode(", ", $fTitle),
+                            'labels' => $data['averageF_labels'],
                             'backgroundColor' => $colors[1], 'borderColor' => $colors[1]];
+        }
+        if ($subquery and isset($data["averageSq"])) {
+            $JSdata['datasets'][] =
+                    ['data' => $data["averageSq"], 'label' => $sqTitle,
+                            'labels' => $data['averageSq_labels'],
+                            'backgroundColor' => $colors[2], 'borderColor' => $colors[2]];
         }
         // show maximum $maxCharts graphs
         if ($allKey) //AND $evaluatedResults <= $maxCharts )
@@ -1198,7 +1553,7 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
                 }
                 $JSdata['datasets'][] =
                         ['data' => $data['average_' . $value], 'label' => $allValues[$key], 'labels' => $data['labels_' . $value],
-                                'backgroundColor' => $colors[$key + 1], 'borderColor' => $colors[$key + 1]];
+                                'backgroundColor' => $colors[$key + 3], 'borderColor' => $colors[$key + 3]];
                 $cnt++;
                 if ($cnt == $maxCharts) {
                     break;
@@ -1327,6 +1682,8 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
     @flush();
     @ob_start();
     print "<hr>$goBack";
+    // store stats event
+    evaluation_trigger_module_statistics($evaluation, false, $courseid);
 
     //check for unanswered questions
     if ($validation and is_siteadmin()) //AND ( safeCount($zeroReplies) OR safeCount($ignoredReplies) ) )
@@ -1388,4 +1745,40 @@ function evaluation_compare_results($evaluation, $courseid = false, $course_of_s
         //. nl2br(var_export($noAnswerQSum, true));
         //. nl2br(var_export($invalidReplies, true));
     }
+
+    $n = 300;
+    function decColorToHex($int) {
+        return str_pad(dechex($int), 2, '0', STR_PAD_LEFT);
+    }
+
+    function getColorForItem($itemNumber, $numberOfItems) {
+        $x = ($itemNumber - 1) / ($numberOfItems - 1);
+
+        $r = max(0, round(sin(M_PI * ($x - 1)) * 255));
+        $g = max(0, round(sin(M_PI * $x) * 255));
+        $b = max(0, round(sin(M_PI * ($x + 3)) * 255));
+
+        return decColorToHex($r) . decColorToHex($g) . decColorToHex($b);
+    }
+
+    /*
+     for ($i=1;$i<=$n;$i++) {
+        $c=getColorForItem($i,$n);
+        echo '<div style="width:200px;height:30px;color:#fff;font-weight:bold;background-color:#'.$c.';">Item '.$i.': #'.$c.'</div>';
+    }
+    */
+    /*
+    $count = 0;
+    for($i=0,$i<=255,$i++){
+        for($i_i=0,$i_i<=255,$i_i++){
+            for($i_i_i=0,$i_i_i<=255,$i_i_i++){
+                echo '<span style="color:rgb('.$i.','.$i_i.','.$i_i_i.')">'.$count.'&nbsp;&nbsp;</span>';
+                $count++;
+                if( $count>42){
+                    break;
+                }
+            }
+        }
+    }
+    */
 }

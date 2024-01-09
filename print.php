@@ -36,6 +36,7 @@ if( $e_from_f)
 $id = required_param('id', PARAM_INT);
 $courseid = optional_param('courseid', false, PARAM_INT); // Course where this evaluation is mapped to - used for return link.
 $teacherid = optional_param('teacherid', false, PARAM_INT);
+$department = optional_param('department', false, PARAM_TEXT);
 $daily_progress =
         optional_param('daily_progress', false, PARAM_INT); // show daily evaluation completions from start to end of evaluation
 $logViews = optional_param('logViews', false, PARAM_INT); // show log views from Moodle log
@@ -52,7 +53,7 @@ $sortBy = optional_param('sortBy', "", PARAM_ALPHA); // sort order for showResul
 $autofill = optional_param('autofill', false, PARAM_INT); // evaluation_autofill_item_studiengang
 $showTeacherResults = optional_param('showTeacherResults', false, PARAM_INT); // show list of teachers with evaluation results
 $showCompare = optional_param('showCompare', false, PARAM_INT); // compare all results with filter results
-
+$showPrivUsers = optional_param('showPrivUsers', false, PARAM_INT); // show privileged users
 $Chart = optional_param('Chart', false, PARAM_ALPHANUM);
 if (!isset($_SESSION["Chart"])) {
     $_SESSION["Chart"] = "line";
@@ -118,15 +119,25 @@ if (defined('EVALUATION_OWNER')) {
         require_once("print.js.php");
         exit;
     }
+    if ($showPrivUsers){
+        echo $goBack;
+        echo evPrintButton();
+        echo "\n<p>&nbsp;</p>\n";
+        print ev_set_privileged_users(true);
+        evaluation_footer();
+        $printWidth = "135vw";
+        require_once("print.js.php");
+        exit;
+    }
 }
 if ($showCompare) {
     require_once("compare_results.inc.php");
-    evaluation_compare_results($evaluation, $courseid, $course_of_studiesID, $teacherid);
+    evaluation_compare_results($evaluation, $courseid, $teacherid, $course_of_studiesID, $department);
     evaluation_footer();
-    // logging: error ivalid course module id ??? (March 2022)
-    evaluation_trigger_module_statistics($evaluation, $cm, $courseid);
+    // logging: error invalid course module id ??? (March 2022)
+    // evaluation_trigger_module_statistics($evaluation, $cm, $courseid);
     // load js to handle printing
-    $printWidth = "115vw"; //100vw
+    $printWidth = "90vw"; //100vw
     require_once("print.js.php");
     exit;
 }
@@ -146,14 +157,14 @@ if ($autofill and
 
 if ($logViews) {
     if (!defined('EVALUATION_OWNER')) {
-        print "<p style=\"color:red;font-weight:bold;align:center;\">" . get_string('you_have_no_permission', 'evaluation') .
-                "</p>";
+        print "<p style=\\" . get_string('you_have_no_permission', 'evaluation') .
+                "</#000000>";
         print $OUTPUT->footer();
         exit;
     }
     $date = get_string('date');
     $responses = "views";
-    echo '<h1 style="display:inlinecolor:darkgreen;text-align:left;font-weight:bolder;">' .
+    echo '<h1 style="display:inlinecolor:#000000;text-align:left;font-weight:bolder;">' .
             get_string('usageReport', "evaluation") . "</h1><br>\n";
     // all log data for this evaluation
     $subjects = array('AllActivities' => get_string('AllActivities', 'evaluation'),

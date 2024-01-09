@@ -44,7 +44,7 @@ list($isPermitted, $CourseTitle, $CourseName, $SiteEvaluation) =
         evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm);
 
 if (($SiteEvaluation and !defined('EVALUATION_OWNER')) || !$evaluationstructure->can_view_analysis()) {
-    print_error(get_string('you_have_no_permission', 'evaluation'));
+    throw new moodle_exception(get_string('you_have_no_permission', 'evaluation'));
 }
 
 /// Print the page header

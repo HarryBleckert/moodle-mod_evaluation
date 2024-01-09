@@ -76,7 +76,7 @@ if ($courseid) {
 }
 
 if (!$items = $evaluationstructure->get_items(true)) {
-    print_error('no_items_available_yet', 'evaluation', $cm->url);
+    throw new moodle_exception('no_items_available_yet', 'evaluation', $cm->url);
 }
 
 $mygroupid = groups_get_activity_group($cm);

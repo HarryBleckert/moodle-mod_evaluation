@@ -28,7 +28,7 @@ require_once("lib.php");
 $id = optional_param('id', SITEID, PARAM_INT);
 
 if (!$course = $DB->get_record('course', array('id' => $id))) {
-    print_error('invalidcourseid');
+    throw new moodle_exception('invalidcourseid');
 }
 
 $context = context_course::instance($course->id);

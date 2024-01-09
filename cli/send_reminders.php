@@ -161,11 +161,11 @@ $start = time();
 //get all participating students/teachers
 $evaluation_users = get_evaluation_participants($evaluation, false, false, ($role == "teacher"), ($role == "student"));
 $minResults = evaluation_min_results($evaluation);
+$minResultsText = min_results_text($evaluation);
 $remaining_evaluation_days = round(remaining_evaluation_days($evaluation), 0);
 $current_evaluation_day = round(current_evaluation_day($evaluation), 0);
 $total_evaluation_days = total_evaluation_days($evaluation);
 $lastEvaluationDay = date("d.m.Y", $evaluation->timeclose);
-$minResultsTeacher = $minResults + 2;
 $cmid = get_evaluation_cmid_from_id($evaluation);
 $evUrl = "https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=" . $cmid;
 
@@ -269,7 +269,7 @@ wir möchten Sie daran erinnern,
 $testMsg<p>Guten Tag $fullname</p>
 <p>Bitte beteiligen $also Sie sich an der $reminder
 <a href="$evUrl"><b>$evaluation->name</b></a>.<br><br>
-Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Dozent_in.<br>
+Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs und Dozent_in.<br>
 Für jeden bereits von Ihnen evaluierten Kurs können Sie selbst sofort die Auswertung einsehen, wenn mindestens $minResults Abgaben erfolgt sind.<br>
 Ausgenommen sind aus Datenschutzgründen die persönlichen Angaben, sowie die Antworten auf die offenen Fragen.
 </p>
@@ -293,17 +293,20 @@ HEREDOC;
         // $possible_evaluations = ev_get_participants($myEvaluations);
         // Bis zu $possible_evaluations Abgaben für Sie sind möglich.
         $onlyfew = "";
+
         $replies = evaluation_countCourseEvaluations($evaluation, false, "teacher", $userid);
-        if ($replies < 21) {
-            if ($replies < 1) {
-                $onlyfew = "<b>Keine Ihrer " . $_SESSION["distinct_s"] . " Studierenden hat bisher teilgenommen</b>.<br>";
+        if ( $current_evaluation_day>7 OR $replies >3 ) {
+            if ($replies < 21) {
+                if ($replies < 1) {
+                    $onlyfew = "<b>Keine Ihrer " . $_SESSION["distinct_s"] . " Studierenden hat bisher teilgenommen</b>.<br>";
+                } else {
+                    $onlyfew = "<b>Bisher gibt es nur $replies Abgabe" . ($replies < 2 ? "" : "n")
+                            . " Ihrer " . $_SESSION["distinct_s"] . " Studierenden</b>.<br>";
+                    // .($replies<2 ?"hat" :"haben")." bisher teilgenommen</b>. ";
+                }
             } else {
-                $onlyfew = "<b>Bisher gibt es nur $replies Abgabe" . ($replies < 2 ? "" : "n")
-                        . " Ihrer " . $_SESSION["distinct_s"] . " Studierenden</b>.<br>";
-                // .($replies<2 ?"hat" :"haben")." bisher teilgenommen</b>. ";
+                $onlyfew = "<b>Bisher gibt es $replies Abgaben Ihrer " . $_SESSION["distinct_s"] . " Studierenden</b>.<br>";
             }
-        } else {
-            $onlyfew = "<b>Bisher gibt es $replies Abgaben Ihrer " . $_SESSION["distinct_s"] . " Studierenden</b>.<br>";
         }
 
         $message = <<<HEREDOC
@@ -318,7 +321,7 @@ Bitte motivieren Sie Ihre Studierenden an der $reminder Evaluation teilzunehmen!
 Optimal wäre es, wenn Sie die Teilnahme jeweils in Ihre Veranstaltungen integrieren, indem Sie dafür einen motivierenden Aufruf machen und den 
 Studierenden während der Veranstaltung die wenigen Minuten Zeit zur Teilnahme geben!</p>
 <p>Sofern für einen Ihrer Kurse mindestens $minResults Abgaben <b>für Sie</b> vorliegen, können Sie jeweils die Auswertung der für Sie gemachten Abgaben einsehen.<br>
-Nur wenn mindestens $minResultsTeacher Abgaben für Sie gemacht wurden, können Sie auch selbst die Textantworten einsehen<br>
+Nur wenn mindestens $minResultsText Abgaben für Sie gemacht wurden, können Sie auch selbst die Textantworten einsehen<br>
 </p>
 <p>Hier eine Übersicht Ihrer Kurse, die an der 
 <a href="$evUrl"><b>$evaluation->name</b></a> teilnehmen:</p>

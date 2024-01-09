@@ -1,57 +1,60 @@
-﻿#,Für den privilegierten Zugriff per Studiengang benötige ich für jede Person die exakte Bezeichnung des Studiengangs sowie den vollen Namen und den Anmeldenamen des jeweiligen ASH Kontos.,,,,
-#,Hier die Liste aller Studiengänge und der zusätzlichen Kategorien:,,,,
-#,https://moodle.ash-berlin.eu/mod/evaluation/print.php?id=414804&showCourses_of_studies=1,,,,
-#,Bei global privilegierten Personen entfällt die Angabe eines Studiengangs,,,,
-#,Bitte unbedingt auf korrekte Groß- und Kleinschreibung achten.,,,,
-#,Studiengänge und Namen können mehrfach eingegeben werden, je nach Zuordnung.,,,,
-#,Fehlerhafte Daten können nicht zugeordnet werden.,,,,
-#,,,,,
-#,bei den farblich markierten Studiengängen handelt es sich um die weiterbildenden Masterstudiengänge an der ASH,Das Feld WM markiert weiterbildende Master,,,
-#ASH Anmeldename,Exakter Moodle Name des Studiengangs,WM,Vorname,Name,Funktion
-voelterb,#alle grundständigen Studiengänge und weiterbildenden Master,Ja,Bettina,Völter,Rektorin
-voss,#alle grundständigen Studiengänge und weiterbildenden Master,Ja,Anja,Voss,Prorektorin
-khayat,#alle grundständigen Studiengänge und weiterbildenden Master,Ja,Berthe,Khayat,QM Referentin
-gorling,#alle grundständigen Studiengänge und weiterbildenden Master,Ja,Karsten,Gorling,Leiter ComZ
-fuchsb,#alle grundständigen Studiengänge,Nein,Benjamin,Fuchs,Wissenschaftliche Beratung
-bettig,Pflege (primärqualifizierend) (B.Sc.),Nein,Uwe,Bettig,Dekan FB2
-bettig,Physiotherapie-Ergotherapie - AddIS (B.Sc.),Nein,Uwe,Bettig,Dekan FB2
-bettig,Physiotherapie-Ergotherapie - PQS (B.Sc.),Nein,Uwe,Bettig,Dekan FB2
-bettig,Gesundheits- und Pflegemanagement (B.Sc.),Nein,Uwe,Bettig,Dekan FB2
-bettig,Erziehung und Bildung in der Kindheit (B.A.),Nein,Uwe,Bettig,Dekan FB2
-bettig,Erziehung und Bildung in der Kindheit (B.A.) - berufsintegrierend,Nein,Uwe,Bettig,Dekan FB2
-bettig,Management und Versorgung im Gesundheitswesen (B.Sc.),Nein,Uwe,Bettig,Dekan FB2
-bettig,Kindheitspädagik (B.A.) - berufsintegriert,Nein,Uwe,Bettig,DekanFB2
-bettig,Management und Qualitätsentwicklung im Gesundheitswesen (M.Sc.),Nein,Uwe,Bettig,Dekan FB2
-brodowskim,Pflege (primärqualifizierend) (B.Sc.),Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Physiotherapie-Ergotherapie - AddIS (B.Sc.),Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Physiotherapie-Ergotherapie - PQS (B.Sc.),Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Gesundheits- und Pflegemanagement (B.Sc.),Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Erziehung und Bildung in der Kindheit (B.A.),Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Erziehung und Bildung in der Kindheit (B.A.) - berufsintegrierend,Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Management und Versorgung im Gesundheitswesen (B.Sc.),Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Kindheitspädagik (B.A.) - berufsintegriert,Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Management und Qualitätsentwicklung im Gesundheitswesen (M.Sc.),Nein,Michael,Brodowski,Prodekan FB2
-beyerl,Praxisforschung in Sozialer Arbeit und Pädagogik (M.A.),Nein,Luzi,Beyer,Prodekanin FB1
-beyerl,Soziale Arbeit (B.A.),Nein,Luzi,Beyer,Prodekanin FB1
-beyerl,Soziale Arbeit - Kritische Diversity und Community Studies (KriDiCo) (M.A.),Nein,Luzi,Beyer,Prodekanin FB1
-stapfh,Praxisforschung in Sozialer Arbeit und Pädagogik (M.A.),Nein,Heinz,Stapf-Finé,Dekan FB1
-stapfh,Soziale Arbeit (B.A.),Nein,Heinz,Stapf-Finé,Dekan FB1
-stapfh,Soziale Arbeit - Kritische Diversity und Community Studies (KriDiCo) (M.A.),Nein,Heinz,Stapf-Finé,Dekan FB1
-baerg,Biographisches und Kreatives Schreiben (M.A.),Ja,Gesine,Bär,Prorektorin
-baerg,Klinische Sozialarbeit (M. A.),Ja,Gesine,Bär,Prorektorin
-baerg,Kinderschutz (M.A.),Ja,Gesine,Bär,Prorektorin
-baerg,Social Work as a Human Rights Profession (M.A.),Ja,Gesine,Bär,Prorektorin
-baerg,Netzwerkmanagement Bildung (M.A.),Ja,Gesine,Bär,Prorektorin
-baerg,Intercultural Conflict Management (M.A.) - engl.,Ja,Gesine,Bär,Prorektorin
-benner,Biographisches und Kreatives Schreiben (M.A.),Ja,Susanne A.,Benner plus Isensee, Koor,Studiengangsleitung
-siga,Klinische Sozialarbeit (M. A.),Ja,Silke Birgitta,Gahlleitner plusJornitz,Koor,Studiengangsleitung
-raetz,Kinderschutz (M.A.),Ja,Regina,Rätz,Studiengangsleitung
-erdeme,Social Work as a Human Rights Profession (M.A.),Ja,Esra,Erdem,Studiengangsleitung
-brodowskim,Netzwerkmanagement Bildung (M.A.),Ja,Michael,Brodowski plus Looks Koor,Studiengangsleitung
-winkelmannc,Biographisches und Kreatives Schreiben (M.A.),Ja,Claudia,Winkelmann,Leiterin Weiterbildung
-winkelmannc,Klinische Sozialarbeit (M. A.),Ja,Claudia,Winkelmann,Leiterin Weiterbildung
-winkelmannc,Kinderschutz (M.A.),Ja,Claudia,Winkelmann,Leiterin Weiterbildung
-winkelmannc,Social Work as a Human Rights Profession (M.A.),Ja,Claudia,Winkelmann,Leiterin Weiterbildung
-winkelmannc,Netzwerkmanagement Bildung (M.A.),Ja,Claudia,Winkelmann,Leiterin Weiterbildung
-winkelmannc,Intercultural Conflict Management (M.A.),Ja,Claudia,Winkelmann,Leiterin Weiterbildung
-
+﻿#,Für den privilegierten Zugriff per Studiengang benötige ich für jede Person die exakte Bezeichnung des Studiengangs sowie den vollen Namen und den Anmeldenamen des jeweiligen ASH Kontos.,,,,,
+#,Hier die Liste aller Studiengänge und der zusätzlichen Kategorien:,,,,,
+#,https://moodle.ash-berlin.eu/mod/evaluation/print.php?id=414804&showCourses_of_studies=1,,,,,
+#,Bei global privilegierten Personen entfällt die Angabe eines Studiengangs,,,,,
+#,Bitte unbedingt auf korrekte Groß- und Kleinschreibung achten.,,,,,
+#,"Studiengänge und Namen können mehrfach eingegeben werden, je nach Zuordnung.",,,,,
+#,Fehlerhafte Daten können nicht zugeordnet werden.,,,,,
+#,,Bitte für jeden Studiengang den Fachbereich eintragen,,,,
+#,bei den farblich markierten Studiengängen handelt es sich um die weiterbildenden Masterstudiengänge an der ASH,,Das Feld WM markiert weiterbildende Master,,,
+#Anmeldename,Exakter Moodle Name des Studiengangs,FB,WM,Vorname,Name,Funktion
+voelterb,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Bettina,Völter,Rektorin
+voss,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Anja,Voss,Prorektorin
+khayat,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Berthe,Khayat,QM Referentin
+gorling,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Karsten,Gorling,Leiter ComZ
+#Noch unbekannt,#alle grundständigen Studiengänge,,Nein,,,stud. Beschäftigte Evaluation
+fuchsb,#alle grundständigen Studiengänge,,Nein,Benjamin,Fuchs,Wissenschaftliche Beratung
+bettig,Pflege (primärqualifizierend) (B.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
+bettig,Physiotherapie-Ergotherapie - AddIS (B.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
+bettig,Physiotherapie-Ergotherapie - PQS (B.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
+bettig,Gesundheits- und Pflegemanagement (B.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
+bettig,Erziehung und Bildung in der Kindheit (B.A.),2,Nein,Uwe,Bettig,Dekan FB2
+bettig,Erziehung und Bildung in der Kindheit (B.A.) - berufsintegrierend,2,Nein,Uwe,Bettig,Dekan FB2
+bettig,Management und Versorgung im Gesundheitswesen (B.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
+bettig,Kindheitspädagik (B.A.) - berufsintegriert,2,Nein,Uwe,Bettig,Dekan FB2
+bettig,Management und Qualitätsentwicklung im Gesundheitswesen (M.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
+brodowskim,Pflege (primärqualifizierend) (B.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
+brodowskim,Physiotherapie-Ergotherapie - AddIS (B.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
+brodowskim,Physiotherapie-Ergotherapie - PQS (B.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
+brodowskim,Gesundheits- und Pflegemanagement (B.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
+brodowskim,Erziehung und Bildung in der Kindheit (B.A.),2,Nein,Michael,Brodowski,Prodekan FB2
+brodowskim,Erziehung und Bildung in der Kindheit (B.A.) - berufsintegrierend,2,Nein,Michael,Brodowski,Prodekan FB2
+brodowskim,Management und Versorgung im Gesundheitswesen (B.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
+brodowskim,Kindheitspädagik (B.A.) - berufsintegriert,2,Nein,Michael,Brodowski,Prodekan FB2
+brodowskim,Management und Qualitätsentwicklung im Gesundheitswesen (M.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
+beyerl,Praxisforschung in Sozialer Arbeit und Pädagogik (M.A.),1,Nein,Luzi,Beyer,Prodekanin FB1
+beyerl,Soziale Arbeit (B.A.),1,Nein,Luzi,Beyer,Prodekanin FB1
+beyerl,Soziale Arbeit - Kritische Diversity und Community Studies (KriDiCo) (M.A.),1,Nein,Luzi,Beyer,Prodekanin FB1
+stapfh,Praxisforschung in Sozialer Arbeit und Pädagogik (M.A.),1,Nein,Heinz,Stapf-Finé,Dekan FB1
+stapfh,Soziale Arbeit (B.A.),1,Nein,Heinz,Stapf-Finé,Dekan FB1
+stapfh,Soziale Arbeit - Kritische Diversity und Community Studies (KriDiCo) (M.A.),1,Nein,Heinz,Stapf-Finé,Dekan FB1
+baerg,Biographisches und Kreatives Schreiben (M.A.),,Ja,Gesine,Bär,Prorektorin
+baerg,Klinische Sozialarbeit (M. A.),,Ja,Gesine,Bär,Prorektorin
+baerg,Kinderschutz (M.A.),,Ja,Gesine,Bär,Prorektorin
+baerg,Social Work as a Human Rights Profession (M.A.),,Ja,Gesine,Bär,Prorektorin
+baerg,Netzwerkmanagement Bildung (M.A.),,Ja,Gesine,Bär,Prorektorin
+baerg,Intercultural Conflict Management (M.A.) - engl.,,Ja,Gesine,Bär,Prorektorin
+benner,Biographisches und Kreatives Schreiben (M.A.),,Ja,Susanne A.,Benner,Studiengangsleitung
+isenseej,Biographisches und Kreatives Schreiben (M.A.),,Ja,Johanna,Isensee,Studiengangskoordination
+siga,Klinische Sozialarbeit (M. A.),,Ja,Silke Birgitta,Gahleitner,Studiengangsleitung
+jornitz,Klinische Sozialarbeit (M. A.),,Ja,Kristiane,Jornitz,Studiengangskoordination
+raetz,Kinderschutz (M.A.),,Ja,Regina,Rätz,Studiengangsleitung
+erdeme,Social Work as a Human Rights Profession (M.A.),,Ja,Esra,Erdem,Studiengangsleitung
+brodowskim,Netzwerkmanagement Bildung (M.A.),,Ja,Michael,Brodowski,Studiengangsleitung
+looksl,Netzwerkmanagement Bildung (M.A.),,Ja,Liliana,Looks,Studiengangskoordination
+winkelmannc,Biographisches und Kreatives Schreiben (M.A.),,Ja,Claudia,Winkelmann,Leiterin Weiterbildung
+winkelmannc,Klinische Sozialarbeit (M. A.),,Ja,Claudia,Winkelmann,Leiterin Weiterbildung
+winkelmannc,Kinderschutz (M.A.),,Ja,Claudia,Winkelmann,Leiterin Weiterbildung
+winkelmannc,Social Work as a Human Rights Profession (M.A.),,Ja,Claudia,Winkelmann,Leiterin Weiterbildung
+winkelmannc,Netzwerkmanagement Bildung (M.A.),,Ja,Claudia,Winkelmann,Leiterin Weiterbildung
+winkelmannc,Intercultural Conflict Management (M.A.),,Ja,Claudia,Winkelmann,Leiterin Weiterbildung

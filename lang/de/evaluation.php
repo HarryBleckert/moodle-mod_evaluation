@@ -44,6 +44,8 @@ $string['courses_of_studies'] = 'Studiengänge';
 $string['course_of_studies_list'] = 'Alle Studiengänge des Semesters';
 $string['course_of_studies_selected'] = 'Liste der zu evaluierenden Studiengänge';
 $string['daily_progress'] = 'Abgabestatistik -pro Tag und über den gesamten Zeitraum';
+$string['department'] = 'Fachbereich';
+$string['departments'] = 'Fachbereiche';
 $string['evaluate_now'] = 'Jetzt evaluieren';
 $string['evaluate_teacher'] = 'Sie evaluieren jetzt: <span style="color:darkgreen;font-weight:bolder;">{$a}</span>';
 $string['evaluated_courses'] = 'Evaluierte Kurse';
@@ -53,10 +55,12 @@ $string['filter_courses'] = 'Auswahl von Kursen anstelle von Studiengängen';
 $string['filter_courses_desc'] = 'Einzelne Kurse anstelle von Studiengängen. (1 Kurs-ID/Zeile)';
 $string['filter_by_course_of_studies'] = 'Filter Studiengang';
 $string['filter_by_teacher'] = 'Filter Dozent_in';
+$string['filter_by_department'] = 'Filter Fachbereich';
 $string['filter_course_of_studies_desc'] =
         'Studiengänge dieser Evaluation (je 1 Studiengang/Zeile). Privilegierte Personen können über Anmeldenamen nach Eingabe von "||" als Trennzeichen gesetzt werden. Falls es mehrere Personen sind, sind die Anmeldenamen durch Kommata zu trennen.';
 $string['fulllistofstudies'] = 'Alle Studiengänge';
 $string['fulllistofteachers'] = 'Alle Dozent_innen';
+$string['fulllistofdepartments'] = 'Alle Fachbereiche';
 $string['global_evaluations'] = 'Globale Evaluationen';
 $string['min_results'] =
         'Bisher gibt es leider weniger als {$a} Abgaben. Aus datenschutzrechtlichen Gründen dürfen keine Ergebnisse gezeigt werden.';
@@ -78,8 +82,10 @@ $string['pageviews'] = 'Ansichten';
 $string['participants'] = 'Teilnehmer_innen';
 $string['participating_courses'] = 'Teilnehmende Kurse';
 $string['participating_courses_of_studies'] = 'Teilnehmende Studiengänge';
+$string['participant_roles'] = 'Standardrolle(n) der Teilnehmer_innen';
+$string['participant_roles_help'] = 'Geben Sie die Standardrolle(n) für Teilnehmer_innen ein. Die Standardrolle ist Student. Standardeinstellungen können für jede Evaluation in den Einstellungen überschrieben werden.';
 $string['privileged_users'] = 'Privilegierte Anwender_innen';
-$string['privileged_users_desc'] = 'Privilegierte Anwender_innen (je 1 username/Zeile)';
+$string['privileged_users_desc'] = 'Privilegierte Personen für diese Evaluation (je 1 Anmeldename/Zeile)';
 $string['select_teacher'] = '<b>Bitte wählen Sie die Dozentin/den Dozenten für diese Evaluation!</b><br>Hinweis: 
 		Sie können einen Fragebogen pro Dozent_in ausfüllen<b>';
 $string['semesters'] = 'Semester';

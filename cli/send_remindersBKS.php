@@ -147,11 +147,11 @@ $start = time();
 //get all participating students/teachers
 $evaluation_users = get_evaluation_participants($evaluation, false, false, ($role == "teacher"), ($role == "student"));
 $minResults = evaluation_min_results($evaluation);
+$minResultsText = min_results_text($evaluation);
 $remaining_evaluation_days = round(remaining_evaluation_days($evaluation), 0);
 $current_evaluation_day = round(current_evaluation_day($evaluation), 0);
 $total_evaluation_days = total_evaluation_days($evaluation);
 $lastEvaluationDay = date("d. m.Y", $evaluation->timeclose);
-$minResultsTeacher = $minResults + 2;
 $date_ending = date("d. M", $evaluation->timeclose);
 $cmid = get_evaluation_cmid_from_id($evaluation);
 $evUrl = "https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=" . $cmid;
@@ -225,6 +225,8 @@ wir möchten Sie daran erinnern,
     Mit Ihren Antworten helfen Sie uns, die Lehre zu verbessern und Sie können ggf. noch im
     laufenden Semester in einen Austausch mit den Lehrenden treten.</p>
 */
+    $reminder = ($remaining_evaluation_days <= 9 ?
+            "<b>nur noch $remaining_evaluation_days Tage bis zum $lastEvaluationDay laufenden</b> " : "laufenden ");
     if ($role == "student" || $role == "participants") {    //$user = core_user::get_user($userid);
         if (hasUserEvaluationCompleted($evaluation, $userid)) {
             show_log("$cnt. $fullname - $username - $userid - $email - COMPLETED ALL!!");
@@ -241,9 +243,10 @@ wir möchten Sie daran erinnern,
 </head>
 <body>
 $testMsg<p>Liebe BKS-Studierende</p>
-<p>Wir möchten Sie herzlich einladen, an unserer <a href="$evUrl"><b>Semesterevaluation für das Wintersemester 2022/2023 im Masterstudiengang Biografisches und Kreatives Schreiben</b></a> teilzunehmen.<br><br>
-Die Evaluation wird online über Moodle durchgeführt und der Link zur Teilnahme erscheint auf allen Kurshauptseiten des Wintersemesters 2022/2023.<br>
-Das Ausfüllen des Fragebogens erfolgt anonym und dauert pro Modul und Dozent_in etwa 3 Minuten.<br>
+<p>Wir möchten Sie herzlich einladen, an unserer $reminder <b>Semesterevaluation für 
+das Sommersemester 2023 im Masterstudiengang Biografisches und Kreatives Schreiben</b> teilzunehmen.<br><br>
+Die Evaluation wird online über Moodle durchgeführt und der Link zur Teilnahme erscheint auf allen Kurshauptseiten 
+des Sommersemesters 2023.<br>Das Ausfüllen des Fragebogens erfolgt anonym und dauert pro Modul und Dozent_in etwa 3 Minuten.<br>
 <br>
 Für jeden bereits von Ihnen evaluierten Kurs können Sie selbst sofort die Auswertung einsehen, wenn mindestens $minResults Abgaben erfolgt sind.<br>
 Ausgenommen sind aus Datenschutzgründen die persönlichen Angaben sowie die Antworten auf die offenen Fragen.
@@ -265,8 +268,24 @@ HEREDOC;
     {
         $testTeacher = true;
         $cntTeachers++;
-        //$subject = "Auswertung der ".$subject;
-        //an der noch $remaining_evaluation_days Tage laufenden
+
+        $onlyfew = "";
+
+        $replies = evaluation_countCourseEvaluations($evaluation, false, "teacher", $userid);
+        if ( $current_evaluation_day>7 OR $replies >3 ) {
+            if ($replies < 21) {
+                if ($replies < 1) {
+                    $onlyfew = "<b>Keine Ihrer " . $_SESSION["distinct_s"] . " Studierenden hat bisher teilgenommen</b>.<br>";
+                } else {
+                    $onlyfew = "<b>Bisher gibt es nur $replies Abgabe" . ($replies < 2 ? "" : "n")
+                            . " Ihrer " . $_SESSION["distinct_s"] . " Studierenden</b>.<br>";
+                    // .($replies<2 ?"hat" :"haben")." bisher teilgenommen</b>. ";
+                }
+            } else {
+                $onlyfew = "<b>Bisher gibt es $replies Abgaben Ihrer " . $_SESSION["distinct_s"] . " Studierenden</b>.<br>";
+            }
+        }
+
         $message = <<<HEREDOC
 <html>
 <head>
@@ -274,14 +293,15 @@ HEREDOC;
 </head>
 <body>
 $testMsg<p>Guten Tag $fullname</p>
-
-<p><b>Bitte motivieren Sie Ihre Studierenden an der laufenden Semesterevaluation des MA BKS teilzunehmen!</b><br>
+$onlyfew
+<p>Bitte motivieren Sie Ihre Studierenden an der $reminder <b>Semesterevaluation für 
+das Sommersemester 2023 im Masterstudiengang Biografisches und Kreatives Schreiben teilzunehmen!</b><br>
 Optimal wäre es, wenn Sie die Teilnahme jeweils in Ihre Veranstaltungen integrieren, indem Sie dafür einen motivierenden Aufruf machen und den 
 Studierenden während der Veranstaltung die wenigen Minuten Zeit zur Teilnahme geben!</p>
 <p>Sofern für einen Ihrer Kurse mindestens $minResults Abgaben <b>für Sie</b> vorliegen, können Sie jeweils die Auswertung der für Sie gemachten Abgaben einsehen.<br>
-Nur wenn mindestens $minResultsTeacher Abgaben für Sie gemacht wurden, können Sie auch selbst die Textantworten einsehen.
+Nur wenn mindestens $minResultsText Abgaben für Sie gemacht wurden, können Sie auch selbst die Textantworten einsehen.
 </p>
-<p>Die Evaluation wird online über Moodle durchgeführt und der Link zur Teilnahme erscheint auf allen Kurshauptseiten des Wintersemesters 2022/2023.</p>
+<p>Die Evaluation wird online über Moodle durchgeführt und der Link zur Teilnahme erscheint auf allen Kurshauptseiten des Sommersemesters 2023.</p>
 <p>Hier eine Übersicht Ihrer Kurse, die an der 
 <a href="$evUrl"><b>$evaluation->name</b></a> teilnehmen:</p>
 $myCourses

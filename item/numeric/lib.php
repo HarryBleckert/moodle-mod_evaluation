@@ -120,9 +120,9 @@ class evaluation_item_numeric extends evaluation_item_base {
         return $value->value;
     }
 
-    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid = false,
-            $course_of_studies = false) {
-        $values = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
+    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false,
+            $teacherid = false, $course_of_studies = false, $department = false ) {
+        $values = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department);
 
         if (isset($values->data) and is_array($values->data)) {
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
@@ -160,14 +160,15 @@ class evaluation_item_numeric extends evaluation_item_base {
      * @param int $courseid
      * @return stdClass
      */
-    protected function get_analysed($item, $groupid = false, $courseid = false, $teacherid = false, $course_of_studies = false) {
+    protected function get_analysed($item, $groupid = false, $courseid = false,
+            $teacherid = false, $course_of_studies = false, $department = false) {
 
         global $DB;
 
         $analysed = new stdClass();
         $analysed->data = array();
         $analysed->name = $item->name;
-        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies);
+        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies,$department);
 
         $avg = 0.0;
         $counter = 0;

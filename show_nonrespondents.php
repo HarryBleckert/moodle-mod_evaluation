@@ -50,13 +50,13 @@ if ($message) {
 
 list ($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
 if (!$evaluation = $DB->get_record("evaluation", array("id" => $cm->instance))) {
-    print_error('invalidcoursemodule');
+    throw new moodle_exception('invalidcoursemodule');
 }
 
 //this page only can be shown on nonanonymous evaluations in courses
 //we should never reach this page
 if ($evaluation->anonymous != EVALUATION_ANONYMOUS_NO or $evaluation->course == SITEID) {
-    print_error('error');
+    throw new moodle_exception('error');
 }
 
 $url = new moodle_url('/mod/evaluation/show_nonrespondents.php', array('id' => $cm->id));
@@ -71,7 +71,7 @@ $coursecontext = context_course::instance($course->id);
 require_login($course, true, $cm);
 
 if (($formdata = data_submitted()) and !confirm_sesskey()) {
-    print_error('invalidsesskey');
+    throw new moodle_exception('invalidsesskey');
 }
 
 require_capability('mod/evaluation:viewreports', $context);

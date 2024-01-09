@@ -48,6 +48,8 @@ class mod_evaluation_structure {
     /** @var array */
     protected $allcourses;
     protected $allstudies;
+
+    protected $alldepartments;
     protected $allteachers;
     /** @var int */
     protected $userid;
@@ -55,6 +57,7 @@ class mod_evaluation_structure {
     protected $teacherid = 0;
     protected $course_of_studies = "";
     protected $course_of_studiesID = 0;
+    protected $department = 0;
 
     /**
      * Constructor
@@ -69,7 +72,7 @@ class mod_evaluation_structure {
      * @param int $teacherid for selected teacher (for teamteaching only). Set to 0 as default.
      */
     public function __construct($evaluation, $cm = false, $courseid = 0, $templateid = null, $userid = 0, $teacherid = 0,
-            $course_of_studies = "", $course_of_studiesID = 0) {
+            $course_of_studies = "", $course_of_studiesID = 0, $department = 0) {
         global $USER;
         if ((empty($evaluation->id) || empty($evaluation->course)) && (empty($cm->instance) || empty($cm->course))) {
             throw new coding_exception('Either $evaluation or $cm must be passed to constructor');
@@ -87,11 +90,13 @@ class mod_evaluation_structure {
         $this->teacherid = 0;
         $this->course_of_studies = "";
         $this->course_of_studiesID = 0;
+        $this->department = 0;
         if ($this->evaluation->course == SITEID) {
             $this->courseid = $courseid ?: 0;
             $this->teacherid = $teacherid ?: 0;
             $this->course_of_studies = $course_of_studies ?: "";
             $this->course_of_studiesID = $course_of_studiesID ?: 0;
+            $this->department = $department ?: 0;
         }
         //if ( $this->courseid AND empty($this->course_of_studies) )
         //{	$this->course_of_studies = evaluation_get_course_of_studies( $this->courseid, false ); }
@@ -346,18 +351,22 @@ class mod_evaluation_structure {
      */
     public function count_completed_responses($groupid = 0, $today = false) {
         global $DB;
-        $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($this->evaluation, "fbc");
+        $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($this->evaluation, "completed");
         $params = ['evaluation' => $this->evaluation->id, 'groupid' => $groupid, 'courseid' => $this->courseid];
         $filter = $fstudies = $fteacher = $ftoday = $fcourseid = "";
         if ($this->get_course_of_studies()) {
             $filter .= " AND course_of_studies = '" . $this->get_course_of_studies() . "'";
-            $fstudies = " AND fbc.course_of_studies = :course_of_studies";
+            $fstudies = " AND completed.course_of_studies = :course_of_studies";
             $params['course_of_studies'] = $this->get_course_of_studies();
         }
         if ($this->get_teacherid()) {
             $filter .= " AND teacherid = " . $this->get_teacherid();
-            $fteacher = " AND fbc.teacherid = :teacherid";
+            $fteacher = " AND completed.teacherid = :teacherid";
             $params['teacherid'] = $this->get_teacherid();
+        }
+        $filterD = $this->get_department_filter();
+        if (!empty($filterD)) {
+            $filter .= $filterD;
         }
         if ($today) {
             $today = date("d M Y");
@@ -368,20 +377,20 @@ class mod_evaluation_structure {
         }
         if (intval($groupid) > 0) {
             $query = "SELECT COUNT(DISTINCT fbc.id)
-                        FROM {evaluation_completed} fbc, {groups_members} gm
-                        WHERE fbc.evaluation = :evaluation
+                        FROM {evaluation_completed} completed, {groups_members} gm
+                        WHERE completed.evaluation = :evaluation
                             AND gm.groupid = :groupid
-                            AND fbc.userid = gm.userid $fteacher $fstudies $ftoday";
+                            AND completed.userid = gm.userid $fteacher $fstudies $filterD $ftoday";
             $filter .= " AND true";
         } else if ($this->courseid) {
-            $query = "SELECT COUNT(fbc.id)
-                        FROM {evaluation_completed} fbc
-                        WHERE fbc.evaluation = :evaluation
-						AND fbc.courseid = :courseid $fteacher $ftoday";
+            $query = "SELECT COUNT(completed.id)
+                        FROM {evaluation_completed} completed
+                        WHERE completed.evaluation = :evaluation
+						AND completed.courseid = :courseid $fteacher $ftoday";
             $filter .= " AND courseid=" . $this->courseid;
         } else {
-            $query = "SELECT COUNT(fbc.id) FROM {evaluation_completed} fbc 
-						WHERE fbc.evaluation = :evaluation $fteacher $fstudies $ftoday $cosPrivileged_filter";
+            $query = "SELECT COUNT(completed.id) FROM {evaluation_completed} completed 
+						WHERE completed.evaluation = :evaluation $fteacher $fstudies $filterD $ftoday $cosPrivileged_filter";
         }
         $duplicated = 0;
         if (!$this->evaluation->teamteaching and empty($filter) and !$cosPrivileged_filter) {
@@ -404,6 +413,32 @@ class mod_evaluation_structure {
         return $this->course_of_studies;
     }
 
+
+    public function set_department($studies) {
+        if ( isset($_SESSION['CoS_department']) AND safeCount($_SESSION['CoS_department']) ) {
+            $keys = array_keys($_SESSION['CoS_department']);
+            $dept = array_search($studies, $keys);
+            if ($dept AND isset($_SESSION['CoS_department'][$keys[$dept]]) ) {
+                $this->$department = $_SESSION['CoS_department'][$keys[$dept]];
+                return $this->$department;
+            }
+        }
+    }
+
+
+    public function get_department() {
+        // if ( empty($this->department) AND !empty($this->course_of_studies;)){
+        return $this->department;
+    }
+
+    public function get_department_filter() {
+        $department = $this->get_department();
+        if ($department AND isset($_SESSION['CoS_department']) AND safeCount($_SESSION['CoS_department'])) {
+            $CoS = "'" . implode("','", array_keys($_SESSION['CoS_department'], $department)) . "'";
+            return " AND completed.course_of_studies IN($CoS)";
+        }
+        return "";
+    }
     /**
      * Id of the current teacher
      *
@@ -428,7 +463,7 @@ class mod_evaluation_structure {
         if ($this->allcourses !== null) {
             return $this->allcourses;
         }
-
+        $is_open = evaluation_is_open($this->evaluation);
         $filter = "";
         if ($this->get_teacherid()) {
             $filter .= " AND completed.teacherid=" . $this->get_teacherid();
@@ -443,13 +478,19 @@ class mod_evaluation_structure {
             $filter .= $CoS_Filter;
         }
 
-        $sql = "SELECT completed.id, completed.courseid, completed.teacherid, completed.course_of_studies, 
-				concat(u.firstname,' ',u.lastname) as name, c.fullname, c.shortname, c.idnumber
-				FROM {evaluation_completed} completed, {course} c, {user} u
-				WHERE completed.evaluation = :evaluationid $filter AND c.id=completed.courseid AND u.id=completed.userid ORDER BY c.fullname ASC";
+        $filterD = $this->get_department_filter();
+        if (!empty($filterD)) {
+            $filter .= $filterD;
+        }
 
-        $list = $DB->get_records_sql($sql, ['evaluationid' => $this->get_evaluation()->id]);
-
+        $sql = "SELECT DISTINCT ON (completed.courseid) completed.courseid, c.fullname, c.shortname
+				FROM {evaluation_completed} completed, {"
+                .($is_open ?"course" :"evaluation_enrolments")
+                ."} c
+				WHERE completed.evaluation = :evaluationid $filter AND completed.courseid=c."
+                .($is_open ?"id" :"courseid and completed.evaluation=c.evaluation")
+				. " ORDER BY completed.courseid ASC";
+        $list = $DB->get_records_sql($sql, ['evaluationid' => $this->evaluation->id]);
         $this->allcourses = array();
         foreach ($list as $course) {
             $label = $course->fullname . ($course->fullname !== $course->shortname ? " (" . $course->shortname . ")" : "");
@@ -457,6 +498,7 @@ class mod_evaluation_structure {
             //{	$label = wordwrap( $label, 60, " <br>",false ); }
             $this->allcourses[$course->courseid] = $label;
         }
+        natcasesort($this->allcourses);
         return $this->allcourses;
     }
 
@@ -490,7 +532,11 @@ class mod_evaluation_structure {
             $filter .= $CoS_Filter;
         }
 
-        $sql = "SELECT DISTINCT ON (course_of_studies) course_of_studies, completed.id, completed.teacherid, completed.courseid
+        $filterD = $this->get_department_filter();
+        if (!empty($filterD)) {
+            $filter .= $filterD;
+        }
+        $sql = "SELECT DISTINCT ON (completed.course_of_studies) completed.course_of_studies, completed.id
 				FROM {evaluation_completed} AS completed
 				WHERE completed.evaluation = :evaluationid $filter ORDER BY completed.course_of_studies ASC";
 
@@ -520,7 +566,7 @@ class mod_evaluation_structure {
      *
      * @return array id=>name pairs of courses
      */
-    public function get_completed_teachers($CoS = true) {
+    public function get_completed_teachers() {
         global $DB;
 
         if ($this->get_evaluation()->course != SITEID) {
@@ -531,6 +577,7 @@ class mod_evaluation_structure {
             return $this->allteachers;
         }
 
+        $is_open = evaluation_is_open($this->evaluation);
         $filter = "";
         if ($this->get_courseid()) {
             $filter .= " AND completed.courseid=" . $this->get_courseid();
@@ -544,20 +591,71 @@ class mod_evaluation_structure {
             $filter .= $CoS_Filter;
         }
 
-        $sql = "SELECT completed.id, completed.courseid, completed.teacherid, completed.course_of_studies, 
-				concat(u.firstname,' ',u.lastname) as name, 
-				c.fullname, c.shortname, c.idnumber
-				FROM {evaluation_completed} completed, {course} c, {user} u
-				WHERE completed.evaluation = :evaluationid $filter AND c.id=completed.courseid AND u.id=completed.teacherid ORDER bY concat(u.lastname,' ',u.firstname) ASC";
+        $filterD = $this->get_department_filter();
+        if (!empty($filterD)) {
+            $filter .= $filterD;
+        }
+
+        $sql = "SELECT DISTINCT ON (completed.teacherid) completed.teacherid, u.firstname, u.lastname 
+				FROM {evaluation_completed} completed, {"
+                .($is_open ?"user" :"evaluation_users")
+                ."} u
+				WHERE completed.evaluation = :evaluationid $filter  AND completed.teacherid=u.".($is_open ?"" :"user") ."id 
+				ORDER BY completed.teacherid ASC";
 
         $list = $DB->get_records_sql($sql, ['evaluationid' => $this->get_evaluation()->id]);
 
         $this->allteachers = array();
         foreach ($list as $teacher) {
-            $label = $teacher->name;
+            $label = $teacher->firstname . " " . $teacher->lastname;
             $this->allteachers[$teacher->teacherid] = $label;
         }
+        natcasesort($this->allteachers);
         return $this->allteachers;
     }
+
+    public function get_completed_departments() {
+        global $DB;
+
+        if ($this->get_evaluation()->course != SITEID) {
+            return [];
+        }
+
+        if ($this->alldepartments !== null) {
+            return $this->alldepartments;
+        }
+        /*
+        $filter = "";
+        if ($this->get_courseid()) {
+            $filter .= " AND completed.courseid=" . $this->get_courseid();
+        } else if ($this->get_course_of_studies()) {
+            $filter .= " AND completed.course_of_studies='" . $this->get_course_of_studies() . "'";
+        }
+        if ($this->get_teacherid()) {
+            $filter .= " AND completed.teacherid=" . $this->get_teacherid();
+        }
+
+        // handle CoS privileged users
+        $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
+        if ($CoS_Filter) {
+            $filter .= $CoS_Filter;
+        }
+
+        $sql = "SELECT DISTINCT completed.course_of_studies, completed.id
+				FROM {evaluation_completed} completed
+				WHERE completed.evaluation = :evaluationid $filter 
+				ORDER bY completed.course_of_studies ASC";
+        $list = $DB->get_records_sql($sql, ['evaluationid' => $this->get_evaluation()->id]);
+        */
+        $list = $_SESSION['CoS_department']; //$_SESSION['CoS_department'][$CoS]
+
+        $this->alldepartments = array();
+        foreach ($list as $department) {
+            $this->alldepartments[$department] = $department;
+        }
+        asort($this->alldepartments);
+        return $this->alldepartments;
+    }
+
 }
 

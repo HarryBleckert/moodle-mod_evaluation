@@ -518,7 +518,7 @@ class mod_evaluation_completion extends mod_evaluation_structure {
                         $gopreviouspage)) {    // Form was submitted (skip validation for "Previous page" button).
             $data = $this->form->get_submitted_data();
             if (!isset($SESSION->evaluation->is_started) or !$SESSION->evaluation->is_started == true) {
-                print_error('error', '', $CFG->wwwroot . '/course/view.php?id=' . $this->courseid);
+                throw new moodle_exception('error', '', $CFG->wwwroot . '/course/view.php?id=' . $this->courseid);
             }
             $this->save_response_tmp($data);
             if (!empty($data->savevalues) || !empty($data->gonextpage)) {

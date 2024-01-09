@@ -64,6 +64,10 @@ if (isset($course_of_studiesID) and $course_of_studiesID) {
     $urlparams['course_of_studiesID'] = $course_of_studiesID;
 }
 
+if (isset($department) AND $department) {
+    $urlparams['department'] = $department;
+}
+
 if (!isset($isPermitted)) {
     list($isPermitted, $CourseTitle, $CourseName, $SiteEvaluation) =
             evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm);
@@ -118,6 +122,9 @@ if (true) //defined( "SiteEvaluation") )
         }
         if ($course_of_studiesID) {
             $urlparamsIDT['course_of_studiesID'] = $course_of_studiesID;
+        }
+        if (isset($department) AND $department) {
+            $urlparamsIDT['department'] = $department;
         }
     }
 
