@@ -786,8 +786,8 @@ if (is_siteadmin()) {
 //evaluation_spinnerJS();		
 
 $pluginfo = ev_get_plugin_version();
-$info = "\n<hr>\nPlugin: ".$pluginfo->component.". Plugin Version: ".$pluginfo->version." - Release: "
-        .$pluginfo->release ."<hr>\n";
+$info = "\n<hr>\nPlugin: ".$pluginfo->component.". Version: "
+        .$pluginfo->release ." (Build: ".$pluginfo->version.")<hr>\n";
 print $info;
 echo $OUTPUT->footer();
 require_once("print.js.php");
