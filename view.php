@@ -785,6 +785,10 @@ if (is_siteadmin()) {
 // js code for loafing spinner
 //evaluation_spinnerJS();		
 
+$pluginfo = assign_submission_filero::get_plugin_version();
+$info = "\n<hr>\n".$this->get_name()." Plugin Version: ".$pluginfo->version." - Release: "
+        .$pluginfo->release ."<hr>\n";
+print $info;
 echo $OUTPUT->footer();
 require_once("print.js.php");
 evaluation_trigger_module_viewed($evaluation, $cm, $courseid);
