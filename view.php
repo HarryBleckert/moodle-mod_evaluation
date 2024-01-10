@@ -723,6 +723,7 @@ if (is_siteadmin())
     }
 
     if (isset($_GET['empty_courses'])) {
+       print "<hr>Date empty_courses: $_GET['empty_courses']<hr>";
        evaluation_get_empty_courses($_GET['empty_courses']);
     }
 
