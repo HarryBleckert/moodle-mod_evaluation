@@ -4074,12 +4074,12 @@ function evaluation_is_empty_course($courseid,$debug=false) {
 			 WHERE c.id = :courseid
 				   AND ($modularsql)";
     $params['courseid'] = $courseid;
-    if ( $debug ){
-        print nl2br("SQL: $sql" .var_export($params, true));
-    }
     if ($DB->get_records_sql($sql, $params)) {
         return false;
     } else {
+        if ( $debug ){
+            print nl2br("SQL: $sql" .var_export($params, true));
+        }
         return true;
     }
 }
