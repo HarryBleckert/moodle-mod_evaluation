@@ -4084,12 +4084,12 @@ function evaluation_is_empty_course($courseid,$debug=false) {
     }
 }
 
-function evaluation_get_empty_courses($date=false) {
+function evaluation_get_empty_courses($sdate=false) {
     global $DB;
     $filter = $filterText = "";
-    if ( is_string($date) AND strlen($date)>=5 ){
-        $filter = "WHERE startdate<='" . strtotime($date) ."'" ;
-        $filterText = " -with start date before $date";
+    if ( is_string($sdate) AND strlen($sdate)>=5 ){
+        $filter = "WHERE startdate<=" . strtotime($sdate);
+        $filterText = " -with start date before $sdate";
     }
     $courses = $DB->get_records_sql("SELECT id, startdate, fullname, shortname, idnumber from {course} 
     $filter ORDER BY startdate ASC");
