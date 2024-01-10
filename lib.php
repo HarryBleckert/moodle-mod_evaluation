@@ -4086,8 +4086,8 @@ function evaluation_is_empty_course($courseid,$debug=false) {
 
 function evaluation_get_empty_courses($date=false) {
     global $DB;
-    $filter = "";
-    if ( is_string($date) AND $date>0 ){
+    $filter = $filterText = "";
+    if ( is_string($date) AND strlen($date)>=5 ){
         $filter = "WHERE startdate<timestamp '$date'" ;
         $filterText = " -with start date before $date";
     }
