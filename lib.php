@@ -4058,7 +4058,7 @@ status = 0
 ))";
 
     // Course module count.
-    $modularsql = "1 <= (
+    $modularsql = "1 < (
 						select count(*)
 						  FROM {course_modules} cm, {modules} m, {course_sections} cs
 						 WHERE cm.course = :courseid1 AND cm.module=m.id 
@@ -4069,7 +4069,7 @@ status = 0
 
     // Grade category count.
     $modularsql .= !empty($modularsql) ? " OR " : "";
-    $modularsql .= "1 <= (
+    $modularsql .= "1 < (
 						select count(*)
 						  FROM {grade_categories}
 						 WHERE courseid = :courseid2
@@ -4078,7 +4078,7 @@ status = 0
 
     // Grade items count.
     $modularsql .= !empty($modularsql) ? " OR " : "";
-    $modularsql .= "1 <= (
+    $modularsql .= "1 < (
 						select count(*)
 						  FROM {grade_items}
 						 WHERE courseid = :courseid3
