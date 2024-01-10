@@ -4088,7 +4088,7 @@ function evaluation_get_empty_courses($date=false) {
     global $DB;
     $filter = $filterText = "";
     if ( is_string($date) AND strlen($date)>=5 ){
-        $filter = "WHERE startdate<timestamp '$date'" ;
+        $filter = "WHERE startdate<='" . strtotime($date) ."'" ;
         $filterText = " -with start date before $date";
     }
     $courses = $DB->get_records_sql("SELECT id, startdate, fullname, shortname, idnumber from {course} 
