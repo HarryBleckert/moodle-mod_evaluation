@@ -4091,7 +4091,8 @@ function evaluation_get_empty_courses($date=false) {
         $filter = "WHERE startdate<timestamp '$date'" ;
         $filterText = " -with start date before $date";
     }
-    $courses = $DB->get_records_sql("SELECT id, startdate, fullname, shortname, idnumber from {course} $filter");
+    $courses = $DB->get_records_sql("SELECT id, startdate, fullname, shortname, idnumber from {course} 
+    $filter ORDER BY startdate ASC");
     $cnt = $empty_courses = 0;
     print "<h2>Empty Courses</h2><br><table>\n";
     print "<tr><th>Courseid</th><th>Shortname</th><th>Fullname</th><th>Idnumber</th><th>Startdate</th></tr>\n";
