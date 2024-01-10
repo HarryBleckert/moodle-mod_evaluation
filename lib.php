@@ -4075,7 +4075,7 @@ function evaluation_is_empty_course($courseid,$debug=false) {
 				   AND ($modularsql)";
     $params['courseid'] = $courseid;
     if ( $debug ){
-        nl2br("<hr>SQL: $sql" .var_export($params, true));
+        print nl2br("SQL: $sql" .var_export($params, true));
     }
     if ($DB->get_records_sql($sql, $params)) {
         return false;
