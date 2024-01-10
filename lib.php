@@ -4097,7 +4097,8 @@ function evaluation_get_empty_courses($date=false) {
     print "<tr><th>Courseid</th><th>Shortname</th><th>Fullname</th><th>Idnumber</th><th>Startdate</th></tr>\n";
     foreach ($courses as $course){
         if ($isEmpty = evaluation_is_empty_course($course->id,$cnt==0)){
-            print '<tr><td><a href="/course/view.php?id='.$course->id.'" target="_blank">$course->id</a></td>'
+            print '<tr><td><a href="/course/view.php?id='.$course->id.'" target="_blank">'
+                    .$course->id.'</a></td>'
                 ."<td>$course->shortname</td><td>$course->fullname</td><td>$course->idnumber</td>
                 <td>".date("Y-m-d",$course->startdate)."</td></tr>\n";
             $empty_courses++;
