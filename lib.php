@@ -1173,6 +1173,7 @@ function possible_active_evaluations($evaluation) {
 
 // get all teachers of courses of current user of current evaluation - currently unused (Jan 7, 2022))
 function evaluation_get_all_teachers($evaluation, $userid = false, $force = false) {
+    validate_evaluation_sessions($evaluation);
     if ($force or empty($_SESSION["allteachers"]) or !isset($_SESSION["teamteaching_courses"])) {
         if (empty($_SESSION["allteachers"])) {
             $_SESSION["allteachers"] = array();
@@ -1192,10 +1193,6 @@ function evaluation_get_all_teachers($evaluation, $userid = false, $force = fals
             if (!empty($_SESSION["allteachers"][$courseid])) {    // courses with Team Teaching
                 $numTeachers = safeCount($_SESSION["allteachers"][$courseid]);
                 if ($numTeachers > 1) {
-                    if (!isset($_SESSION["teamteaching_courses"])) // implemented because strangely line 911 is sometimes ignored !??!
-                    {
-                        $_SESSION["teamteaching_courses"] = 0;
-                    }
                     $_SESSION["teamteaching_courses"]++;
                     $_SESSION["teamteaching_courseids"][] = $courseid;
                 }
@@ -1731,14 +1728,14 @@ function evaluation_participating_courses($evaluation, $userid = false, $cstudie
     $ids = array();
     $evaluation_is_open = (evaluation_is_open($evaluation) or intval(date("Ymd", $evaluation->timeopen)) > intval(date("Ymd")));
     if ($userid) {    //$DB->set_debug(true);
-        $myCourses = $DB->get_records_sql("SELECT e.id AS eid,e.courseid as courseid,c.idnumber as idnumber FROM {enrol} e, {course} c 
-							WHERE  e.id IN (SELECT enrolid FROM {user_enrolments} ue WHERE ue.userid=$userid AND (ue.timeend<1 or ue.timeend>" .
-                time() . "))
+        if ($evaluation_is_open) {
+            $myCourses = $DB->get_records_sql("SELECT e.id AS eid,e.courseid as courseid,c.idnumber as idnumber FROM {enrol} e, {course} c 
+							WHERE  e.id IN (SELECT enrolid FROM {user_enrolments} ue WHERE ue.userid=$userid AND (ue.timeend<1 or ue.timeend>"
+                    . time() . "))
 							AND e.courseid=c.id AND c.visible=1 AND RIGHT(c.idnumber,5) = '$evaluation_semester' ");
-        if (!$evaluation_is_open) {
-            $myCoursesC = $DB->get_records_sql("SELECT DISTINCT ON (courseid) courseid, id,course_of_studies FROM {evaluation_completed} 
+        } else{
+            $myCourses = $DB->get_records_sql("SELECT DISTINCT ON (courseid) courseid, id,course_of_studies FROM {evaluation_completed} 
 												WHERE evaluation=$evaluation->id AND (userid=$userid OR teacherid=$userid) ORDER BY courseid DESC");
-            array_merge_recursive_distinct($myCourses, $myCoursesC);
         }
         //$DB->set_debug(false);
         foreach ($myCourses as $course) {
@@ -1751,12 +1748,12 @@ function evaluation_participating_courses($evaluation, $userid = false, $cstudie
             return $ids;
         }
     }
-    $myCourses =
-            $DB->get_records_sql("SELECT id FROM {course} WHERE visible=1 AND RIGHT(idnumber,5) = '$evaluation_semester' $fcourses");
-    if (!$evaluation_is_open) {
-        $myCoursesC = $DB->get_records_sql("SELECT DISTINCT ON (courseid) id as eveid, courseid AS id, course_of_studies FROM {evaluation_enrolments} 
+    if ($evaluation_is_open) {
+        $myCourses =
+                $DB->get_records_sql("SELECT id FROM {course} WHERE visible=1 AND RIGHT(idnumber,5) = '$evaluation_semester' $fcourses");
+    } else {
+        $myCourses = $DB->get_records_sql("SELECT DISTINCT ON (courseid) id as eveid, courseid AS id, course_of_studies FROM {evaluation_enrolments} 
 											WHERE evaluation=$evaluation->id $fcourses ORDER by courseid");
-        array_merge_recursive_distinct($myCourses, $myCoursesC);
     }
     $ids = $studies = array();
     foreach ($myCourses as $course) {
