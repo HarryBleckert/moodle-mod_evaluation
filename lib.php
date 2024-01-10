@@ -4033,12 +4033,37 @@ function evaluation_is_empty_course($courseid,$debug=false) {
 
     // THIS FUNCTION IS BEING MODULARIZED SO THAT IN THE FUTURE WE CAN
     // SELECT AT SEARCH TIME WHAT CONSTITUTES AN EMPTY COURSE.
+    $sql="
+    SELECT *
+FROM mdl_course c
+WHERE c.id in(4834,5281,3099)
+AND (1 < (
+select count(*)
+FROM mdl_course_modules cm, mdl_modules m
+WHERE course in(4834,5281,3099) AND cm.module=m.id AND m.name NOT IN ('forum','bigbluebuttonbn')
+) OR 1 < (
+select count(*)
+FROM mdl_grade_categories
+WHERE courseid in(4834,5281)
+) OR 1 < (
+select count(*)
+FROM mdl_grade_items
+WHERE courseid in(4834,5281,3099)
+) OR c.id IN (
+SELECT customint1
+FROM mdl_enrol
+WHERE enrol = 'meta'
+AND
+status = 0
+))";
 
     // Course module count.
     $modularsql = "1 < (
 						select count(*)
-						  FROM {course_modules} cm, {modules} m
-						 WHERE course = :courseid1 AND cm.module=m.id AND m.name NOT IN ('forum','bigbluebuttonbn')
+						  FROM {course_modules} cm, {modules} m, {course_sections} cs
+						 WHERE cm.course = :courseid1 AND cm.module=m.id 
+						 AND cm.course = cs.course and coalesce(cs.name) <>''
+						 AND m.name NOT IN ('forum','bigbluebuttonbn')
 					   )";
     $params['courseid1'] = $courseid;
 
