@@ -4093,17 +4093,18 @@ function evaluation_get_empty_courses($sdate=false) {
     }
     $courses = $DB->get_records_sql("SELECT id, startdate, fullname, shortname, idnumber from {course} 
     $filter ORDER BY startdate ASC");
-    $empty_courses = 0;
+    $cnt = $empty_courses = 0;
     print "<h2>Empty Courses</h2><br><table>\n";
     print "<tr><th>Courseid</th><th>Shortname</th><th>Fullname</th><th>Idnumber</th><th>Startdate</th></tr>\n";
     foreach ($courses as $course){
-        if (evaluation_is_empty_course($course->id,($empty_courses==0))){
+        if (evaluation_is_empty_course($course->id,($cnt<1))){
             print '<tr><td><a href="/course/view.php?id='.$course->id.'" target="_blank">'
                     .$course->id.'</a></td>'
                 ."<td>$course->shortname</td><td>$course->fullname</td><td>$course->idnumber</td>
                 <td>".date("Y-m-d",$course->startdate)."</td></tr>\n";
             $empty_courses++;
         }
+        $cnt++;
     }
     print "</table>\n";
     print "<h2><b>$empty_courses empty courses found $filterText</h2><br><table></table></b>\n";
