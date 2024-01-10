@@ -568,87 +568,6 @@ if ($evaluation->timeopen and $evaluation->timeclose) {
 echo "<b>" . get_string('mode', 'evaluation') . "</b>: " . ($evaluation->anonymous ? "Anonym" : "Personalisiert") . " - "
         . "<b>" . get_string("questions", "evaluation") . "</b>: " . $_SESSION["questions"] . " " . $previewQ . "<br>\n";
 
-if (is_siteadmin()) //OR !empty($_SESSION["LoggedInAs"]) )
-{
-    if (isset($_GET['shuffle'])) {
-        ev_shuffle_completed_userids($evaluation, true);
-    }
-    //if( !safeCount( $DB->get_records_sql("SELECT * FROM {evaluation_item}
-    //									WHERE name ILIKE '%studiengang%' AND evaluation=$evaluation->id and typ='multichoice'")) )
-    //{	evaluation_autofill_item_studiengang( $evaluation ); }
-    //print show_user_evaluation_courses( $evaluation, $_SESSION["myEvaluations"], $id, true, true, true );
-    //unset( $_SESSION['allteachers'] );
-    //evaluation_get_all_teachers( $evaluation, false, true);
-    if (isset($_GET['set_results'])) {
-        unset($_SESSION['set_results_' . $evaluation->id]);
-        evaluation_set_results($evaluation, false, true, false);
-        ///evaluation_set_results( $evaluation);
-    }
-    if (isset($_GET['course_of_studies'])) {
-        $keys = array();
-        $dept = $departmentF = "";
-        if ( $dept AND isset($_SESSION['CoS_department']) AND safeCount($_SESSION['CoS_department']) ) {
-            $keys = array_keys($_SESSION['CoS_department']);
-            $dept = array_search($course_of_studies, $keys);
-            if (isset($_SESSION['CoS_department'][$keys[$dept]]) ) {
-                $departmentF = $_SESSION['CoS_department'][$keys[$dept]];
-                //return $department;
-            }
-        }
-
-        $department = get_department_from_cos($course_of_studies);
-        print "<hr>course_of_studies: $course_of_studies - key: $dept - F: $departmentF - department: $department
-                - ".$_SESSION['CoS_department'][$keys[$dept]]."<hr>";
-        print nl2br(var_export($_SESSION['CoS_department'], true));
-        print nl2br(var_export(array_keys($_SESSION['CoS_department']), true));
-    }
-    /*$sg_filter = $courses_filter = array();
-    list( $sg_filter, $courses_filter ) = get_evaluation_filters( $evaluation );
-    echo "<hr>evaluation:\n" . nl2br(var_export($evaluation,true)) . "<hr>sg_filter:\n" . nl2br(var_export($sg_filter,true))
-        . "<hr>filter_courses:\n" . var_export($courses_filter,true);
-    if ( !empty($courses_filter) AND in_array( 16654, $courses_filter ))
-    { echo "<hr><br>filter_courses:16654  in\n" . var_export($courses_filter,true);
-    }
-    */
-    if (false) // $DB->count_records_sql("SELECT COUNT(*) from {evaluation_enrolments} WHERE evaluation=$evaluation->id AND shortname IS NULL") )
-    {    //echo "<br><hr>evaluation_set_results( evaluation, false, true ) ...<hr>";
-        echo "<br><hr>evaluation_get_course_studies(\$evaluation): " . safeCount(evaluation_get_course_studies($evaluation));
-        echo "<br>possible_evaluations(\$evaluation): " . safeCount(possible_evaluations($evaluation));
-        echo "<br>possible_active_evaluations(\$evaluation): " . safeCount(possible_active_evaluations($evaluation));
-        $enrolments = $DB->get_records_sql("SELECT * from {evaluation_enrolments} WHERE evaluation=" . $evaluation->id);
-        $possible_evaluations = $possible_active_evaluations = 0;
-        foreach ($enrolments as $enrolment) {
-            if ($enrolment->students and !empty($enrolment->teacherids)) {
-                $possible_evaluations += ($enrolment->students * count(explode(",", $enrolment->teacherids)));
-            }
-            if ($enrolment->active_students and !empty($enrolment->active_teachers)) {
-                $possible_active_evaluations += $enrolment->active_students * $enrolment->active_teachers;
-            }
-        }
-        echo "<br>possible_evaluations(enrolments): " . $possible_evaluations;
-        echo "<br>possible_active_evaluations(enrolments): " . $possible_active_evaluations;
-
-        $evaluation_participating_courses = safeCount(evaluation_participating_courses($evaluation));
-        echo "<br>\$evaluation_participating_courses: $evaluation_participating_courses - \$evaluation_has_user_participated: $evaluation_has_user_participated";
-        echo "<br>isEvaluationCompleted( $evaluation->id, $courseid, $USER->id ): " .
-                var_export(isEvaluationCompleted($evaluation, $courseid, $USER->id), true);
-        //echo "\n\$PAGE->activityrecord: " . var_export($PAGE->activityrecord,true)."<br>\n";
-        //echo "<br>\$_SESSION['filter_course_of_studies']: " . (!isset($_SESSION['filter_course_of_studies']) ?"Not set" :var_export($_SESSION['filter_course_of_studies'],true));
-        //echo "<br>\$sg_filter: " . var_export($sg_filter,true);
-        //echo "<br>implode-explode filter_course_of_studies: " . implode("<br>\n",explode( "\n", $evaluation->filter_course_of_studies));
-
-        //@ob_flush();@ob_end_flush();@flush();@ob_start();
-        //evaluation_set_results( $evaluation, false, true );
-        //print nl2br(var_export($_SESSION, true));
-    }
-    /*echo "<hr>_SESSION[loggedInAs]: ".$_SESSION["loggedInAs"]."ID: $USER->id - Name: $USER->firstname $USER->lastname - lastaccess: $USER->lastaccess
-            - _SESSION[EVALUATION_OWNER]: ".$_SESSION["EVALUATION_OWNER"]
-            . " - _SESSION['REALUSER']: ".$_SESSION['REALUSER']->id." - GLOBALS['USER']->realuser: ".$GLOBALS['USER']->realuser."<hr>";
-    */
-    //echo (stristr($semester,'semester')?"Yes":"No"  );
-    //echo "<hr>\$_SESSION['privileged_global_users']: ".var_export($_SESSION['privileged_global_users'],true) . "<hr>";
-    //unset($_SESSION['CoS_privileged']);
-}
 
 if ($evaluationcompletion->can_complete()) {
     echo $OUTPUT->box_start('generalbox boxaligncenter');
@@ -785,6 +704,95 @@ if (is_siteadmin()) {
         print make_block_evaluation_visible($evaluation);
     }
 }
+
+if (is_siteadmin())
+{
+    if (isset($_GET['shuffle'])) {
+        ev_shuffle_completed_userids($evaluation, true);
+    }
+    //if( !safeCount( $DB->get_records_sql("SELECT * FROM {evaluation_item}
+    //									WHERE name ILIKE '%studiengang%' AND evaluation=$evaluation->id and typ='multichoice'")) )
+    //{	evaluation_autofill_item_studiengang( $evaluation ); }
+    //print show_user_evaluation_courses( $evaluation, $_SESSION["myEvaluations"], $id, true, true, true );
+    //unset( $_SESSION['allteachers'] );
+    //evaluation_get_all_teachers( $evaluation, false, true);
+    if (isset($_GET['set_results'])) {
+        unset($_SESSION['set_results_' . $evaluation->id]);
+        evaluation_set_results($evaluation, false, true, false);
+        ///evaluation_set_results( $evaluation);
+    }
+
+    if (isset($_GET['empty_courses'])) {
+       evaluation_get_empty_courses($_GET['empty_courses']);
+    }
+
+    if (isset($_GET['course_of_studies'])) {
+        $keys = array();
+        $dept = $departmentF = "";
+        if ( $dept AND isset($_SESSION['CoS_department']) AND safeCount($_SESSION['CoS_department']) ) {
+            $keys = array_keys($_SESSION['CoS_department']);
+            $dept = array_search($course_of_studies, $keys);
+            if (isset($_SESSION['CoS_department'][$keys[$dept]]) ) {
+                $departmentF = $_SESSION['CoS_department'][$keys[$dept]];
+                //return $department;
+            }
+        }
+
+        $department = get_department_from_cos($course_of_studies);
+        print "<hr>course_of_studies: $course_of_studies - key: $dept - F: $departmentF - department: $department
+                - ".$_SESSION['CoS_department'][$keys[$dept]]."<hr>";
+        print nl2br(var_export($_SESSION['CoS_department'], true));
+        print nl2br(var_export(array_keys($_SESSION['CoS_department']), true));
+    }
+    /*$sg_filter = $courses_filter = array();
+    list( $sg_filter, $courses_filter ) = get_evaluation_filters( $evaluation );
+    echo "<hr>evaluation:\n" . nl2br(var_export($evaluation,true)) . "<hr>sg_filter:\n" . nl2br(var_export($sg_filter,true))
+        . "<hr>filter_courses:\n" . var_export($courses_filter,true);
+    if ( !empty($courses_filter) AND in_array( 16654, $courses_filter ))
+    { echo "<hr><br>filter_courses:16654  in\n" . var_export($courses_filter,true);
+    }
+    */
+    if (false) // $DB->count_records_sql("SELECT COUNT(*) from {evaluation_enrolments} WHERE evaluation=$evaluation->id AND shortname IS NULL") )
+    {    //echo "<br><hr>evaluation_set_results( evaluation, false, true ) ...<hr>";
+        echo "<br><hr>evaluation_get_course_studies(\$evaluation): " . safeCount(evaluation_get_course_studies($evaluation));
+        echo "<br>possible_evaluations(\$evaluation): " . safeCount(possible_evaluations($evaluation));
+        echo "<br>possible_active_evaluations(\$evaluation): " . safeCount(possible_active_evaluations($evaluation));
+        $enrolments = $DB->get_records_sql("SELECT * from {evaluation_enrolments} WHERE evaluation=" . $evaluation->id);
+        $possible_evaluations = $possible_active_evaluations = 0;
+        foreach ($enrolments as $enrolment) {
+            if ($enrolment->students and !empty($enrolment->teacherids)) {
+                $possible_evaluations += ($enrolment->students * count(explode(",", $enrolment->teacherids)));
+            }
+            if ($enrolment->active_students and !empty($enrolment->active_teachers)) {
+                $possible_active_evaluations += $enrolment->active_students * $enrolment->active_teachers;
+            }
+        }
+        echo "<br>possible_evaluations(enrolments): " . $possible_evaluations;
+        echo "<br>possible_active_evaluations(enrolments): " . $possible_active_evaluations;
+
+        $evaluation_participating_courses = safeCount(evaluation_participating_courses($evaluation));
+        echo "<br>\$evaluation_participating_courses: $evaluation_participating_courses - \$evaluation_has_user_participated: $evaluation_has_user_participated";
+        echo "<br>isEvaluationCompleted( $evaluation->id, $courseid, $USER->id ): " .
+                var_export(isEvaluationCompleted($evaluation, $courseid, $USER->id), true);
+        //echo "\n\$PAGE->activityrecord: " . var_export($PAGE->activityrecord,true)."<br>\n";
+        //echo "<br>\$_SESSION['filter_course_of_studies']: " . (!isset($_SESSION['filter_course_of_studies']) ?"Not set" :var_export($_SESSION['filter_course_of_studies'],true));
+        //echo "<br>\$sg_filter: " . var_export($sg_filter,true);
+        //echo "<br>implode-explode filter_course_of_studies: " . implode("<br>\n",explode( "\n", $evaluation->filter_course_of_studies));
+
+        //@ob_flush();@ob_end_flush();@flush();@ob_start();
+        //evaluation_set_results( $evaluation, false, true );
+        //print nl2br(var_export($_SESSION, true));
+    }
+    /*echo "<hr>_SESSION[loggedInAs]: ".$_SESSION["loggedInAs"]."ID: $USER->id - Name: $USER->firstname $USER->lastname - lastaccess: $USER->lastaccess
+            - _SESSION[EVALUATION_OWNER]: ".$_SESSION["EVALUATION_OWNER"]
+            . " - _SESSION['REALUSER']: ".$_SESSION['REALUSER']->id." - GLOBALS['USER']->realuser: ".$GLOBALS['USER']->realuser."<hr>";
+    */
+    //echo (stristr($semester,'semester')?"Yes":"No"  );
+    //echo "<hr>\$_SESSION['privileged_global_users']: ".var_export($_SESSION['privileged_global_users'],true) . "<hr>";
+    //unset($_SESSION['CoS_privileged']);
+}
+
+
 
 echo $OUTPUT->footer();
 require_once("print.js.php");
