@@ -4062,7 +4062,8 @@ status = 0
 						select count(*)
 						  FROM {course_modules} cm, {modules} m, {course_sections} cs
 						 WHERE cm.course = :courseid1 AND cm.module=m.id 
-						 AND cm.course = cs.course and coalesce(cs.name) <>''
+						 AND cm.course = cs.course 
+						 ANMD coalesce(cs.name) <>'' ANMD coalesce(cs.summary) <>''
 						 AND m.name NOT IN ('forum','bigbluebuttonbn')
 					   )";
     $params['courseid1'] = $courseid;
