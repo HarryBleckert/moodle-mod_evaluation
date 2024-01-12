@@ -45,7 +45,7 @@ $downloading = optional_param('adownload', false, PARAM_TEXT);
 $goBack = '<div style="display:block;text-align:center;">' .
         html_writer::tag('button', "Zurück", array('style' => 'color:white;background-color:black;text-align:right;',
                 'type' => 'button', 'onclick' => '(window.history.back()?window.history.back():window.close());')) . "</div>\n";
-
+$cosStudies = 0;
 ////////////////////////////////////////////////////////
 //get the objects
 ////////////////////////////////////////////////////////
@@ -184,6 +184,7 @@ if ($deleteid) {
     // Viewing list of reponses.
     $evaluationstructure = new mod_evaluation_structure($evaluation, $cm, $courseid, null, 0,
             $teacherid, $course_of_studies, $course_of_studiesID, $department);
+    $cosStudies = safeCount($evaluationstructure->get_completed_course_of_studies());
 }
 
 $responsestable = new mod_evaluation_responses_table($evaluationstructure);
@@ -306,7 +307,8 @@ if ($userid || $showcompleted) {
             echo "</div>\n";
         }
         // Process course of studies select form.
-        if ($SiteEvaluation and !$cosPrivileged AND !$courseid AND safeCount($_SESSION['participating_courses_of_studies']) > 1) {
+        if ($SiteEvaluation and (!$cosPrivileged OR $cosStudies)
+                AND !$courseid AND $_SESSION["participating_courses_of_studies"]>1) {
             $studyselectform =
                     new mod_evaluation_course_of_studies_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
             if ($data = $studyselectform->get_data()) {

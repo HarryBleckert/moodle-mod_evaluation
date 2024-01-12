@@ -133,7 +133,7 @@ if (!isset($_SESSION['myEvaluations'])) {
 }
 $evaluationstructure = new mod_evaluation_structure($evaluation, $PAGE->cm, $courseid, null, 0,
         $teacherid, $course_of_studies, $course_of_studiesID,$department);
-
+$cosStudies = safeCount($evaluationstructure->get_completed_course_of_studies());
 $completed_responses = $evaluationstructure->count_completed_responses();
 $minresults = evaluation_min_results($evaluation);
 $minresultsText = min_results_text($evaluation);
@@ -277,7 +277,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
     if (is_siteadmin()) {
         echo '<span id="evFiltersMsg"></span>';
     } //<b>'.EVALUATION_OWNER.'</b>
-	
+
 	// process department (Fachbereich) select form $_SESSION['CoS_department'][$CoS]
     if ($SiteEvaluation and $_SESSION["participating_courses_of_studies"]>1 AND
             !$cosPrivileged and !$courseid AND !$course_of_studiesID AND !$teacherid
@@ -293,7 +293,8 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
         echo "</div>\n";
     }
     // Process course of studies select form.
-    if ($SiteEvaluation and !$cosPrivileged AND !$courseid AND $_SESSION["participating_courses_of_studies"]>1) {
+    if ($SiteEvaluation and (!$cosPrivileged OR $cosStudies)
+            AND !$courseid AND $_SESSION["participating_courses_of_studies"]>1) {
         $studyselectform =
                 new mod_evaluation_course_of_studies_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
         if ($data = $studyselectform->get_data()) {
