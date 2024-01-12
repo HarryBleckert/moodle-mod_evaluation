@@ -376,7 +376,7 @@ if (!defined('EVALUATION_OWNER') and !$Teacher) {
 }
 
 $buttonStyle = 'margin: 3px 5px;font-weight:bold;color:white;background-color:teal;';
-
+$activebuttonStyle = 'text-decoration:underline;margin: 3px 5px;font-weight:bold;color:white;background-color:teal;';
 // Button Auswertung drucken
 echo '<div style="float:left;">';
 echo evPrintButton();
@@ -427,12 +427,16 @@ if ($numTextQ and (((!$showUnmatched_minResults and ($completed_responses >= $mi
     ?>
     <div style="float:left;">
         <form style="display:inline;" method="POST">
-            <button name="TextOnly" style="<?php echo $buttonStyle; ?>" value="1" onclick="this.form.submit();">Nur Text</button>
+            <button name="TextOnly" style="<?php
+            echo ($TextOnly ?$activebuttonStyle :$buttonStyle);
+            ?>" value="1" onclick="this.form.submit();">Nur Text</button>
         </form>
     </div>
     <div style="float:left;">
         <form style="display:inline;" method="POST">
-            <button name="graphicsonly" style="<?php echo $buttonStyle; ?>" value="1" onclick="this.form.submit();">Kein Text</button>
+            <button name="graphicsonly" style="<?php
+            echo ($graphicsonly ?$activebuttonStyle :$buttonStyle);
+            ?>" value="1" onclick="this.form.submit();">Kein Text</button>
         </form>
     </div>
     <?php
