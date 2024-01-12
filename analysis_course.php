@@ -35,7 +35,7 @@ $course_of_studiesID = optional_param('course_of_studiesID', false, PARAM_INT);
 $teacherid = optional_param('teacherid', false, PARAM_INT);
 $department = optional_param('department', false, PARAM_INT);
 $TextOnly = optional_param('TextOnly', false, PARAM_INT);
-
+$graphicsonly= optional_param('graphicsonly', false, PARAM_INT);
 $Chart = optional_param('Chart', false, PARAM_ALPHANUM);
 $SetShowGraf = optional_param('SetShowGraf', 'verbergen', PARAM_ALPHANUM);
 if (!isset($_SESSION["Chart"])) {
@@ -421,12 +421,18 @@ if (($isPermitted or ($Teacher and $teacherid)) and $evaluationstructure->count_
 }
 
 // show / print only text
-if ($numTextQ and (((!$showUnmatched_minResults and ($completed_responses >= $minresultsText AND ($cosPrivileged or $Teacher)))) or
+if ($numTextQ and (((!$showUnmatched_minResults and ($completed_responses >= $minresultsText
+                                AND ($cosPrivileged or $Teacher)))) or
                 (defined('EVALUATION_OWNER') ? !$cosPrivileged : false))) {
     ?>
     <div style="float:left;">
         <form style="display:inline;" method="POST">
             <button name="TextOnly" style="<?php echo $buttonStyle; ?>" value="1" onclick="this.form.submit();">Nur Text</button>
+        </form>
+    </div>
+    <div style="float:left;">
+        <form style="display:inline;" method="POST">
+            <button name="graphicsonly" style="<?php echo $buttonStyle; ?>" value="1" onclick="this.form.submit();">Kein Text</button>
         </form>
     </div>
     <?php
@@ -540,6 +546,9 @@ if ($courseitemfilter > 0) {
 
         // show text replies only
         if ($TextOnly and in_array($item->typ, array("numeric", "multichoice", "multichoicerated"))) {
+            continue;
+        }
+        if ($graphicsonly and !in_array($item->typ, array("numeric", "multichoice", "multichoicerated"))) {
             continue;
         }
 
