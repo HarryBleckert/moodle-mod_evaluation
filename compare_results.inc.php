@@ -414,7 +414,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             if (($allSelected == "allCourses" or $allSelected == "allTeachers")) {
                 print '- mindestens <input type="number" name="minReplies" value="' . $minReplies . '"
                     style="width:42px;font-size:100%;color:white;background-color:teal;" ondblclick="this.form.submit();" 
-                    min="$minResults"> Abgaben';
+                    min="'.$minResults.'"> Abgaben';
             }
             //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
             print        "\n<br>";
