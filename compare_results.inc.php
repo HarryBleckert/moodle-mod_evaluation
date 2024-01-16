@@ -61,7 +61,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $allSubject = $subquery = $subqueryC = $subquerytxt = $filterDept = "";
     $data = $subqueryids = array();
     $zeroReplies = $invalidReplies = array();
-
+    $evaluatedResults = $evaluationResults = $omittedResults = 0
     // handle CoS privileged user
     $cosPrivileged = evaluation_cosPrivileged($evaluation);
     $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
@@ -691,6 +691,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     $evaluatedResults++;
                 }
             }
+            else{
+                $omittedResults++;
+            }
         }
         $evaluatedResults = safeCount($allCounts);
     }else if ($allSelected == "allStudies") {
@@ -749,6 +752,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $sortArray[] = array("allIDs" => $allResult->course_of_studies, "allValues" => $allResult->course_of_studies,
                         "allLinks" => $links, "allCounts" => $Counts);
                 $evaluatedResults++;
+            }
+            else{
+                $omittedResults++;
             }
         }
     } else if ($allSelected == "allCourses") {
@@ -815,6 +821,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                         "allCounts" => $Counts);
                 $evaluatedResults++;
             }
+            else{
+                $omittedResults++;
+            }
         }
     } else if ($allSelected == "allTeachers") {
         $allKey = "teacherid";
@@ -873,6 +882,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $sortArray[] = array("allIDs" => $allResult->teacherid, "allValues" => $fullname, "allLinks" => $links,
                         "allCounts" => $Counts);
                 $evaluatedResults++;
+            }
+            else{
+                $omittedResults++;
             }
         }
     }
@@ -953,8 +965,14 @@ function evaluation_compare_results($evaluation, $courseid = false,
 			<th colspan="2">' . 'Mittelwert' . '</th></tr>' . "\n";
     print  '<tr><td style="text-align:left;">' . "Alle Abgaben:" . '</td>
 				<td>' . $numresults . '</td>
-				<td style="text-align:left;"><span id="totalPresentaion"></span></td>
+				<td style="text-align:left;"><span id="totalPresentation"></span></td>
 				<td><span id="totalAvg"></span></td></tr>' . "\n";
+    if ($omittedResults){
+        print  '<tr><td style="text-align:left;">' . "Alle Abgaben <".$minReplies.":" . '</td>
+				<td>' . $omittedResults . '</td>
+				<td style="text-align:left;"><span id="omittedResult"></span></td>
+				<td><span id="omittedAvg"></span></td></tr>' . "\n";
+    }
     $title = "";
     if ($filter) {
         if (empty($fTitle) and $cosPrivileged_filter) {
@@ -1244,7 +1262,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $presentation = array(($validation ? "ungültig" : "keine Antwort"), "Ja", "Nein");
     }
     $hint = $presentation[max(0, round($totalAvg))];
-    $tags["totalPresentaion"] = trim($hint);
+    $tags["totalPresentation"] = trim($hint);
     $invalidItems = 0;
     $rowsA = array();
     if ($allKey) {
