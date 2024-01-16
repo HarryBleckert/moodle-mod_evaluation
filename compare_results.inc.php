@@ -61,7 +61,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $allSubject = $subquery = $subqueryC = $subquerytxt = $filterDept = "";
     $data = $subqueryids = array();
     $zeroReplies = $invalidReplies = array();
-    $evaluatedResults = $evaluationResults = $omittedResults = 0
+    $evaluatedResults = $evaluationResults = $omittedResults = 0;
     // handle CoS privileged user
     $cosPrivileged = evaluation_cosPrivileged($evaluation);
     $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
