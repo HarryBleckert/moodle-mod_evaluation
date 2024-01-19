@@ -823,7 +823,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                         "allCounts" => $Counts);
                 $evaluatedResults++;
             // }
-            if ( $allResult->count < $minRepliese) {
+            if ( $allResult->count < $minReplies) {
                 $omittedResults++;
             }
         }
