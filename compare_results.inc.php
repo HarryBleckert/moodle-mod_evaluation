@@ -1324,7 +1324,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     continue;
                 }
                 $filterAvg = "";
-                $hint = '<small><i title="Weniger als '.$minReplies.' Abgaben">verborgen</i></small>';
+                $hint = '';
                 if ($sortKey != "replies") {
                     $sortCol = 0;
                 }
@@ -1428,7 +1428,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $tags["filterAvg"] = 0;
         }
         if ( $numresultsF < $minReplies){
-            $tags["filterPresentation"] = '<small><i title="Weniger als '.$minReplies.' Abgaben">verborgen</i></small>';
+            $tags["filterPresentation"] = '';
             $tags["filterAvg"] = "";
         }
     }
@@ -1464,7 +1464,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         }
 
         if ( $numresultsSq < $minReplies){
-            $tags["SqPresentation"] = '<small><i title="Weniger als '.$minReplies.' Abgaben">verborgen</i></small>';
+            $tags["SqPresentation"] = '';
             $tags["SqAvg"] = "";
         }
     }
