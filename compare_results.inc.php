@@ -1583,7 +1583,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     continue;
                 }
                 $replies = $allCounts[$allValues[$key]];
-print "<hr>minReplies: $minReplies - key: $key => value:$value - allCounts[$allValues[$key]] = $replies<hr>";
+                // print "<hr>minReplies: $minReplies - key: $key => value:$value - allCounts[$allValues[$key]] = $replies<hr>";
                 if ($replies >= $minReplies) {
                     $JSdata['datasets'][] =
                             ['data' => $data['average_' . $value], 'label' => $allValues[$key],
