@@ -425,7 +425,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 echo $minReplies;?> Abgaben anzeigen/verbergen"
                     onclick="this.form.submit();">
                 <?php
-                echo ($showOmitted ?"anzeigen" :"verbergen"); ?></button>
+                echo (!$showOmitted ?"anzeigen" :"verbergen"); ?></button>
             <?php
 
             //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
