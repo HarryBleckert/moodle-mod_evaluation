@@ -1190,7 +1190,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 					  WHERE item=$question->id AND value IN ($fValues) $filter";
             $record = $DB->get_record_sql($query);
             //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter" $subquery)->count;
-            if (!empty($record) and $numresultsF >= $minReplies and $record->average >= 1) {
+            if (!empty($record) and $record->average >= 1) { // and $numresultsF >= $minReplies
                 $average = round($record->average, 2);
                 if ($YesNo) {
                     $hint = "Ja/Nein (1-2)";
@@ -1208,11 +1208,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 } else {
                     $hint = $presentation[max(0, round($average))];
                 }
-                if ($numresultsF >= $minReplies) {
+                // if ($numresultsF >= $minReplies) {
                     $data['averageF'][$qCount] = $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
                     $data['averageF_presentation'][$qCount] = $hint;
                     $data['averageF_labels'][$qCount] = $hint . " (0)";
-                }
+                // }
             }
         }
         if ($subquery) {
@@ -1220,7 +1220,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 			    		  WHERE item=$question->id AND value IN ($fValues) $filter $subquery";
             $record = $DB->get_record_sql($query);
             //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter" $subquery)->count;
-            if (!empty($record) and $numresultsSq >= $minReplies and $record->average >= 1) {
+            if (!empty($record) and $record->average >= 1) { // and $numresultsSq >= $minReplies
                 $average = round($record->average, 2);
                 if ($YesNo) {
                     $hint = "Ja/Nein (1-2)";
@@ -1238,11 +1238,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 } else {
                     $hint = $presentation[max(0, round($average))];
                 }
-                if ($numresultsSq >= $minReplies) {
+                // if ($numresultsSq >= $minReplies) {
                     $data['averageSq'][$qCount] = $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
                     $data['averageSq_presentation'][$qCount] = $hint;
                     $data['averageSq_labels'][$qCount] = $hint . " (0)";
-                }
+                // }
             }
         }
 
