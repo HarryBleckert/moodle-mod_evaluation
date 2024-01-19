@@ -122,7 +122,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     // validation needs more research
     if (!is_siteadmin()){  //AND !defined('EVALUATION_OWNER') )
         $validation = false;
-        $hideInvalid = true;
+        $hideInvalid = false;
     }
     // access control
     if (defined('EVALUATION_OWNER')) {
