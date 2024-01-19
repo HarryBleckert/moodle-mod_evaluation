@@ -418,15 +418,15 @@ function evaluation_compare_results($evaluation, $courseid = false,
                         .(defined('EVALUATION_OWNER')?1:$minResults)
                         .'"> Abgaben';
             }
-            if ($omittedResults){
-                ?>
-                <button name="showOmitted" style="<?php echo $style; ?>" value="<?php
-                echo ($showOmitted ?0 :1); ?>"
-                        onclick="this.form.submit();">
-                    <?php
-                    echo ($showOmitted ?"anzeigen" :"verbergen"); ?></button>
+            // show or hide lines < minReplies
+            ?>
+            <button name="showOmitted" style="<?php echo $style; ?>" value="<?php
+            echo ($showOmitted ?0 :1); ?>"
+                    onclick="this.form.submit();">
                 <?php
-            }
+                echo ($showOmitted ?"anzeigen" :"verbergen"); ?></button>
+            <?php
+
             //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
             print        "\n<br>";
 
