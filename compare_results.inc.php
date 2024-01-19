@@ -1464,7 +1464,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $tags["SqAvg"] = "";
         }
     }
-    if (count($rowsA) < 2 ) AND !$filter) {
+    if (count($rowsA) < 2 AND !$filter) {
         print "\n<script>document.getElementById('showFilter').style.display='none';</script>\n";
     }
     print "<script>\n";
