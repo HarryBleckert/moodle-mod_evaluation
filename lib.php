@@ -911,7 +911,7 @@ function evaluation_LoginAs() {
         if ($CoS_privileged_cnt) {
             $cnt = 0;
             $choice = random_int(0, $CoS_privileged_cnt);
-            if (true) //evaluation_debug( false ) )
+            if (false) //evaluation_debug( false ) )
             {
                 print "<br><hr>\$CoS_privileged_cnt: $CoS_privileged_cnt:\n_CoS_privileged: "
                         . nl2br(var_export($CoS_privileged, true)) . "<hr>\n";
