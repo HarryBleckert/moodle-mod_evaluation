@@ -34,18 +34,18 @@ function evaluation_compare_results($evaluation, $courseid = false,
         </form>
         <?php
     }
-    $isOpen = evaluation_is_open($evaluation);
-    $maxCharts = intval(ev_session_request("maxCharts", 21));
-    $allSelected = ev_session_request("allSelected", "");
-    $ChartAxis = ev_session_request("ChartAxis", "x");
-    $sortOrder = intval(ev_session_request("sortOrder", SORT_ASC));
-    $minReplies = intval(ev_session_request("minReplies", evaluation_min_results($evaluation)));
     $minResults = evaluation_min_results($evaluation);
     $minResultsText = min_results_text($evaluation);
     $minResultsPriv = min_results_priv($evaluation);
     if (defined('EVALUATION_OWNER')) {
         $minResults = $minResultsText = $minResultsPriv;
     }
+    $isOpen = evaluation_is_open($evaluation);
+    $maxCharts = intval(ev_session_request("maxCharts", 21));
+    $allSelected = ev_session_request("allSelected", "");
+    $ChartAxis = ev_session_request("ChartAxis", "x");
+    $sortOrder = intval(ev_session_request("sortOrder", SORT_ASC));
+    $minReplies = intval(ev_session_request("minReplies", $minResults));
     $qSelected = intval(ev_session_request("qSelected", ""));
     $sortKey = ev_session_request("sortKey", "values");
     $validation = intval(ev_session_request("validation", 0));
@@ -611,12 +611,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $numresultsF =
             safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
                 WHERE evaluation=$evaluation->id $filterC $subqueryC"));
-    if ($filterC and $numresultsF < $minResults) {
+    if ($filterC and $numresultsF < $minReplies) {
         /*if (!is_siteadmin()) {
             $filter = $filterC = "";
         }*/
         print '<span style="color:red;font-weight:bold;">' . "Es gibt für</span> '" . implode(", ", $fTitle) . "' "
-                . '<span style="color:red;font-weight:bold;">' . "weniger als $minResults Abgaben</span>. "
+                . '<span style="color:red;font-weight:bold;">' . "weniger als $minReplies Abgaben</span>. "
                 . "<b>Daher wird keine Auswertung angezeigt!</b><br>" . (is_siteadmin() ? "- except for siteadmin" : "") . "<br>\n";
     }
     //handle CoS priv users
@@ -787,7 +787,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY courseid ORDER BY courseid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
-            if ($allResult->count >= $minReplies) {
+            // if ($allResult->count >= $minReplies) {
                 if (!defined('EVALUATION_OWNER') and !evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
                         and !evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid)) {
                     continue;
@@ -822,8 +822,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $sortArray[] = array("allIDs" => $allResult->courseid, "allValues" => $fullname, "allLinks" => $links,
                         "allCounts" => $Counts);
                 $evaluatedResults++;
-            }
-            else{
+            // }
+            if ( $allResult->count < $minRepliese) {
                 $omittedResults++;
             }
         }
@@ -1190,7 +1190,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 					  WHERE item=$question->id AND value IN ($fValues) $filter";
             $record = $DB->get_record_sql($query);
             //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter" $subquery)->count;
-            if (!empty($record) and $numresultsF >= $minResults and $record->average >= 1) {
+            if (!empty($record) and $numresultsF >= $minReplies and $record->average >= 1) {
                 $average = round($record->average, 2);
                 if ($YesNo) {
                     $hint = "Ja/Nein (1-2)";
@@ -1208,7 +1208,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 } else {
                     $hint = $presentation[max(0, round($average))];
                 }
-                if ($numresultsF >= $minResults) {
+                if ($numresultsF >= $minReplies) {
                     $data['averageF'][$qCount] = $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
                     $data['averageF_presentation'][$qCount] = $hint;
                     $data['averageF_labels'][$qCount] = $hint . " (0)";
@@ -1220,7 +1220,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 			    		  WHERE item=$question->id AND value IN ($fValues) $filter $subquery";
             $record = $DB->get_record_sql($query);
             //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter" $subquery)->count;
-            if (!empty($record) and $numresultsSq >= $minResults and $record->average >= 1) {
+            if (!empty($record) and $numresultsSq >= $minReplies and $record->average >= 1) {
                 $average = round($record->average, 2);
                 if ($YesNo) {
                     $hint = "Ja/Nein (1-2)";
@@ -1238,7 +1238,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 } else {
                     $hint = $presentation[max(0, round($average))];
                 }
-                if ($numresultsSq >= $minResults) {
+                if ($numresultsSq >= $minReplies) {
                     $data['averageSq'][$qCount] = $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
                     $data['averageSq_presentation'][$qCount] = $hint;
                     $data['averageSq_labels'][$qCount] = $hint . " (0)";
@@ -1265,13 +1265,14 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
     $hint = $presentation[max(0, round($totalAvg))];
     $tags["totalPresentation"] = trim($hint);
-    $invalidItems = 0;
+    $invalidItems = $replies = 0;
     $rowsA = array();
     if ($allKey) {
         $allAvg = array();
         $filterAVGsum = $repliesSum = 0;
         foreach ($allIDs as $key => $value) {
             $validated = true;
+            $replies = $allCounts[$allValues[$key]];
             $AVGsum = $replypattern = $filterAvg = 0;
             foreach ($data['average_' . $value] as $reply) {
                 $replypattern = max($replypattern, $reply);
@@ -1308,7 +1309,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $filterAVGsum += $filterAvg;
             $allAvg[$key] = $AVGsum;
             //$filterAVGsum += $filterAvg;
-            $repliesSum += $allCounts[$allValues[$key]];
+            $repliesSum += $replies;
             // handle different link for course_of_studies
             if (isset($allCosIDs[$key])) {
                 $value = $allCosIDs[$key];
@@ -1316,7 +1317,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $sortCol = $filterAvg;
             $hint = trim($hint);
             if ($sortKey == "replies") {
-                $sortCol = $allCounts[$allValues[$key]];
+                $sortCol = $replies; // $allCounts[$allValues[$key]];
             }
             if (defined('EVALUATION_OWNER') || $allSelected == "allCourses"){
                 //{	$hintLink = '<a href="print.php?showCompare=1&allSelected=useFilter&id='
@@ -1329,18 +1330,17 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
             //if ( $isFilter AND $allSelected == "allTeachers" )
             //{	$allLinks[$key] = "Alle ". ( $teacherid ?"ausgwählten " :"") . get_string("teachers","evaluation"); }
-
+            if ( $replies < $minReplies){
+                $filterAvg = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
+            }
             $rowsA[] = array("key" => $key, "sortKey" => $sortCol,
                     "row" => 'row = table.insertRow(-1); '
                             . 'nCell = row.insertCell(0); nCell.innerHTML = \'' . $allLinks[$key] .
                             '\';nCell.style.textAlign ="left"; '
-                            . 'nCell = row.insertCell(1); nCell.innerHTML = \'' . $allCounts[$allValues[$key]] . '\'; '
+                            . 'nCell = row.insertCell(1); nCell.innerHTML = \'' . $replies . '\'; '
                             . 'nCell = row.insertCell(2); nCell.innerHTML = \'' . $hintLink . '\';nCell.style.textAlign ="left"; '
                             . 'nCell = row.insertCell(3); nCell.innerHTML = "' . $filterAvg . '";'
                             . "\n"); //row.style.textAlign ="right";
-            /*print "<br>Data $value=".$allValues[$key].": filterAvg :$filterAvg: Average: " . var_export( $data['average_'.$value], true)
-            . "<br>\nLabels: "	.var_export( $data['labels_'.$value], true) . "<br>\n";*/
-
         }
         $ids = array_column($rowsA, 'key');
         $sortCol = array_column($rowsA, 'sortKey');
@@ -1392,7 +1392,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         print '<script>var table = document.getElementById("chartResultsTable");var row = ncell = "";'
                 . $rows . '</script>';
     }
-    if ($filter and $numresultsF >= $minResults) {
+    if ($filter) {
         $filterAvg = $replypattern = 0;
         $validated = false;
         foreach ($data['averageF'] as $reply) {
@@ -1420,9 +1420,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $hint = "ungültig ($filterAvg)";
             $tags["filterAvg"] = 0;
         }
+        if ( $numresultsF < $minReplies){
+            $tags["filterAvg"] = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
+        }
     }
     // subquery
-    if ($subquery and $numresultsSq >= $minResults) {
+    if ($subquery) {
 
         $filterAvg = $replypattern = 0;
         $validated = false;
@@ -1450,6 +1453,10 @@ function evaluation_compare_results($evaluation, $courseid = false,
         } else {
             $hint = "ungültig ($filterAvg)";
             $tags["SqAvg"] = 0;
+        }
+
+        if ( $numresultsSq < $minReplies){
+            $tags["SqAvg"] = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
         }
     }
     if (count($rowsA) < 2 AND !$filter) { //  and empty($subquery)
@@ -1571,10 +1578,14 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 if (empty($data['average_' . $value])) {
                     continue;
                 }
-                $JSdata['datasets'][] =
-                        ['data' => $data['average_' . $value], 'label' => $allValues[$key], 'labels' => $data['labels_' . $value],
-                                'backgroundColor' => $colors[$key + 3], 'borderColor' => $colors[$key + 3]];
-                $cnt++;
+                $replies = $allCounts[$allValues[$key]];
+                if ($replies >= $minReplies) {
+                    $JSdata['datasets'][] =
+                            ['data' => $data['average_' . $value], 'label' => $allValues[$key],
+                                    'labels' => $data['labels_' . $value],
+                                    'backgroundColor' => $colors[$key + 3], 'borderColor' => $colors[$key + 3]];
+                    $cnt++;
+                }
                 if ($cnt == $maxCharts) {
                     break;
                 }
