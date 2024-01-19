@@ -418,7 +418,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     style="width:42px;font-size:100%;color:white;background-color:teal;" 
                     ondblclick="this.form.submit();"
                     min="'
-                        .(defined('EVALUATION_OWNER')?1:$minResults)
+                        .(defined('EVALUATION_OWNER' AND !$cosPrivileged)?1:$minResults)
                         .'"> Abgaben';
             }
             // show or hide lines < minReplies
