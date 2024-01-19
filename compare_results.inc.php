@@ -1292,7 +1292,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $hint = "ungültig ($filterAvg)";
                 $validated = false;
             }
-            /*if (!$qSelected and $validation) {
+            if (!$qSelected and $validation) {
                 if ($hideInvalid and !$validated) {
                     unset($data['average_' . $value]);
                     $invalidItems++;
@@ -1305,7 +1305,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             } else if (!$qSelected and $validation and !$validated) {
                 $invalidItems++;
                 continue;
-            }*/
+            }
             $filterAVGsum += $filterAvg;
             $allAvg[$key] = $AVGsum;
             //$filterAVGsum += $filterAvg;
@@ -1322,7 +1322,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
             if ( $replies < $minReplies){
                 $filterAvg = "";
-                $hint = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
+                $hint = '<small><i title="Weniger als '.$minReplies.' Abgaben">verborgen</i></small>';
             }
 
             if (defined('EVALUATION_OWNER') || $allSelected == "allCourses"){
@@ -1334,16 +1334,15 @@ function evaluation_compare_results($evaluation, $courseid = false,
             } else {
                 $hintLink = $hint;
             }
-            //if ( $isFilter AND $allSelected == "allTeachers" )
-            //{	$allLinks[$key] = "Alle ". ( $teacherid ?"ausgwählten " :"") . get_string("teachers","evaluation"); }
             $rowsA[] = array("key" => $key, "sortKey" => $sortCol,
                     "row" => 'row = table.insertRow(-1); '
                             . 'nCell = row.insertCell(0); nCell.innerHTML = \'' . $allLinks[$key] .
                             '\';nCell.style.textAlign ="left"; '
                             . 'nCell = row.insertCell(1); nCell.innerHTML = \'' . $replies . '\'; '
-                            . 'nCell = row.insertCell(2); nCell.innerHTML = \'' . $hintLink . '\';nCell.style.textAlign ="left"; '
+                            . 'nCell = row.insertCell(2); nCell.innerHTML = \'' . $hintLink . '\'; '
+                            . 'nCell.style.textAlign ="left"; '
                             . 'nCell = row.insertCell(3); nCell.innerHTML = "' . $filterAvg . '";'
-                            . "\n"); //row.style.textAlign ="right";
+                            . "\n");
         }
         $ids = array_column($rowsA, 'key');
         $sortCol = array_column($rowsA, 'sortKey');
@@ -1424,7 +1423,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $tags["filterAvg"] = 0;
         }
         if ( $numresultsF < $minReplies){
-            $tags["filterPresentation"] = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
+            $tags["filterPresentation"] = '<small><i title="Weniger als '.$minReplies.' Abgaben">verborgen</i></small>';
             $tags["filterAvg"] = "";
         }
     }
@@ -1460,7 +1459,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         }
 
         if ( $numresultsSq < $minReplies){
-            $tags["SqPresentation"] = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
+            $tags["SqPresentation"] = '<small><i title="Weniger als '.$minReplies.' Abgaben">verborgen</i></small>';
             $tags["SqAvg"] = "";
         }
     }
