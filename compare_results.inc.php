@@ -119,6 +119,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $allSubject = get_string("teachers", "evaluation");
     }
 
+    // validation needs more research
+    if (!is_siteadmin()){  //AND !defined('EVALUATION_OWNER') )
+        $validation = false;
+        $hideInvalid = true;
+    }
     // access control
     if (defined('EVALUATION_OWNER')) {
         get_evaluation_filters($evaluation);
@@ -270,11 +275,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         <form style="display:inline;" id="statsForm" method="POST" action="print.php">
             <?php
 
-            // validation needs more research
-            if (!is_siteadmin()){  //AND !defined('EVALUATION_OWNER') )
-                $validation = $hideInvalid = true;
-            }
-            else if (!$qSelected){
+            if (!$qSelected){
                 $label = ($validation ? "V" : "Nicht V") . "alidiert";
                 $value = ($validation ? 0 : 1);
                 ?>
