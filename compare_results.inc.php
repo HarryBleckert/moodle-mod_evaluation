@@ -416,7 +416,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     style="width:42px;font-size:100%;color:white;background-color:teal;" 
                     ondblclick="this.form.submit();"
                     title="Evaluationen für ' .$allSubject. ' mit weniger als "' . $minReplies
-                        . ' Abgaben dürfen nicht ausgewertet werden."'
+                        . ' Abgaben dürfen nicht ausgewertet werden."
                     min="'
                         .(defined('EVALUATION_OWNER')?1:$minResults)
                         .'"> Abgaben';
