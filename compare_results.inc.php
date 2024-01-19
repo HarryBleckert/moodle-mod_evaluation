@@ -52,6 +52,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $hideInvalid = intval(ev_session_request("hideInvalid", 1));
     $applysubquery = intval(ev_session_request("applysubquery", 0));
     $subqueries = ev_session_request("subqueries", array());
+    $showOmitted = intval(ev_session_request("showOmitted", 0));
     $isFilter = ($teacherid or $courseid or $course_of_studiesID or $department);
     /*if ( $isFilter AND $allSelected == "useFilter" )
     {	if ( $courseid ) { $allSelected = "allCourses"; }
@@ -409,14 +410,22 @@ function evaluation_compare_results($evaluation, $courseid = false,
                         onclick="this.form.submit();"><?php
                     echo get_string("teachers", "evaluation"); ?></button>
                 <?php
-            } // if !teacherid
-            //defined('EVALUATION_OWNER') AND
+            }
             if (($allSelected == "allCourses" or $allSelected == "allTeachers")) {
                 print '- mindestens <input type="number" name="minReplies" value="' . $minReplies . '"
                     style="width:42px;font-size:100%;color:white;background-color:teal;" ondblclick="this.form.submit();" 
                     min="'
                         .(defined('EVALUATION_OWNER')?1:$minResults)
                         .'"> Abgaben';
+            }
+            if ($omittedResults){
+                ?>
+                <button name="showOmitted" style="<?php echo $style; ?>" value="<?php
+                echo ($showOmitted ?0 :1); ?>"
+                        onclick="this.form.submit();">
+                    <?php
+                    echo ($showOmitted ?"anzeigen" :"verbergen"); ?></button>
+                <?php
             }
             //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
             print        "\n<br>";
@@ -663,36 +672,34 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY course_of_studies ORDER BY course_of_studies");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
-            // if ($allResult->count >= $minReplies) {
-                // array_keys($_SESSION['CoS_department'], $department)
-                $dept = $_SESSION['CoS_department'][$allResult->course_of_studies];
-                if ($dept) {
-                    $allIDs[$dept] = $allValues[$dept] = $dept;
-                    if (defined('EVALUATION_OWNER')) {
-                        $links = '<a href="analysis_course.php?id=' . $id
-                                . '&department='
-                                . $dept
-                                . '" target="analysis">' . $dept . "</a>";
-                    } else {
-                        $links = $dept;
-                    }
-                    $allLinks[$dept] = $links;
-                    if (false && $isFilter) {
-                        $Result = $DB->get_record_sql("select count(*) AS count 
-						FROM {evaluation_completed}
-						WHERE evaluation=$evaluation->id $filter $subqueryC");
-                        //GROUP BY course_of_studies ORDER BY course_of_studies");
-                        $Counts = $Result->count;
-                        //print 	"<br>Result= ".nl2br(var_export( $Result, true)) ."<br>";
-                    } else {
-                        $Counts = $allResult->count;
-                    }
-                    $allCounts[$dept] += $Counts;
-                    $sortArray[$dept] = array("allIDs" => $dept, "allValues" => $dept,
-                            "allLinks" => $links, "allCounts" => $Counts);
-                    $evaluatedResults++;
+            // array_keys($_SESSION['CoS_department'], $department)
+            $dept = $_SESSION['CoS_department'][$allResult->course_of_studies];
+            if ($dept) {
+                $allIDs[$dept] = $allValues[$dept] = $dept;
+                if (defined('EVALUATION_OWNER')) {
+                    $links = '<a href="analysis_course.php?id=' . $id
+                            . '&department='
+                            . $dept
+                            . '" target="analysis">' . $dept . "</a>";
+                } else {
+                    $links = $dept;
                 }
-            // }
+                $allLinks[$dept] = $links;
+                if (false && $isFilter) {
+                    $Result = $DB->get_record_sql("select count(*) AS count 
+                    FROM {evaluation_completed}
+                    WHERE evaluation=$evaluation->id $filter $subqueryC");
+                    //GROUP BY course_of_studies ORDER BY course_of_studies");
+                    $Counts = $Result->count;
+                    //print 	"<br>Result= ".nl2br(var_export( $Result, true)) ."<br>";
+                } else {
+                    $Counts = $allResult->count;
+                }
+                $allCounts[$dept] += $Counts;
+                $sortArray[$dept] = array("allIDs" => $dept, "allValues" => $dept,
+                        "allLinks" => $links, "allCounts" => $Counts);
+                $evaluatedResults++;
+            }
             if ( $allResult->count < $minReplies) {
                 $omittedResults++;
             }
@@ -726,35 +733,34 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY course_of_studies ORDER BY course_of_studies");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
-            // if ($allResult->count >= $minReplies) {
-                $allIDs[] = $allValues[] = $allResult->course_of_studies;
-                $course_of_studiesID =
-                        evaluation_get_course_of_studies_id_from_evc($id, $allResult->course_of_studies, $evaluation);
-                $allCosIDs[] = $course_of_studiesID;
-                if (defined('EVALUATION_OWNER')) {
-                    $links = '<a href="analysis_course.php?id=' . $id .
-                            '&course_of_studiesID='
-                            . $course_of_studiesID
-                            . '" target="analysis">' . $allResult->course_of_studies . "</a>";
-                } else {
-                    $links = $allResult->course_of_studies;
-                }
-                $allLinks[] = $links;
-                if ($isFilter) {
-                    $Result = $DB->get_record_sql("select count(*) AS count 
-						FROM {evaluation_completed}
-						WHERE evaluation=$evaluation->id AND course_of_studies='$allResult->course_of_studies' $subqueryC");
-                    //GROUP BY course_of_studies ORDER BY course_of_studies");
-                    $Counts = $Result->count;
-                    //print 	"<br>Result= ".nl2br(var_export( $Result, true)) ."<br>";
-                } else {
-                    $Counts = $allResult->count;
-                }
-                $allCounts[$allResult->course_of_studies] = $Counts;
-                $sortArray[] = array("allIDs" => $allResult->course_of_studies, "allValues" => $allResult->course_of_studies,
-                        "allLinks" => $links, "allCounts" => $Counts);
-                $evaluatedResults++;
-            // }
+            $allIDs[] = $allValues[] = $allResult->course_of_studies;
+            $course_of_studiesID =
+                    evaluation_get_course_of_studies_id_from_evc($id, $allResult->course_of_studies, $evaluation);
+            $allCosIDs[] = $course_of_studiesID;
+            if (defined('EVALUATION_OWNER')) {
+                $links = '<a href="analysis_course.php?id=' . $id .
+                        '&course_of_studiesID='
+                        . $course_of_studiesID
+                        . '" target="analysis">' . $allResult->course_of_studies . "</a>";
+            } else {
+                $links = $allResult->course_of_studies;
+            }
+            $allLinks[] = $links;
+            if ($isFilter) {
+                $Result = $DB->get_record_sql("select count(*) AS count 
+                    FROM {evaluation_completed}
+                    WHERE evaluation=$evaluation->id AND course_of_studies='$allResult->course_of_studies' $subqueryC");
+                //GROUP BY course_of_studies ORDER BY course_of_studies");
+                $Counts = $Result->count;
+                //print 	"<br>Result= ".nl2br(var_export( $Result, true)) ."<br>";
+            } else {
+                $Counts = $allResult->count;
+            }
+            $allCounts[$allResult->course_of_studies] = $Counts;
+            $sortArray[] = array("allIDs" => $allResult->course_of_studies, "allValues" => $allResult->course_of_studies,
+                    "allLinks" => $links, "allCounts" => $Counts);
+            $evaluatedResults++;
+
             if ( $allResult->count < $minReplies) {
                 $omittedResults++;
             }
@@ -787,42 +793,40 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY courseid ORDER BY courseid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
-            // if ($allResult->count >= $minReplies) {
-                if (!defined('EVALUATION_OWNER') and !evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
-                        and !evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid)) {
-                    continue;
-                }
+            if (!defined('EVALUATION_OWNER') and !evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
+                    and !evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid)) {
+                continue;
+            }
 
-                $fullname = evaluation_get_course_field($allResult->courseid, 'fullname');
-                if (true) //defined('EVALUATION_OWNER') )
-                {
-                    $links = '<a href="analysis_course.php?id=' . $id . '&courseid=' . $allResult->courseid
-                            . '" title="' . $fullname . '" target="analysis">'
-                            . (strlen($fullname) > 120 ? substr($fullname, 0, 120) . "..." : $fullname) . "</a>";
-                } else {
-                    $links = $fullname;
-                }
-                if (empty($fullname)) {
-                    $fullname = '<b style="color:red;">Der Kurs mit Kurs-ID ' . $allResult->courseid . ' existiert nicht mehr!</b>';
-                    $links = $fullname;
-                }
-                $allLinks[] = $links;
-                $allIDs[] = $allResult->courseid;
-                $allValues[] = $fullname;
-                if ($isFilter) {
-                    $Result = $DB->get_record_sql("select count(*) AS count
-									FROM {evaluation_completed}
-									WHERE evaluation=$evaluation->id AND courseid=$allResult->courseid $subqueryC");
-                    //GROUP BY courseid ORDER BY courseid");
-                    $Counts = $Result->count;
-                } else {
-                    $Counts = $allResult->count;
-                }
-                $allCounts[$fullname] = $Counts;
-                $sortArray[] = array("allIDs" => $allResult->courseid, "allValues" => $fullname, "allLinks" => $links,
-                        "allCounts" => $Counts);
-                $evaluatedResults++;
-            // }
+            $fullname = evaluation_get_course_field($allResult->courseid, 'fullname');
+            if (true) //defined('EVALUATION_OWNER') )
+            {
+                $links = '<a href="analysis_course.php?id=' . $id . '&courseid=' . $allResult->courseid
+                        . '" title="' . $fullname . '" target="analysis">'
+                        . (strlen($fullname) > 120 ? substr($fullname, 0, 120) . "..." : $fullname) . "</a>";
+            } else {
+                $links = $fullname;
+            }
+            if (empty($fullname)) {
+                $fullname = '<b style="color:red;">Der Kurs mit Kurs-ID ' . $allResult->courseid . ' existiert nicht mehr!</b>';
+                $links = $fullname;
+            }
+            $allLinks[] = $links;
+            $allIDs[] = $allResult->courseid;
+            $allValues[] = $fullname;
+            if ($isFilter) {
+                $Result = $DB->get_record_sql("select count(*) AS count
+                                FROM {evaluation_completed}
+                                WHERE evaluation=$evaluation->id AND courseid=$allResult->courseid $subqueryC");
+                //GROUP BY courseid ORDER BY courseid");
+                $Counts = $Result->count;
+            } else {
+                $Counts = $allResult->count;
+            }
+            $allCounts[$fullname] = $Counts;
+            $sortArray[] = array("allIDs" => $allResult->courseid, "allValues" => $fullname, "allLinks" => $links,
+                    "allCounts" => $Counts);
+            $evaluatedResults++;
             if ( $allResult->count < $minReplies) {
                 $omittedResults++;
             }
@@ -855,36 +859,34 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY teacherid ORDER BY teacherid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
-            // if ($allResult->count >= $minReplies) {
-                $fullname = evaluation_get_user_field($allResult->teacherid, 'fullname');
-                if (defined('EVALUATION_OWNER')) {
-                    $links = '<a href="print.php?id=' . $id . '&showTeacher=' . $allResult->teacherid
-                            . '" target="analysis">' . $fullname . "</a>";
-                } else {
-                    $links = $fullname;
-                }
-                if (empty($fullname)) {
-                    $fullname = '<b style="color:red;">Es gibt kein ASH Konto mehr für einen Lehrenden mit der User-ID' .
-                            $allResult->teacherid . '!</b>';
-                    $links = $fullname;
-                }
-                $allLinks[] = $links;
-                $allIDs[] = $allResult->teacherid;
-                $allValues[] = $fullname;
-                if ($isFilter) {
-                    $Result = $DB->get_record_sql("select count(*) AS count
-											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id AND teacherid=$allResult->teacherid $subqueryC");
-                    //GROUP BY courseid ORDER BY courseid");
-                    $Counts = $Result->count;
-                } else {
-                    $Counts = $allResult->count;
-                }
-                $allCounts[$fullname] = $Counts;
-                $sortArray[] = array("allIDs" => $allResult->teacherid, "allValues" => $fullname, "allLinks" => $links,
-                        "allCounts" => $Counts);
-                $evaluatedResults++;
-            // }
+            $fullname = evaluation_get_user_field($allResult->teacherid, 'fullname');
+            if (defined('EVALUATION_OWNER')) {
+                $links = '<a href="print.php?id=' . $id . '&showTeacher=' . $allResult->teacherid
+                        . '" target="analysis">' . $fullname . "</a>";
+            } else {
+                $links = $fullname;
+            }
+            if (empty($fullname)) {
+                $fullname = '<b style="color:red;">Es gibt kein ASH Konto mehr für einen Lehrenden mit der User-ID' .
+                        $allResult->teacherid . '!</b>';
+                $links = $fullname;
+            }
+            $allLinks[] = $links;
+            $allIDs[] = $allResult->teacherid;
+            $allValues[] = $fullname;
+            if ($isFilter) {
+                $Result = $DB->get_record_sql("select count(*) AS count
+                                         FROM {evaluation_completed}
+                                         WHERE evaluation=$evaluation->id AND teacherid=$allResult->teacherid $subqueryC");
+                //GROUP BY courseid ORDER BY courseid");
+                $Counts = $Result->count;
+            } else {
+                $Counts = $allResult->count;
+            }
+            $allCounts[$fullname] = $Counts;
+            $sortArray[] = array("allIDs" => $allResult->teacherid, "allValues" => $fullname, "allLinks" => $links,
+                    "allCounts" => $Counts);
+            $evaluatedResults++;
             if ( $allResult->count < $minReplies) {
                 $omittedResults++;
             }
@@ -970,7 +972,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
 				<td style="text-align:left;"><span id="totalPresentation"></span></td>
 				<td><span id="totalAvg"></span></td></tr>' . "\n";
     if ($omittedResults){
-        print  '<tr><td style="text-align:left;">' . "Alle Abgaben <".$minReplies.":" . '</td>
+        $button = '';
+        print  '<tr><td style="text-align:left;">' . "Alle Abgaben <".$minReplies . '</td>
 				<td>' . $omittedResults . '</td>
 				<td style="text-align:left;"><span id="omittedResult"></span></td>
 				<td><span id="omittedAvg"></span></td></tr>' . "\n";
@@ -1190,7 +1193,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 					  WHERE item=$question->id AND value IN ($fValues) $filter";
             $record = $DB->get_record_sql($query);
             //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter" $subquery)->count;
-            if (!empty($record) and $record->average >= 1) { // and $numresultsF >= $minReplies
+            if (!empty($record) and $record->average >= 1) {
                 $average = round($record->average, 2);
                 if ($YesNo) {
                     $hint = "Ja/Nein (1-2)";
@@ -1208,11 +1211,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 } else {
                     $hint = $presentation[max(0, round($average))];
                 }
-                // if ($numresultsF >= $minReplies) {
-                    $data['averageF'][$qCount] = $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
-                    $data['averageF_presentation'][$qCount] = $hint;
-                    $data['averageF_labels'][$qCount] = $hint . " (0)";
-                // }
+                $data['averageF'][$qCount] = $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
+                $data['averageF_presentation'][$qCount] = $hint;
+                $data['averageF_labels'][$qCount] = $hint . " (0)";
             }
         }
         if ($subquery) {
@@ -1220,7 +1221,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 			    		  WHERE item=$question->id AND value IN ($fValues) $filter $subquery";
             $record = $DB->get_record_sql($query);
             //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter" $subquery)->count;
-            if (!empty($record) and $record->average >= 1) { // and $numresultsSq >= $minReplies
+            if (!empty($record) and $record->average >= 1) {
                 $average = round($record->average, 2);
                 if ($YesNo) {
                     $hint = "Ja/Nein (1-2)";
@@ -1238,11 +1239,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 } else {
                     $hint = $presentation[max(0, round($average))];
                 }
-                // if ($numresultsSq >= $minReplies) {
-                    $data['averageSq'][$qCount] = $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
-                    $data['averageSq_presentation'][$qCount] = $hint;
-                    $data['averageSq_labels'][$qCount] = $hint . " (0)";
-                // }
+                $data['averageSq'][$qCount] = $average; // problem!!!!!!!!!!!!!!!!!!!!!!!!!!!! Antworten waren nicht pflichtig
+                $data['averageSq_presentation'][$qCount] = $hint;
+                $data['averageSq_labels'][$qCount] = $hint . " (0)";
             }
         }
 
@@ -1321,6 +1320,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
 
             if ( $replies < $minReplies){
+                if ( !$showOmitted ){
+                    continue;
+                }
                 $filterAvg = "";
                 $hint = '<small><i title="Weniger als '.$minReplies.' Abgaben">verborgen</i></small>';
                 if ($sortKey != "replies") {
