@@ -420,8 +420,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
             // show or hide lines < minReplies
             ?>
-            <button name="showOmitted" style="<?php echo $style; ?>" value="<?php
-            echo ($showOmitted ?0 :1); ?>"
+            <button name="showOmitted" style="<?php echo $buttonStyle; ?>" value="<?php
+            echo ($showOmitted ?0 :1); ?>" title="Ergebnisse mit weniger als <?php
+                echo $minReplies;?> Abgaben anzeigen/verbergen"
                     onclick="this.form.submit();">
                 <?php
                 echo ($showOmitted ?"anzeigen" :"verbergen"); ?></button>
