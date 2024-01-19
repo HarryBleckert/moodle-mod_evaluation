@@ -663,7 +663,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY course_of_studies ORDER BY course_of_studies");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
-            if ($allResult->count >= $minReplies) {
+            // if ($allResult->count >= $minReplies) {
                 // array_keys($_SESSION['CoS_department'], $department)
                 $dept = $_SESSION['CoS_department'][$allResult->course_of_studies];
                 if ($dept) {
@@ -692,8 +692,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                             "allLinks" => $links, "allCounts" => $Counts);
                     $evaluatedResults++;
                 }
-            }
-            else{
+            // }
+            if ( $allResult->count < $minReplies) {
                 $omittedResults++;
             }
         }
@@ -726,7 +726,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY course_of_studies ORDER BY course_of_studies");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
-            if ($allResult->count >= $minReplies) {
+            // if ($allResult->count >= $minReplies) {
                 $allIDs[] = $allValues[] = $allResult->course_of_studies;
                 $course_of_studiesID =
                         evaluation_get_course_of_studies_id_from_evc($id, $allResult->course_of_studies, $evaluation);
@@ -754,8 +754,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $sortArray[] = array("allIDs" => $allResult->course_of_studies, "allValues" => $allResult->course_of_studies,
                         "allLinks" => $links, "allCounts" => $Counts);
                 $evaluatedResults++;
-            }
-            else{
+            // }
+            if ( $allResult->count < $minReplies) {
                 $omittedResults++;
             }
         }
@@ -855,7 +855,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY teacherid ORDER BY teacherid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
-            if ($allResult->count >= $minReplies) {
+            // if ($allResult->count >= $minReplies) {
                 $fullname = evaluation_get_user_field($allResult->teacherid, 'fullname');
                 if (defined('EVALUATION_OWNER')) {
                     $links = '<a href="print.php?id=' . $id . '&showTeacher=' . $allResult->teacherid
@@ -884,8 +884,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $sortArray[] = array("allIDs" => $allResult->teacherid, "allValues" => $fullname, "allLinks" => $links,
                         "allCounts" => $Counts);
                 $evaluatedResults++;
-            }
-            else{
+            // }
+            if ( $allResult->count < $minReplies) {
                 $omittedResults++;
             }
         }
@@ -1319,6 +1319,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
             if ($sortKey == "replies") {
                 $sortCol = $replies; // $allCounts[$allValues[$key]];
             }
+
+            if ( $replies < $minReplies){
+                $filterAvg = "";
+                $hint = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
+            }
+
             if (defined('EVALUATION_OWNER') || $allSelected == "allCourses"){
                 //{	$hintLink = '<a href="print.php?showCompare=1&allSelected=useFilter&id='
                 $selector = ($allSelected == "allDepartments") ?"department" : $allKey;
@@ -1330,9 +1336,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
             //if ( $isFilter AND $allSelected == "allTeachers" )
             //{	$allLinks[$key] = "Alle ". ( $teacherid ?"ausgwählten " :"") . get_string("teachers","evaluation"); }
-            if ( $replies < $minReplies){
-                $filterAvg = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
-            }
             $rowsA[] = array("key" => $key, "sortKey" => $sortCol,
                     "row" => 'row = table.insertRow(-1); '
                             . 'nCell = row.insertCell(0); nCell.innerHTML = \'' . $allLinks[$key] .
@@ -1421,7 +1424,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $tags["filterAvg"] = 0;
         }
         if ( $numresultsF < $minReplies){
-            $tags["filterAvg"] = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
+            $tags["filterPresentation"] = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
+            $tags["filterAvg"] = "";
         }
     }
     // subquery
@@ -1456,7 +1460,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
         }
 
         if ( $numresultsSq < $minReplies){
-            $tags["SqAvg"] = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
+            $tags["SqPresentation"] = "<small><i title='Weniger als $minReplies Abgaben'>verborgen</i></small>";
+            $tags["SqAvg"] = "";
         }
     }
     if (count($rowsA) < 2 AND !$filter) { //  and empty($subquery)
