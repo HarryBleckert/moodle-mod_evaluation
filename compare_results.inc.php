@@ -275,7 +275,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         <form style="display:inline;" id="statsForm" method="POST" action="print.php">
             <?php
 
-            if (!$qSelected){
+            if (is_siteadmin() AND !$qSelected){
                 $label = ($validation ? "V" : "Nicht V") . "alidiert";
                 $value = ($validation ? 0 : 1);
                 ?>
