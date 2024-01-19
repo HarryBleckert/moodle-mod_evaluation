@@ -1292,7 +1292,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $hint = "ungültig ($filterAvg)";
                 $validated = false;
             }
-            if (!$qSelected and $validation) {
+            /*if (!$qSelected and $validation) {
                 if ($hideInvalid and !$validated) {
                     unset($data['average_' . $value]);
                     $invalidItems++;
@@ -1305,7 +1305,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             } else if (!$qSelected and $validation and !$validated) {
                 $invalidItems++;
                 continue;
-            }
+            }*/
             $filterAVGsum += $filterAvg;
             $allAvg[$key] = $AVGsum;
             //$filterAVGsum += $filterAvg;
