@@ -416,14 +416,14 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     style="width:42px;font-size:100%;color:white;background-color:teal;" ondblclick="this.form.submit();" 
                     min="'
                         .(defined('EVALUATION_OWNER')?1:$minResults)
-                        .'">';
+                        .'">Abgaben';
             }
             // show or hide lines < minReplies
             ?>
             <button name="showOmitted" style="<?php echo $buttonStyle; ?>" value="<?php
             echo ($showOmitted ?0 :1); ?>" title="Ergebnisse mit weniger als <?php
                 echo $minReplies;?> Abgaben anzeigen/verbergen"
-                    onclick="this.form.submit();">Abgaben
+                    onclick="this.form.submit();">
                 <?php
                 echo (!$showOmitted ?"anzeigen" :"verbergen"); ?></button>
             <?php
