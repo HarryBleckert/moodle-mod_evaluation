@@ -1323,6 +1323,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             if ( $replies < $minReplies){
                 $filterAvg = "";
                 $hint = '<small><i title="Weniger als '.$minReplies.' Abgaben">verborgen</i></small>';
+                $sortCol = 0;
             }
 
             if (defined('EVALUATION_OWNER') || $allSelected == "allCourses"){
