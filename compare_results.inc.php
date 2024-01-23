@@ -66,6 +66,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     // handle CoS privileged user
     $cosPrivileged = evaluation_cosPrivileged($evaluation);
     $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
+    $privGlobalUser = isset($_SESSION["privileged_global_users"][$USER->username]);
     //if ( !$course_of_studiesID AND ( $cosPrivileged = evaluation_cosPrivileged( $evaluation ) ) )
     //{	$course_of_studiesID = evaluation_get_course_of_studies_id_from_evc( $id, $_SESSION['CoS_privileged'][$USER->username][0], $evaluation ); }
 
@@ -350,8 +351,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         if (($isTeacher or $isStudent) or defined('EVALUATION_OWNER')){
             print $isFilter ? "" : "- alle: ";
 
-            if (defined('EVALUATION_OWNER') AND !$cosPrivileged
-                AND $_SESSION["participating_courses_of_studies"]>1
+            if ($privGlobalUser AND $_SESSION["participating_courses_of_studies"]>1
             ) {
                 if ($allSelected == "allDepartments") {
                     $style = $selectStyle;
@@ -420,7 +420,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     style="width:42px;font-size:100%;color:white;background-color:teal;" 
                     ondblclick="this.form.submit();"
                     min="'
-                        .((defined('EVALUATION_OWNER') AND !$cosPrivileged)?1:$minResults)
+                        .($privGlobalUser?1:$minResults)
                         .'"> Abgaben';
             }
             // show or hide lines < minReplies
