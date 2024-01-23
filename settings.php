@@ -23,6 +23,8 @@ if ($ADMIN->fulltree) {
             get_string('allowfullanonymous', 'evaluation'),
             $str, 0, $options));
 
+
+    /*
     // set default role(s) of participants. Defaults to role 5 (student)
     global $DB;
     $roles = $DB->get_records_sql("SELECT id,shortname FROM {role} WHERE trim(name) <> '' ORDER BY name asc");
@@ -30,7 +32,6 @@ if ($ADMIN->fulltree) {
     foreach ( $roles as $role ){
         $participant_roles[$role->id] = ucfirst(trim($role->shortname));
     }
-    /*
     $name = new lang_string('participant_roles', 'evaluation');
     $description = new lang_string('participant_roles_help', 'evaluation');
     $element = new admin_setting_configmultiselect('evaluation_participant_roles',
@@ -39,6 +40,7 @@ if ($ADMIN->fulltree) {
             array(5), $participant_roles);
     $settings->add($element);
     */
+
     /*
     Monate des Sommersemesters: sommermonths (  Januar Februar März April Mai Juni Juli August September Oktober November Dezember
 

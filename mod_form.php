@@ -207,7 +207,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
             // adding a new evaluation instance
             $draftitemid = file_get_submitted_draft_itemid('page_after_submit_editor');
             $default_values['min_results'] = 3;
-            $default_values['min_results_text'] = 3;
+            $default_values['min_results_text'] = 6;
             $default_values['min_results_priv'] = 3;
             $default_values['show_on_index'] = 1;
             $default_values['semester'] = evaluation_get_current_semester();
