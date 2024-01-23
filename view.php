@@ -793,6 +793,7 @@ if (is_siteadmin())
     //echo (stristr($semester,'semester')?"Yes":"No"  );
     //echo "<hr>\$_SESSION['privileged_global_users']: ".var_export($_SESSION['privileged_global_users'],true) . "<hr>";
     //unset($_SESSION['CoS_privileged']);
+    echo "<hr>Owner: " . (defined('EVALUATION_OWNER') AND !$cosPrivileged ?"Ja":"Nein")."<hr>";
 }
 
 
