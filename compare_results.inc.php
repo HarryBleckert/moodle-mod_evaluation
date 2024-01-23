@@ -37,7 +37,13 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $minResults = evaluation_min_results($evaluation);
     $minResultsText = min_results_text($evaluation);
     $minResultsPriv = min_results_priv($evaluation);
-    if (defined('EVALUATION_OWNER')) {
+
+    // handle CoS privileged user
+    $cosPrivileged = evaluation_cosPrivileged($evaluation);
+    $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
+    $privGlobalUser = (isset($_SESSION["privileged_global_users"][$USER->username])
+            ?!empty($_SESSION["privileged_global_users"][$USER->username]) :false);
+    if ($privGlobalUser) {
         $minResults = $minResultsText = $minResultsPriv;
     }
     $isOpen = evaluation_is_open($evaluation);
@@ -63,11 +69,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $data = $subqueryids = array();
     $zeroReplies = $invalidReplies = array();
     $evaluatedResults = $evaluationResults = $omittedResults = 0;
-    // handle CoS privileged user
-    $cosPrivileged = evaluation_cosPrivileged($evaluation);
-    $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
-    $privGlobalUser = (isset($_SESSION["privileged_global_users"][$USER->username])
-            ?!empty($_SESSION["privileged_global_users"][$USER->username]) :false);
     //if ( !$course_of_studiesID AND ( $cosPrivileged = evaluation_cosPrivileged( $evaluation ) ) )
     //{	$course_of_studiesID = evaluation_get_course_of_studies_id_from_evc( $id, $_SESSION['CoS_privileged'][$USER->username][0], $evaluation ); }
 
