@@ -3352,7 +3352,7 @@ function get_evaluation_filters($evaluation, $get_course_studies=true) {
     $filter = $sg_filter = $courses_filter = array();
     if (isset($_SESSION['filter_course_of_studies'])
             and isset($_SESSION['filter_courses']) AND isset($_SESSION["privileged_global_users"])
-            AND !(!empty($_SESSION['filter_course_of_studies']) OR
+            AND (!empty($_SESSION['filter_course_of_studies']) OR
             !empty($_SESSION['filter_courses']) OR !empty($_SESSION["privileged_global_users"]))
 
     ) {
