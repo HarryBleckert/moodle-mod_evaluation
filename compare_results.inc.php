@@ -447,6 +447,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 if ($question->id == $qSelected) {
                     $selected = ' selected="' . $selected . '" ';
                 }
+                if ($isStudent AND stristr($question->name,"Geschlecht")){
+                    continue;
+                }
                 $qname = $question->name;
                 if (strlen($qname) > 90) {
                     $qname = substr($qname, 0, 87) . "...";
