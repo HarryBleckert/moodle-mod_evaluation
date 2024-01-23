@@ -180,15 +180,16 @@ function evaluation_compare_results($evaluation, $courseid = false,
                             $question->presentation));
 
             // sub queries
-
-            if (intval($_REQUEST['sqfilter']) == 1 and $_REQUEST['subreply']) {
-                $applysubquery = 1;
-                $_SESSION['subqueries'][$qSelected]['item'] = $qSelected;
-                $_SESSION['subqueries'][$qSelected]['name'] = trim($question->name);
-                $_SESSION['subqueries'][$qSelected]['value'] = $_REQUEST['subreply'];
-                $_SESSION['subqueries'][$qSelected]['reply'] = trim($presentationraw[intval($_REQUEST['subreply']) - 1]);
-            } else if (intval($_REQUEST['sqfilter']) == 2) {
-                unset($_SESSION['subqueries'][$qSelected]);
+            if (isset($_REQUEST['sqfilter']) ) {
+                if (intval($_REQUEST['sqfilter']) == 1 and $_REQUEST['subreply']) {
+                    $applysubquery = 1;
+                    $_SESSION['subqueries'][$qSelected]['item'] = $qSelected;
+                    $_SESSION['subqueries'][$qSelected]['name'] = trim($question->name);
+                    $_SESSION['subqueries'][$qSelected]['value'] = $_REQUEST['subreply'];
+                    $_SESSION['subqueries'][$qSelected]['reply'] = trim($presentationraw[intval($_REQUEST['subreply']) - 1]);
+                } else if (intval($_REQUEST['sqfilter']) == 2) {
+                    unset($_SESSION['subqueries'][$qSelected]);
+                }
             }
 
             if (in_array("k.b.", $presentation) or in_array("keine Angabe", $presentation) or
