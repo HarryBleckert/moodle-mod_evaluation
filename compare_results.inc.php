@@ -417,7 +417,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             print '<span title="Evaluationen für ' .$allSubject. ' mit weniger als ' . $minReplies
                         . ' Abgaben'."\n".'dürfen nicht ausgewertet werden.">';
             if (($allSelected == "allCourses" or $allSelected == "allTeachers")) {
-                print 'mit weniger als <input type="number" name="minReplies" value="' . $minReplies . '"
+                print 'mit mindestens <input type="number" name="minReplies" value="' . $minReplies . '"
                     style="width:42px;font-size:100%;color:white;background-color:teal;" 
                     ondblclick="this.form.submit();"
                     min="'
