@@ -425,7 +425,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                         .'"> Abgaben';
                 echo nl2br("<hr>_SESSION['privileged_global_users'][USER->username]: "
                 .var_export(isset($_SESSION["privileged_global_users"][$USER->username]),true))
-                        ."- privGlobalUser: " . nl2br(var_export($privGlobalUser,tue))
+                        ."- privGlobalUser: " . nl2br(var_export($privGlobalUser,true))
                         ."<hr>";
             }
             // show or hide lines < minReplies
