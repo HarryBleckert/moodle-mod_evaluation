@@ -1267,7 +1267,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
     $filterAvg = "";
     $tags = array("totalAvg" => $totalAvg);
-    if ($qSelected and isset($data['average_presentation'][0], "ja")
+    if ($qSelected and isset($data['average_presentation'][0])
         AND stristr($data['average_presentation'][0], "ja")
         and stristr($data['average_presentation'][0], "nein")) {
         $presentation = array(($validation ? "ungültig" : "keine Antwort"), "Ja", "Nein");
