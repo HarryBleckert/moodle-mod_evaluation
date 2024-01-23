@@ -255,7 +255,6 @@ if ($logViews) {
     $modus = $results2[0]->{$responses};
 
     $date = get_string('date');
-    if ()
     //echo get_string($logsubject,'evaluation');
     echo "Aktivitäten/Tag: <b>Mittelwert</b>: " . evaluation_number_format($average) . " - <b>Median</b>: "
             . evaluation_number_format($median) . " - <b>Modus</b>: " . evaluation_number_format($modus) . ".<br>\n";
