@@ -138,9 +138,11 @@ $completed_responses = $evaluationstructure->count_completed_responses();
 $minresults = evaluation_min_results($evaluation);
 $minresultsText = min_results_text($evaluation);
 $minresultsPriv = min_results_priv($evaluation);
-if (defined('EVALUATION_OWNER') and !evaluation_cosPrivileged($evaluation)) {
+$privGlobalUser = isset($_SESSION["privileged_global_users"][$USER->username]);
+if ($privGlobalUser) {
     $minresults = $minresultsText = $minresultsPriv;
 }
+
 
 $numTextQ = evaluation_count_qtype($evaluation, "textarea");
 $is_open = evaluation_is_open($evaluation);

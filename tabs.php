@@ -86,6 +86,8 @@ if (!isset($completed_responses)) {
     }
 }
 
+$privGlobalUser = isset($_SESSION["privileged_global_users"][$USER->username]);
+
 $viewurl = new moodle_url('/mod/evaluation/view.php', $urlparams);
 $row[] = new tabobject('view', $viewurl->out(), get_string('overview', 'evaluation'));
 
