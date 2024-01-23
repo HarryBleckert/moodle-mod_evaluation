@@ -220,7 +220,8 @@ if ($logViews) {
         echo "<b>" . get_string('evaluation_period', 'evaluation') . "</b>: " . date("d.m.Y", $evaluation->timeopen)
                 . " - " . date("d.m.Y", $evaluation->timeclose)
                 . " (" . total_evaluation_days($evaluation) . " " . get_string("days") . ")<br>\n";
-        if ($logsubject == "analysisExport" and $evaluation->timeclose < strtotime("March 13 2023")) {
+        if (false ) {
+            // $logsubject == "analysisExport" and $evaluation->timeclose < strtotime("March 13 2023")) {
             echo "Der Filter 'Excel Export' wurde erstmals am 14.03.2023 gesetzt.<br>\n";
         }
     }
