@@ -164,7 +164,7 @@ if ($logViews) {
     }
     $date = get_string('date');
     $responses = "views";
-    echo '<h1 style="display:inlinecolor:#000000;text-align:left;font-weight:bolder;">' .
+    echo '<h1 style="display:inline;display:inlinecolor:#000000;text-align:left;font-weight:bolder;">' .
             get_string('usageReport', "evaluation") . "</h1><br>\n";
     // all log data for this evaluation
     $subjects = array('AllActivities' => get_string('AllActivities', 'evaluation'),
@@ -174,7 +174,7 @@ if ($logViews) {
             'statistics' => get_string('statistics', 'evaluation'), 'show_entries' => get_string('show_entries', 'evaluation'),
             'viewsglobalEvaluationInstances' => get_string('viewsglobalEvaluationInstances', 'evaluation')
     );
-    $goBack = "<br>" . html_writer::tag('a', "Zurück", array('class' => "d-print-none",
+    $goBack = html_writer::tag('a', "Zurück", array('class' => "d-print-none",
                     'style' => 'color:white;background-color:black;text-align:center;',
                     'href' => '/mod/evaluation/view.php?id=' . $id));
     echo $goBack;
@@ -255,6 +255,7 @@ if ($logViews) {
     $modus = $results2[0]->{$responses};
 
     $date = get_string('date');
+    if ()
     //echo get_string($logsubject,'evaluation');
     echo "Aktivitäten/Tag: <b>Mittelwert</b>: " . evaluation_number_format($average) . " - <b>Median</b>: "
             . evaluation_number_format($median) . " - <b>Modus</b>: " . evaluation_number_format($modus) . ".<br>\n";
