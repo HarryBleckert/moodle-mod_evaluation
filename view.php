@@ -797,7 +797,7 @@ if (is_siteadmin())
     //echo "<hr>\$_SESSION['privileged_global_users']: ".var_export($_SESSION['privileged_global_users'],true) . "<hr>";
     //unset($_SESSION['CoS_privileged']);
     // echo "<hr>Owner: " . (defined('EVALUATION_OWNER') AND !$cosPrivileged ?"Ja":"Nein")."<hr>";
-    echo nl2br(var_export(isset($_SESSION["privileged_global_users"][$USER->username],true)));
+    echo nl2br(var_export(isset($_SESSION["privileged_global_users"][$USER->username]),true));
 }
 
 
