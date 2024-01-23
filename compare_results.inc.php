@@ -423,6 +423,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     min="'
                         .($privGlobalUser?1:$minResults)
                         .'"> Abgaben';
+                echo nl2br(var_export(isset($_SESSION["privileged_global_users"][$USER->username]),true));
             }
             // show or hide lines < minReplies
             ?>
