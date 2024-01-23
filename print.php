@@ -251,7 +251,7 @@ if ($logViews) {
 
     $average = round($views / $NumResults);
 
-    $median = $results2[round($NumResults / 2)]->{$responses};
+    $median = $results2[intval($NumResults / 2)]->{$responses};
     $modus = $results2[0]->{$responses};
 
     $date = get_string('date');
@@ -392,7 +392,7 @@ else if (false and $showEvaluations) {
         return ($a->{$responses} > $b->{$responses} ? -1 : 1);
     });
     // print nl2br(var_export($results2));
-    $median = $results2[round($numresults / 2)]->{$responses};
+    $median = $results2[intval($numresults / 2)]->{$responses};
     $modus = $results2[0]->{$responses};
     $dayC = round(remaining_evaluation_days($evaluation)); //+round(date("H")/24,4) );
     //$dayC = current_evaluation_day($evaluation);
