@@ -389,7 +389,7 @@ else if (false and $showEvaluations) {
         if ($a->{$responses} == $b->{$responses}) {
             return 0;
         }
-        return ($a->{$responses} < $b->{$responses} ? -1 : 1);
+        return ($a->{$responses} > $b->{$responses} ? -1 : 1);
     });
     print nl2br(var_export($results2));
     $median = $results2[round($numresults / 2)]->{$responses};
