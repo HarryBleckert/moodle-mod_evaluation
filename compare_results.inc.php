@@ -66,7 +66,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
     // handle CoS privileged user
     $cosPrivileged = evaluation_cosPrivileged($evaluation);
     $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
-    $privGlobalUser = isset($_SESSION["privileged_global_users"][$USER->username]);
+    $privGlobalUser = (isset($_SESSION["privileged_global_users"][$USER->username])
+            ?!empty($_SESSION["privileged_global_users"][$USER->username]) :false);
     //if ( !$course_of_studiesID AND ( $cosPrivileged = evaluation_cosPrivileged( $evaluation ) ) )
     //{	$course_of_studiesID = evaluation_get_course_of_studies_id_from_evc( $id, $_SESSION['CoS_privileged'][$USER->username][0], $evaluation ); }
 

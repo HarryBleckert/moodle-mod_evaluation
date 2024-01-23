@@ -138,7 +138,8 @@ $completed_responses = $evaluationstructure->count_completed_responses();
 $minresults = evaluation_min_results($evaluation);
 $minresultsText = min_results_text($evaluation);
 $minresultsPriv = min_results_priv($evaluation);
-$privGlobalUser = isset($_SESSION["privileged_global_users"][$USER->username]);
+$privGlobalUser = (isset($_SESSION["privileged_global_users"][$USER->username])
+        ?!empty($_SESSION["privileged_global_users"][$USER->username]) :false);
 if ($privGlobalUser) {
     $minresults = $minresultsText = $minresultsPriv;
 }
