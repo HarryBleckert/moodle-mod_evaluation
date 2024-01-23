@@ -424,7 +424,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                         .'"> Abgaben';
             }
             echo "<hr>Owner: " . (defined('EVALUATION_OWNER') ?"Ja":"Nein")
-                    ." - CoSpriv: " . (!$cosPrivileged ?"Ja":"Nein")
+                    ." - CoSpriv: " . ($cosPrivileged ?"Ja":"Nein")
                     ."<hr>";
             // show or hide lines < minReplies
             ?>
