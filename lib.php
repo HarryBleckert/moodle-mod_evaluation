@@ -3350,10 +3350,8 @@ function ev_set_privileged_users($show = false) {
 function get_evaluation_filters($evaluation, $get_course_studies=true) {
     global $CFG, $USER;
     $filter = $sg_filter = $courses_filter = array();
-    if (isset($_SESSION['filter_course_of_studies'])
-            and isset($_SESSION['filter_courses']) AND isset($_SESSION["privileged_global_users"])
-            AND (!empty($_SESSION['filter_course_of_studies']) OR
-            !empty($_SESSION['filter_courses']) OR !empty($_SESSION["privileged_global_users"]))
+    if (isset($_SESSION['filter_course_of_studies']) AND isset($_SESSION['filter_courses'])
+            AND (!empty($_SESSION['filter_course_of_studies']) OR !empty($_SESSION['filter_courses']) )
 
     ) {
         return array($_SESSION['filter_course_of_studies'], $_SESSION['filter_courses']);
