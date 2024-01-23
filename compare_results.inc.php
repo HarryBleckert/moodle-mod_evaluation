@@ -423,9 +423,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
                         .((defined('EVALUATION_OWNER') AND !$cosPrivileged)?1:$minResults)
                         .'"> Abgaben';
             }
-            echo "<hr>Owner: " . (defined('EVALUATION_OWNER') ?"Ja":"Nein")
-                    ." - CoSpriv: " . ($cosPrivileged ?"Ja":"Nein")
-                    ."<hr>";
             // show or hide lines < minReplies
             ?>
             <button name="showOmitted" style="<?php echo $buttonStyle; ?>" value="<?php
