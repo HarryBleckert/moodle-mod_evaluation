@@ -1118,7 +1118,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
             evaluation_get_all_teachers($evaluation);
             //evaluation_get_course_teachers($courseid)
         }
-        if (!isset($_SESSION["possible_evaluations"]) or !is_array($_SESSION["possible_evaluations"])) {
+        if (!safeCount($_SESSION["possible_evaluations"]) or !is_array($_SESSION["possible_evaluations"])) {
             get_evaluation_participants($evaluation);
         }
         if (true) // !$teacherid AND !$course_of_studies )
@@ -1138,7 +1138,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
             }
             if ($enrolment->active_students and !empty($enrolment->active_teachers)) {
                 $_SESSION["possible_active_evaluations"][$enrolment->courseid] =
-                $possible_active_evaluations += $enrolment->active_students * $enrolment->active_teachers;
+                $possible_active_evaluations += ($enrolment->active_students * $enrolment->active_teachers);
             }
         }
     }
@@ -2177,11 +2177,11 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
         $_SESSION["possible_evaluations"][$courseid] = $_SESSION["possible_active_evaluations"][$courseid] = 0;
         if ($numTeachersCourse) {
             $_SESSION["possible_evaluations"][$courseid]
-                    = $numStudentsCourse * ($evaluation->teamteaching ? $numTeachersCourse : 1);
+                    = ($numStudentsCourse * ($evaluation->teamteaching ? $numTeachersCourse : 1));
         }
         if ($numTeachersActiveCourse) {
             $_SESSION["possible_active_evaluations"][$courseid]
-                    = $numStudentsActiveCourse * ($evaluation->teamteaching ? $numTeachersActiveCourse : 1);
+                    = ($numStudentsActiveCourse * ($evaluation->teamteaching ? $numTeachersActiveCourse : 1));
         }
         //}
     }
@@ -2201,15 +2201,19 @@ function ev_get_participants($myEvaluations, $courseid = false) {
     $possible_evaluations = 0;
     /*if ( evaluation_is_closed($evaluation) AND $courseid AND !isset($_SESSION["possible_evaluations"][$courseid]) )
 	{	possible_evaluations()}*/
-    foreach ($myEvaluations as $id => $course) {
-        if ($courseid and $id != $courseid) {
-            continue;
-        }
-        if (isset($_SESSION["possible_evaluations"][$id])) {
-            $possible_evaluations += $_SESSION["possible_evaluations"][$id];
-        }
-        if ($courseid and $id == $courseid) {
-            break;
+    if (!$courseid AND safeCount($_SESSION["possible_evaluations"])){
+        $possible_evaluations = array_sum($_SESSION["possible_evaluations"]);
+    } else {
+        foreach ($myEvaluations as $id => $course) {
+            if ($courseid and $course->courseid != $courseid) {
+                continue;
+            }
+            if (isset($_SESSION["possible_evaluations"][$course->courseid])) {
+                $possible_evaluations += $_SESSION["possible_evaluations"][$course->courseid];
+            }
+            if ($courseid and $course->courseid == $courseid) {
+                break;
+            }
         }
     }
     return $possible_evaluations;
@@ -2227,6 +2231,13 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
     $myCourseReplies = $possible_evaluations = $possible_evaluations_per_teacher = 0;
     $evaluation_is_open = evaluation_is_open($evaluation); //  OR date("Ymd",$evaluation->timeopen) < date("Ymd");
     $min_results = evaluation_min_results($evaluation);
+    $minresultsPriv = min_results_priv($evaluation);
+    $privGlobalUser = (isset($_SESSION["privileged_global_users"][$USER->username])
+            ?!empty($_SESSION["privileged_global_users"][$USER->username]) :false);
+    if ($privGlobalUser) {
+        $min_results = $minresultsPriv;
+    }
+
     $min_resTitle = ' title="' . get_string('min_results', 'evaluation', $min_results) . '" ';
     $numCourses = array();
     if (safeCount($myEvaluations)) {
@@ -2275,8 +2286,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
             $teachers = $_SESSION["allteachers"][$myEvaluation['courseid']];
             if (safeCount($teachers)) {
                 // $possible_evaluations_per_teacher += round(ev_get_participants($myEvaluations, $myEvaluation["courseid"]) / safeCount($teachers),0);
-                $possible_evaluations_per_teacher += round(ev_get_participants($myEvaluations, $myEvaluation["courseid"]) /
-                        safeCount($teachers), 0);
+                $possible_evaluations_per_teacher += round(ev_get_participants($myEvaluations, $myEvaluation["courseid"]) / safeCount($teachers), 0);
             }
             $possible_evaluations += round(ev_get_participants($myEvaluations, $myEvaluation["courseid"]), 0);
             $actionTxt = get_string("evaluate_now", "evaluation");
@@ -2423,6 +2433,8 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
     }
     return $str;
 }
+
+
 
 // show list of courses with evaluation results, sorted by results or course names
 function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fullname", $id = false, $courseid = false,

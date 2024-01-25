@@ -652,14 +652,13 @@ if ((!$isPermitted AND !defined('EVALUATION_OWNER')) and empty($_SESSION["myEval
 } 
 elseif ($SiteEvaluation) {
     if (($isTeacher and !$isStudent) or ($teacheridSaved > 0 and defined('EVALUATION_OWNER'))) {
-        $tEvaluations = $_SESSION["myEvaluations"];
         $showTeacher = $USER->id;
-        //if ( $completed_responses AND empty($tEvaluations) AND $teacheridSaved )
-        //if ( $completed_responses AND $teacheridSaved AND $teacheridSaved != $showTeacher )
+        $tEvaluations = $_SESSION["myEvaluations"];
         if ($teacheridSaved and $teacheridSaved != $showTeacher) {
             $showTeacher = $teacheridSaved;
             $tEvaluations = get_evaluation_participants($evaluation, $showTeacher);
         }
+
         if (!empty($tEvaluations)) {
             print show_user_evaluation_courses($evaluation, $tEvaluations, $id, true, true, true);
             $teacherEvaluations = evaluation_countCourseEvaluations($evaluation, $tEvaluations, "teacher", $showTeacher);
