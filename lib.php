@@ -2034,7 +2034,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 
         //$contextC = get_context_instance(CONTEXT_COURSE, $course->id);
         $contextC = context_course::instance($course->id);
-        if ($evaluation_is_open AND (is_array($contextC) or is_object($contextC))) {
+        if ( (is_array($contextC) or is_object($contextC))) { // $evaluation_is_open AND
             foreach ($roleT as $role) {
                 $rolesC = get_role_users($role->id, $contextC);
                 foreach ($rolesC as $roleC) {
@@ -2104,11 +2104,19 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 
         if (!$evaluation_is_open) //else	// from evc
         {    // get students
-            $rolesC = $DB->get_records_sql("SELECT evc.id AS evcid, evc.courseid, evc.userid AS id, evc.teacherid, evu.id AS evuid, evu.username, 
+
+            $rolesC = $DB->get_records_sql("SELECT evc.id AS evcid, evc.courseid, evc.userid AS id, evc.teacherid, evu.id AS evuid, evu.username,
 													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
 												FROM {evaluation_completed} AS evc, {evaluation_users} AS evu, {evaluation_users_la} AS evul
 												WHERE evc.evaluation = $evaluation->id AND evc.courseid=$course->id AND evu.userid = evc.userid
 														AND evul.userid = evc.userid AND evul.evaluation = evc.evaluation");
+            /*
+            $rolesC = $DB->get_records_sql("SELECT evc.id AS evcid, evc.courseid, evc.userid AS id, evc.teacherid, evu.id AS evuid, evu.username, 
+													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
+												FROM {evaluation_enrolments} AS eve, {evaluation_users_la} AS evul, {evaluation_users} AS evu
+												WHERE evul.evaluation = $evaluation->id AND evul.user->id AND evu.userid = evc.userid
+														AND evul.userid = evc.userid AND evul.evaluation = evc.evaluation");
+            */
             //print "<hr>Students rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
             foreach ($rolesC as $roleC) {
                 $fullname = ($roleC->alternatename ? $roleC->alternatename : $roleC->firstname) . " " . $roleC->lastname;
@@ -2164,8 +2172,8 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                 }
                 if ($userid and ($userid < 0 or $userid == $roleC->id)) {
                     $my_evaluation_courses[$course->id] =
-                            array("role" => "teacher", "id" => $roleC->id, "username" => $roleC->username,
-                                    "email" => $roleC->email, "fullname" => $fullname, "courseid" => $course->id,
+                            array("courseid" => $course->id, "role" => "teacher", "id" => $roleC->id,
+                                    "username" => $roleC->username, "email" => $roleC->email, "fullname" => $fullname,
                                     "course" => $course->fullname,
                                     "shortname" => $course->shortname, "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                 } else if ($getTeachers) {
