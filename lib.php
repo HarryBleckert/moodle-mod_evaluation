@@ -240,7 +240,7 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
             }
             // set evaluation to Open for allowing set_results
             $evaluation->timeclose = time() + 86400;
-            if (true) // $forceGlobal OR !isset($_SESSION["distinct_s"]) OR !isset($_SESSION["distinct_s_active"]) )
+            if ( $forceGlobal OR !safeCount($_SESSION["distinct_s"]) OR !isset($_SESSION["distinct_s_active"]) )
             {
                 list($_SESSION["participating_courses"], $_SESSION["participating_empty_courses"],
                         $_SESSION["distinct_s"], $_SESSION["distinct_s_active"], $_SESSION["students"],
@@ -1113,13 +1113,13 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
 {
     global $DB;
     $possible_evaluations = 0;
-    $is_open = evaluation_is_open($evaluation);
+    // $is_open = evaluation_is_open($evaluation);
     if (empty($evaluation->possible_evaluations)) {
         if (empty($_SESSION["allteachers"])) {
             evaluation_get_all_teachers($evaluation);
             //evaluation_get_course_teachers($courseid)
         }
-        if (!safeCount($_SESSION["possible_evaluations"]) or !is_array($_SESSION["possible_evaluations"])) {
+        if ( !safeCount($_SESSION["participating_courses"])) {
             get_evaluation_participants($evaluation);
         }
         if (true) // !$teacherid AND !$course_of_studies )
@@ -1163,7 +1163,7 @@ function possible_active_evaluations($evaluation) {
     if (empty($_SESSION["allteachers"])) {
         evaluation_get_all_teachers($evaluation);
     }
-    if (!is_array($_SESSION["possible_active_evaluations"]) or !is_array($_SESSION["possible_active_evaluations"])) {
+    if ( !safeCount($_SESSION["participating_courses"])) {
         get_evaluation_participants($evaluation);
     }
     foreach ($_SESSION["possible_active_evaluations"] as $maxEvaluations) {
