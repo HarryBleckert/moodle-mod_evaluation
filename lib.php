@@ -1114,7 +1114,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
     global $DB;
     $possible_evaluations = 0;
     // $is_open = evaluation_is_open($evaluation);
-    if (empty($evaluation->possible_evaluations)) {
+    if ($is_open OR empty($evaluation->possible_evaluations)) {
         if (empty($_SESSION["allteachers"])) {
             evaluation_get_all_teachers($evaluation);
             //evaluation_get_course_teachers($courseid)
@@ -1158,7 +1158,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
 }
 
 function possible_active_evaluations($evaluation) {
-    // return possible_evaluations($evaluation, false, true);
+    return possible_evaluations($evaluation, false, true);
     $possible_evaluations = 0;
     if (empty($_SESSION["allteachers"])) {
         evaluation_get_all_teachers($evaluation);
@@ -2200,8 +2200,9 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 
 function ev_get_participants($myEvaluations, $courseid = false) {
     $possible_evaluations = 0;
-    /*if ( evaluation_is_closed($evaluation) AND $courseid AND !isset($_SESSION["possible_evaluations"][$courseid]) )
-	{	possible_evaluations()}*/
+    if ( evaluation_is_closed($evaluation) AND $courseid AND !isset($_SESSION["possible_evaluations"][$courseid]) ){
+        possible_evaluations();
+    }
     if (!$courseid AND safeCount($_SESSION["possible_evaluations"])){
         $possible_evaluations = array_sum($_SESSION["possible_evaluations"]);
     } else {

@@ -215,7 +215,8 @@ if ($SiteEvaluation and !$courseid) {
     $all_courses = true;
     $CourseTitle = "\n<span style=\"font-size:12pt;font-weight:bold;display:inline;\">" . get_string("all_courses", "evaluation") .
             "</span><br>\n";
-} else if ($courseid) {
+}
+if ($courseid) {
     if ($evaluation->course == SITEID) {
         $Studiengang = evaluation_get_course_of_studies($courseid, true);  // get Studiengang with link
         $semester = evaluation_get_course_of_studies($courseid, true, true);  // get Semester with link
