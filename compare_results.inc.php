@@ -60,6 +60,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $subqueries = ev_session_request("subqueries", array());
     $showOmitted = intval(ev_session_request("showOmitted", 0));
     $isFilter = ($teacherid or $courseid or $course_of_studiesID or $department);
+    if ( $minReplies < $minResults){
+        $minReplies = $minResults;
+    }
     /*if ( $isFilter AND $allSelected == "useFilter" )
     {	if ( $courseid ) { $allSelected = "allCourses"; }
         $isFilter = false; $course_of_studiesID=false; $teacherid=false; $courseid = false;
