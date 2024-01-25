@@ -2199,6 +2199,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 }
 
 function ev_get_participants($myEvaluations, $courseid = false) {
+    global $evaluation;
     $possible_evaluations = 0;
     if ( evaluation_is_closed($evaluation) ) { // AND $courseid AND !isset($_SESSION["possible_evaluations"][$courseid]) ){
         possible_evaluations($evaluation);
