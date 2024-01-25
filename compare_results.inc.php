@@ -1609,7 +1609,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     $JSdata['datasets'][] =
                             ['data' => $data['average_' . $value], 'label' => $allValues[$key],
                                     'labels' => $data['labels_' . $value],
-                                    'backgroundColor' => $colors[$key + 3], 'borderColor' => $colors[$key + 3]];
+                                    'backgroundColor' => $colors[$cnt + 3], 'borderColor' => $colors[$cnt + 3]];
                     $cnt++;
                 }
                 if ($cnt == $maxCharts) {
