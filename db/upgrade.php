@@ -442,7 +442,15 @@ function xmldb_evaluation_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, $newversion, 'evaluation');
     }
-
+    $newversion = 2024012501;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation_users_la');
+        $field = new xmldb_field('teacherids', XMLDB_TYPE_CHAR, '600', null, null, null, '');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field,"courseids");
+        }
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
     return true;
 }
 
