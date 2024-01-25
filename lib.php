@@ -1112,7 +1112,7 @@ function evaluation_count_active_students($evaluation, $courseid) {
 function possible_evaluations($evaluation, $courseid = false, $active = false) // teacherid=false, $course_of_studies=false)
 {
     global $DB;
-    $possible_evaluations = 0;
+    $possible_evaluations = $possible_active_evaluations = 0;
     $is_open = evaluation_is_open($evaluation);
     if ($is_open OR empty($evaluation->possible_evaluations)) {
         if (empty($_SESSION["allteachers"])) {
@@ -1122,20 +1122,24 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
         if ( !safeCount($_SESSION["participating_courses"])) {
             get_evaluation_participants($evaluation);
         }
-        if (true) // !$teacherid AND !$course_of_studies )
-        {
-            foreach ($_SESSION["possible_evaluations"] as $key => $maxEvaluations) {    /*if ( $courseid AND $courseid != $key )
-				{	continue; }*/
-                $possible_evaluations += $maxEvaluations;
-            }
+        foreach ($_SESSION["possible_evaluations"] as $key => $maxEvaluations) {
+            if ( $courseid AND $courseid != $key )
+            {	continue; }
+            $possible_evaluations += $maxEvaluations;
         }
+
     } else {
     $_SESSION["possible_evaluations"] = $_SESSION["possible_active_evaluations"] = array();
         $enrolments = $DB->get_records_sql("SELECT * from {evaluation_enrolments} WHERE evaluation=" . $evaluation->id);
         foreach ($enrolments as $enrolment) {
+            if ($courseid AND $enrolment->courseid == $courseid){
+                continue;
+            }
             if ($enrolment->students and !empty($enrolment->teacherids)) {
-                $_SESSION["possible_evaluations"][$enrolment->courseid] =
-                $possible_evaluations += ($enrolment->students * safeCount(explode(",", $enrolment->teacherids)));
+                $teachers = safeCount(explode(",", $enrolment->teacherids));
+                $_SESSION["possible_evaluations"][$enrolment->courseid]
+                        = ($enrolment->students * $teachers);
+                $possible_evaluations += ($enrolment->students * $teachers);
             }
             if ($enrolment->active_students and !empty($enrolment->active_teachers)) {
                 $_SESSION["possible_active_evaluations"][$enrolment->courseid] =
