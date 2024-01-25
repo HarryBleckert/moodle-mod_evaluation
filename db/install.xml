@@ -245,6 +245,7 @@
 		<FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
 		<FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
 		<FIELD NAME="evaluation" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseids" TYPE="char" LENGTH="600" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
 		<FIELD NAME="role" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
 		<FIELD NAME="lastaccess" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
 		<FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
