@@ -1513,11 +1513,15 @@ function evaluation_compare_results($evaluation, $courseid = false,
             ChartAxis.helpers.color(color).lighten(0.2);
         */
 
-        $colors0 = array("#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
+        $colors0 = array("black", "red", "green", "yellow","blue","orange", "purple", "cyan",
+                "magenta", "Lime", "pink",
+                "teal", "lavender", "brown", "beige", "maroon", "mint", "olive", "apricot",
+                "navy", "grey", "amber", "darkblue", "darkred",
+                "darkred", "violet",
+                "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
                 "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11",
                 "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#651067", "#661067", "#691067",
-                "lightblue", "yellow", "amber", "cyan", "darkblue", "grey", "red", "darkred",
-                "magenta", "blue", "navy", "#AC3912",
+
         );
         $colors = ($colors0 + $colors0 + $colors0 + $colors0 + $colors0);
         $labelAxis = ($ChartAxis == "x" ? "y" : "x");
