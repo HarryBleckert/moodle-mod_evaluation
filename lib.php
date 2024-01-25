@@ -3544,6 +3544,9 @@ function evaluation_number_format($number, $decimals = 0) {    // use Moodle lan
         $dsep = ",";
         $tsep = ".";
     }
+    if (!is_numeric($number)){
+        $number = 0;
+    }
     return number_format($number, $decimals, $dsep, $tsep);
 }
 
