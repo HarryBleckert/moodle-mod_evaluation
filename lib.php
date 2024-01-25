@@ -1113,7 +1113,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
 {
     global $DB;
     $possible_evaluations = 0;
-    // $is_open = evaluation_is_open($evaluation);
+    $is_open = evaluation_is_open($evaluation);
     if ($is_open OR empty($evaluation->possible_evaluations)) {
         if (empty($_SESSION["allteachers"])) {
             evaluation_get_all_teachers($evaluation);
