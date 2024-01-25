@@ -1113,6 +1113,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
 {
     global $DB;
     $possible_evaluations = 0;
+    $is_open = evaluation_is_open($evaluation);
     if (empty($evaluation->possible_evaluations)) {
         if (empty($_SESSION["allteachers"])) {
             evaluation_get_all_teachers($evaluation);
@@ -1129,7 +1130,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
             }
         }
     } else {
-        $_SESSION["possible_evaluations"] = $_SESSION["possible_active_evaluations"] = array();
+    $_SESSION["possible_evaluations"] = $_SESSION["possible_active_evaluations"] = array();
         $enrolments = $DB->get_records_sql("SELECT * from {evaluation_enrolments} WHERE evaluation=" . $evaluation->id);
         foreach ($enrolments as $enrolment) {
             if ($enrolment->students and !empty($enrolment->teacherids)) {
@@ -1162,7 +1163,7 @@ function possible_active_evaluations($evaluation) {
     if (empty($_SESSION["allteachers"])) {
         evaluation_get_all_teachers($evaluation);
     }
-    if (!isset($_SESSION["possible_active_evaluations"]) or !is_array($_SESSION["possible_active_evaluations"])) {
+    if (!is_array($_SESSION["possible_active_evaluations"]) or !is_array($_SESSION["possible_active_evaluations"])) {
         get_evaluation_participants($evaluation);
     }
     foreach ($_SESSION["possible_active_evaluations"] as $maxEvaluations) {
@@ -2205,13 +2206,13 @@ function ev_get_participants($myEvaluations, $courseid = false) {
         $possible_evaluations = array_sum($_SESSION["possible_evaluations"]);
     } else {
         foreach ($myEvaluations as $id => $course) {
-            if ($courseid and $course->courseid != $courseid) {
+            if ($courseid and $id != $courseid) {
                 continue;
             }
-            if (isset($_SESSION["possible_evaluations"][$course->courseid])) {
-                $possible_evaluations += $_SESSION["possible_evaluations"][$course->courseid];
+            if (isset($_SESSION["possible_evaluations"][$id])) {
+                $possible_evaluations += $_SESSION["possible_evaluations"][$id];
             }
-            if ($courseid and $course->courseid == $courseid) {
+            if ($courseid and $id == $courseid) {
                 break;
             }
         }
