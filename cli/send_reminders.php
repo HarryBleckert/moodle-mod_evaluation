@@ -308,7 +308,9 @@ HEREDOC;
                 $onlyfew = "<b>Bisher gibt es $replies Abgaben Ihrer " . $_SESSION["distinct_s"] . " Studierenden</b>.<br>";
             }
         }
-
+        if (!$_SESSION["distinct_s"]){
+            continue;
+        }
         $message = <<<HEREDOC
 <html>
 <head>

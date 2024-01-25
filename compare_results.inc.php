@@ -1482,6 +1482,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
     if (count($rowsA) < 2) { // AND !$filter
         print "\n<script>document.getElementById('showFilter').style.display='none';</script>\n";
+        unset($data["averageF"]);
     }
     print "<script>\n";
     // print 'document.getElementById("showFilter").display="table-row";'. "\n";
