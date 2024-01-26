@@ -2150,7 +2150,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
 												FROM {evaluation_users_la} AS evul, {evaluation_users} AS evu
 												WHERE evul.evaluation = $evaluation->id AND evul.userid=evu.userid
-                                                AND $courseid IN (evul.courseids) AND role='student'");
+                                                AND '$courseid' IN (evul.courseids) AND role='student'");
 
             //print "<hr>Students rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
             foreach ($rolesC as $roleC) {
@@ -2194,7 +2194,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
 												FROM {evaluation_users_la} AS evul, {evaluation_users} AS evu
 												WHERE evul.evaluation = $evaluation->id AND evul.userid=evu.userid
-                                                AND $courseid IN (evul.courseids) AND role='teacher'");
+                                                AND '$courseid' IN (evul.courseids) AND role='teacher'");
 
             //print "<hr>Teachers rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
             foreach ($rolesC as $roleC) {
