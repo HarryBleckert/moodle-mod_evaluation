@@ -2066,11 +2066,11 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
             $cnt=0;
             foreach ($roleT as $role) {
                 $rolesC = get_role_users($role->id, $contextC);
-                if ($cnt<1 AND is_siteadmin()){
-                    print "<hr>RolesC:\n" .nl2br(var_export($rolesC, true));
-                }
                 $cnt++;
                 foreach ($rolesC as $roleC) {
+                    if ($cnt<1 AND is_siteadmin()){
+                        print "<hr>RolesC:\n" .nl2br(var_export($roleC, true));
+                    }
                     $fullname = ($roleC->alternatename ? $roleC->alternatename : $roleC->firstname) . " " . $roleC->lastname;
                     if ($roleC->roleid == 5)  // student
                     {
