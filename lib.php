@@ -1824,7 +1824,7 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
     else{
         $courseids = explode(",", $userlast->courseids);
     }
-    if ($courseid AND !in_array($courseid, $courseids)){
+    if (is_numeric($courseid) AND !in_array("$courseid", $courseids)){
         $courseids[] = $courseid;
         $userlast->courseids =  implode(",", $courseids);
         $update = true;
