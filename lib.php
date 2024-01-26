@@ -2152,7 +2152,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 												WHERE evul.evaluation = $evaluation->id AND evul.role='student' AND evul.courseids LIKE '%courseid%'
 												AND evul.userid=evu.userid");
 
-            //print "<hr>Students rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
+            print "<hr>Students rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
             $cnt = 0;
             foreach ($rolesC as $roleC) {
                 if ($cnt<1 AND is_siteadmin()){
