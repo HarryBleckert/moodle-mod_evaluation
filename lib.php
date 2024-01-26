@@ -2153,7 +2153,11 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 												AND evul.userid=evu.userid");
 
             //print "<hr>Students rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
+            $cnt = 0;
             foreach ($rolesC as $roleC) {
+                if ($cnt<1 AND is_siteadmin()){
+                    print "<hr>roleC:\n" .nl2br(var_export($roleC, true));
+                }
                 $fullname = ($roleC->alternatename ? $roleC->alternatename : $roleC->firstname) . " " . $roleC->lastname;
                 if (!isset($distinct_s[$roleC->id])) {
                     $cnt_students++;
