@@ -1833,7 +1833,7 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
             $update = true;
         }
     }
-    if ( $update ){
+    if ( $update AND is_object($userlast)){
         $DB->update_record('evaluation_users_la', $userlast);
     }
     return $lastaccess;
