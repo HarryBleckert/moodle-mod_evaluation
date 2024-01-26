@@ -219,7 +219,8 @@ if ($evaluation->course == SITEID) {
 }
 
 //if ( is_siteadmin() OR has_capability('moodle/course:update', $context) )
-if (has_capability('mod/evaluation:edititems', $context)) {
+if (has_capability('mod/evaluation:edititems', $context) OR
+        ($evaluation->course != SITEID AND $isPermitted)) {
     $editurl = new moodle_url('/mod/evaluation/edit.php', $urlparams + ['do_show' => 'edit']);
     $row[] = new tabobject('edit', $editurl->out(), get_string('edit_items', 'evaluation'));
 
@@ -227,7 +228,8 @@ if (has_capability('mod/evaluation:edititems', $context)) {
     $row[] = new tabobject('templates', $templateurl->out(), get_string('templates', 'evaluation'));
 }
 
-if ($evaluation->course != SITEID and has_capability('mod/evaluation:mapcourse', $context)) {
+if ($evaluation->course != SITEID AND
+        ($isPermitted OR has_capability('mod/evaluation:mapcourse', $context))) {
     $mapurl = new moodle_url('/mod/evaluation/mapcourse.php', $urlparams);
     $row[] = new tabobject('mapcourse', $mapurl->out(), get_string('mappedcourses', 'evaluation'));
 }
