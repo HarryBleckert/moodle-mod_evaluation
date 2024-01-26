@@ -1824,7 +1824,8 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
     else{
         $courseids = explode(",", $userlast->courseids);
     }
-    if (is_object($userlast) AND is_numeric($courseid) AND !in_array($courseid, $courseids)){
+    if (!empty($userlast) AND is_object($userlast)
+            AND is_numeric($courseid) AND !in_array($courseid, $courseids)){
         $courseids[] = $courseid;
         $courseidsC = implode(",", $courseids);
         if ( is_string($courseidsC) AND !empty($courseidsC)){
@@ -1833,7 +1834,7 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
             $update = true;
         }
     }
-    if ( $update AND is_object($userlast)){
+    if ( $update AND !empty($userlast) AND is_object($userlast)){
         $DB->update_record('evaluation_users_la', $userlast);
     }
     return $lastaccess;
