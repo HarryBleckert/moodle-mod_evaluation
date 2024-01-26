@@ -86,7 +86,10 @@ if (!isset($completed_responses)) {
     }
 }
 
-$privGlobalUser = isset($_SESSION["privileged_global_users"][$USER->username]);
+
+$privGlobalUser = (is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username])
+                ?!empty($_SESSION["privileged_global_users"][$USER->username]) :false);
+
 
 $viewurl = new moodle_url('/mod/evaluation/view.php', $urlparams);
 $row[] = new tabobject('view', $viewurl->out(), get_string('overview', 'evaluation'));

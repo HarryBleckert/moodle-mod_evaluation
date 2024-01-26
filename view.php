@@ -85,7 +85,7 @@ $minresults = evaluation_min_results($evaluation);
 $minresultsText = min_results_text($evaluation);
 $minresultsPriv = min_results_priv($evaluation);
 
-$privGlobalUser = (isset($_SESSION["privileged_global_users"][$USER->username])
+$privGlobalUser = (is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username])
         ?!empty($_SESSION["privileged_global_users"][$USER->username]) :false);
 
 //$previewimg = '<i style="color:blue;" class="fa fa-search-plus fa-fw fa-2x" title="'.get_string('preview').'">';

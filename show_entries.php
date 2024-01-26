@@ -352,8 +352,10 @@ if ($userid || $showcompleted) {
     $minResults = evaluation_min_results($evaluation);
     $minResultsText = min_results_text($evaluation);
     $minResultsPriv = min_results_priv($evaluation);
-    if (defined('EVALUATION_OWNER')) {
-        $minResults = $minResultsText = $minResultsPriv;
+    $privGlobalUser = (is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username])
+                    ?!empty($_SESSION["privileged_global_users"][$USER->username]) :false);
+    if ($privGlobalUser) {
+        $minresults = $minresultsText = $minresultsPriv;
     }
 
     $completed_responses = $evaluationstructure->count_completed_responses();
