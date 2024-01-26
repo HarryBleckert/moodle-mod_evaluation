@@ -1797,7 +1797,7 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
     $update = false;
 
     if (isset($userlast->lastaccess) and !$is_open) {
-        return ($userlast->lastaccess ?: 0);
+        $lastaccess = $userlast->lastaccess ?: 0;
     } else if ($is_open) {
         if (!isset($userlast->lastaccess)) {
             $fields = array("evaluation", "userid", "role", "courseids", "lastaccess", "timemodified");
@@ -1822,9 +1822,8 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
     }
     if ( $update ){
         $DB->update_record('evaluation_users_la', $userlast);
-        return $lastaccess;
     }
-    return 0;
+    return $lastaccess;
 }
 
 // has user participated in evaluation
