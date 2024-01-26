@@ -1828,7 +1828,7 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
         $courseids[] = $courseid;
         $courseidsC = implode(",", $courseids);
         if ( is_string($courseidsC) AND !empty($courseidsC)){
-            print nl2br(print_r("<hr>courseidsC: $courseidsC<hr>"));
+            // print nl2br(print_r("<hr>courseidsC: $courseidsC<hr>"));
             $userlast->courseids = $courseidsC;
             $update = true;
         }
