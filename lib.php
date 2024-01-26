@@ -1794,27 +1794,34 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
     $userlast = $DB->get_record_sql("SELECT * from {evaluation_users_la} WHERE evaluation=" . $evaluation->id .
             " AND userid=$userid LIMIT 1");
     $is_open = evaluation_is_open($evaluation);
-    $courseids = explode(",", $userlast->courseids);
-    if (!in_array($courseid, $courseids)){
-        $courseids[] = $courseid;
-    }
+    $update = false;
 
     if (isset($userlast->lastaccess) and !$is_open) {
         return ($userlast->lastaccess ?: 0);
     } else if ($is_open) {
         if (!isset($userlast->lastaccess)) {
             $fields = array("evaluation", "userid", "role", "courseids", "lastaccess", "timemodified");
-            $values = array($evaluation->id, $userid, $role, implode(",", $courseids), $lastaccess, time());
+            $values = array($evaluation->id, $userid, $role, $courseid, $lastaccess, time());
             $recObj = new stdClass();
             foreach ($fields as $key => $value) {
                 $recObj->{$value} = $values[$key];
             }
             $DB->insert_record('evaluation_users_la', $recObj);
+            return $lastaccess;
         } else if ($lastaccess > $userlast->lastaccess) {
             $userlast->lastaccess = $lastaccess;
             $userlast->timemodified = time();
-            $DB->update_record('evaluation_users_la', $userlast);
+            $update = true;
         }
+    }
+    $courseids = explode(",", $userlast->courseids);
+    if (!in_array($courseid, $courseids)){
+        $courseids[] = $courseid;
+        $userlast->courseids =  implode(",", $courseids);
+        $update = true;
+    }
+    if ( $update ){
+        $DB->update_record('evaluation_users_la', $userlast);
         return $lastaccess;
     }
     return 0;
