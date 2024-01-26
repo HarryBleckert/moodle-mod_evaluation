@@ -1814,7 +1814,12 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
             $update = true;
         }
     }
-    $courseids = explode(",", $userlast->courseids);
+    if ( empty($userlast->courseids)) {
+        $courseids = array();
+    }
+    else{
+        $courseids = explode(",", $userlast->courseids);
+    }
     if ($courseid AND !in_array($courseid, $courseids)){
         $courseids[] = $courseid;
         $userlast->courseids =  implode(",", $courseids);
