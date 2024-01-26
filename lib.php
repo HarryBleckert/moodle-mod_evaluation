@@ -2149,8 +2149,8 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
             $rolesC = $DB->get_records_sql("SELECT evul.id AS evulid, evul.userid AS id, evu.id AS evuid, evu.username,
 													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
 												FROM {evaluation_users_la} AS evul, {evaluation_users} AS evu
-												WHERE evul.evaluation = $evaluation->id AND evul.userid=evu.userid
-                                                AND '$courseid' IN (evul.courseids) AND role='student'");
+												WHERE evul.evaluation = $evaluation->id AND evul.role='student' AND evul.courseids LIKE '%courseid%'
+												AND evul.userid=evu.userid");
 
             //print "<hr>Students rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
             foreach ($rolesC as $roleC) {
@@ -2193,8 +2193,8 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
             $rolesC = $DB->get_records_sql("SELECT evul.id AS evulid, evul.userid AS id, evu.id AS evuid, evu.username,
 													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
 												FROM {evaluation_users_la} AS evul, {evaluation_users} AS evu
-												WHERE evul.evaluation = $evaluation->id AND evul.userid=evu.userid
-                                                AND '$courseid' IN (evul.courseids) AND role='teacher'");
+												WHERE evul.evaluation = $evaluation->id AND evul.role='teacher' AND evul.courseids LIKE '%courseid%'
+												AND evul.userid=evu.userid");
 
             //print "<hr>Teachers rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
             foreach ($rolesC as $roleC) {
