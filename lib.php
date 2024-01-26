@@ -561,8 +561,8 @@ function evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, $se
         if ($evaluation_is_open) {
             $CourseRec = $DB->get_record_sql("SELECT id, fullname, shortname FROM {course} WHERE id = $courseid");
         } else {
-            $CourseRec = $DB->get_record_sql("SELECT DISTINCT ON (courseid) courseid, fullname, shortname, teacherids, id FROM {evaluation_enrolments} 
-												WHERE evaluation = $evaluation->id AND courseid = $courseid");
+            $CourseRec = $DB->get_record_sql("SELECT DISTINCT ON (courseid) courseid, fullname, shortname, teacherids, id 
+                FROM {evaluation_enrolments} WHERE evaluation = $evaluation->id AND courseid = $courseid");
         }
         if (isset($CourseRec->fullname)) // || is_object( $CourseRec ))
         {
@@ -597,8 +597,8 @@ function evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, $se
                 if (in_array($user->id, explode(",", $CourseRec->teacherids))) {
                     $isTeacher = true;
                 } else {
-                    $isStudent = !empty($DB->get_record_sql("SELECT DISTINCT ON (userid) userid, evaluation, id FROM {evaluation_completed} 
-														WHERE evaluation = $evaluation->id AND userid = $user->id"));
+                    $isStudent = !empty($DB->get_record_sql("SELECT DISTINCT ON (userid) userid, evaluation, id 
+                    FROM {evaluation_users_la} WHERE evaluation = $evaluation->id AND userid = $user->id" AND role="student"));
                 }
             }
             if ($isStudent && !$isTeacher) {
