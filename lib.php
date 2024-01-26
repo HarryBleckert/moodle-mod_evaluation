@@ -597,8 +597,8 @@ function evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, $se
                 if (in_array($user->id, explode(",", $CourseRec->teacherids))) {
                     $isTeacher = true;
                 } else {
-                    $isStudent = !empty($DB->get_record_sql("SELECT DISTINCT ON (userid) userid, evaluation, id 
-                    FROM {evaluation_users_la} WHERE evaluation = $evaluation->id AND userid = $user->id" AND role="student"));
+                    $isStudent = !empty($DB->get_record_sql("SELECT DISTINCT ON (userid) userid, evaluation, id  
+                    FROM {evaluation_users_la} WHERE evaluation = $evaluation->id AND userid = $user->id" AND role='student'));
                 }
             }
             if ($isStudent && !$isTeacher) {
