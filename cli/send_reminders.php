@@ -189,7 +189,7 @@ foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { 
     // get student courses to evaluate
     $USER = core_user::get_user($userid);
 
-    unset($_SESSION["possible_evaluations"]);
+    unset($_SESSION["possible_evaluations"],$_SESSION["possible_active_evaluations"]);
     //$teamteaching = $evaluation->teamteaching;
     $myEvaluations = get_evaluation_participants($evaluation, $userid);
     //$evaluation->teamteaching = $teamteaching;
@@ -286,8 +286,10 @@ Alice-Salomon-Platz 5, 12627 Berlin
 </body>
 </html>
 HEREDOC;
-    } else   // role = teacher
-    {
+    } else {
+        if (!safeCount($_SESSION["distinct_s"])){
+            continue;
+        }
         $testTeacher = true;
         $cntTeachers++;
         // $possible_evaluations = ev_get_participants($myEvaluations);
@@ -308,9 +310,7 @@ HEREDOC;
                 $onlyfew = "<b>Bisher gibt es $replies Abgaben Ihrer " . $_SESSION["distinct_s"] . " Studierenden</b>.<br>";
             }
         }
-        if (!$_SESSION["distinct_s"]){
-            continue;
-        }
+
         $message = <<<HEREDOC
 <html>
 <head>
