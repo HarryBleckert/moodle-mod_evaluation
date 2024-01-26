@@ -1783,7 +1783,7 @@ function evaluation_participating_courses($evaluation, $userid = false, $cstudie
     return $ids;
 }
 
-function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role = "student", $courseid) {
+function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role = "student", $courseid=false) {
     global $DB;
     if (empty($lastaccess)) {
         $lastaccess = 0;
@@ -1815,7 +1815,7 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
         }
     }
     $courseids = explode(",", $userlast->courseids);
-    if (!in_array($courseid, $courseids)){
+    if ($courseid AND !in_array($courseid, $courseids)){
         $courseids[] = $courseid;
         $userlast->courseids =  implode(",", $courseids);
         $update = true;
