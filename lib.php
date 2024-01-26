@@ -1792,7 +1792,7 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
         return 0;
     } //$lastaccess; }
     $userlast = $DB->get_record_sql("SELECT * from {evaluation_users_la} WHERE evaluation=" . $evaluation->id .
-            " AND userid=$userid LIMIT 1");
+            " AND userid=$userid AND role='$role' LIMIT 1");
     $is_open = evaluation_is_open($evaluation);
     $update = false;
 
@@ -1808,7 +1808,7 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
             }
             $DB->insert_record('evaluation_users_la', $recObj);
             return $lastaccess;
-        } else if ($lastaccess > $userlast->lastaccess) {
+        } else if ($lastaccess > ($userlast->lastaccess+86400)) {
             $userlast->lastaccess = $lastaccess;
             $userlast->timemodified = time();
             $update = true;
