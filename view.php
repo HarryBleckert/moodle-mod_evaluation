@@ -252,8 +252,8 @@ if ($courseid) {
                 }
             }
         }
-        //$numStudents = safeCount($students );
-        $numStudents = evaluation_count_students($evaluation, $courseid);
+        $numStudents = safeCount($students );
+        //$numStudents = evaluation_count_students($evaluation, $courseid);
         print '<br><span style="font-size:12pt;font-weight:normal;">';
         if ($numStudents) {
             $numToDo = $numStudents * $divisor;
