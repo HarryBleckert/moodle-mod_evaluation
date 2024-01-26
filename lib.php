@@ -1824,10 +1824,13 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
     else{
         $courseids = explode(",", $userlast->courseids);
     }
-    if (is_numeric($courseid) AND !in_array("$courseid", $courseids)){
-        $courseids[] = "$courseid";
-        $userlast->courseids =  implode(",", $courseids);
-        $update = true;
+    if (is_numeric($courseid) AND !in_array($courseid, $courseids)){
+        $courseids[] = $courseid;
+        $courseidsC = implode(",", $courseids);
+        if ( is_string($courseidsC) AND !empty($courseidsC)){
+            $userlast->courseids = $courseidsC;
+            $update = true;
+        }
     }
     if ( $update ){
         $DB->update_record('evaluation_users_la', $userlast);
