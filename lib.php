@@ -2063,7 +2063,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 
         // should be only used when open! Problem: No replacement yet for get_role_users:
         // $evaluation_is_open AND
-        if ( (is_array($contextC) or is_object($contextC))) {
+        if ( $evaluation_is_open AND (is_array($contextC) or is_object($contextC))) {
             // $cnt=0;
             foreach ($roleT as $role) {
                 $rolesC = get_role_users($role->id, $contextC);
@@ -2139,19 +2139,19 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 
         if (!$evaluation_is_open) //else	// from evc
         {    // get students
-
+            /*
             $rolesC = $DB->get_records_sql("SELECT evc.id AS evcid, evc.courseid, evc.userid AS id, evc.teacherid, evu.id AS evuid, evu.username,
 													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
 												FROM {evaluation_completed} AS evc, {evaluation_users} AS evu, {evaluation_users_la} AS evul
 												WHERE evc.evaluation = $evaluation->id AND evc.courseid=$course->id AND evu.userid = evc.userid
 														AND evul.userid = evc.userid AND evul.evaluation = evc.evaluation");
-            /*
-            $rolesC = $DB->get_records_sql("SELECT evc.id AS evcid, evc.courseid, evc.userid AS id, evc.teacherid, evu.id AS evuid, evu.username, 
-													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
-												FROM {evaluation_enrolments} AS eve, {evaluation_users_la} AS evul, {evaluation_users} AS evu
-												WHERE evul.evaluation = $evaluation->id AND evul.user->id AND evu.userid = evc.userid
-														AND evul.userid = evc.userid AND evul.evaluation = evc.evaluation");
             */
+            $rolesC = $DB->get_records_sql("SELECT evul.id AS evulid, evul.userid AS id, evu.id AS evuid, evu.username,
+													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
+												FROM {evaluation_users_la} AS evul, {evaluation_users} AS evu
+												WHERE evul.evaluation = $evaluation->id AND evul.userid=evu.userid
+                                                AND $courseid IN (evul.courseids) AND role='student'");
+
             //print "<hr>Students rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
             foreach ($rolesC as $roleC) {
                 $fullname = ($roleC->alternatename ? $roleC->alternatename : $roleC->firstname) . " " . $roleC->lastname;
@@ -2184,11 +2184,18 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                 }
             }
             // get teachers
-            $rolesC = $DB->get_records_sql("SELECT evc.id AS evcid, evc.courseid, evc.teacherid AS id, evc.teacherid, evu.id AS evuid, evu.username, 
+            /*$rolesC = $DB->get_records_sql("SELECT evc.id AS evcid, evc.courseid, evc.teacherid AS id, evc.teacherid, evu.id AS evuid, evu.username,
 													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
 												FROM {evaluation_completed} AS evc, {evaluation_users} AS evu, {evaluation_users_la} AS evul
 												WHERE evc.evaluation = $evaluation->id AND evc.courseid=$course->id AND evc.teacherid = evu.userid
 													AND evul.userid = evc.teacherid  AND evul.evaluation = evc.evaluation");
+            */
+            $rolesC = $DB->get_records_sql("SELECT evul.id AS evulid, evul.userid AS id, evu.id AS evuid, evu.username,
+													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
+												FROM {evaluation_users_la} AS evul, {evaluation_users} AS evu
+												WHERE evul.evaluation = $evaluation->id AND evul.userid=evu.userid
+                                                AND $courseid IN (evul.courseids) AND role='teacher'");
+
             //print "<hr>Teachers rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
             foreach ($rolesC as $roleC) {
                 $fullname = ($roleC->alternatename ? $roleC->alternatename : $roleC->firstname) . " " . $roleC->lastname;
