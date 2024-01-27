@@ -4142,7 +4142,7 @@ status = 0
 						  FROM {course_modules} cm, {modules} m, {course_sections} cs
 						 WHERE cm.course = :courseid1 AND cm.module=m.id 
 						 AND cm.course = cs.course 
-						 AND (coalesce(cs.name) <>'' OR coalesce(cs.summary) <>'')
+						 /* AND (coalesce(cs.name) <>'' OR coalesce(cs.summary) <>'') */
 						 AND m.name NOT IN ('forum','bigbluebuttonbn')
 					   )";
     $params['courseid1'] = $courseid;
