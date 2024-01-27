@@ -1123,10 +1123,20 @@ function possible_evaluations($evaluation, $courseid = false, $active = false) /
         if ( !safeCount($_SESSION["participating_courses"])) {
             get_evaluation_participants($evaluation);
         }
-        foreach ($_SESSION["possible_evaluations"] as $key => $maxEvaluations) {
-            if ( $courseid AND $courseid != $key )
-            {	continue; }
-            $possible_evaluations += $maxEvaluations;
+        if ($active) {
+            foreach ($_SESSION["possible_active_evaluations"] as $key => $maxEvaluations) {
+                if ($courseid and $courseid != $key) {
+                    continue;
+                }
+                $possible_active_evaluations += $maxEvaluations;
+            }
+        } else {
+            foreach ($_SESSION["possible_evaluations"] as $key => $maxEvaluations) {
+                if ($courseid and $courseid != $key) {
+                    continue;
+                }
+                $possible_evaluations += $maxEvaluations;
+            }
         }
 
     } else {
@@ -2234,7 +2244,8 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
             }
         } // from evc$numTeachersCourse++;
         // if ( !$getTeachers AND !$getStudents){
-        $_SESSION["possible_evaluations"][$courseid] = $_SESSION["possible_active_evaluations"][$courseid] = 0;
+        $_SESSION["possible_evaluations"][$courseid]
+                = $_SESSION["possible_active_evaluations"][$courseid] = 0;
         if ($numTeachersCourse) {
             $_SESSION["possible_evaluations"][$courseid]
                     = ($numStudentsCourse * ($evaluation->teamteaching ? $numTeachersCourse : 1));
@@ -2252,8 +2263,10 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
         return $my_evaluation_users;
     } else {
         return array($cnt_courses, $cnt_empty_courses,
-                safeCount($distinct_s), safeCount($distinct_s_active), $cnt_students, $cnt_students_active,
-                safeCount($distinct_t), safeCount($distinct_t_active), $cnt_teachers, $cnt_teachers_active);
+                safeCount($distinct_s), safeCount($distinct_s_active),
+                $cnt_students, $cnt_students_active,
+                safeCount($distinct_t), safeCount($distinct_t_active),
+                $cnt_teachers, $cnt_teachers_active);
     }
 }
 

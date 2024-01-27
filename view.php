@@ -395,7 +395,8 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                 list($_SESSION["participating_courses"], $_SESSION["participating_empty_courses"],
                         $_SESSION["distinct_s"], $_SESSION["distinct_s_active"], $_SESSION["students"],
                         $_SESSION["students_active"],
-                        $_SESSION["distinct_t"], $_SESSION["distinct_t_active"], $_SESSION["Teachers"], $_SESSION["Teachers_active"]
+                        $_SESSION["distinct_t"], $_SESSION["distinct_t_active"], $_SESSION["Teachers"],
+                        $_SESSION["Teachers_active"]
                         )
                         = get_evaluation_participants($evaluation);
             }
