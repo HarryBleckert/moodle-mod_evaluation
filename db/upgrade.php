@@ -457,6 +457,42 @@ function xmldb_evaluation_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, $newversion, 'evaluation');
     }
+
+    $newversion = 2024012900;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation_completed');
+        $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, ['timemodified']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $table = new xmldb_table('evaluation_enrolments');
+        $index = new xmldb_index('evaluation', XMLDB_INDEX_NOTUNIQUE, ['evaluation']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $table = new xmldb_table('evaluation_users');
+        $index = new xmldb_index('lastaccess', XMLDB_INDEX_NOTUNIQUE, ['lastaccess']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $table = new xmldb_table('evaluation_users_la');
+        $index = new xmldb_index('evaluation', XMLDB_INDEX_NOTUNIQUE, ['evaluation']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $table = new xmldb_table('evaluation_users_la');
+        $index = new xmldb_index('lastaccess', XMLDB_INDEX_NOTUNIQUE, ['lastaccess']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
+
     return true;
 }
 

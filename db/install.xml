@@ -110,6 +110,7 @@
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
         <INDEX NAME="teacherid" UNIQUE="false" FIELDS="teacherid"/>
         <INDEX NAME="course_of_studies" UNIQUE="false" FIELDS="course_of_studies"/>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
       </INDEXES>
     </TABLE>
 	
@@ -214,6 +215,8 @@
 	</KEYS>
 	<INDEXES>
 		<INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="evaluation" UNIQUE="false" FIELDS="evaluation"/>
+
 	</INDEXES>
 	</TABLE>
 		
@@ -237,6 +240,7 @@
 	<INDEXES>	
         <INDEX NAME="userid" UNIQUE="true" FIELDS="userid"/>
         <INDEX NAME="username" UNIQUE="false" FIELDS="username"/>
+        <INDEX NAME="lastaccess" UNIQUE="false" FIELDS="lastaccess"/>
 	</INDEXES>
 	</TABLE>
 		
@@ -256,6 +260,7 @@
 	<INDEXES>	
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
         <INDEX NAME="evaluation" UNIQUE="false" FIELDS="evaluation"/>
+        <INDEX NAME="lastaccess" UNIQUE="false" FIELDS="lastaccess"/>
 	</INDEXES>
 	</TABLE>
 
