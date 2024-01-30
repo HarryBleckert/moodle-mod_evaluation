@@ -1796,7 +1796,7 @@ function evaluation_participating_courses($evaluation, $userid = false, $cstudie
 
 function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role = "student", $courseid=false) {
     global $DB;
-    if (empty($lastaccess)) {
+    if (is_siteadmin() OR empty($lastaccess)) {
         $lastaccess = 0;
     }
     if (!isset($evaluation->timeclose)) {
