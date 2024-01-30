@@ -140,7 +140,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }else {
         $department = false;
         $myEvaluations = get_evaluation_participants($evaluation, $USER->id);
-        if ($isOpen or $course_of_studiesID or ($teacherid and $teacherid != $USER->id)
+        if ($course_of_studiesID or ($teacherid and $teacherid != $USER->id)
                 or ($courseid and !evaluation_is_my_courseid($myEvaluations, $courseid))
         ) {
             print '<br><h2 style="font-weight:bold;color:red;background-color:whitesmoke;">'
