@@ -2389,6 +2389,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
             if (!$evaluation_is_open or $isTeacher or stristr($myEvaluation["reminder"], get_string("analysis", "evaluation"))) {
                 $color = "grey";
                 $actionTxt = get_string("analysis", "evaluation");
+                $statTxt = $string['statistics'];
                 // link to Evaluation Overview
                 $urlF = "<a href=\"$wwwroot/mod/evaluation/view.php?id=$cmid&courseid=" . $myEvaluation["courseid"] . "\">";
                 if ($replies >= $min_results and $evaluation_has_user_participated) {
@@ -2397,6 +2398,8 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     // see graphic results
                     $urlF = "<a href=\"$wwwroot/mod/evaluation/analysis_course.php?id=$cmid&courseid=" . $myEvaluation["courseid"]
                             . (($isTeacher and $userResults) ? "&teacherid=" . $myEvaluation["id"] : "") . "\">";
+                    $urlStats = "<a href=\"$wwwroot/mod/evaluation/print.php?showCompare=1&id=$cmid&courseid=" . $myEvaluation["courseid"] . '">';
+
                 }
                 if (empty($_SESSION["LoggedInAs"])) {
                     $urlC = "<a href=\"$wwwroot/course/view.php?id=" . $myEvaluation["courseid"] . "\">";
@@ -2404,8 +2407,15 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     $urlC = "<a href=\"#\">";
                 }
                 $str .= "<tr>\n";
-                $str .= "<td $min_resInfo>$urlF<b style=\"color:$color;\">$actionTxt</b></a></td>
-							<td style=\"text-align:right;\">" . $replies . "</td>";
+                $str .= "<td $min_resInfo>$urlF<b style=\"color:$color;\">$actionTxt</b></a></td>\n";
+                $str .= "<td style=\"text-align:right;\">"
+                if (empty($min_resInfo)){
+                    $str .= $urlStats."<b style=\"color:$color;\">$statTxt</b></a>";
+                }
+                else{
+                    $str .= "&nlbr;"
+                }
+                $str .= "</td>\n<td style=\"text-align:right;\">" . $replies . "</td>\n";
                 if (empty($_SESSION["LoggedInAs"])) {
                     $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></a></td>\n";
                 } else {

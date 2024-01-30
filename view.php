@@ -707,10 +707,6 @@ if (is_siteadmin()) {
         $_SESSION["make_block_evaluation_visible"] = $evaluation->name;
         print make_block_evaluation_visible($evaluation);
     }
-}
-
-if (is_siteadmin())
-{
     if (isset($_GET['shuffle'])) {
         ev_shuffle_completed_userids($evaluation, true);
     }
