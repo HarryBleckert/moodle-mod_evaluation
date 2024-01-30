@@ -143,7 +143,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         if ($isOpen or $course_of_studiesID or ($teacherid and $teacherid != $USER->id)
                 or ($courseid and !evaluation_is_my_courseid($myEvaluations, $courseid))
         ) {
-            print '<br><h2 style="font-weight:bold;color:#000000;background-color:#000000;">'
+            print '<br><h2 style="font-weight:bold;color:red;background-color:whitesmoke;">'
                     . get_string('no_permission_analysis', 'evaluation') . "</h2><br>";
             echo $OUTPUT->continue_button("/mod/evaluation/view.php?id=$id");
             echo $OUTPUT->footer();
