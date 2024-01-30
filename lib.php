@@ -2397,8 +2397,9 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     $min_resInfo = "";
                     // see graphic results
                     $urlF = "<a href=\"$wwwroot/mod/evaluation/analysis_course.php?id=$cmid&courseid=" . $myEvaluation["courseid"]
-                            . (($isTeacher and $userResults) ? "&teacherid=" . $myEvaluation["id"] : "") . "\">";
-                    $urlStats = "<a href=\"$wwwroot/mod/evaluation/print.php?showCompare=1&id=$cmid&courseid=" . $myEvaluation["courseid"] . '">';
+                            . (($isTeacher and $userResults) ? "&teacherid=" . $myEvaluation["id"] : "") . '" target="ev_results">';
+                    $urlStats = "<a href=\"$wwwroot/mod/evaluation/print.php?showCompare=1&id=$cmid&courseid=" . $myEvaluation["courseid"]
+                            .  '" target="ev_results">';
 
                 }
                 if (empty($_SESSION["LoggedInAs"])) {
