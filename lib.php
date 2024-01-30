@@ -2414,7 +2414,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     $str .= $urlStats."<b style=\"color:$color;\">$statTxt</b></a>";
                 }
                 else{
-                    $str .= "&nbsp;";
+                    $str .= $urlF."<b style=\"color:$color;\">$statTxt</b></a>";
                 }
                 $str .= "</td>\n<td style=\"text-align:right;\">" . $replies . "</td>\n";
                 if (empty($_SESSION["LoggedInAs"])) {
