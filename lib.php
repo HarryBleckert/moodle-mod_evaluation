@@ -2409,7 +2409,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                 }
                 $str .= "<tr>\n";
                 $str .= "<td $min_resInfo>$urlF<b style=\"color:$color;\">$actionTxt</b></a></td>\n";
-                $str .= "<td style=\"text-align:right;\">";
+                $str .= "<td $min_resInfo>";
                 if (empty($min_resInfo)){
                     $str .= $urlStats."<b style=\"color:$color;\">$statTxt</b></a>";
                 }
