@@ -2408,12 +2408,12 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                 }
                 $str .= "<tr>\n";
                 $str .= "<td $min_resInfo>$urlF<b style=\"color:$color;\">$actionTxt</b></a></td>\n";
-                $str .= "<td style=\"text-align:right;\">"
+                $str .= "<td style=\"text-align:right;\">";
                 if (empty($min_resInfo)){
                     $str .= $urlStats."<b style=\"color:$color;\">$statTxt</b></a>";
                 }
                 else{
-                    $str .= "&nlbr;"
+                    $str .= "&nlbr;";
                 }
                 $str .= "</td>\n<td style=\"text-align:right;\">" . $replies . "</td>\n";
                 if (empty($_SESSION["LoggedInAs"])) {
