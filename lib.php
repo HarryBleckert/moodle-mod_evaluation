@@ -2389,7 +2389,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
             if (!$evaluation_is_open or $isTeacher or stristr($myEvaluation["reminder"], get_string("analysis", "evaluation"))) {
                 $color = "grey";
                 $actionTxt = get_string("analysis", "evaluation");
-                $statTxt = $string['statistics'];
+                $statTxt = get_string("statistics", "evaluation");
                 // link to Evaluation Overview
                 $urlF = "<a href=\"$wwwroot/mod/evaluation/view.php?id=$cmid&courseid=" . $myEvaluation["courseid"] . "\">";
                 if ($replies >= $min_results and $evaluation_has_user_participated) {
@@ -2413,7 +2413,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     $str .= $urlStats."<b style=\"color:$color;\">$statTxt</b></a>";
                 }
                 else{
-                    $str .= "&nlbr;";
+                    $str .= "&nbsp;";
                 }
                 $str .= "</td>\n<td style=\"text-align:right;\">" . $replies . "</td>\n";
                 if (empty($_SESSION["LoggedInAs"])) {
