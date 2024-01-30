@@ -175,7 +175,7 @@ if ($evaluation->course == SITEID) {
                 $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'evaluation'));
             }
             //$txt = ($courseid||$teacherid) ?" mit Vergleich" :"";
-            if (!$is_open or defined('EVALUATION_OWNER')) {
+            if (!$is_open or $isTeacher or defined('EVALUATION_OWNER')) {
                 $urlparamsIDT['showCompare'] = 1;
                 $statsurl = new moodle_url('/mod/evaluation/print.php', $urlparamsIDT);
                 $row[] = new tabobject('statistics', $statsurl->out(), "Statistik");
