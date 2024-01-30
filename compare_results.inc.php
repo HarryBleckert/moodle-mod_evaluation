@@ -1513,7 +1513,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             ChartAxis.helpers.color(color).lighten(0.2);
         */
 
-        $colors0 = array("black", "red", "green", "yellow","blue","orange", "purple", "cyan",
+        $colors0 = array("black", "red", "green", "blue","orange", "purple", "cyan",
                 "magenta", "Lime", "pink",
                 "teal", "lavender", "brown", "beige", "maroon", "mint", "olive", "apricot",
                 "navy", "grey", "amber", "darkblue", "darkred",
