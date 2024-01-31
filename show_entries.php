@@ -355,25 +355,22 @@ if ($userid || $showcompleted) {
     $privGlobalUser = (is_siteadmin() OR (isset($_SESSION["privileged_global_users"][$USER->username]) &&
             !empty($_SESSION["privileged_global_users"][$USER->username])));
     if ($privGlobalUser) {
-        $minresults = $minresultsText = $minresultsPriv;
-    }
-    if ($privGlobalUser) {
-        $minresults = $minresultsText = $minresultsPriv;
+        $minResults = $minResultsText = $minResultsPriv;
     }
 
     $completed_responses = $evaluationstructure->count_completed_responses();
     /*
-    $minresults = evaluation_min_results($evaluation);
+    $minResults = evaluation_min_results($evaluation);
     if ( $cosPrivileged )
-    {	if ( $completed_responses < $minresults )
-        {	echo '<br><b style="color:red;">Für diese Auswertung wurden weniger als '. $minresults
+    {	if ( $completed_responses < $minResults )
+        {	echo '<br><b style="color:red;">Für diese Auswertung wurden weniger als '. $minResults
                    . " Abgaben gemacht. Daher können Sie keine Antworten einsehen!</b><br>\n";
             echo $OUTPUT->continue_button("/mod/evaluation/view.php?id=$id");
             if ( !is_siteadmin() )
             {	print $OUTPUT->footer(); exit; }
         }
-        elseif ( $completed_responses >= $minresults AND $completed_responses < $minresults+3 )
-        {	echo '<br><b style="color:red;">Für diese Auswertung wurden weniger als '.($minresults+3)
+        elseif ( $completed_responses >= $minResults AND $completed_responses < $minResults+3 )
+        {	echo '<br><b style="color:red;">Für diese Auswertung wurden weniger als '.($minResults+3)
                    . " Abgaben gemacht. Daher können Sie keine Textantworten einsehen!</b><br>\n";
         }
     }*/

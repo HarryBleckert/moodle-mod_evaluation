@@ -81,14 +81,14 @@ if ($courseid and $course->id !== SITEID and !defined('EVALUATION_OWNER')) {
 $url = new moodle_url('/mod/evaluation/view.php', array('id' => $id));
 evSetPage($url);
 
-$minresults = evaluation_min_results($evaluation);
-$minresultsText = min_results_text($evaluation);
-$minresultsPriv = min_results_priv($evaluation);
+$minResults = evaluation_min_results($evaluation);
+$minResultsText = min_results_text($evaluation);
+$minResultsPriv = min_results_priv($evaluation);
 
 $privGlobalUser = (is_siteadmin() OR (isset($_SESSION["privileged_global_users"][$USER->username]) &&
         !empty($_SESSION["privileged_global_users"][$USER->username])));
 if ($privGlobalUser) {
-    $minresults = $minresultsText = $minresultsPriv;
+    $minResults = $minResultsText = $minResultsPriv;
 }
 
 //$previewimg = '<i style="color:blue;" class="fa fa-search-plus fa-fw fa-2x" title="'.get_string('preview').'">';
@@ -303,13 +303,13 @@ $msg_student_all_courses = "Guten Tag $fullname<br>Bitte beteiligen " . ($evalua
                         und füllen Sie dann jeweils den Fragebogen aus.<br>\n$teamteachingTxt
                         Ihre Evaluation ist uns eine große Hilfe!<br>"
         )
-        . "Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald $minresults Abgaben vorliegen.<br>
+        . "Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald $minResults Abgaben vorliegen.<br>
                         Herzliche Grüße vom Team der Lehrveranstaltungsevaluation<br>\n";
 $msg_teachers = "Guten Tag $fullname<br>
                         Sie haben Kurse, die an dieser Evaluation teil" . ($is_open
                 ? "nehmen. Bitte motivieren Sie die Studierenden zur Teilnahme" : "genommen haben") . ".<br>
-                        Für Ihre eigenen Kurse können Sie die statistische Auswertung einsehen, sobald $minresults Abgaben vorliegen. 
-                        Ab $minresultsText Abgaben können Sie auch die Textantworten einsehen.<br>\n
+                        Für Ihre eigenen Kurse können Sie die statistische Auswertung einsehen, sobald $minResults Abgaben vorliegen. 
+                        Ab $minResultsText Abgaben können Sie auch die Textantworten einsehen.<br>\n
                         Herzliche Grüße vom Team der Lehrveranstaltungsevaluation<br>\n";
 if ($is_open) {
     $days = remaining_evaluation_days($evaluation);
@@ -333,7 +333,7 @@ if ($is_open) {
 
 
 if (defined('EVALUATION_OWNER') and !evaluation_cosPrivileged($evaluation)) {
-    $minresults = $minresultsText = $minresultsPriv;
+    $minResults = $minResultsText = $minResultsPriv;
 }
 
 //show loading spinner - not working at this stage as page

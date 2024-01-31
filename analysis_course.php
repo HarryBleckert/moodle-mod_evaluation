@@ -135,14 +135,13 @@ $evaluationstructure = new mod_evaluation_structure($evaluation, $PAGE->cm, $cou
         $teacherid, $course_of_studies, $course_of_studiesID,$department);
 $cosStudies = safeCount($evaluationstructure->get_completed_course_of_studies());
 $completed_responses = $evaluationstructure->count_completed_responses();
-$minresults = evaluation_min_results($evaluation);
-$minresultsText = min_results_text($evaluation);
-$minresultsPriv = min_results_priv($evaluation);
+$minResults = evaluation_min_results($evaluation);
+$minResultsText = min_results_text($evaluation);
+$minResultsPriv = min_results_priv($evaluation);
 $privGlobalUser = (is_siteadmin() OR (isset($_SESSION["privileged_global_users"][$USER->username]) &&
         !empty($_SESSION["privileged_global_users"][$USER->username])));
-
 if ($privGlobalUser) {
-    $minresults = $minresultsText = $minresultsPriv;
+    $minResults = $minResultsText = $minResultsPriv;
 }
 
 
@@ -167,9 +166,9 @@ $Teacher = evaluation_is_teacher($evaluation, $_SESSION["myEvaluations"], $cours
 
 $showUnmatched_minResults = false;
 if ($Teacher) {
-    $showUnmatched_minResults = ($completed_responses >= $minresults and $completed_responses < $minresultsText);
+    $showUnmatched_minResults = ($completed_responses >= $minResults and $completed_responses < $minResultsText);
 } else if (defined('EVALUATION_OWNER') and !evaluation_cosPrivileged($evaluation)) {
-    $showUnmatched_minResults = ($completed_responses < $minresultsPriv);
+    $showUnmatched_minResults = ($completed_responses < $minResultsPriv);
 }
 
 /// print the tabs
@@ -236,7 +235,7 @@ if ($Teacher) {    //if ( !defined( "isTeacher") ) { define( "isTeacher", true )
     }
 }
 if ($numTextQ and $showUnmatched_minResults) {
-    echo '<br><b style="color:#000065;">Für diese Auswertung wurden weniger als ' . ($minresultsText)
+    echo '<br><b style="color:#000065;">Für diese Auswertung wurden weniger als ' . ($minResultsText)
             . " Abgaben gemacht. Daher können Sie keine Textantworten einsehen!</b><br>\n";
 }
 
@@ -346,10 +345,10 @@ if (!$completed_responses) {
     echo $OUTPUT->footer();
     exit;
 }
-if ($completed_responses < $minresults) {
+if ($completed_responses < $minResults) {
     evaluation_spinnerJS(false);
     $teacherTxt = ($Teacher and $teacherid) ? " Es werden nur die Abgaben für Sie ausgewertet." : "";
-    echo "</div><p style=\"color:red;font-weight:bold;align:center;\">" . get_string('min_results', 'evaluation', $minresults) .
+    echo "</div><p style=\"color:red;font-weight:bold;align:center;\">" . get_string('min_results', 'evaluation', $minResults) .
             $teacherTxt . "</p>";
     if (!is_siteadmin()) {
         echo $OUTPUT->footer();
@@ -425,7 +424,7 @@ if (($isPermitted or ($Teacher and $teacherid)) and $evaluationstructure->count_
 }
 
 // show / print only text
-if ($numTextQ and (((!$showUnmatched_minResults and ($completed_responses >= $minresultsText
+if ($numTextQ and (((!$showUnmatched_minResults and ($completed_responses >= $minResultsText
                                 AND ($cosPrivileged or $Teacher)))) or
                 (defined('EVALUATION_OWNER') ? !$cosPrivileged : false))) {
     ?>
@@ -536,7 +535,7 @@ if ($courseitemfilter > 0) {
     //echo "<br>Studiengang: $course_of_studies<br>";
 
     $byTeacher =
-            ((($Teacher and $teacherid == $USER->id) or defined('EVALUATION_OWNER')) and $completed_responses >= $minresultsText);
+            ((($Teacher and $teacherid == $USER->id) or defined('EVALUATION_OWNER')) and $completed_responses >= $minResultsText);
     echo "<br>\n";
     // Print the items in an analysed form.
     foreach ($items as $key => $item) {
