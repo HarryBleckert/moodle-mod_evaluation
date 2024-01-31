@@ -381,7 +381,7 @@ if ($userid || $showcompleted) {
     // before 2022/7/28: ( !defined('EVALUATION_OWNER') ?true :!$cosPrivileged ) AND
     if (defined("SiteEvaluation") and
             ((!$totalrowsRT and !$totalrowsART) or
-                    ($totalrowsRT < $minResults and $totalrowsART < evaluation_min_results($evaluation)))) {
+                    ($totalrowsRT < $minResults and $totalrowsART < $minResults))) {
         echo "<p style=\"color:red;font-weight:bold;align:center;\">" . get_string('min_results', 'evaluation', $minResults) .
                 "</p>";
         evaluation_spinnerJS(false);
