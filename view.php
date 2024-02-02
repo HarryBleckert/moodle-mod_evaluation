@@ -698,13 +698,14 @@ if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
 
 }
 
-$pluginfo = ev_get_plugin_version();
-$info = "\n<hr>\nPlugin: ".$pluginfo->component.". Version: "
-        .$pluginfo->release ." (Build: ".$pluginfo->version.")<hr>\n";
-print $info;
-
 if (is_siteadmin()) {
     print "<br>Evaluation->id: $evaluation->id";
+
+    $pluginfo = ev_get_plugin_version();
+    $info = "\n<hr>\nPlugin: ".$pluginfo->component.". Version: "
+            .$pluginfo->release ." (Build: ".$pluginfo->version.")<hr>\n";
+    print $info;
+
     if ($SiteEvaluation and (!isset($_SESSION["make_block_evaluation_visible"]) or
                     $_SESSION["make_block_evaluation_visible"] !== $evaluation->name)) {
         $_SESSION["make_block_evaluation_visible"] = $evaluation->name;
