@@ -4567,7 +4567,7 @@ function ev_get_reminders($evaluation) {
      20240122:teachers,students
      */
     $remindersA = explode("\n",$reminders);
-    echo "<b>Hinweismails wurden versandt am:</b> ";
+    echo '<b title="Der Vermerk NR weist darauf hin, dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben angeschrieben wurden.">Hinweismails wurden versandt am:</b> ';
     foreach ( $remindersA AS $line){
         if (!strpos($line,":")){
             continue;
