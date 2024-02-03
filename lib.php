@@ -4553,16 +4553,17 @@ function ev_get_reminders($evaluation) {
         $ndate = $lineA[0];
         echo "<b>$ndate</b>: ";
         $actions = explode(":",$lineA[1]);
-        $alen = safeCount($actions);
         $cnt = 0;
-        foreach ($actions as $action){
-            if (strstr("student,teacher",$action)) {
-                $action =  get_string($action);
+        $roles = explode(",",$actions);
+        $alen = safeCount($roles);
+        foreach ($roles as $role){
+            if (strstr("student,teacher",$role)) {
+                $role =  get_string($role);
             }
-            echo $action;
+            echo $role;
             $cnt++;
             if ($cnt<$alen){
-                echo " - ";
+                echo ", ";
             }
             else{
                 echo "<br>\n";
