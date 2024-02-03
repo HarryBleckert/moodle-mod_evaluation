@@ -4272,7 +4272,7 @@ function ev_send_reminders($evaluation,$role="teacher",$test=true,$verbose=false
     setlocale(LC_ALL, 'de_DE');
 
     ev_show_reminders_log("\n" . date("Ymd H:m:s") .
-            "\nSending reminders to all participants with role $role in evaluation $evaluation->name (ID: $evaluationid)");
+            "\nSending reminders to all participants with role $role in evaluation $evaluation->name (ID: $evaluation->id)");
 
     if ($test) {
         ev_show_reminders_log("Test Mode");
