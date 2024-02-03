@@ -2435,6 +2435,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                         $Txt = $actionTxt;
                         $url = $urlF;
                         $str .= "<tr>\n";
+                        $colspan = ' colspan="3';
                         $completed = $DB->get_record_sql("select id,evaluation,courseid,userid,teacherid from {evaluation_completed} 
 										WHERE evaluation=" . $evaluation->id . " AND userid=" . $myEvaluation["id"]
                                 . " AND courseid=" . $myEvaluation['courseid'] . " AND teacherid=" . $teacher['id']);
@@ -2443,22 +2444,22 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                             $color = "green";
                             $Txt = '<span style="font-weight:normal;color:$color;">Abgegeben für<br>Dozent_in '
                                     . $teacher['fullname'] . '</span>';
-                            $str .= "<td><b style=\"color:$color;\">$Txt</b></td>";
+                            $str .= "<td$colspan><b style=\"color:$color;\">$Txt</b></td>";
                         } else {
                             $color = "darkred";
                             $Txt .= '<span style="font-weight:normal;color:black;"><br>Dozent_in ' . $teacher['fullname'] .
                                     '</span>';
                             $url = "<a href=\"$wwwroot/mod/evaluation/complete.php?id=$cmid&courseid=" . $myEvaluation["courseid"] .
                                     "&teacherid=" . $teacher['id'] . '">';
-                            $str .= "<td>$url<b style=\"color:$color;\">$Txt</b></a></td>";
+                            $str .= "<td$colspan>$url<b style=\"color:$color;\">$Txt</b></a></td>";
                         }
                         if (empty($_SESSION["LoggedInAs"])) {
                             $urlC = "<a href=\"$wwwroot/course/view.php?id=" . $myEvaluation["courseid"] . "\">";
                         } else {
                             $urlC = "<a href=\"#\">";
                         }
-                        $str .= "<td>&nbsp;</td>";
-                        $str .= "<td style=\"text-align:right;\">" . $replies . "</td>";
+                        // $str .= "<td>&nbsp;</td>";
+                        // $str .= "<td style=\"text-align:right;\">" . $replies . "</td>";
                         if (empty($_SESSION["LoggedInAs"])) {
                             $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></a></td>\n";
                         } else {
