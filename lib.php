@@ -4244,7 +4244,7 @@ function evaluation_get_empty_courses($sdate=false) {
 
 
 function ev_send_reminders($evaluation,$role="teacher",$test=true,$verbose=false,$cli=false) {
-    global $DB, $USER;
+    global $CFG, $DB, $USER;
     $_SESSION['ev_cli'] = $cli;
     set_time_limit(3000);
     $start = time();
@@ -4252,7 +4252,9 @@ function ev_send_reminders($evaluation,$role="teacher",$test=true,$verbose=false
     if ($verbose) {
         $DB->set_debug(true);
     }
-
+    if ($CFG->dbname != 'moodle_production' ){
+        $test = true;
+    }
     if (!isset($evaluation->id)) {
         ev_show_reminders_log("ERROR: Evaluation with ID $evaluationid not found!");
         return false;
