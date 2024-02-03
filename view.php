@@ -735,7 +735,11 @@ if (is_siteadmin()) {
        evaluation_get_empty_courses($_GET['empty_courses']);
     }
     if (isset($_GET['send_reminders'])) {
-        ev_send_reminders($evaluation, "teacher", $test, $verbose, true);
+       $test = true;
+       if (isset($_GET['test'])){
+           $test = $_GET['test'];
+       }
+        ev_send_reminders($evaluation, "teacher", $test);
     }
     if (isset($_GET['course_of_studies'])) {
         $keys = array();
