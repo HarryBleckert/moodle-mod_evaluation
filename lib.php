@@ -4540,7 +4540,7 @@ function ev_get_reminders($evaluation) {
      20240122:teachers,students
      */
     $remindersA = explode("\n",$reminders);
-    echo "<b>Hinweismails wurden versandt am:</b><br>";
+    echo "<b>Hinweismails wurden versandt am:</b> ";
     foreach ( $remindersA AS $line){
         if (!strpos($line,":")){
             continue;
@@ -4565,10 +4565,9 @@ function ev_get_reminders($evaluation) {
                 echo ", ";
             }
             else{
-                echo "<br>\n";
+                echo ". ";
             }
         }
-        // echo "$line<br>";
     }
 }
 
