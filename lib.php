@@ -4353,11 +4353,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 $testMsg =
                         "<p>Dies ist ein Entwurf für die Mail an die Studierenden, deren Kurse an der Evaluation teilnehmen$nrs.</p><hr>";
             } else {
-                $testMsg =
-                        "<p>Dies ist ein Entwurf für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen.</p><hr>";
                 if ($noreplies){
                     $nrs = " und für die es bisher weniger als 3 Abgbaen gibt";
                 }
+                $testMsg =
+                        "<p>Dies ist ein Entwurf für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen.</p><hr>";
             }
 
             $to = "Harry Bleckert <Harry@Bleckert.com>";
