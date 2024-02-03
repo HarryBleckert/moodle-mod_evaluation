@@ -141,6 +141,6 @@ $verbose = $options['verbose'];
 // uncomment this AFTER validating all settings in this script, mail message and mail header details suit your needs.
 // echo $usage; "\n\nScript is currently blocked. You need to validate settings and uncomment this line of code before you can run it!\n";  exit;
 // exit
-ev_show_reminders_log("\n" . date("Ymd H:m:s") . "\nSend using script '$PHP_SELF'");
+ev_show_reminders_log("\n" . date("Ymd H:m:s") . "\nSend using script $PHP_SELF");
 ev_send_reminders($evaluation,$role,$test,$verbose,true);
 exit;

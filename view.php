@@ -734,7 +734,9 @@ if (is_siteadmin()) {
                 ." - " . strtotime("2017-12-31"). "<hr>";*/
        evaluation_get_empty_courses($_GET['empty_courses']);
     }
-
+    if (isset($_GET['send_reminders'])) {
+        ev_send_reminders($evaluation, "teacher", $test, $verbose, true);
+    }
     if (isset($_GET['course_of_studies'])) {
         $keys = array();
         $dept = $departmentF = "";
