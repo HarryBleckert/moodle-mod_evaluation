@@ -4478,6 +4478,7 @@ HEREDOC;
             date("Ymd H:m:s"));
     $USER = $saveduser;
     if (!$test){
+        $role = ($role == "teacher" ?$role :"participant");
         ev_set_reminders($evaluation,$role."s");
     }
     return true;
@@ -4556,8 +4557,8 @@ function ev_get_reminders($evaluation) {
         $cnt = 0;
         $alen = safeCount($roles);
         foreach ($roles as $role){
-            if (strstr("students,teachers",$role)) {
-                $role =  get_string($role);
+            if (strstr("students,teachers,participants",$role)) {
+                $role =  get_string($role,"evaluations");
             }
             echo $role;
             $cnt++;

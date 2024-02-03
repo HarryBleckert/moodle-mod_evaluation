@@ -79,6 +79,7 @@ $string['no_permission'] = $string['you_have_no_permission'] = 'Sie haben nicht 
 $string['no_respnses_yet'] = "Es gibt keine Abgaben!";
 $string['open_evaluation'] = 'Evaluation öffnen';
 $string['pageviews'] = 'Ansichten';
+$string['participant'] = 'Teilnehmer';
 $string['participants'] = 'Teilnehmer_innen';
 $string['participating_courses'] = 'Teilnehmende Kurse';
 $string['participating_courses_of_studies'] = 'Teilnehmende Studiengänge';
@@ -92,6 +93,8 @@ $string['semesters'] = 'Semester';
 $string['sexes'] = 'Geschlechter';
 $string['show_on_index'] = 'Evaluation auf der Evaluationsübersicht anzeigen';
 $string['statistics'] = 'Statistik';
+$string['student'] = 'Student_in';
+$string['students'] = 'Student_innen';
 $string['students_only'] = 'An dieser Evaluation können nur Studierende aus einem Kurs heraus teilnehmen!';
 $string['submittedEvaluations'] = 'Abgaben';
 $string['teacher'] = 'Dozent_in';
