@@ -85,8 +85,7 @@ $minResults = evaluation_min_results($evaluation);
 $minResultsText = min_results_text($evaluation);
 $minResultsPriv = min_results_priv($evaluation);
 
-$privGlobalUser = (is_siteadmin() OR (isset($_SESSION["privileged_global_users"][$USER->username]) &&
-        !empty($_SESSION["privileged_global_users"][$USER->username])));
+$privGlobalUser = (is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]));
 if ($privGlobalUser) {
     $minResults = $minResultsText = $minResultsPriv;
 }

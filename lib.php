@@ -4545,15 +4545,30 @@ function ev_get_reminders($evaluation) {
         if (!strpos($line,":")){
             continue;
         }
-        /*
+
         $lineA = explode(":",$line);
         if ( empty($lineA) OR empty($lineA[0]) OR !isset($lineA[1])){
             continue;
         }
-        $date = $lineA[0];
-        // $actions = explode(":",$lineA[1]);
-        */
-        echo "$line<br>";
+        $ndate = $lineA[0];
+        echo "<b>$ndate</b>: ";
+        $actions = explode(":",$lineA[1]);
+        $alen = safeCount($actions);
+        $cnt = 0;
+        foreach ($actions as $action){
+            if (strstr("student,teacher",$action)) {
+                $action =  get_string($action);
+            }
+            echo $action;
+            $cnt++;
+            if ($cnt<$alen){
+                echo " - "
+            }
+            else{
+                echo "<br>\n";
+            }
+        }
+        // echo "$line<br>";
     }
 }
 
