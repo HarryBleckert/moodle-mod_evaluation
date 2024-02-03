@@ -1050,6 +1050,7 @@ function evaluation_LoginAs() {
                 . ($CoS_privileged_cnt ? '<a href="' . $url . '&LoginAs=dekan">Dekan_in</a> - ' : "")
                 . '<a href="' . $url . '&LoginAs=teacher">Dozent_in</a> - <a href="'
                 . $url . '&LoginAs=student">Student_in</a> - <a href="' . $url . '&LoginAs=user">ASH Mitglied</a>';
+        // not done: $msg .= ' - <a href="' . $url . '&LoginAs=username">' .get_string('username'). '</a>";
     }
     print "\n" . '<script>document.getElementById("LoginAs").innerHTML = "' . str_replace('"', '\"', $msg) . '<br>";</script>' .
             "\n";
