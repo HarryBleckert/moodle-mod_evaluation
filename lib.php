@@ -4549,7 +4549,7 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
         $DB->update_record("evaluation",$evUpdate);
         return true;
     }
-    $evUpdate->reminders = $ndate . ":" . $action . $nonresponding . "\n";
+    $evUpdate->reminders = $reminders . $ndate . ":" . $action . $nonresponding . "\n";
     $DB->update_record("evaluation",$evUpdate);
     return true;
 }
