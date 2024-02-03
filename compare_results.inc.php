@@ -15,6 +15,7 @@ define('EVALUATION_MULTICHOICE_HIDENOSELECT', 'h');
 function evaluation_compare_results($evaluation, $courseid = false,
         $teacherid = false, $course_of_studiesID = false, $department =false) {
     global $DB, $OUTPUT, $USER;
+    validate_evaluation_sessions($evaluation);
     if (!isset($_SESSION["duplicated"])) {
         $_SESSION["duplicated"] = evaluation_count_duplicated_replies($evaluation);
     }
