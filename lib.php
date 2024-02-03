@@ -4255,7 +4255,11 @@ function ev_send_reminders($evaluation,$role="teacher",$test=true,$verbose=false
 
     if (!isset($evaluation->id)) {
         ev_show_reminders_log("ERROR: Evaluation with ID $evaluationid not found!");
-        exit;
+        return false;
+    }
+    if (!evaluation_is_open($evaluation)){
+        ev_show_reminders_log("ERROR: This evaluation is not open. Reminders can not be mailed!");
+        return false;
     }
     // set user var to Admin Harry
     if (empty($USER) or !isset($USER->username)) {
@@ -4323,10 +4327,12 @@ function ev_send_reminders($evaluation,$role="teacher",$test=true,$verbose=false
             //$myCourses .= "<p><b>Ergebnisse für alle evaluierten Dozent_innen Ihrer Kurse:</b></p>\n";
             //$myCourses .= show_user_evaluation_courses( $evaluation, $myEvaluations, $cmid, true, false, false );
         }
+
         // if filter for course category.
-        if ($cos) {
+        /* if ($cos) {
 
         }
+        */
 
         $testMsg = "";
 
@@ -4471,8 +4477,13 @@ HEREDOC;
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
             date("Ymd H:m:s"));
     $USER = $saveduser;
+    if (!$test){
+        ev_set_reminders($evaluation,$role)
+    }
     return true;
 }
+
+
 function ev_show_reminders_log($msg) {
     $logfile = "/var/log/moodle/evaluation_send_reminders.log";
     if (isset($_SESSION['ev_cli']) AND $_SESSION['ev_cli']){
@@ -4488,8 +4499,81 @@ function ev_show_reminders_log($msg) {
 }
 
 
+function ev_set_reminders($evaluation,$action) {
+    global $DB;
+    $evUpdate = new stdClass();
+    $evUpdate->id = $evaluation->id;
+    $reminders = $evaluation->reminders;
+    $remindersA = array();
+    $ndate = date("Ymd");
+    if (!empty($reminders)){
+        $remindersA = explode("\n",$reminders);
+    }
+    /*
+     20240102:teachers,students
+     20240122:teachers,students
+    */
+
+    foreach ( $remindersA AS $key => $line) {
+        if (!strpos($line, $ndate.":")) {
+            continue;
+        }
+        $remindersA[$key] .= "," . $action;
+        $evUpdate->reminders = implode("\n",$remindersA);
+        $DB->update_record("evaluation",$evUpdate);
+        return true;
+    }
+    $evUpdate->reminders = $ndate . ":" . $action . "\n";
+    $DB->update_record("evaluation",$evUpdate);
+    return true;
+}
+
+
+
+function ev_get_reminders($evaluation) {
+    $reminders = $evaluation->reminders;
+    if (empty($reminders)){
+        return "";
+    }
+    /*
+     20240102:teachers,students
+     20240122:teachers,students
+     */
+    $remindersA = explode("\n",$reminders);
+    echo "<b>Hinweismails wurden versandt am:</b><br>";
+    foreach ( $remindersA AS $line){
+        if (!strpos($line,":")){
+            continue;
+        }
+        /*
+        $lineA = explode(":",$line);
+        if ( empty($lineA) OR empty($lineA[0]) OR !isset($lineA[1])){
+            continue;
+        }
+        $date = $lineA[0];
+        // $actions = explode(":",$lineA[1]);
+        */
+        echo "$line<br>";
+    }
+}
 
 // end of ASH functions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Include forms lib.
 require_once($CFG->libdir . '/formslib.php');
