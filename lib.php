@@ -4243,7 +4243,7 @@ function evaluation_get_empty_courses($sdate=false) {
 }
 
 
-function ev_send_reminders($evaluation,$role="teacher",$test=true,$verbose=false,$cli=false) {
+function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=true,$verbose=false,$cli=false) {
     global $CFG, $DB, $USER;
     $_SESSION['ev_cli'] = $cli;
     set_time_limit(3000);
@@ -4376,14 +4376,19 @@ function ev_send_reminders($evaluation,$role="teacher",$test=true,$verbose=false
         $reminder = ($remaining_evaluation_days <= 9 ?
                 "<b>nur noch $remaining_evaluation_days Tage bis zum $lastEvaluationDay laufenden</b> " : "laufenden ");
         if ($role == "student" || $role == "participants") {    //$user = core_user::get_user($userid);
+            $hasParticipated = evaluation_has_user_participated($evaluation, $userid);
+            if ($noreplies AND $hasParticipated) {
+                continue;
+            }
             if (hasUserEvaluationCompleted($evaluation, $userid)) {
                 ev_show_reminders_log("$cnt. $fullname - $username - $userid - $email - COMPLETED ALL!!");
                 $cnt++;
                 continue;
             }
+
             $testStudent = true;
             $cntStudents++;
-            $also = ((evaluation_has_user_participated($evaluation, $userid) or remaining_evaluation_days($evaluation) > 15) ? "" :
+            $also = (($hasParticipated or remaining_evaluation_days($evaluation) > 15) ? "" :
                     "auch");
             $message = <<<HEREDOC
 <html>
@@ -4422,6 +4427,9 @@ HEREDOC;
             $onlyfew = "";
 
             $replies = evaluation_countCourseEvaluations($evaluation, false, "teacher", $userid);
+            if ($noreplies AND $replies>=3) {
+                continue;
+            }
             if ($current_evaluation_day > 7 or $replies > 3) {
                 if ($replies < 21) {
                     if ($replies < 1) {
@@ -4481,7 +4489,7 @@ HEREDOC;
     $USER = $saveduser;
     if (!$test){
         $role = ($role == "teacher" ?$role :"participant");
-        ev_set_reminders($evaluation,$role."s");
+        ev_set_reminders($evaluation,$role."s", $noreplies);
     }
     return true;
 }
@@ -4502,8 +4510,9 @@ function ev_show_reminders_log($msg) {
 }
 
 
-function ev_set_reminders($evaluation,$action) {
+function ev_set_reminders($evaluation,$action,$noreplies=false) {
     global $DB;
+    $nonresponding = ($noreplies ?" (NR)" :"");
     $evUpdate = new stdClass();
     $evUpdate->id = $evaluation->id;
     $reminders = $evaluation->reminders;
@@ -4521,12 +4530,12 @@ function ev_set_reminders($evaluation,$action) {
         if (!strpos($line, $ndate.":")) {
             continue;
         }
-        $remindersA[$key] .= "," . $action;
+        $remindersA[$key] .= "," . $action . $nonresponding;
         $evUpdate->reminders = implode("\n",$remindersA);
         $DB->update_record("evaluation",$evUpdate);
         return true;
     }
-    $evUpdate->reminders = $ndate . ":" . $action . "\n";
+    $evUpdate->reminders = $ndate . ":" . $action . $nonresponding . "\n";
     $DB->update_record("evaluation",$evUpdate);
     return true;
 }
@@ -4535,6 +4544,7 @@ function ev_set_reminders($evaluation,$action) {
 
 function ev_get_reminders($evaluation) {
     $reminders = $evaluation->reminders;
+    $nonresponding = " (NR)";
     if (empty($reminders)){
         return "";
     }
@@ -4559,10 +4569,15 @@ function ev_get_reminders($evaluation) {
         $cnt = 0;
         $alen = safeCount($roles);
         foreach ($roles as $role){
+            $nrd = "";
+            if ( strstr($role, $nonresponding)){
+                $role = str_replace($nonresponding,"", $role);
+                $nrd = $nonresponding;
+            }
             if (strstr("students,teachers,participants",$role)) {
                 $role =  get_string($role,"evaluation");
             }
-            echo $role;
+            echo $role . $nrd;
             $cnt++;
             if ($cnt<$alen){
                 echo ", ";

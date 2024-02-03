@@ -142,5 +142,5 @@ $verbose = $options['verbose'];
 // echo $usage; "\n\nScript is currently blocked. You need to validate settings and uncomment this line of code before you can run it!\n";  exit;
 // exit
 ev_show_reminders_log("\n" . date("Ymd H:m:s") . "\nSend using script $PHP_SELF");
-ev_send_reminders($evaluation,$role,$test,$verbose,true);
+ev_send_reminders($evaluation,$role,false,$test,$verbose,true);
 exit;

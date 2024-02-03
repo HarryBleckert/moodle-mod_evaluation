@@ -738,11 +738,15 @@ if (is_siteadmin()) {
 
     if (isset($_GET['send_reminders'])) {
        $test = true;
+       $noreplies = false;
        if (isset($_GET['test'])){
            $test = $_GET['test'];
        }
-       ev_send_reminders($evaluation, "teacher", $test);
-       ev_send_reminders($evaluation, "student", $test);
+       if (isset($_GET['noreplies'])){
+           $noreplies = $_GET['noreplies'];
+       }
+       ev_send_reminders($evaluation, "teacher", $noreplies, $test);
+       ev_send_reminders($evaluation, "student", $noreplies, $test);
     }
 
 
