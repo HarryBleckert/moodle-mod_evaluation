@@ -4434,7 +4434,6 @@ HEREDOC;
                 continue;
             }
             $testTeacher = true;
-            $cntTeachers++;
             // $possible_evaluations = ev_get_participants($myEvaluations);
             // Bis zu $possible_evaluations Abgaben für Sie sind möglich.
             $onlyfew = "";
@@ -4457,6 +4456,7 @@ HEREDOC;
                 }
             }
 
+            $cntTeachers++;
             $message = <<<HEREDOC
 <html>
 <head>
