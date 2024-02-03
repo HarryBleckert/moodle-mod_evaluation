@@ -4552,9 +4552,8 @@ function ev_get_reminders($evaluation) {
         }
         $ndate = $lineA[0];
         echo "<b>$ndate</b>: ";
-        $actions = explode(":",$lineA[1]);
+        $roles = explode(",",$lineA[1]);
         $cnt = 0;
-        $roles = explode(",",$actions);
         $alen = safeCount($roles);
         foreach ($roles as $role){
             if (strstr("student,teacher",$role)) {
