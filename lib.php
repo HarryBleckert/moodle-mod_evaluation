@@ -4560,7 +4560,7 @@ function ev_get_reminders($evaluation) {
         $alen = safeCount($roles);
         foreach ($roles as $role){
             if (strstr("students,teachers,participants",$role)) {
-                $role =  get_string($role,"evaluations");
+                $role =  get_string($role,"evaluation");
             }
             echo $role;
             $cnt++;
