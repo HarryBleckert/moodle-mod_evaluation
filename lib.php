@@ -4505,7 +4505,7 @@ function ev_set_reminders($evaluation,$action) {
     $evUpdate->id = $evaluation->id;
     $reminders = $evaluation->reminders;
     $remindersA = array();
-    $ndate = date("Ymd");
+    $ndate = date("d.m.Y");
     if (!empty($reminders)){
         $remindersA = explode("\n",$reminders);
     }
