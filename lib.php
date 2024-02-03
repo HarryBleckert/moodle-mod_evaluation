@@ -4486,8 +4486,8 @@ HEREDOC;
         }
 
         mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
-        $testinfo = ($test ?"Test: " :"");
-        ev_show_reminders_log("$cnt. $testinfo . $fullname - $username - $email - ID: $userid");
+        $testinfo = ($test ?" Test: " :"");
+        ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
         $cnt++;
     }
     $elapsed = time() - $start;
