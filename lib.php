@@ -4473,9 +4473,8 @@ HEREDOC;
     return true;
 }
 function ev_show_reminders_log($msg) {
-    global $cli;
     $logfile = "/var/log/moodle/evaluation_send_reminders.log";
-    if (isset($cli) AND $cli){
+    if (isset($_SESSION['ev_cli']) AND $_SESSION['ev_cli']){
         echo $msg . "\n";
     }
     else{
