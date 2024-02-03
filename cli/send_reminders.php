@@ -130,7 +130,7 @@ $test = ($CFG->dbname == 'moodle_production' ? !$options['send'] : true);
 $evaluationid = $options["evaluation"];
 $evaluation = $DB->get_record_sql("SELECT * FROM {evaluation} WHERE id=" . $evaluationid);
 if (!isset($evaluation->id)) {
-    ev_show_reminders_log(("ERROR: Evaluation with ID $evaluationid not found!");
+    ev_show_reminders_log("ERROR: Evaluation with ID $evaluationid not found!");
     exit;
 }
 $verbose = $options['verbose'];
