@@ -4478,7 +4478,7 @@ HEREDOC;
             date("Ymd H:m:s"));
     $USER = $saveduser;
     if (!$test){
-        ev_set_reminders($evaluation,$role)
+        ev_set_reminders($evaluation,$role);
     }
     return true;
 }
