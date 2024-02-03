@@ -125,6 +125,9 @@ if (($role !== "student" and $role !== "teacher")) {
     }
 }
 
+
+
+$_SESSION['ev_cli'] = true;
 $test = ($CFG->dbname == 'moodle_production' ? !$options['send'] : true);
 
 $evaluationid = $options["evaluation"];
@@ -139,6 +142,5 @@ $verbose = $options['verbose'];
 // echo $usage; "\n\nScript is currently blocked. You need to validate settings and uncomment this line of code before you can run it!\n";  exit;
 // exit
 ev_show_reminders_log("\n" . date("Ymd H:m:s") . "\nSend using script '$PHP_SELF'");
-$_SESSION['ev_cli'] = true;
 ev_send_reminders($evaluation,$role,$test,$verbose,true);
 exit;
