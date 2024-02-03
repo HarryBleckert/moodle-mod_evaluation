@@ -29,7 +29,7 @@
 		<FIELD NAME="semester" TYPE="char" LENGTH="5" NOTNULL="false" DEFAULT="" SEQUENCE="false" COMMENT="Evaluation Semester in format YYYYS"/>
 		<FIELD NAME="min_results" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="3" SEQUENCE="false" COMMENT="Privacy: No of evaluations required to show results"/>
 		<FIELD NAME="min_results_text" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="6" SEQUENCE="false" COMMENT="Privacy: No of evaluations required to show free taxtresults"/>
-		<FIELD NAME="min_results_priv" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="3" SEQUENCE="false" COMMENT="Privacy: No of evaluations required to show results to privileged users"/>
+		<FIELD NAME="min_results_priv" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Privacy: No of evaluations required to show results to privileged users"/>
         <FIELD NAME="privileged_users" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Global evaluations: define privileged users"/>
         <FIELD NAME="filter_course_of_studies" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Global evaluations: select courses of studies"/>
 		<FIELD NAME="filter_courses" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Global evaluations: Select courses by course id"/>
@@ -44,6 +44,7 @@
 		<FIELD NAME="courses_of_studies" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
 		<FIELD NAME="duplicated_replies" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
 		<FIELD NAME="teamteaching_courses" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="reminders" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Reminders sent"/>
 	</FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for evaluation"/>

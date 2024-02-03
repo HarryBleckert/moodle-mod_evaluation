@@ -493,6 +493,15 @@ function xmldb_evaluation_upgrade($oldversion) {
         upgrade_mod_savepoint(true, $newversion, 'evaluation');
     }
 
+    $newversion = 2024020300;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation');
+        $field = new xmldb_field('reminders', XMLDB_TYPE_TEXT, null, XMLDB_NOTNULL, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
     return true;
 }
 
