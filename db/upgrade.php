@@ -496,7 +496,7 @@ function xmldb_evaluation_upgrade($oldversion) {
     $newversion = 2024020300;
     if ($oldversion < $newversion) {
         $table = new xmldb_table('evaluation');
-        $field = new xmldb_field('reminders', XMLDB_TYPE_TEXT, null, XMLDB_NOTNULL, null, null, '');
+        $field = new xmldb_field('reminders', XMLDB_TYPE_TEXT, null, XMLDB_NOTNULL, null, null, null);
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
