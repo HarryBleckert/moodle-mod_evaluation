@@ -4245,6 +4245,7 @@ function evaluation_get_empty_courses($sdate=false) {
 
 function ev_send_reminders($evaluation,$role="teacher",$test=true,$verbose=false,$cli=false) {
     global $DB, $USER;
+    $_SESSION['ev_cli'] = $cli;
     set_time_limit(3000);
     $start = time();
     $DB->set_debug(false);
