@@ -4562,7 +4562,7 @@ function ev_get_reminders($evaluation) {
             echo $action;
             $cnt++;
             if ($cnt<$alen){
-                echo " - "
+                echo " - ";
             }
             else{
                 echo "<br>\n";
