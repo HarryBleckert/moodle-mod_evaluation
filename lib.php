@@ -2457,6 +2457,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                         } else {
                             $urlC = "<a href=\"#\">";
                         }
+                        $str .= "<td>&nbsp;</td>";
                         $str .= "<td style=\"text-align:right;\">" . $replies . "</td>";
                         if (empty($_SESSION["LoggedInAs"])) {
                             $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></a></td>\n";
@@ -2489,6 +2490,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     } else {
                         $urlC = "<a href=\"#\">";
                     }
+                    $str .= "<td>&nbsp;</td>";
                     $str .= "<td style=\"text-align:right;\">" . $replies . "</td>";
                     if (empty($_SESSION["LoggedInAs"])) {
                         $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></a></td>\n";
