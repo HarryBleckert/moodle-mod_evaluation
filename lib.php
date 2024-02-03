@@ -4275,7 +4275,7 @@ function ev_send_reminders($evaluation,$role="teacher",$test=true,$verbose=false
             "\nSending reminders to all participants with role $role in evaluation $evaluation->name (ID: $evaluation->id)");
 
     if ($test) {
-        ev_show_reminders_log("Test Mode");
+        ev_show_reminders_log("Test Mode $test");
     }
     //get all participating students/teachers
     $evaluation_users = get_evaluation_participants($evaluation, false, false, ($role == "teacher"), ($role == "student"));
