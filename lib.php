@@ -4356,6 +4356,10 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             $fullname = "Test";
             if (strpos($test,"@")){
                 $to = $test;
+                $fullname = "Test";
+                if (strpos($test,"<")) {
+                    $fullname = substr($test, 0, strpos($test, "<") - 1);
+                }
             }
             // $to = "Berthe Khayat <khayat@ash-berlin.eu>";
             // $fullname = "Berthe Khayat";
@@ -4474,7 +4478,8 @@ HEREDOC;
         }
 
         mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
-        ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid");
+        $testinfo = ($test ?"Test: " :"");
+        ev_show_reminders_log("$cnt. $testinfo . $fullname - $username - $email - ID: $userid");
         $cnt++;
     }
     $elapsed = time() - $start;
