@@ -210,6 +210,11 @@ function evSetPage($url, $url2 = false, $anker = false) {
 
 function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse = false, $forceUsers = false) {
     global $DB, $CFG;
+    if (!defined('NO_OUTPUT_BUFFERING')) {
+        define('NO_OUTPUT_BUFFERING', true);
+    }
+    ini_set("output_buffering", 350);
+    @ob_flush();@ob_end_flush();@flush();@ob_start();
 
     // only siteadmin should call this
     if (isset($_SESSION['set_results_' . $evaluation->id]) or evaluation_is_open($evaluation)
@@ -369,10 +374,7 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
                 if (true) //evaluation_debug() )
                 {
                     print "<br>\nCourse: $courseid - $fullname\n";
-                    @ob_flush();
-                    @ob_end_flush();
-                    @flush();
-                    @ob_start();
+                    @ob_flush();@ob_end_flush();@flush();@ob_start();
                 }
                 if ($students and !empty($teacherids)) {
                     $possible_evaluations += (safeCount($students) * count(explode(",", $teacherids)));
@@ -463,10 +465,7 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
                         print "<br>\n" . str_pad(number_format($cnt), 6, " ", STR_PAD_LEFT) . ". <b>$participant</b>: " .
                                 str_pad($userid, 6) . " - "
                                 . str_pad($username, 12) . " - " . str_pad($fullname, 42) . " - Replies $utype: $participated\n";
-                        @ob_flush();
-                        @ob_end_flush();
-                        @flush();
-                        @ob_start();
+                        @ob_flush();@ob_end_flush();@flush();@ob_start();
                     }
                     $cnt++;
                 }
@@ -491,19 +490,13 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
     $courses = evaluation_participating_courses($evaluation);
     $cntC = 1;
     print '<br><hr>ev_shuffle_completed_userids(): Course id = <span id="showCourseRec_' . $evaluation->id . '">&nbsp;</span><hr>';
-    ini_set("output_buffering", 256);
-    @ob_flush();
-    @ob_end_flush();
-    @flush();
-    @ob_start();
+    ini_set("output_buffering", 350);
+    @ob_flush();@ob_end_flush();@flush();@ob_start();
     foreach ($courses as $courseid) {
         print '<script>document.getElementById("showCourseRec_' . $evaluation->id . '").innerHTML = "<b>' . $courseid . '</b> (' .
                 $cntC . ' courses)";</script>';
         $cntC++;
-        @ob_flush();
-        @ob_end_flush();
-        @flush();
-        @ob_start();
+        @ob_flush();@ob_end_flush();@flush();@ob_start();
         $completed = $DB->get_records_sql("SELECT * FROM {evaluation_completed} WHERE evaluation=$evaluation->id AND courseid=$courseid 
 						ORDER BY id");
         $userids = array();
@@ -1390,10 +1383,7 @@ function evaluation_showLoading() {    //evaluation_spinnerJS();
 	function ev_spinner_disable_timeout()
 	{	setTimeout(function() { ev_spinner_disable(); }, 2100 ); }
 	</script>\n";
-    @ob_flush();
-    @ob_end_flush();
-    @flush();
-    @ob_start();
+    @ob_flush();@ob_end_flush();@flush();@ob_start();
 }
 
 // js code for loafing spinner
@@ -3715,11 +3705,8 @@ function evaluation_autofill_field_teacherid($evaluation, $reset = false) {
     if ($reset) {
         print "Resetted all teacherid for $evaluation->name<br>\n";
     }
-    //ini_set("output_buffering", 256);
-    @ob_flush();
-    @ob_end_flush();
-    @flush();
-    @ob_start();
+    ini_set("output_buffering", 350);
+    @ob_flush();@ob_end_flush();@flush();@ob_start();
     foreach ($completed as $complete) {
         evaluation_get_course_teachers($complete->courseid);
         $teacherid = 0;
@@ -3757,11 +3744,8 @@ function evaluation_autofill_duplicate_field_teacherid($evaluation, $reset = fal
         print "Resetted all teacherid for $evaluation->name<br>\n";
     }
     print '<span id="counter"></span><br>';
-    //ini_set("output_buffering", 256);
-    @ob_flush();
-    @ob_end_flush();
-    @flush();
-    @ob_start();
+    ini_set("output_buffering", 360);
+    @ob_flush();@ob_end_flush();@flush();@ob_start();
     $counter = 0;
     foreach ($completed as $complete) {
         $counter++;
@@ -3812,8 +3796,7 @@ if ( $counter >= 6)	{ exit;} */
                         .
                         "Count: $counter - ID: $complete->id: CourseID: $complete->courseid - UserID: $complete->userid - Teacherid: $teacherid" .
                         '";</script>';
-                @ob_flush();
-                @flush();
+                @ob_flush();@ob_end_flush();@flush();@ob_start();
             }
         }
     }
@@ -4029,11 +4012,7 @@ function evaluation_autofill_item_studiengang($evaluation) {
                 "$cnt/$hits: $val_id - $courseid->courseid - $Studiengang - Wert:"
                 . trim($newval->value) . '";</script>';
         //print "<script>window.scrollTo(0,document.body.scrollHeight);</script>\n";
-        @ob_flush();
-        @ob_end_flush();
-        @flush();
-        @ob_start();
-        //@flush();
+        @ob_flush();@ob_end_flush();@flush();@ob_start();
     }
     return true;
 }
