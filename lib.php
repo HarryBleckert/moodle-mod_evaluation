@@ -4342,18 +4342,17 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             }
 
             $to = "Harry Bleckert <Harry@Bleckert.com>";
+            // $to = "Berthe Khayat <khayat@ash-berlin.eu>";
+            //$to = "Anja Voss <voss@ash-berlin.eu>";
             $fullname = "Test";
             if (strpos($test,"@")){
                 $to = $test;
                 $fullname = "Test";
-                if (strpos($test,"<")) {
-                    $fullname = substr($test, 0, strpos($test, "<") - 1);
-                }
             }
-            // $to = "Berthe Khayat <khayat@ash-berlin.eu>";
-            // $fullname = "Berthe Khayat";
-            //$to = "Anja Voss <voss@ash-berlin.eu>";
-            //$fullname = "Anja Voss";
+            if ( strpos($to,"<") !== false AND strpos($to,">") !== false) {
+                list($fullname, $emailt) = explode(' <', trim($to, '> '));
+                $to = '=?UTF-8?B?' . base64_encode($fullname." (Test)") . '?=' . " <$emailt>";
+            }
             if ($cnt > 1) {
                 break;
             }
