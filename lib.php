@@ -4279,8 +4279,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         //$fullname = $evaluation_user["firstname"] . " " . $evaluation_user["lastname"];
         $email = $evaluation_user["email"];
         $userid = $evaluation_user["id"];
-        //$role = $evaluation_user["role"];
-        $to = '=?UTF-8?B?' . base64_encode($evaluation_user["fullname"] . '?=' . " <$email>";
+        // $role = $evaluation_user["role"];
+        $to = '=?UTF-8?B?' . base64_encode($evaluation_user["fullname"]) . '?=' . " <$email>";
         $senderName = '=?UTF-8?B?' . base64_encode('ASH Berlin (Qualitätsmanagement)') . '?=';
         $senderMail = "<khayat@ash-berlin.eu>";
         $sender = $senderName  . " " . $senderMail;
