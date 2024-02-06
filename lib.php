@@ -4269,7 +4269,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $evUrl = "https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=" . $cmid;
 
     //$subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
-    $subject = '=?UTF-8?Q?' . quoted_printable_encode($evaluation->name) . '?=';
+    $subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
     $cntStudents = $cntTeachers = 0;
     $cnt = 1;
     foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
@@ -4280,9 +4280,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $email = $evaluation_user["email"];
         $userid = $evaluation_user["id"];
         //$role = $evaluation_user["role"];
-        $to = $evaluation_user["firstname"] . " " . $evaluation_user["lastname"] . " <$email>";
-        $sender = "ASH Berlin (Qualitätsmanagement) <khayat@ash-berlin.eu>";
-        $headers = array("From" => $sender, "Return-Path" => $sender, "Reply-To" => $sender, "MIME-Version" => "1.0",
+        $to = '=?UTF-8?B?' . base64_encode($evaluation_user["fullname"] . '?=' . " <$email>";
+        $senderName = '=?UTF-8?B?' . base64_encode('ASH Berlin (Qualitätsmanagement)') . '?=';
+        $senderMail = "<khayat@ash-berlin.eu>";
+        $sender = $senderName  . " " . $senderMail;
+        $headers = array("From" => $sender, "Return-Path" => $senderMail, "Reply-To" => $sender, "MIME-Version" => "1.0",
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
         // $start2 = time();
         // get student courses to evaluate
