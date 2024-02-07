@@ -4363,8 +4363,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
           Lehrveranstaltungsevaluation</a> zu beteiligen!<br>
         Mit Ihren Antworten helfen Sie uns, die Lehre zu verbessern und Sie können ggf. noch im
         laufenden Semester in einen Austausch mit den Lehrenden treten.</p>
-
-
+=if(D9>3000000;(D9-3000000)*if(D9<6000000;0,25;0,35);0)
+=if(D9>6000000;ROI_month2024;(D9-3000000)*0,35)
+=if(D9>9000000;ROI_month2024;if(d9>3000000;(D9-3000000)*0,35;0))
     */
         $reminder = ($remaining_evaluation_days <= 9 ?
                 "<b>nur noch $remaining_evaluation_days Tage bis zum $lastEvaluationDay laufenden</b> " : "laufenden ");
