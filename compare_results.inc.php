@@ -909,13 +909,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
 				<td>' . $numresults . '</td>
 				<td style="text-align:left;"><span id="totalPresentation"></span></td>
 				<td><span id="totalAvg"></span></td></tr>' . "\n";
-    if ($omittedResults){
-        $button = '';
-        print  '<tr><td style="text-align:left;">' . "Alle Abgaben <".$minReplies . '</td>
-				<td>' . $omittedResults . '</td>
-				<td style="text-align:left;"><span id="omittedResult"></span></td>
-				<td><span id="omittedAvg"></span></td></tr>' . "\n";
-    }
     $title = "";
     if ($filter) {
         if (empty($fTitle) and $cosPrivileged_filter) {
@@ -945,6 +938,15 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 . '<td><span id="SqAvg"></span></td></tr>'
                 . "\n";
     }
+
+    if ($omittedResults){
+        $button = '';
+        print  '<tr><td style="text-align:left;">' . "Alle Abgaben <".$minReplies . '</td>
+				<td>' . $omittedResults . '</td>
+				<td style="text-align:left;"><span id="omittedResult"></span></td>
+				<td><span id="omittedAvg"></span></td></tr>' . "\n";
+    }
+
     print '</table><div style="display:block;" id="chartResultsList"></div>' . "\n";
 
 
