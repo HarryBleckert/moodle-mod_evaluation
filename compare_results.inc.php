@@ -546,7 +546,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $fTitle[] = get_string("teacher", "evaluation") . ": $teacher";
         $anker = get_string("teacher", "evaluation") . ': <span style="font-size:12pt;font-weight:bold;">'
                 . $teacher . "</span>";
-        if (defined('EVALUATION_OWNER')) {
+        if (defined('EVALUATION_OWNER') OR $isTeacher) {
             print '<a href="print.php?id=' . $id . '&showTeacher=' . $teacherid . '" target="teacher">' . $anker . '</a>';
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&courseid=' . $courseid
@@ -573,11 +573,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
         }
         $anker = get_string("course", "evaluation") . ': <span style="font-size:12pt;font-weight:bold;display:inline;">'
                 . $course->fullname . " ($course->shortname)</span>\n";
-        print $Studiengang . '<a href="analysis_course.php?id=' . $id . '&courseid=' . $courseid . '" target="course">' . $anker .
+        print $Studiengang . '<a href="analysis_course.php?id=' . $id . '&courseid=' . $courseid
+                . '" target="course">' . $anker .
                 '</a>';
 
         // option to remove filter
-        if (defined('EVALUATION_OWNER')) {
+        if (defined('EVALUATION_OWNER') OR $isTeacher) {
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&teacherid=' . $teacherid
                     . '&course_of_studiesID=' . $course_of_studiesID
