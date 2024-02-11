@@ -787,7 +787,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY courseid ORDER BY courseid"));
-        $aFilter = "";
+        /*$aFilter = "";
         if ($isFilter) {
             if ($courseid) {
                 $aFilter .= " AND courseid=" . $courseid;
@@ -799,7 +799,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $aFilter .= " AND course_of_studies='$course_of_studies'";
             }
             $aFilter = $filter;
-        }
+        }*/
+        $aFilter = $filter;
         $aFilter .= $cosPrivileged_filter;
         $allResults = $DB->get_records_sql("SELECT courseid AS courseid, count(*) AS count
 											 FROM {evaluation_completed}
@@ -828,7 +829,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $allLinks[] = $links;
             $allIDs[] = $allResult->courseid;
             $allValues[] = $fullname;
-            if ($isFilter) {
+            if (false AND $isFilter) {
                 $Result = $DB->get_record_sql("select count(*) AS count
                                 FROM {evaluation_completed}
                                 WHERE evaluation=$evaluation->id 
@@ -854,7 +855,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY teacherid ORDER BY teacherid"));
-        $aFilter = "";
+        /*$aFilter = "";
         if ($isFilter) {
             if ($teacherid) {
                 $aFilter .= " AND teacherid=" . $teacherid;
@@ -866,7 +867,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $aFilter .= " AND course_of_studies='$course_of_studies'";
             }
             $aFilter = $filter;
-        }
+        }*/
+        $aFilter = $filter;
         $aFilter .= $cosPrivileged_filter;
         $allResults = $DB->get_records_sql("SELECT teacherid AS teacherid, count(*) AS count
 											 FROM {evaluation_completed}
