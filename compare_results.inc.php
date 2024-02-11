@@ -155,6 +155,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $isTeacher = evaluation_is_teacher($evaluation, $myEvaluations);
     }
 
+    $showteachercourses = ($isTeacher and $allSelected == "allCourses");
+    if ($showteachercourses){
+        $teacherid = $USER->id;
+    }
+
     $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id 
 				AND (typ='multichoice' OR typ='numeric') AND hasvalue=1 
 				AND name NOT ILIKE '%" . get_string("course_of_studies", "evaluation") . "%' 
@@ -538,10 +543,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $filter = $allKey = $allKeyV = "";
     $numTeachers = 0;
     $allIDs = $allValues = $allCounts = $allResults = $fTitle = $allCosIDs = $sortArray = array();
-    $showteachercourses = ($isTeacher and $allSelected == "allCourses");
-    if ($showteachercourses){
-        $teacherid = $USER->id;
-    }
     if ($teacherid) {
         $filter .= " AND teacherid=" . $teacherid;
         $teacher = evaluation_get_user_field($teacherid, 'fullname');
