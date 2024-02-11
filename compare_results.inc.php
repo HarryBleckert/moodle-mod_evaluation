@@ -700,7 +700,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY course_of_studies ORDER BY course_of_studies"));
-        }
         $allResults = $DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id $filter $subqueryC
