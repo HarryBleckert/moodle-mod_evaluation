@@ -546,7 +546,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $fTitle[] = get_string("teacher", "evaluation") . ": $teacher";
         $anker = get_string("teacher", "evaluation") . ': <span style="font-size:12pt;font-weight:bold;">'
                 . $teacher . "</span>";
-        if (defined('EVALUATION_OWNER') OR $isTeacher) {
+        if (defined('EVALUATION_OWNER')) {
             print '<a href="print.php?id=' . $id . '&showTeacher=' . $teacherid . '" target="teacher">' . $anker . '</a>';
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&courseid=' . $courseid
