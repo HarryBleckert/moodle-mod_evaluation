@@ -578,12 +578,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 '</a>';
 
         // option to remove filter
-        if (defined('EVALUATION_OWNER') OR $isTeacher) {
+        // if (defined('EVALUATION_OWNER') OR $isTeacher) {
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&teacherid=' . $teacherid
                     . '&course_of_studiesID=' . $course_of_studiesID
                     . '&department=' .$department . '">' . "Filter entfernen" . '</a>)';
-        }
+        // }
         //$msg = ($evaluation->teamteaching AND $numTeachers>1) ?" (Team Teaching)" :" (Eine Abgabe pro Teilnehmer_in und Kurs)";
         $msg = ($numTeachers > 1) ? " (Team Teaching)" : " (Eine Abgabe pro Teilnehmer_in und Kurs)";
         if (defined("showTeachers")) {
