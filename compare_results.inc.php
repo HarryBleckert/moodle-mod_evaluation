@@ -786,12 +786,17 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY teacherid ORDER BY teacherid"));
-        $allResults = $DB->get_records_sql("SELECT teacherid AS teacherid, count(*) AS count
+        $allResults = $DB->get_records_sql("SELECT ON (teacherid) teacherid AS teacherid, courseid, count(*) AS count
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id $filter $subqueryC
-											 GROUP BY teacherid ORDER BY teacherid");
+											 ORDER BY teacherid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
+
+            if (!defined('EVALUATION_OWNER') and !evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
+                    and !evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid)) {
+                continue;
+            }
             $fullname = evaluation_get_user_field($allResult->teacherid, 'fullname');
             if (defined('EVALUATION_OWNER')) {
                 $links = '<a href="print.php?id=' . $id . '&showTeacher=' . $allResult->teacherid
