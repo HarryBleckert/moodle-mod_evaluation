@@ -1843,11 +1843,16 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
 }
 
 // has user participated in evaluation
-function evaluation_has_user_participated($evaluation, $userid, $courseid = false) {
+function evaluation_has_user_participated($evaluation, $userid, $courseid = false, $teacherid=false) {
     global $DB;
     $filter = "";
     if ($courseid) {
         $filter = " AND courseid=$courseid";
+    }else if ($teacherid ){
+        $participated = $DB->get_records_sql("SELECT id,userid from {evaluation_completed} WHERE evaluation=" . $evaluation->id
+                . " AND userid=$userid AND teacherid=$teacherid $filter");
+
+        return safeCount($participated);
     }
     $participated = $DB->get_records_sql("SELECT id,userid from {evaluation_completed} WHERE evaluation=" . $evaluation->id
             . " AND (userid=$userid OR teacherid=$userid) $filter");

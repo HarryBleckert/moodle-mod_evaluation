@@ -753,7 +753,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     and !$isCourseStudent) {
                 continue;
             }
-            if ( $isCourseStudent AND !evaluation_has_user_participated($evaluation, $USER->id, $courseid) ){
+            if ( $isCourseStudent AND !evaluation_has_user_participated($evaluation, $USER->id, $allResult->courseid) ){
                 continue;
             }
             $fullname = evaluation_get_course_field($allResult->courseid, 'fullname');
@@ -795,8 +795,14 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY teacherid ORDER BY teacherid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
-
-            if (!defined('EVALUATION_OWNER') AND !evaluation_is_student($evaluation, $myEvaluations, false, $allResult->teacherid)) {
+            $isMyTeacher = true;
+            if ($isStudent){
+                $isMyTeacher = evaluation_is_student($evaluation, $myEvaluations, false, $allResult->teacherid);
+                if (!evaluation_has_user_participated($evaluation, $USER->id, false, $allResult->teacherid)){
+                    continue;
+                }
+            }
+            if (!defined('EVALUATION_OWNER') AND !$isMyTeacher) {
                 continue;
             }
             $fullname = evaluation_get_user_field($allResult->teacherid, 'fullname');
