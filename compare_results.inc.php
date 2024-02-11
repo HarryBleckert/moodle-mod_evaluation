@@ -538,7 +538,10 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $filter = $allKey = $allKeyV = "";
     $numTeachers = 0;
     $allIDs = $allValues = $allCounts = $allResults = $fTitle = $allCosIDs = $sortArray = array();
-
+    $showteachercourses = ($isTeacher and $allSelected == "allCourses");
+    if ($showteachercourses){
+        $teacherid = $USER->id;
+    }
     if ($teacherid) {
         $filter .= " AND teacherid=" . $teacherid;
         $teacher = evaluation_get_user_field($teacherid, 'fullname');
@@ -546,7 +549,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $anker = get_string("teacher", "evaluation") . ': <span style="font-size:12pt;font-weight:bold;">'
                 . $teacher . "</span>";
         // if ($isStudent OR defined('EVALUATION_OWNER')) {
-        if (true){
+        if (!($isTeacher and $allSelected == "allCourses")){
             print '<a href="print.php?id=' . $id . '&showTeacher=' . $teacherid . '" target="teacher">' . $anker . '</a>';
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&courseid=' . $courseid
