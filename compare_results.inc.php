@@ -786,7 +786,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY teacherid ORDER BY teacherid"));
-        $allResults = $DB->get_records_sql("SELECT ON (teacherid) teacherid AS teacherid, courseid, count(*) AS count
+        $allResults = $DB->get_records_sql("SELECT DISTINCT ON (teacherid) teacherid AS teacherid, courseid, count(*) AS count
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id $filter $subqueryC
 											 ORDER BY teacherid");
