@@ -125,8 +125,8 @@ function evaluation_additional_html() {
 		{	var nav = document.getElementsByClassName("list-group"); for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; } }
 		if ( document.getElementsByClassName("fixed-top").length > 0 ) 
 		{	var nav = document.getElementsByClassName("fixed-top");	for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; } }
-		if ( document.getElementsByClassName("breadcrumb-item").length > 0 ) 
-		{	var nav = document.getElementsByClassName("breadcrumb-item"); nav[0].style.display="none"; }
+		// if ( document.getElementsByClassName("breadcrumb-item").length > 0 ) 
+		// {	var nav = document.getElementsByClassName("breadcrumb-item"); nav[0].style.display="none"; }
 		if ( document.getElementsById("page-footer").length > 0 ) 
 		{	document.getElementById("page-footer").style.display="none"; }
 		if ( document.getElementsByClassName("footnote").length > 0 ) 
@@ -141,7 +141,7 @@ function evaluation_additional_html() {
 		*/
         if (empty($_SESSION["LoggedInAs"]))  // need remove elements only if logged in as role
         {
-            // return "";
+            return "";
         }
     }
     return $html;
