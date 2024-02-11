@@ -405,8 +405,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             echo get_string("courses", "evaluation");
             echo "</button>";
 
-            if (($isTeacher and $teacherid) or
-                    defined('EVALUATION_OWNER')) {
+            if ($isStudent or defined('EVALUATION_OWNER')) { // ($isTeacher and $teacherid)
                 if ($allSelected == "allTeachers") {
                     $style = $selectStyle;
                     $value = "";
@@ -546,7 +545,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $fTitle[] = get_string("teacher", "evaluation") . ": $teacher";
         $anker = get_string("teacher", "evaluation") . ': <span style="font-size:12pt;font-weight:bold;">'
                 . $teacher . "</span>";
-        if (defined('EVALUATION_OWNER')) {
+        // if ($isStudent OR defined('EVALUATION_OWNER')) {
+        if (true){
             print '<a href="print.php?id=' . $id . '&showTeacher=' . $teacherid . '" target="teacher">' . $anker . '</a>';
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&courseid=' . $courseid
@@ -604,12 +604,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 . $course_of_studies . "</span>\n";
         print '<a href="analysis_course.php?id=' . $id . '&course_of_studiesID=' . $course_of_studiesID
                 . '" target="course_of_studies">' . $anker . '</a>';
-        if (defined('EVALUATION_OWNER')) {
+        // if (defined('EVALUATION_OWNER')) {
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&teacherid=' . $teacherid
                     . '&courseid=' . $courseid
                     . '&department=' .$department . '">' . "Filter entfernen" . '</a>)';
-        }
+        // }
         print "<br>\n";
     }
     if ($department  AND !empty($filterDept)){
@@ -620,12 +620,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 . $department . "</span>\n";
         print '<a href="analysis_course.php?id=' . $id . '&department=' . $department
                 . '" target="department">' . $anker . '</a>';
-        if (defined('EVALUATION_OWNER')) {
+        // if (defined('EVALUATION_OWNER')) {
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&teacherid=' . $teacherid
                     . '&courseid=' . $courseid
                     . '&course_of_studiesID=' . $course_of_studiesID . '">' . "Filter entfernen" . '</a>)';
-        }
+        // }
         print "<br>\n";;
     }
 
