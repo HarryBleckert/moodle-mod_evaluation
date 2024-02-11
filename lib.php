@@ -1898,19 +1898,13 @@ function evaluation_is_user_enrolled($evaluation, $userid, $courseid = false) {
     return $ids;
 }
 
-function evaluation_is_student($evaluation, $myEvaluations, $courseid = false) {
+function evaluation_is_student($evaluation, $myEvaluations, $courseid = false, $teacherid = false) {
     global $USER;
-    /*if (!$myEvaluations) {
-		if ( isset($_SESSION["myEvaluations"]) ) {
-			$myEvaluations = $_SESSION["myEvaluations"];
-		}
-		else{
-			return false;
-		}
-
-	}*/
     foreach ($myEvaluations as $myEvaluation) {
         if ($myEvaluation['role'] == "student" and $myEvaluation['id'] == $USER->id) {
+            if ($teacherid AND $myEvaluation['teachers'] == $teacherid) {
+                return true;
+            }
             if (!$courseid) {
                 return true;
             }
@@ -2095,7 +2089,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                                     "username" => $roleC->username,
                                     "email" => $roleC->email, "fullname" => $fullname, "courseid" => $course->id,
                                     "course" => $course->fullname, "shortname" => $course->shortname,
-                                    "lastaccess" => $roleC->lastaccess,
+                                    "lastaccess" => $roleC->lastaccess, "teachers" => $_SESSION["allteachers"][$course->id],
                                     "reminder" => $reminder);
                         } else if ($getStudents) {
                             $my_evaluation_users[$roleC->id] =
@@ -2123,8 +2117,8 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                             $my_evaluation_courses[$course->id] =
                                     array("role" => "teacher", "id" => $roleC->id, "username" => $roleC->username,
                                             "email" => $roleC->email, "fullname" => $fullname, "courseid" => $course->id,
-                                            "course" => $course->fullname,
-                                            "shortname" => $course->shortname, "lastaccess" => $roleC->lastaccess,
+                                            "course" => $course->fullname, "shortname" => $course->shortname,
+                                            "teachers" => $_SESSION["allteachers"][$course->id], "lastaccess" => $roleC->lastaccess,
                                             "reminder" => $reminder);
                         } else if ($getTeachers) {
                             $my_evaluation_users[$roleC->id] =
@@ -2179,8 +2173,8 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                     $my_evaluation_courses[$course->id] =
                             array("role" => "student", "id" => $roleC->id, "username" => $roleC->username,
                                     "email" => $roleC->email, "fullname" => $fullname, "courseid" => $course->id,
-                                    "course" => $course->fullname,
-                                    "shortname" => $course->shortname, "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
+                                    "course" => $course->fullname, "shortname" => $course->shortname,
+                                    "teachers" => $_SESSION["allteachers"][$course->id], "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                 } else if ($getStudents) {
                     $my_evaluation_users[$roleC->id] =
                             array("fullname" => $fullname, "id" => $roleC->id, "username" => $roleC->username,
@@ -2222,8 +2216,8 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                     $my_evaluation_courses[$course->id] =
                             array("courseid" => $course->id, "role" => "teacher", "id" => $roleC->id,
                                     "username" => $roleC->username, "email" => $roleC->email, "fullname" => $fullname,
-                                    "course" => $course->fullname,
-                                    "shortname" => $course->shortname, "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
+                                    "course" => $course->fullname, "shortname" => $course->shortname,
+                                    "teachers" => $_SESSION["allteachers"][$course->id],"lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                 } else if ($getTeachers) {
                     $my_evaluation_users[$roleC->id] =
                             array("fullname" => $fullname, "id" => $roleC->id, "username" => $roleC->username,

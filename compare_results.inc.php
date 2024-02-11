@@ -782,7 +782,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $allKey = "teacherid";
         $allKeyV = "teacherid";
         $aFilter = "teacherid >0"; // .$cosPrivileged_filter;
-        $evaluationResults = safeCount($DB->get_records_sql("SELECT teacherid AS teacherid, id, count(*) AS count
+        $evaluationResults = safeCount($DB->get_records_sql("SELECT teacherid AS teacherid, count(*) AS count
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY teacherid ORDER BY teacherid"));
@@ -793,8 +793,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
 
-            if (!defined('EVALUATION_OWNER') and !evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
-                    and !evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid)) {
+            if (!defined('EVALUATION_OWNER') OR !evaluation_is_student($evaluation, $myEvaluations, false, $allResult->teacherid)) {
                 continue;
             }
             $fullname = evaluation_get_user_field($allResult->teacherid, 'fullname');
