@@ -1902,8 +1902,12 @@ function evaluation_is_student($evaluation, $myEvaluations, $courseid = false, $
     global $USER;
     foreach ($myEvaluations as $myEvaluation) {
         if ($myEvaluation['role'] == "student" and $myEvaluation['id'] == $USER->id) {
-            if ($teacherid AND $myEvaluation['teachers'] == $teacherid) {
-                return true;
+            if ($teacherid ){
+                if ($myEvaluation['teachers'] == $teacherid) {
+                    return true;
+                } else {
+                    continue;
+                }
             }
             if (!$courseid) {
                 return true;
