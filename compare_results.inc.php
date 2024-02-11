@@ -428,15 +428,15 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     min="'
                         .($privGlobalUser?1:$minResults)
                         .'"> Abgaben';
-            }
-            // show or hide lines < minReplies
-            ?>
-            <button name="showOmitted" style="<?php echo $buttonStyle; ?>" value="<?php
-            echo ($showOmitted ?0 :1); ?>" title="Ergebnisse mit weniger als <?php
+                // show or hide lines < minReplies
+                ?>
+                <button name="showOmitted" style="<?php echo $buttonStyle; ?>" value="<?php
+                echo ($showOmitted ?0 :1); ?>" title="Ergebnisse mit weniger als <?php
                 echo $minReplies;?> Abgaben anzeigen/verbergen"
-                    onclick="this.form.submit();"><?php
-                echo ($showOmitted ?"anzeigen" :"verbergen"); ?></button>
-            <?php
+                        onclick="this.form.submit();"><?php
+                    echo ($showOmitted ?"anzeigen" :"verbergen"); ?></button>
+                <?php
+            }
             print "</span>";
             //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
             print        "\n<br>";
