@@ -831,7 +831,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             if ($isFilter) {
                 $Result = $DB->get_record_sql("select count(*) AS count
                                 FROM {evaluation_completed}
-                                WHERE evaluation=$evaluation->id AND courseid=$allResult->courseid $subqueryC");
+                                WHERE evaluation=$evaluation->id 
+                                  AND courseid=$allResult->courseid $afilter $subqueryC");
                 //GROUP BY courseid ORDER BY courseid");
                 $Counts = $Result->count;
             } else {
@@ -891,7 +892,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             if ($isFilter) {
                 $Result = $DB->get_record_sql("select count(*) AS count
                                          FROM {evaluation_completed}
-                                         WHERE evaluation=$evaluation->id AND teacherid=$allResult->teacherid $subqueryC");
+                                         WHERE evaluation=$evaluation->id 
+                                           AND teacherid=$allResult->teacherid $afilter $subqueryC");
                 //GROUP BY courseid ORDER BY courseid");
                 $Counts = $Result->count;
             } else {
