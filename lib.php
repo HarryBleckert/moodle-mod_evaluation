@@ -119,8 +119,8 @@ function evaluation_additional_html() {
         $html = '<style>.container-fluid.navbar-nav > div { display: none; }</style>
 		<script>
 		// document.getElementById("nav-drawer").style.display="none";
-		if ( document.getElementsByClassName("nav").length > 0 ) 
-		{	var nav = document.getElementsByClassName("nav"); for (var i = 0; i < nav.length; i++) { nav[i].style.display="none"; } }
+		// if ( document.getElementsByClassName("nav").length > 0 ) 
+		// {	var nav = document.getElementsByClassName("nav"); for (var i = 0; i < nav.length; i++) { nav[i].style.display="none"; } }
 		if ( document.getElementsByClassName("list-group").length > 0 ) 
 		{	var nav = document.getElementsByClassName("list-group"); for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; } }
 		if ( document.getElementsByClassName("fixed-top").length > 0 ) 
