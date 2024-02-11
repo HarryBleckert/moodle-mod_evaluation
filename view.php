@@ -461,7 +461,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
         echo $view_daily_link . evaluation_number_format($completed_responses) . "/" .
                 evaluation_number_format($possible_evaluations)
                 . evaluation_calc_perc($completed_responses, $possible_evaluations);
-        echo ' <b title="Bereinigt: Nur Teilnehmer_innen, die vor Abschluss der Evaluation Moodle nutzten">'
+        echo ' <b title="Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten">'
                 . "Nur Aktive</b>: " . evaluation_number_format($possible_active_evaluations)
                 . "<b>" . evaluation_calc_perc($completed_responses, $possible_active_evaluations) . "</b> ";
         echo '<span style="font-size:20px;"> &#248;</span>: '
@@ -478,7 +478,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                     evaluation_number_format($_SESSION["distinct_users"]) . "/" .
                     evaluation_number_format($participating_students) .
                     evaluation_calc_perc($_SESSION["distinct_users"], $participating_students)
-                    . " <b " . 'title="Bereinigt: Nur Teilnehmer_innen, die vor Abschluss der Evaluation Moodle nutzten"'
+                    . " <b " . 'title="Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten"'
                     . ">Nur Aktive</b>: " . evaluation_number_format($participating_active_students)
                     . "<b>" . evaluation_calc_perc($_SESSION["distinct_users"], $participating_active_students) . "</b>"
                     . "<br>\n";
@@ -494,7 +494,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                         . evaluation_calc_perc($_SESSION["evaluated_teachers"], $participating_teachers);
                 if (true) //$is_open )
                 {
-                    echo " <b " . 'title="Bereinigt: Nur Lehrende, die vor Abschluss der Evaluation Moodle nutzten"'
+                    echo " <b " . 'title="Bereinigt: Nur Lehrende, die während der Laufzeit der Evaluation Moodle nutzten"'
                             . ">Nur Aktive</b>: " . evaluation_number_format($participating_active_teachers)
                             . "<b>" . evaluation_calc_perc($_SESSION["evaluated_teachers"], $participating_active_teachers) .
                             "</b>";
@@ -510,7 +510,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             echo $evaluated_courses;
             echo evaluation_number_format($_SESSION["evaluated_courses"]) . "/" . evaluation_number_format($participating_courses)
                     . evaluation_calc_perc($_SESSION["evaluated_courses"], $participating_courses)
-                    . " <b " . 'title="Bereinigt: Nur Kurse, die vor Abschluss der Evaluation Inhalte hatten"'
+                    . " <b " . 'title="Bereinigt: Nur Kurse, die während der Laufzeit der Evaluation Inhalte hatten"'
                     . ">Nur genutzte Kurse</b>: " . evaluation_number_format($participating_active_courses)
                     . "<b>" . evaluation_calc_perc($_SESSION["evaluated_courses"], $participating_active_courses)
                     . "</b>";
