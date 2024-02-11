@@ -692,7 +692,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
         }
         $evaluatedResults = safeCount($allCounts);
-    }else if ($allSelected == "allStudies") {
+    } else if ($allSelected == "allStudies") {
         $allKey = "course_of_studiesID";
         $allKeyV = "course_of_studies";
         $aFilter = "course_of_studies <>''"; // . $cosPrivileged_filter;
@@ -730,7 +730,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $omittedResults++;
             }
         }
-    }else if ($allSelected == "allCourses") {
+    } else if ($allSelected == "allCourses") {
         $allKey = "courseid";
         $allKeyV = "courseid";
         $aFilter = "courseid >0";
@@ -774,7 +774,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $omittedResults++;
             }
         }
-    }else if ($allSelected == "allTeachers") {
+    } else if ($allSelected == "allTeachers") {
         $allKey = "teacherid";
         $allKeyV = "teacherid";
         $aFilter = "teacherid >0"; // .$cosPrivileged_filter;
