@@ -1071,24 +1071,24 @@ function evaluation_compare_results($evaluation, $courseid = false,
         if ($allKeyV) {
             if ($validation) {
                 $query = "SELECT $allKeyV AS $allKeyV, COUNT(*) as count FROM {evaluation_value} 
-							WHERE item=$question->id AND coalesce(value, '') = '' 
+							WHERE item=$question->id AND coalesce(value, '') = '' $filter $subquery
 							GROUP BY $allKeyV ORDER BY $allKeyV";
                 $_zeroReplies[$qCount] = $DB->get_records_sql($query);
                 $query = "SELECT $allKeyV AS $allKeyV, COUNT(*) as count FROM {evaluation_value} 
-							WHERE item=$question->id AND value NOT IN ($fValues) 
+							WHERE item=$question->id AND value NOT IN ($fValues) $filter $subquery
 							GROUP BY $allKeyV ORDER BY $allKeyV";
                 $_ignoredReplies[$qCount] = $DB->get_records_sql($query);
             }
             if ($allSelected == "allDepartments") {
                 $query = "SELECT e.department AS department, AVG (v.value::INTEGER)::NUMERIC(10,2) as average
 					  FROM {evaluation_value} v, {evaluation_enrolments} e  
-					  WHERE item=$question->id AND value IN ($fValues) $subquery 
+					  WHERE item=$question->id AND value IN ($fValues) $filter $subquery 
 					    AND e.courseid=v.courseid
 					  GROUP BY e.department ORDER BY e.department";
             } else {
                 $query = "SELECT $allKeyV AS $allKeyV, AVG (value::INTEGER)::NUMERIC(10,2) as average
 					  FROM {evaluation_value} 
-					  WHERE item=$question->id AND value IN ($fValues) $subquery
+					  WHERE item=$question->id AND value IN ($fValues) $filter $subquery
 					  GROUP BY $allKeyV ORDER BY $allKeyV";
             }
 
