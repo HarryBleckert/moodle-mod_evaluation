@@ -102,8 +102,8 @@ function evaluation_additional_html() {
         $html = '<script>
 				if ( document.getElementsByClassName("page-context-header").length > 0 ) 
 				{	document.getElementsByClassName("page-context-header")[0].style.display="none"; }
-				if ( document.getElementsByClassName("secondary-navigation").length > 0 ) 
-				{	document.getElementsByClassName("secondary-navigation")[0].style.display="none"; }
+				// if ( document.getElementsByClassName("secondary-navigation").length > 0 ) 
+				// {	document.getElementsByClassName("secondary-navigation")[0].style.display="none"; }
 				if ( document.getElementsByClassName("activity-description").length > 0 ) 
 				{	document.getElementsByClassName("activity-description")[0].style.display="none"; }'
                 . $LoggedInAs . '</script>';
@@ -119,8 +119,8 @@ function evaluation_additional_html() {
         $html = '<style>.container-fluid.navbar-nav > div { display: none; }</style>
 		<script>
 		// document.getElementById("nav-drawer").style.display="none";
-		// if ( document.getElementsByClassName("nav").length > 0 ) 
-		// {	var nav = document.getElementsByClassName("nav"); for (var i = 0; i < nav.length; i++) { nav[i].style.display="none"; } }
+		if ( document.getElementsByClassName("nav").length > 0 ) 
+		{	var nav = document.getElementsByClassName("nav"); for (var i = 0; i < nav.length; i++) { nav[i].style.display="none"; } }
 		if ( document.getElementsByClassName("list-group").length > 0 ) 
 		{	var nav = document.getElementsByClassName("list-group"); for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; } }
 		if ( document.getElementsByClassName("fixed-top").length > 0 ) 
