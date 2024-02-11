@@ -360,8 +360,8 @@ $evaluation_has_user_participated = evaluation_has_user_participated($evaluation
 $non_participated_student = ($courseid and defined('isStudent') and !$evaluation_has_user_participated);
 // check access rights
 if (!defined('EVALUATION_OWNER') and !$Teacher) {
-    if ((!$courseid and $is_open)
-            or (!defined('isStudent') and ($teacherid or $course_of_studies or $courseid))
+    if (    /* (!$courseid and $is_open) or */
+            (!defined('isStudent') and ($teacherid or $course_of_studies or $courseid))
             or $non_participated_student
     ) {
         evaluation_spinnerJS(false);
