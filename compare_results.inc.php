@@ -752,7 +752,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     and !evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid)) {
                 continue;
             }
-
+            if ( $isStudent AND !evaluation_has_user_participated($evaluation, $USER->id, $courseid) ){
+                continue;
+            }
             $fullname = evaluation_get_course_field($allResult->courseid, 'fullname');
             if (true) //defined('EVALUATION_OWNER') )
             {
