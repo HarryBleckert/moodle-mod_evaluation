@@ -748,11 +748,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY courseid ORDER BY courseid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
+            $isCourseStudent = evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid);
             if (!defined('EVALUATION_OWNER') and !evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
-                    and !evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid)) {
+                    and !$isCourseStudent) {
                 continue;
             }
-            if ( $isStudent AND !evaluation_has_user_participated($evaluation, $USER->id, $courseid) ){
+            if ( $isCourseStudent AND !evaluation_has_user_participated($evaluation, $USER->id, $courseid) ){
                 continue;
             }
             $fullname = evaluation_get_course_field($allResult->courseid, 'fullname');
