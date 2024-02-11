@@ -141,7 +141,7 @@ function evaluation_additional_html() {
 		*/
         if (empty($_SESSION["LoggedInAs"]))  // need remove elements only if logged in as role
         {
-            return "";
+            // return "";
         }
     }
     return $html;
