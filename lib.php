@@ -1032,10 +1032,11 @@ function evaluation_LoginAs() {
     $msg = $priv = "";
     // moved to view.php: $msg = '<a href="/course/modedit.php?update='.$id.'&return=1"><i class="fa fa-cog fa-1x" aria-hidden="true"></i></a>&nbsp;';
     if (!empty($_SESSION["LoggedInAs"])) {
+        $showStop = '<span style="color:maroon;font-weight:bold;">Rollenansicht beenden</span>';
         $role = (stristr($_SESSION["LoggedInAs"], "privileg") ? "privilegierte Person"
                 : (stristr($_SESSION["LoggedInAs"], "dekan") ? "Dekan_in" :
                         $DB->get_record('role', array('shortname' => $_SESSION["LoggedInAs"]), '*')->name));
-        $msg .= "Aktuelle Ansicht: " . $role . '&nbsp; <a href="' . $url . '&LoginAs=logout">Rollenansicht beenden</a>';
+        $msg .= "Aktuelle Ansicht: " . $role . '&nbsp; <a href="' . $url . '&LoginAs=logout">'.$showStop.'</a>';
     } else {
         $msg .= 'Rollenansicht wählen: '
                 . ((!empty($evaluation->privileged_users) or !empty($_SESSION["privileged_global_users"]))
