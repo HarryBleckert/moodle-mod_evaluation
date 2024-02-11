@@ -346,6 +346,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
 
         }
+        /*
         if ($isFilter and $allSelected and $allSelected !== "useFilter"){ // filter conditions set
             ?>
             <button name="allSelected" style="<?php echo $buttonStyle; ?>" value="useFilter"
@@ -353,7 +354,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 echo $filterSubject; ?></button>
             <?php
         }
-
+        */
         if (($isTeacher or $isStudent) or defined('EVALUATION_OWNER')){
             print $isFilter ? "" : "- alle: ";
 
