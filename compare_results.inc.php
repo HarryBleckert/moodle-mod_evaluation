@@ -793,7 +793,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
 
-            if (!defined('EVALUATION_OWNER') OR !evaluation_is_student($evaluation, $myEvaluations, false, $allResult->teacherid)) {
+            if (!defined('EVALUATION_OWNER') AND !evaluation_is_student($evaluation, $myEvaluations, false, $allResult->teacherid)) {
                 continue;
             }
             $fullname = evaluation_get_user_field($allResult->teacherid, 'fullname');
