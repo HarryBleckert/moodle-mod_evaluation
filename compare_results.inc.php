@@ -691,9 +691,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $sortArray[$dept] = array("allIDs" => $dept, "allValues" => $dept,
                         "allLinks" => $links, "allCounts" => $Counts);
                 $evaluatedResults++;
-            }
-            if ( $allResult->count < $minReplies) {
-                $omittedResults++;
+                if ( $Counts < $minReplies) {
+                    $omittedResults += $Counts;
+                }
             }
         }
         $evaluatedResults = safeCount($allCounts);
@@ -730,8 +730,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     "allLinks" => $links, "allCounts" => $Counts);
             $evaluatedResults++;
 
-            if ( $allResult->count < $minReplies) {
-                $omittedResults++;
+            if ( $Counts < $minReplies) {
+                $omittedResults += $Counts;
             }
         }
     } else if ($allSelected == "allCourses") {
@@ -777,8 +777,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $sortArray[] = array("allIDs" => $allResult->courseid, "allValues" => $fullname, "allLinks" => $links,
                     "allCounts" => $Counts);
             $evaluatedResults++;
-            if ( $allResult->count < $minReplies) {
-                $omittedResults++;
+            if ( $Counts < $minReplies) {
+                $omittedResults += $Counts;
             }
         }
     } else if ($allSelected == "allTeachers") {
@@ -825,8 +825,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $sortArray[] = array("allIDs" => $allResult->teacherid, "allValues" => $fullname, "allLinks" => $links,
                     "allCounts" => $Counts);
             $evaluatedResults++;
-            if ( $allResult->count < $minReplies) {
-                $omittedResults++;
+            if ( $Counts < $minReplies) {
+                $omittedResults += $Counts;
             }
         }
     }
