@@ -535,13 +535,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
         exit;
     }
 
-    $filter = $filterC = $allKey = $allKeyV = "";
+    $filter = $allKey = $allKeyV = "";
     $numTeachers = 0;
     $allIDs = $allValues = $allCounts = $allResults = $fTitle = $allCosIDs = $sortArray = array();
 
     if ($teacherid) {
         $filter .= " AND teacherid=" . $teacherid;
-        $filterC .= " AND teacherid=" . $teacherid;
         $teacher = evaluation_get_user_field($teacherid, 'fullname');
         $fTitle[] = get_string("teacher", "evaluation") . ": $teacher";
         $anker = get_string("teacher", "evaluation") . ': <span style="font-size:12pt;font-weight:bold;">'
@@ -559,7 +558,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
     if ($courseid) {
         $filter .= " AND courseid=" . $courseid;
-        $filterC .= " AND courseid=" . $courseid;
         $course = $DB->get_record('course', array('id' => $courseid), '*'); //$course = get_course($courseid);
         $fTitle[] = get_string("course", "evaluation") . ": $course->fullname";
         evaluation_get_course_teachers($courseid);
@@ -599,7 +597,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
     if ($course_of_studies) {
         $filter .= " AND course_of_studies='" . $course_of_studies . "'";
-        $filterC .= " AND course_of_studies='" . $course_of_studies . "'";
         $fTitle[] = get_string("course_of_studies", "evaluation") . ":  $course_of_studies";
         $anker = get_string("course_of_studies", "evaluation") . ': <span style="font-size:12pt;font-weight:bold;display:inline;">'
                 . $course_of_studies . "</span>\n";
@@ -614,7 +611,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         print "<br>\n";
     }
     if ($department  AND !empty($filterDept)){
-        $filterC = $filter .= $filterDept;
+        $filter .= $filterDept;
         $fTitle[] = get_string("department", "evaluation") . ":  $department";
         $anker = get_string("department", "evaluation") .
                 ': <span style="font-size:12pt;font-weight:bold;display:inline;">'
@@ -633,28 +630,27 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     $numresultsF =
             safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
-                WHERE evaluation=$evaluation->id $filterC $subqueryC"));
-    if ($filterC and $numresultsF < $minReplies) {
+                WHERE evaluation=$evaluation->id $filter $subqueryC"));
+    if ($filter and $numresultsF < $minReplies) {
         /*if (!is_siteadmin()) {
-            $filter = $filterC = "";
+            $filter = $filter = "";
         }*/
         print '<span style="color:red;font-weight:bold;">' . "Es gibt für</span> '" . implode(", ", $fTitle) . "' "
                 . '<span style="color:red;font-weight:bold;">' . "weniger als $minReplies Abgaben</span>. "
                 . "<b>Daher wird keine Auswertung angezeigt!</b><br>" . (is_siteadmin() ? "- except for siteadmin" : "") . "<br>\n";
     }
     //handle CoS priv users
-    $filter .= $cosPrivileged_filter;
-    $filterC .= $cosPrivileged_filter;
+    $filter .= $cosPrivileged_filter;;
 
     // subquery needs filter
     if ($isFilter and !empty($subquery)) {
         $subquery = str_ireplace("))", " $filter))", $subquery);
-        $subqueryC = str_ireplace("))", " $filterC))", $subqueryC);
+        $subqueryC = str_ireplace("))", " $filter))", $subqueryC);
     }
 
     $numresultsF =
             safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
-                WHERE evaluation=$evaluation->id $filterC $subqueryC"));
+                WHERE evaluation=$evaluation->id $filter $subqueryC"));
 
     if ($allSelected == "allDepartments"  ) {
         $allKey = "course_of_studies";
@@ -666,23 +662,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $departments[$CoS] =  $CoS;
         }
         $evaluationResults = safeCount($departments);
-        $aFilter = "";
-        if ($isFilter) {
-            if ($course_of_studies) {
-                $aFilter .= " AND course_of_studies='$course_of_studies'";
-            }
-            if ($teacherid) {
-                $aFilter .= " AND teacherid=" . $teacherid;
-            }
-            if ($courseid) {
-                $aFilter .= " AND courseid=" . $courseid;
-            }
-            $aFilter = $filter;
-        }
-        $aFilter .= $cosPrivileged_filter;
         $allResults = $DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
 											 FROM {evaluation_completed} 
-											 WHERE evaluation=$evaluation->id $aFilter $subqueryC
+											 WHERE evaluation=$evaluation->id $filter $subqueryC
 											 GROUP BY course_of_studies ORDER BY course_of_studies");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
@@ -699,16 +681,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     $links = $dept;
                 }
                 $allLinks[$dept] = $links;
-                if (false && $isFilter) {
-                    $Result = $DB->get_record_sql("select count(*) AS count 
-                    FROM {evaluation_completed}
-                    WHERE evaluation=$evaluation->id $filter $subqueryC");
-                    //GROUP BY course_of_studies ORDER BY course_of_studies");
-                    $Counts = $Result->count;
-                    //print 	"<br>Result= ".nl2br(var_export( $Result, true)) ."<br>";
-                } else {
-                    $Counts = $allResult->count;
-                }
+                $Counts = $allResult->count;
                 $allCounts[$dept] += $Counts;
                 $sortArray[$dept] = array("allIDs" => $dept, "allValues" => $dept,
                         "allLinks" => $links, "allCounts" => $Counts);
@@ -727,23 +700,10 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY course_of_studies ORDER BY course_of_studies"));
-        $aFilter = "";
-        if ($isFilter) {
-            if ($course_of_studies) {
-                $aFilter .= " AND course_of_studies='$course_of_studies'";
-            }
-            if ($teacherid) {
-                $aFilter .= " AND teacherid=" . $teacherid;
-            }
-            if ($courseid) {
-                $aFilter .= " AND courseid=" . $courseid;
-            }
-            $aFilter = $filter;
         }
-        $aFilter .= $cosPrivileged_filter;
         $allResults = $DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
 											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id $aFilter $subqueryC
+											 WHERE evaluation=$evaluation->id $filter $subqueryC
 											 GROUP BY course_of_studies ORDER BY course_of_studies");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
@@ -760,16 +720,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $links = $allResult->course_of_studies;
             }
             $allLinks[] = $links;
-            if ($isFilter) {
-                $Result = $DB->get_record_sql("select count(*) AS count 
-                    FROM {evaluation_completed}
-                    WHERE evaluation=$evaluation->id AND course_of_studies='$allResult->course_of_studies' $subqueryC");
-                //GROUP BY course_of_studies ORDER BY course_of_studies");
-                $Counts = $Result->count;
-                //print 	"<br>Result= ".nl2br(var_export( $Result, true)) ."<br>";
-            } else {
-                $Counts = $allResult->count;
-            }
+            $Counts = $allResult->count;
             $allCounts[$allResult->course_of_studies] = $Counts;
             $sortArray[] = array("allIDs" => $allResult->course_of_studies, "allValues" => $allResult->course_of_studies,
                     "allLinks" => $links, "allCounts" => $Counts);
@@ -779,32 +730,17 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $omittedResults++;
             }
         }
-    } else if ($allSelected == "allCourses") {
+    }else if ($allSelected == "allCourses") {
         $allKey = "courseid";
         $allKeyV = "courseid";
-        $aFilter = "courseid >0"; // .$cosPrivileged_filter;
+        $aFilter = "courseid >0";
         $evaluationResults = safeCount($DB->get_records_sql("SELECT courseid AS courseid, count(*) AS count
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY courseid ORDER BY courseid"));
-        /*$aFilter = "";
-        if ($isFilter) {
-            if ($courseid) {
-                $aFilter .= " AND courseid=" . $courseid;
-            }
-            if ($teacherid) {
-                $aFilter .= " AND teacherid=" . $teacherid;
-            }
-            if ($course_of_studies) {
-                $aFilter .= " AND course_of_studies='$course_of_studies'";
-            }
-            $aFilter = $filter;
-        }*/
-        $aFilter = $filter;
-        $aFilter .= $cosPrivileged_filter;
         $allResults = $DB->get_records_sql("SELECT courseid AS courseid, count(*) AS count
 											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id $aFilter $subqueryC
+											 WHERE evaluation=$evaluation->id $filter $subqueryC
 											 GROUP BY courseid ORDER BY courseid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
@@ -829,16 +765,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $allLinks[] = $links;
             $allIDs[] = $allResult->courseid;
             $allValues[] = $fullname;
-            if (false AND $isFilter) {
-                $Result = $DB->get_record_sql("select count(*) AS count
-                                FROM {evaluation_completed}
-                                WHERE evaluation=$evaluation->id 
-                                  AND courseid=$allResult->courseid $afilter $subqueryC");
-                //GROUP BY courseid ORDER BY courseid");
-                $Counts = $Result->count;
-            } else {
-                $Counts = $allResult->count;
-            }
+            $Counts = $allResult->count;
             $allCounts[$fullname] = $Counts;
             $sortArray[] = array("allIDs" => $allResult->courseid, "allValues" => $fullname, "allLinks" => $links,
                     "allCounts" => $Counts);
@@ -847,7 +774,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $omittedResults++;
             }
         }
-    } else if ($allSelected == "allTeachers") {
+    }else if ($allSelected == "allTeachers") {
         $allKey = "teacherid";
         $allKeyV = "teacherid";
         $aFilter = "teacherid >0"; // .$cosPrivileged_filter;
@@ -855,24 +782,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY teacherid ORDER BY teacherid"));
-        /*$aFilter = "";
-        if ($isFilter) {
-            if ($teacherid) {
-                $aFilter .= " AND teacherid=" . $teacherid;
-            }
-            if ($courseid) {
-                $aFilter .= " AND courseid=" . $courseid;
-            }
-            if ($course_of_studies) {
-                $aFilter .= " AND course_of_studies='$course_of_studies'";
-            }
-            $aFilter = $filter;
-        }*/
-        $aFilter = $filter;
-        $aFilter .= $cosPrivileged_filter;
         $allResults = $DB->get_records_sql("SELECT teacherid AS teacherid, count(*) AS count
 											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id $aFilter $subqueryC
+											 WHERE evaluation=$evaluation->id $filter $subqueryC
 											 GROUP BY teacherid ORDER BY teacherid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
@@ -891,16 +803,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $allLinks[] = $links;
             $allIDs[] = $allResult->teacherid;
             $allValues[] = $fullname;
-            if ($isFilter) {
-                $Result = $DB->get_record_sql("select count(*) AS count
-                                         FROM {evaluation_completed}
-                                         WHERE evaluation=$evaluation->id 
-                                           AND teacherid=$allResult->teacherid $afilter $subqueryC");
-                //GROUP BY courseid ORDER BY courseid");
-                $Counts = $Result->count;
-            } else {
-                $Counts = $allResult->count;
-            }
+            $Counts = $allResult->count;
             $allCounts[$fullname] = $Counts;
             $sortArray[] = array("allIDs" => $allResult->teacherid, "allValues" => $fullname, "allLinks" => $links,
                     "allCounts" => $Counts);
@@ -1003,7 +906,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         }
         $numresultsF =
                 safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
-                WHERE evaluation=$evaluation->id $filterC"));
+                WHERE evaluation=$evaluation->id $filter"));
 
         $title = implode("<br>\n", $fTitle);
         print '<tr id="showFilter" style="display:table-row;"><td style="text-align:left;">' . "Alle Abgaben für: " . $title .
@@ -1016,7 +919,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     if ($subquery) {
         $numresultsSq =
                 safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
-                WHERE evaluation=$evaluation->id $filterC $subqueryC"));
+                WHERE evaluation=$evaluation->id $filter $subqueryC"));
         $sqTitle = "Alle gefilterten Abgaben" . (!empty($title) ? " für $title" : "");
         print '<tr id="showSqFilter" style="display:table-row;"><td style="text-align:left;">'
                 . '<span title="' . htmlentities($subquerytxt) . '"><b>' . $sqTitle . '</b></span></td>'
