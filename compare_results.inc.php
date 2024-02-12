@@ -1411,7 +1411,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $tags["SqAvg"] = "";
         }
     }
-    if (count($rowsA) < 2 AND !$isFilter AND !$omittedResults){
+    if (count($rowsA) < 2 AND !$omittedResults){    // AND !$isFilter
         print "\n<script>document.getElementById('showFilter').style.display='none';</script>\n";
         unset($data["averageF"]);
     }
