@@ -3415,7 +3415,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                         continue;
                     }
                 }
-                if (strstr("#", $row[0])){
+                if (strstr( $row[0], "#")){
                     continue;
                 }
                 $out .= "<tr>\n";
