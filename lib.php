@@ -3402,7 +3402,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             foreach ($rows as $srow) {
                 $CoS = "";
                 $row = explode(",", $srow);
-                if (isset($row[1])) {
+                if (isset($row[1]) AND strpos("#",$row[1])==false) {
                     $CoS = trim($row[1]);
                 }
                 if ( !$first AND !empty($CoS)) {
@@ -3434,7 +3434,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                 $out .= "</tr>\n";
             }
             $out .=  "</table>";
-            print nl2br(var_export($_SESSION['filter_course_of_studies'],true));
+            // print nl2br(var_export($_SESSION['filter_course_of_studies'],true));
             if ($getEmails) {
                 return $eMails;
             }
