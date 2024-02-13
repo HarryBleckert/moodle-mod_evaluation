@@ -3434,6 +3434,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                 $out .= "</tr>\n";
             }
             $out .=  "</table>";
+            print nl2br(var_export($_SESSION['filter_course_of_studies'],true));
             if ($getEmails) {
                 return $eMails;
             }
