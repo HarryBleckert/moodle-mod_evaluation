@@ -946,7 +946,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     if ($omittedResults){
         $button = '';
-        $percentage = evaluation_calc_perc($omittedResults,$($filter ?$numresults :$numresultsF));
+        $percentage = evaluation_calc_perc($omittedResults,($filter ?$numresults :$numresultsF));
         print  '<tr><td style="text-align:left;">' . "Alle Abgaben <".$minReplies . $percentage . '</td>
 				<td>' . $omittedResults . '</td>
 				<td style="text-align:left;"><span id="omittedResult"></span></td>
