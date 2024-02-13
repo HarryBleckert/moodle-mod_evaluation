@@ -3390,7 +3390,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
         if ( $show){
             $cfgData = file_get_contents($cfgFile);
             $pos = strpos($cfgData,"#Anmeldename");
-            $eMails = "";
+            $eMails = array();
             if ( $pos){
                 $cfgData = substr($cfgData, $pos+1);
             }
@@ -3402,7 +3402,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             foreach ($rows as $srow) {
                 $CoS = "";
                 $row = explode(",", $srow);
-                if (isset($row[1]) AND !strstr("#",$row[1])) {
+                if (isset($row[1]) AND !strstr($row[1], "#")) {
                     $CoS = trim($row[1]);
                 }
                 if ( !$first AND !empty($CoS)) {
@@ -3430,7 +3430,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                     }
                     if ($getEmails){
                         if ($eMail = $DB->get_record("user",array("username" => $row[0]))){
-                            $eMails .= '"' . $eMail->firstname .' '. $eMail->lastname .'" <' . $eMail->email . ">, ";
+                            $eMails[$row[0]] = '"' . $eMail->firstname .' '. $eMail->lastname .'" <' . $eMail->email . ">";
                         }
                     }
                 }
@@ -3439,7 +3439,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             $out .=  "</table>";
             // print nl2br(var_export($_SESSION['filter_course_of_studies'],true));
             if ($getEmails) {
-                return $eMails;
+                return implode(",", $eMails);
             }
             return $out;
         }
