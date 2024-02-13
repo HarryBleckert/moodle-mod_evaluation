@@ -423,7 +423,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
 
         }
 
-        $teamteaching_courses = $_SESSION["teamteaching_courses"];
+        // $teamteaching_courses = $_SESSION["teamteaching_courses"];
         if (!isset($_SESSION["participating_courses_of_studies"])) {
             $_SESSION["participating_courses_of_studies"] = $courses_of_studies;
             if (!empty($sg_filter)) {
