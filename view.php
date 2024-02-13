@@ -751,6 +751,9 @@ if (is_siteadmin()) {
        validate_evaluation_sessions($evaluation);
     }
 
+    if (isset($_GET['sendgetEmails'])) {
+        print "\n<hr>Privilegierte Personen:<br>" .ev_set_privileged_users(true, true) ."<hr>\n";
+    }
 
     if (isset($_GET['course_of_studies'])) {
         $keys = array();

@@ -3396,7 +3396,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             }
             $rows = explode("\n", $cfgData);
             print "<style>tr:nth-child(odd) {background-color:lightgrey;}</style>";
-            $out = "<b>Übersicht privilegierte Personen</b> (alle Evaluationen)<br><br>\n";
+            $out = "<b>Übersicht privilegierte Personen</b> (diese Evaluation)<br><br>\n";
             $out .= '<table style="">'."\n";
             $first = true;
             foreach ($rows as $srow) {
