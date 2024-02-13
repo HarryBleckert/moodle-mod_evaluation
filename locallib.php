@@ -2753,7 +2753,7 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
         $Stud = "Stud" . ($sortBy == "numStudents" ? $sort_sym : "");
         $Kurs = "Kurs" . ($sortBy == "fullname" ? $sort_sym : "");
         $ID = "ID" . ($sortBy == "id" ? $sort_sym : "");
-        $sumR = $sumC = $sum = $modus = $median = 0;
+        $sumR = $sumC = $sumTTC = $modus = $median = 0;
         $table = '<table style="border:1px;border-collapse: collapse;">';
         $header = '<tr style="font-weight:bolder;">
 				<td style="text-align:right;"><a href="?id=' . $params . '&sortBy=evaluations"><span style="color:teal;">' .
@@ -2778,6 +2778,9 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
             $evaluations[] = $result->evaluations;
             $sumR += $result->evaluations;
             $numTeachers = $result->numTeachers;
+            if ($numTeachers>1){
+                $sumTTC++;
+            }
             $numStudents = $result->numStudents;
             if (!$numTeachers) {
                 $noteacher_courses++;
@@ -2821,6 +2824,8 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
             $percentage = evaluation_calc_perc($sumC,$evaluatedCourses);
             $topline = '<b>Ausgewertete Kurse mit mindestens ' . $showMin
                     . ' Abgaben '.$percentage.':</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumC) . "</b>";
+            $output .= '<tr><td colspan="4">' . $topline . "</td></tr>\n";
+            $topline = '<b>Ausgewertete Kurse mit Team Teaching:</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumTTC) . "</b>";
             $output .= '<tr><td colspan="4">' . $topline . "</td></tr>\n";
             $output .= '<tr><td colspan="4"><b>Abgaben aus diesen ' . evaluation_number_format($sumC)
                     . ' Kursen:</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumR) .
