@@ -354,9 +354,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
 
     if (!$courseid and defined('EVALUATION_OWNER')) {
         $timeopen = ($evaluation->timeopen > 0) ? $evaluation->timeopen : (time() - 80600);
-        unset($_SESSION["teamteaching_courses"]);
-        evaluation_get_all_teachers($evaluation);
-        $_SESSION["teamteaching_courses"] = evaluation_count_teamteaching_courses($evaluation);
+
         if (!isset($_SESSION["teamteaching_courses"]) or !isset($_SESSION["num_courses_of_studies"])) {
             $_SESSION["num_courses_of_studies"] = safeCount(evaluation_get_course_studies($evaluation,false,false));
             $_SESSION["duplicated"] = evaluation_count_duplicated_replies($evaluation);
@@ -370,7 +368,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             //print "\n<script>document.getElementById('loader').style.display='none';</script>\n";
             //print "<br><hr>called as open EV (set)<br>";
         }
-        // $_SESSION["num_courses_of_studies"] = safeCount(evaluation_get_course_studies($evaluation));
+
         $get_from_table = false;
         if (!$is_open and $evaluation->timeopen < time() and $is_closed AND $completed_responses) {
             if (evaluation_set_results($evaluation)) {
@@ -425,6 +423,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
 
         }
 
+        $teamteaching_courses = $_SESSION["teamteaching_courses"];
         if (!isset($_SESSION["participating_courses_of_studies"])) {
             $_SESSION["participating_courses_of_studies"] = $courses_of_studies;
             if (!empty($sg_filter)) {
