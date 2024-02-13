@@ -354,7 +354,8 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
 
     if (!$courseid and defined('EVALUATION_OWNER')) {
         $timeopen = ($evaluation->timeopen > 0) ? $evaluation->timeopen : (time() - 80600);
-        //else  // if evalation is closed
+        unset($_SESSION["teamteaching_courses"]);
+        $_SESSION["teamteaching_courses"] = evaluation_count_teamteaching_courses($evaluation);
         if (!isset($_SESSION["teamteaching_courses"]) or !isset($_SESSION["num_courses_of_studies"])) {
             $_SESSION["num_courses_of_studies"] = safeCount(evaluation_get_course_studies($evaluation,false,false));
             $_SESSION["duplicated"] = evaluation_count_duplicated_replies($evaluation);
@@ -773,6 +774,7 @@ if (is_siteadmin()) {
         print nl2br(var_export($_SESSION['CoS_department'], true));
         print nl2br(var_export(array_keys($_SESSION['CoS_department']), true));
     }
+
     /*$sg_filter = $courses_filter = array();
     list( $sg_filter, $courses_filter ) = get_evaluation_filters( $evaluation );
     echo "<hr>evaluation:\n" . nl2br(var_export($evaluation,true)) . "<hr>sg_filter:\n" . nl2br(var_export($sg_filter,true))
