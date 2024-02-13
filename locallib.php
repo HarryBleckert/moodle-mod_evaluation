@@ -3052,7 +3052,7 @@ function showEvaluationTeacherResults($evaluation, $showMin = 6, $sortBy = "last
             $topline = '<b>Anzahl aller Dozent_innen mit Abgaben:</b></td><td colspan="1" style="text-align:right;"><b>'
                         . evaluation_number_format($evaluatedTeachers) . "</b>";
             $output .= '<tr><td colspan="2">' . $topline . "</td></tr>\n";
-            $percentage = evaluation_calc_perc($sumC,$evaluatedCourses);
+            $percentage = evaluation_calc_perc($sumC,$evaluatedTeachers);
             $output .= '<tr><td colspan="2"><b>Anzahl der ausgewerteten Dozent_innen mit mindestens ' . $showMin
                     . ' Abgaben '.$percentage.':</b></td><td colspan="1" style="text-align:right;"><b>' . evaluation_number_format($sumC) .
                     "</b></td></tr>\n";
