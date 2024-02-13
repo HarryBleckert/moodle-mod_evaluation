@@ -694,11 +694,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $evaluatedResults++;
                 if ( $Counts < $minReplies) {
                     $omittedResults += $allResult->count;;
-                    $omittedSubjects ++;
+                    // $omittedSubjects ++;
                 }
             } else{
-                $omittedResults += $Counts;
-                $omittedSubjects ++;
+                $omittedResults += $allResult->count;
+                // $omittedSubjects ++;
             }
         }
         $evaluatedResults = safeCount($allCounts);
