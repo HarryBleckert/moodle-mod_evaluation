@@ -953,8 +953,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
 				<td><span id="omittedAvg"></span></td></tr>' . "\n";
 
         $percentage = evaluation_calc_perc($omittedSubjects,$evaluatedResults);
-        print  '<tr><td style="text-align:left;">' . "Alle $allSubject <".$minReplies . " Abgaben" .$percentage . '</td>
-				<td>' . $omittedSubjects . '</td>
+        print  '<tr><td style="text-align:left;">' . "Alle $allSubject <".$minReplies . " Abgaben" .$percentage . ": " . $omittedSubjects . '</td>
+				<td>&nbsp;</td>
 				<td style="text-align:left;"><span id="omittedResult"></span></td>
 				<td><span id="omittedAvg"></span></td></tr>' . "\n";
     }
