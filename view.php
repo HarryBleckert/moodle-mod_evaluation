@@ -751,7 +751,7 @@ if (is_siteadmin()) {
        validate_evaluation_sessions($evaluation);
     }
 
-    if (isset($_GET['sendgetEmails'])) {
+    if (isset($_GET['getPrivEmails'])) {
         print "\n<hr>Privilegierte Personen:<br>" .ev_set_privileged_users(true, true) ."<hr>\n";
     }
 
