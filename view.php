@@ -355,6 +355,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
     if (!$courseid and defined('EVALUATION_OWNER')) {
         $timeopen = ($evaluation->timeopen > 0) ? $evaluation->timeopen : (time() - 80600);
         unset($_SESSION["teamteaching_courses"]);
+        evaluation_get_all_teachers($evaluation, false, true);
         $_SESSION["teamteaching_courses"] = evaluation_count_teamteaching_courses($evaluation);
         if (!isset($_SESSION["teamteaching_courses"]) or !isset($_SESSION["num_courses_of_studies"])) {
             $_SESSION["num_courses_of_studies"] = safeCount(evaluation_get_course_studies($evaluation,false,false));
