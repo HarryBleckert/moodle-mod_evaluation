@@ -946,14 +946,15 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 . "\n";
     }
 
-    if ($omittedResults){
+    if ($omittedResults) {
         $button = '';
-        $percentage = evaluation_calc_perc($omittedResults,($filter ?$numresults :$numresultsF));
-        print  '<tr><td style="text-align:left;">' . "Alle Abgaben <".$minReplies . $percentage . '</td>
+        $percentage = evaluation_calc_perc($omittedResults, ($filter ? $numresults : $numresultsF));
+        print  '<tr><td style="text-align:left;">' . "Alle Abgaben <" . $minReplies . $percentage . '</td>
 				<td>' . $omittedResults . '</td>
 				<td style="text-align:left;"><span id="omittedResult"></span></td>
 				<td><span id="omittedAvg"></span></td></tr>' . "\n";
-
+    }
+    if ($omittedSubjects){
         $percentage = evaluation_calc_perc($omittedSubjects,$evaluatedResults);
         print  '<tr><td style="text-align:left;">' . "$allSubject mit weniger als ".$minReplies . " Abgaben" .$percentage . ": " . $omittedSubjects . '</td>
 				<td>&nbsp;</td>
