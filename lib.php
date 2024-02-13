@@ -3430,7 +3430,8 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                     }
                     if ($getEmails){
                         if ($eMail = $DB->get_record("user",array("username" => $row[0]))){
-                            $eMails[$row[0]] = '"' . $eMail->firstname .' '. $eMail->lastname .'" <' . $eMail->email . ">";
+                            $eMails[$row[0]] = '"' . $eMail->firstname .' '. $eMail->lastname
+                                    .'" &lt;' . $eMail->email . "&gt;";
                         }
                     }
                 }
