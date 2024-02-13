@@ -693,7 +693,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                         "allLinks" => $links, "allCounts" => $Counts);
                 $evaluatedResults++;
                 if ( $Counts < $minReplies) {
-                    $omittedResults += $allResult->count;;
+                    $omittedResults += $Counts;
                     // $omittedSubjects ++;
                 }
             } else{
