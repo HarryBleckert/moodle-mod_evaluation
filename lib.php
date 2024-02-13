@@ -3320,8 +3320,8 @@ function pass_evaluation_filters($evaluation, $courseid) {
     return $passed;
 }
 
-function ev_set_privileged_users($show = false) {
-    global $CFG, $USER;
+function ev_set_privileged_users($show = false, $getEmails = false) {
+    global $CFG, $DB, $USER;
     $cfgFile = $CFG->dirroot . "/mod/evaluation/privileged_users.csv";
     if (is_readable($cfgFile)) {
         $cfgA = explode("\n", file_get_contents($cfgFile));
@@ -3390,6 +3390,7 @@ function ev_set_privileged_users($show = false) {
         if ( $show){
             $cfgData = file_get_contents($cfgFile);
             $pos = strpos($cfgData,"#Anmeldename");
+            $eMails = "";
             if ( $pos){
                 $cfgData = substr($cfgData, $pos+1);
             }
@@ -3404,8 +3405,13 @@ function ev_set_privileged_users($show = false) {
                 if (isset($row[1])) {
                     $CoS = trim($row[1]);
                 }
-                if ( !$first AND !empty($CoS) AND isset($_SESSION['CoS_privileged'][$USER->username])){
-                    if (!isset($_SESSION['CoS_privileged'][$USER->username][$CoS])) {
+                if ( !$first AND !empty($CoS)) {
+                    if ( isset($_SESSION['CoS_privileged'][$USER->username])) {
+                        if (!isset($_SESSION['CoS_privileged'][$USER->username][$CoS])) {
+                            continue;
+                        }
+                    }
+                    if ( !isset($_SESSION['filter_course_of_studies'][$CoS])){
                         continue;
                     }
                 }
@@ -3419,10 +3425,18 @@ function ev_set_privileged_users($show = false) {
                     foreach ($row as $col) {
                         $out .=  "<td>".htmlspecialchars($col)."</td>\n";
                     }
+                    if ($getEmails){
+                        if ($eMail = $DB->get_record("user",array("username" => $row[0]))){
+                            $eMails .= '"' . $eMail->firstname .' '. $eMail->lastname .'" <' . $eMail->email . ">, ";
+                        }
+                    }
                 }
                 $out .= "</tr>\n";
             }
             $out .=  "</table>";
+            if ($getEmails) {
+                return $eMails;
+            }
             return $out;
         }
         return $privileged_users;
