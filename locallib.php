@@ -2677,6 +2677,7 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
     </p>
     <?php
     $output = $header = $lines = "";
+    $sumTTC = 0;
     $params = "$id&courseid=$courseid&showResults=$showMin&goBack=$return_to";
     if ($notevaluated) {
         $params .= "&notevaluated=Kurse ohne Abgaben";
@@ -2716,6 +2717,9 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
                 $noteacher_courses++;
                 $numTeachers = '<span style="color:red;font-weight:bold;">0</span>';
             }
+            if ($numTeachers>1){
+                $sumTTC++;
+            }
             if (!$numStudents) {
                 $nostudent_courses++;
                 $numStudents = '<span style="color:red;font-weight:bold;">0</span>';
@@ -2738,6 +2742,7 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
         $show_stats .= '<b>Kurse ohne Dozent_innen: ' . $noteacher_courses . '</b>' . "<br>\n";
         $show_stats .= '<b>Kurse ohne Student_innen: ' . $nostudent_courses . '</b>' . "<br>\n";
         $show_stats .= '<b>Leere Kurse: ' . $empty_courses . '</b>' . "<br>\n";
+        $show_stats .= '<b>Kurse mit Team Teaching: ' . $sumTTC . '</b>' . "<br>\n";
         print $show_stats;
         if ($listed_courses) {
             print $output;
