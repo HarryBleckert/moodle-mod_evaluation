@@ -942,7 +942,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     if ($omittedResults){
         $button = '';
-        print  '<tr><td style="text-align:left;">' . "Alle Abgaben <".$minReplies . '</td>
+        $percentage = evaluation_calc_perc($omittedResults,$numresults);
+        print  '<tr><td style="text-align:left;">' . "Alle Abgaben <".$minReplies . $percentage . '</td>
 				<td>' . $omittedResults . '</td>
 				<td style="text-align:left;"><span id="omittedResult"></span></td>
 				<td><span id="omittedAvg"></span></td></tr>' . "\n";

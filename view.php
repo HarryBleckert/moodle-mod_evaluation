@@ -724,7 +724,7 @@ if (is_siteadmin()) {
     //evaluation_get_all_teachers( $evaluation, false, true);
     if (isset($_GET['set_results'])) {
         unset($_SESSION['set_results_' . $evaluation->id]);
-        evaluation_set_results($evaluation, false, true, false);
+        evaluation_set_results($evaluation, true, true, true);
         ///evaluation_set_results( $evaluation);
     }
 

@@ -256,7 +256,7 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
             }
             //$_SESSION["num_courses_of_studies"] = safeCount(evaluation_get_course_studies($evaluation));
             //$_SESSION["duplicated"] = evaluation_count_duplicated_replies($evaluation);
-            //$_SESSION["teamteaching_courses"] = evaluation_count_teamteaching_courses($evaluation);
+            $_SESSION["teamteaching_courses"] = evaluation_count_teamteaching_courses($evaluation);
 
             $courses_of_studies = $_SESSION["num_courses_of_studies"];
             $duplicated_replies = $_SESSION["duplicated"];
