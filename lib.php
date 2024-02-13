@@ -3411,7 +3411,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                             continue;
                         }
                     }
-                    if ( !isset($_SESSION['filter_course_of_studies'][$CoS])){
+                    if ( !in_array($CoS, $_SESSION['filter_course_of_studies'])){
                         continue;
                     }
                 }
