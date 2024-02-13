@@ -2830,7 +2830,8 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
             $topline = '<b>Ausgewertete Kurse mit mindestens ' . $showMin
                     . ' Abgaben '.$percentage.':</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumC) . "</b>";
             $output .= '<tr><td colspan="4">' . $topline . "</td></tr>\n";
-            $topline = '<b>Ausgewertete Kurse mit Team Teaching:</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumTTC) . "</b>";
+            $topline = '<b>Ausgewertete Kurse mit Team Teaching:</b></td><td colspan="2" style="text-align:right;"><b>'
+                    . evaluation_number_format($sumTTC) . "</b>";
             $output .= '<tr><td colspan="4">' . $topline . "</td></tr>\n";
             $output .= '<tr><td colspan="4"><b>Abgaben aus diesen ' . evaluation_number_format($sumC)
                     . ' Kursen:</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumR) .
@@ -2846,6 +2847,10 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
             }
 
             print $table . $header . $lines;
+            $topline = '<b>Kurse mit Team Teaching:</b></td><td colspan="2" style="text-align:right;"><b>'
+                    . evaluation_number_format($sumTTC) . "</b>";
+            $output .= '<tr><td colspan="4">' . $topline . "</td></tr>\n";
+
             $output .= '<tr><td colspan="4"><b>Leere Kurse:</b></td><td colspan="2" style="text-align:right;"><b>'
                     . evaluation_number_format($empty_courses) . '</b>' . "</td></tr>\n";
             $output .= '<tr><td colspan="4"><b>Kurse ohne Dozent_innen:</b></td><td colspan="2" style="text-align:right;"><b>'
