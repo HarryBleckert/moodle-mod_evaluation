@@ -3402,7 +3402,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             foreach ($rows as $srow) {
                 $CoS = "";
                 $row = explode(",", $srow);
-                if (isset($row[1]) AND strpos("#",$row[1])==false) {
+                if (isset($row[1]) AND strstr("#",$row[1])) {
                     $CoS = trim($row[1]);
                 }
                 if ( !$first AND !empty($CoS)) {
