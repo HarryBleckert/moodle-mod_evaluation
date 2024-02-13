@@ -2991,6 +2991,7 @@ function showEvaluationTeacherResults($evaluation, $showMin = 6, $sortBy = "last
     <?php
     $params = "$id&courseid=$courseid&showTeacherResults=$showMin&goBack=$return_to";
     $header = $lines = $output = "";
+    $evaluatedTeachers = ($cosPrivileged_filter ?$allResults :safeCount($results));
     if ($notevaluated) {
         $listed = 0;
         print '<b>Anzahl aller Dozent_innen ohne Abgaben: ' . safeCount($allteachers) . '</b>' . "\n";
@@ -3047,19 +3048,19 @@ function showEvaluationTeacherResults($evaluation, $showMin = 6, $sortBy = "last
             $median = $evaluations[round($sumC / 2, 0)];
             $average = round($sumR / $sumC);
 
-            if ($cosPrivileged_filter) {
-                $topline1 = '<b>Anzahl aller Dozent_innen mit Abgaben:</b></td><td colspan="1" style="text-align:right;"><b>'
-                        . evaluation_number_format($allResults) . "</b>";
-                $output .= '<tr><td colspan="2">' . $topline1 . "</td></tr>\n";
-            }
+
+            $topline = '<b>Anzahl aller Dozent_innen mit Abgaben:</b></td><td colspan="1" style="text-align:right;"><b>'
+                        . evaluation_number_format($evaluatedTeachers) . "</b>";
+            $output .= '<tr><td colspan="2">' . $topline . "</td></tr>\n";
+            $percentage = evaluation_calc_perc($sumC,$evaluatedCourses);
             $output .= '<tr><td colspan="2"><b>Anzahl der ausgewerteten Dozent_innen mit mindestens ' . $showMin
-                    . ' Abgaben:</b></td><td colspan="1" style="text-align:right;"><b>' . evaluation_number_format($sumC) .
+                    . ' Abgaben '.$percentage.':</b></td><td colspan="1" style="text-align:right;"><b>' . evaluation_number_format($sumC) .
                     "</b></td></tr>\n";
             $output .= '<tr><td colspan="2"><b>Abgaben für diese ' . evaluation_number_format($sumC) . ' Dozent_innen:</b></td>'
                     . '<td colspan="1" style="text-align:right;"><b>' . evaluation_number_format($sumR) . "</b></td></tr>\n";
-            $topline2 = '<b>Abgaben aus allen Kursen:</b></td><td colspan="2" style="text-align:right;"><b>'
+            $topline = '<b>Abgaben aus allen Kursen:</b></td><td colspan="2" style="text-align:right;"><b>'
                     . evaluation_number_format($completed_responses) . "</b>";
-            $output .= '<tr><td colspan="1">' . $topline2 . "</td></tr>\n";
+            $output .= '<tr><td colspan="1">' . $topline . "</td></tr>\n";
             $output .= '<tr><td colspan="2"><b>Abgaben/Dozent_in: Median:</b></td><td colspan="1" style="text-align:right;"><b>' .
                     evaluation_number_format($median)
                     . "</b></td></tr>\n";
