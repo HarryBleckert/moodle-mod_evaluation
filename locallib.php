@@ -2818,9 +2818,9 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
             $topline = '<b>Ausgewertete Kurse mit Abgaben:</b></td><td colspan="2" style="text-align:right;"><b>'
                     . evaluation_number_format($evaluatedCourses) . "</b>";
             $output .= '<tr><td colspan="4">' . $topline . "</td></tr>\n";
-            $percentage = evaluation_calc_perc($sumC,$evaluatedCourses);
+            $percentage = evaluation_calc_perc($evaluatedCourses,$sumC);
             $topline = '<b>Ausgewertete Kurse mit mindestens ' . $showMin
-                    . ' Abgaben ('.$sumC.'):</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumC) . "</b>";
+                    . ' Abgaben ('.$percentage.'):</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumC) . "</b>";
             $output .= '<tr><td colspan="4">' . $topline . "</td></tr>\n";
             $output .= '<tr><td colspan="4"><b>Abgaben aus diesen ' . evaluation_number_format($sumC)
                     . ' Kursen:</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumR) .
