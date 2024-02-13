@@ -2590,7 +2590,7 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
         // max 1 million results to fetch
         $results = $DB->get_records_sql($query, array("feedid" => $evaluation->id), 0, 1000000);
     }
-
+    $evaluatedCourses=safeCount($results);
     foreach ($results as $key => $result) {
         if (empty($notevaluated) and $result->evaluations < $showMin) {
             unset($results[$key]);
@@ -2808,19 +2808,20 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
             $median = $evaluations[round($sumC / 2, 0)];
             $average = round($sumR / $sumC);
             if ($cosPrivileged_filter) {
-                $topline1 = '<b>Anzahl aller Kurse mit Abgaben:</b></td><td colspan="2" style="text-align:right;"><b>'
+                $topline = '<b>Anzahl aller Kurse mit Abgaben:</b></td><td colspan="2" style="text-align:right;"><b>'
                         . evaluation_number_format($allResults) . "</b>";
-                $output .= '<tr><td colspan="3">' . $topline1 . "</td></tr>\n";
+                $output .= '<tr><td colspan="3">' . $topline . "</td></tr>\n";
             }
-            $topline2 = '<b>Abgaben aus allen Kursen:</b></td><td colspan="2" style="text-align:right;"><b>'
+            $topline = '<b>Abgaben aus allen Kursen:</b></td><td colspan="2" style="text-align:right;"><b>'
                     . evaluation_number_format($completed_responses) . "</b>";
-            $output .= '<tr><td colspan="4">' . $topline2 . "</td></tr>\n";
-            $topline2 = '<b>Ausgewertete Kurse mit Abgaben:</b></td><td colspan="2" style="text-align:right;"><b>'
-                    . evaluation_number_format(safeCount($results)) . "</b>";
-            $output .= '<tr><td colspan="4">' . $topline2 . "</td></tr>\n";
-            $topline3 = '<b>Ausgewertete Kurse mit mindestens ' . $showMin
-                    . ' Abgaben:</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumC) . "</b>";
-            $output .= '<tr><td colspan="4">' . $topline3 . "</td></tr>\n";
+            $output .= '<tr><td colspan="4">' . $topline . "</td></tr>\n";
+            $topline = '<b>Ausgewertete Kurse mit Abgaben:</b></td><td colspan="2" style="text-align:right;"><b>'
+                    . evaluation_number_format($evaluatedCourses) . "</b>";
+            $output .= '<tr><td colspan="4">' . $topline . "</td></tr>\n";
+            $percentage = evaluation_calc_perc($sumC,$evaluatedCourses);
+            $topline = '<b>Ausgewertete Kurse mit mindestens ' . $showMin
+                    . ' Abgaben ('.$sumC.'):</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumC) . "</b>";
+            $output .= '<tr><td colspan="4">' . $topline . "</td></tr>\n";
             $output .= '<tr><td colspan="4"><b>Abgaben aus diesen ' . evaluation_number_format($sumC)
                     . ' Kursen:</b></td><td colspan="2" style="text-align:right;"><b>' . evaluation_number_format($sumR) .
                     "</b></td></tr>\n";
