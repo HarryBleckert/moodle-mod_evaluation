@@ -1321,6 +1321,7 @@ function evaluation_showteachers($evaluation, $courseid, $cmid = false, $user = 
 // unset evaluation sessions if required
 function validate_evaluation_sessions($evaluation) {
     if (!isset($_SESSION["EvaluationsName"]) || $_SESSION["EvaluationsName"] != $evaluation->name) {
+        unset( $_SESSION['allteachers'] );
         unset($_SESSION["myEvaluations"], $_SESSION['anonresponsestable'], $_SESSION['responsestable'],
                 $_SESSION["numStudents"], $_SESSION["teachers"], $_SESSION["showTeachers"],
                 $_SESSION["participating_courses"], $_SESSION["participating_empty_courses"],
@@ -1335,7 +1336,6 @@ function validate_evaluation_sessions($evaluation) {
                 $_SESSION["distinct_users"], $_SESSION["evaluated_teachers"], $_SESSION["evaluated_courses"], $_SESSION["privileged_global_users"],
                 $_SESSION["privileged_global_users_wm"], $_SESSION["course_of_studies_wm"], $_SESSION['ev_global_cfgfile'],
         );
-        //unset( $_SESSION['allteachers'] );
     }
     $_SESSION["EvaluationsName"] = $evaluation->name;
 }
