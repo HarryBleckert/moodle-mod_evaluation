@@ -1464,7 +1464,8 @@ print "<hr>$totalAvg:" .nl2br(var_export($tags,true)."<hr>\n");
     print "<script>\n";
     // print 'document.getElementById("showFilter").display="table-row";'. "\n";
     foreach ($tags as $key => $value) {
-        print 'document.getElementById("' . $key . '").innerHTML="' . $value . '";' . "\n";
+        //print 'document.getElementById("' . $key . '").innerHTML="' . $value . '";' . "\n";
+        print "document.getElementById('" . $key . "').innerHTML='" . $value . "';" . "\n";
     }
     print "</script>\n";
 
