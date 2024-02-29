@@ -757,6 +757,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY courseid ORDER BY courseid");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
+            $fullname = "";
             $isCourseStudent = evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid);
             if (!defined('EVALUATION_OWNER') and !evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
                     and !$isCourseStudent) {
@@ -768,7 +769,16 @@ function evaluation_compare_results($evaluation, $courseid = false,
             if ($allResult->courseid==SITEID OR empty($allResult->courseid)){
                 continue;
             }
-            $fullname = evaluation_get_course_field($allResult->courseid, 'fullname');
+
+            if ($isOpen) {
+                $fullname = evaluation_get_course_field($allResult->courseid, 'fullname');
+            }else{
+                if (!$uRecord = $DB->get_record("evaluation_enrolments",array("courseid" => $allResult->courseid), '*')){
+                    continue;
+                }
+                $fullname = $uRecord->fullname;
+            }
+
             if (true) //defined('EVALUATION_OWNER') )
             {
                 $links = '<a href="analysis_course.php?id=' . $id . '&courseid=' . $allResult->courseid
@@ -778,8 +788,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $links = $fullname;
             }
             if (empty($fullname)) {
-                $fullname = '<b style="color:red;">Der Kurs mit Kurs-ID ' . $allResult->courseid . ' existiert nicht mehr!</b>';
-                $links = $fullname;
+                continue;
+                // $fullname = '<b style="color:red;">Der Kurs mit Kurs-ID ' . $allResult->courseid . ' existiert nicht mehr!</b>';
+                // $links = $fullname;
             }
             $allLinks[] = $links;
             $allIDs[] = $allResult->courseid;
@@ -827,7 +838,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 if (!$uRecord = $DB->get_record("evaluation_users",array("userid" => $allResult->teacherid), '*')){
                     continue;
                 }
-                $fullname = ($uRecord->alternatename ? $uRecord->alternatename : $uRecord->firstname) . " " . $uRecord->lastname;;
+                $fullname = ($uRecord->alternatename ? $uRecord->alternatename : $uRecord->firstname) . " " . $uRecord->lastname;
             }
             if (defined('EVALUATION_OWNER')) {
                 $links = '<a href="print.php?id=' . $id . '&showTeacher=' . $allResult->teacherid
@@ -835,11 +846,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
             } else {
                 $links = $fullname;
             }
-            /*if (empty($fullname)) {
-                $fullname = '<b style="color:red;">Es gibt kein ASH Konto mehr für einen Lehrenden mit der User-ID' .
-                        $allResult->teacherid . '!</b>';
-                $links = $fullname;
-            }*/
+            if (empty($fullname)) {
+                continue;
+                // $fullname = '<b style="color:red;">Es gibt kein ASH Konto mehr für einen Lehrenden mit der User-ID' . $allResult->teacherid . '!</b>';
+                // $links = $fullname;
+            }
             $allLinks[] = $links;
             $allIDs[] = $allResult->teacherid;
             $allValues[] = $fullname;
