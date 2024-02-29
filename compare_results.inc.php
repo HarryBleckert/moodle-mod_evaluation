@@ -1460,7 +1460,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         print "\n<script>document.getElementById('showFilter').style.display='none';</script>\n";
         unset($data["averageF"]);
     }
-print "<hr>" .nl2br(var_export($tags,true)."<hr>\n");
+print "<hr>$totalAvg:" .nl2br(var_export($tags,true)."<hr>\n");
     print "<script>\n";
     // print 'document.getElementById("showFilter").display="table-row";'. "\n";
     foreach ($tags as $key => $value) {
