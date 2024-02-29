@@ -716,6 +716,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY course_of_studies ORDER BY course_of_studies");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
+            if (empty($allResult->course_of_studies)){
+                continue;
+            }
             $allIDs[] = $allValues[] = $allResult->course_of_studies;
             $course_of_studiesID =
                     evaluation_get_course_of_studies_id_from_evc($id, $allResult->course_of_studies, $evaluation);
@@ -760,6 +763,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 continue;
             }
             if ( $isCourseStudent AND !evaluation_has_user_participated($evaluation, $USER->id, $allResult->courseid) ){
+                continue;
+            }
+            if ($allResult->courseid==SITEID OR empty($allResult->courseid)){
                 continue;
             }
             $fullname = evaluation_get_course_field($allResult->courseid, 'fullname');
@@ -812,18 +818,28 @@ function evaluation_compare_results($evaluation, $courseid = false,
             if (!defined('EVALUATION_OWNER') AND !$isMyTeacher) {
                 continue;
             }
-            $fullname = evaluation_get_user_field($allResult->teacherid, 'fullname');
+            if( empty($allResult->teacherid)){
+                continue;
+            }
+            if ($isOpen) {
+                $fullname = evaluation_get_user_field($allResult->teacherid, 'fullname');
+            }else{
+                if (!$uRecord = $DB->get_record("evaluation_users",array("userid" => $allResult->teacherid), '*')){
+                    continue;
+                }
+                $fullname = ($uRecord->alternatename ? $uRecord->alternatename : $uRecord->firstname) . " " . $uRecord->lastname;;
+            }
             if (defined('EVALUATION_OWNER')) {
                 $links = '<a href="print.php?id=' . $id . '&showTeacher=' . $allResult->teacherid
                         . '" target="analysis">' . $fullname . "</a>";
             } else {
                 $links = $fullname;
             }
-            if (empty($fullname)) {
+            /*if (empty($fullname)) {
                 $fullname = '<b style="color:red;">Es gibt kein ASH Konto mehr für einen Lehrenden mit der User-ID' .
                         $allResult->teacherid . '!</b>';
                 $links = $fullname;
-            }
+            }*/
             $allLinks[] = $links;
             $allIDs[] = $allResult->teacherid;
             $allValues[] = $fullname;

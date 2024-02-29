@@ -2572,7 +2572,7 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
         $query = "SELECT c.id, c.fullname, c.shortname, count(completed.courseid) AS evaluations
 				FROM {evaluation_completed} AS completed
 				LEFT JOIN {course} AS c ON c.id = completed.courseid
-				WHERE evaluation= :feedid AND coalesce(c.fullname, '') != ''" . $cosPrivileged_filter . "
+				WHERE evaluation= :evid AND coalesce(c.fullname, '') != ''" . $cosPrivileged_filter . "
 				GROUP BY c.id, c.fullname, c.shortname
 				ORDER BY c.fullname " . $_SESSION["orderBy"];
 
@@ -2588,7 +2588,7 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
 						ORDER BY c.fullname " . $_SESSION["orderBy"]));
         }
         // max 1 million results to fetch
-        $results = $DB->get_records_sql($query, array("feedid" => $evaluation->id), 0, 1000000);
+        $results = $DB->get_records_sql($query, array("evid" => $evaluation->id), 0, 1000000);
     }
     $evaluatedCourses=safeCount($results);
     foreach ($results as $key => $result) {
