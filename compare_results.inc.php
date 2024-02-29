@@ -1236,6 +1236,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
 
 
+
+
     // get total averages
     $totalAvg = 0;
     if ($validCount) {
@@ -1458,6 +1460,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         print "\n<script>document.getElementById('showFilter').style.display='none';</script>\n";
         unset($data["averageF"]);
     }
+print "<hr>" .nl2br(var_export($tags,true)."<hr>\n");
     print "<script>\n";
     // print 'document.getElementById("showFilter").display="table-row";'. "\n";
     foreach ($tags as $key => $value) {
@@ -1476,6 +1479,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
     if ($allKey and $evaluatedResults >= $maxCharts) {
         print "<br><b>Es werden nur die ersten $maxCharts Ergebnisese grafisch angezeigt, da die Auswahl > $maxCharts ist!</b><br>\n";
     }
+
+
+
+
+
 
     // we do not need graphics if we have only 1 data point and this data is already shown in list
     if (!$qSelected) {    // Use source Chartjs With Wrapper Class
