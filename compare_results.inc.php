@@ -176,6 +176,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     $presentation = array();
     $scheme = $numQuestions = "";
+    $stimmezu = array("stimme zu", "stimme eher zu", "stimme eher nicht zu", "stimme nicht zu");
+    $trifftzu = array("trifft zu", "trifft eher zu", "trifft eher nicht zu", "trifft nicht zu");
+    $schemeQ = "( presentation ilike '%stimme zu%' OR presentation ilike '%trifft zu%')";
 
     if ($qSelected) {
 
@@ -188,7 +191,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $itemInfo = $itemobj->get_info($question);
 
             $presentationraw = $presentation =
-                    explode("|", str_replace(array("<<<<<1", "r>>>>>", "c>>>>>", "r>>>>>", "\n"), "",
+                    /*explode("|", str_replace(array("<<<<<1", "r>>>>>", "c>>>>>", "r>>>>>", "\n"), "",
+                            $question->presentation));*/
+                    explode("\n", str_replace(array("<<<<<1", "r>>>>>", "c>>>>>", "r>>>>>"), "",
                             $question->presentation));
 
             // sub queries
@@ -221,10 +226,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             //. "<br>info: " .var_export($info,true) . "<br>" ;
             //print 'Ausgewertete Frage: <span style="' . $boldStyle .'">'	. $question->name . "</span><br>\n";
         }
-    } else {    //$schemeQ = "( presentation ilike '%stimme zu%' OR (presentation ilike '%ja%' AND presentation ilike '%nein%'))";
-        $stimmezu = array("stimme zu", "stimme eher zu", "stimme eher nicht zu", "stimme nicht zu");
-        $trifftzu = array("trifft zu", "trifft eher zu", "trifft eher nicht zu", "trifft nicht zu");
-        $schemeQ = "( presentation ilike '%stimme zu%' OR presentation ilike '%trifft zu%')";
+    } else {
         $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id AND (typ like'multichoice%' OR typ='numeric') AND $schemeQ
 					ORDER BY position ASC";
         $questions = $DB->get_records_sql($query);
