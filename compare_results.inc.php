@@ -182,7 +182,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     if ($qSelected) {
 
-        $query = "SELECT * FROM {evaluation_item} WHERE id = $qSelected AND evaluation=$evaluation->id ORDER by position ASC";
+        $query = "SELECT * FROM {evaluation_item} WHERE id = $qSelected 
+                                    AND evaluation=$evaluation->id ORDER by position ASC";
         $question = array();
         $questions = $DB->get_records_sql($query);
         //extract presentation list
@@ -227,7 +228,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             //print 'Ausgewertete Frage: <span style="' . $boldStyle .'">'	. $question->name . "</span><br>\n";
         }
     } else {
-        $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id AND (typ like'multichoice%' OR typ='numeric') AND $schemeQ
+        $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id 
+                    AND (typ like'multichoice%' OR typ='numeric') AND $schemeQ
 					ORDER BY position ASC";
         $questions = $DB->get_records_sql($query);
         //print "<br><hr>".var_export($questions,true);exit;
@@ -240,6 +242,10 @@ function evaluation_compare_results($evaluation, $courseid = false,
         foreach ($questions as $quest) {
             $present = $quest->presentation;
             break;
+        }
+        $qfValues = "";
+        for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
+            $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
         }
         if ($numQuestions and stristr($present, "trifft")) {
             $presentation = array_merge(array(($validation ? "ungültig" : "keine Antwort")), $trifftzu);
@@ -1008,20 +1014,20 @@ function evaluation_compare_results($evaluation, $courseid = false,
             if ($question->id != $qSelected) {
                 continue;
             } //print "<br>$question->id!==$qSelected";
-            $fValues = $qfValues;
-        } else {
+            // $fValues = $qfValues;
+        } /*else {
             $fValues = "'1','2'" . ($YesNo ? "" : ",'3','4'");
-        }
+        }*/
         if ($validation) {
             $query = "SELECT count (*) as count FROM {evaluation_value} 
 				  WHERE item=$question->id AND coalesce(value, '') = ''";
             $zeroReplies[$question->name][$qCount] = $DB->get_record_sql($query)->count;
             $query = "SELECT count (*) as count FROM {evaluation_value} 
-				  WHERE item=$question->id AND value NOT IN ($fValues) ";
+				  WHERE item=$question->id AND value NOT IN ($qfValues) ";
             $ignoredReplies[$question->name][$qCount] = $DB->get_record_sql($query)->count;
         }
         $query = "SELECT AVG (value::INTEGER)::NUMERIC(10,2) as average FROM {evaluation_value} 
-				  WHERE item=$question->id AND value IN ($fValues) ";
+				  WHERE item=$question->id AND value IN ($qfValues) ";
         $answer = $DB->get_record_sql($query);
         if (empty($answer)) {
             continue;
@@ -1043,24 +1049,24 @@ function evaluation_compare_results($evaluation, $courseid = false,
         if ($allKeyV) {
             if ($validation) {
                 $query = "SELECT $allKeyV AS $allKeyV, COUNT(*) as count FROM {evaluation_value} 
-							WHERE item=$question->id AND coalesce(value, '') = '' $filter $subquery
+							WHERE item=$question->id AND coalesce(value, '') = '' $subquery
 							GROUP BY $allKeyV ORDER BY $allKeyV";
                 $_zeroReplies[$qCount] = $DB->get_records_sql($query);
                 $query = "SELECT $allKeyV AS $allKeyV, COUNT(*) as count FROM {evaluation_value} 
-							WHERE item=$question->id AND value NOT IN ($fValues) $filter $subquery
+							WHERE item=$question->id AND value NOT IN ($qfValues) $subquery
 							GROUP BY $allKeyV ORDER BY $allKeyV";
                 $_ignoredReplies[$qCount] = $DB->get_records_sql($query);
             }
             if ($allSelected == "allDepartments") {
                 $query = "SELECT e.department AS department, AVG (v.value::INTEGER)::NUMERIC(10,2) as average
 					  FROM {evaluation_value} v, {evaluation_enrolments} e  
-					  WHERE item=$question->id AND value IN ($fValues) $filter $subquery 
+					  WHERE item=$question->id AND value IN ($qfValues)  $subquery 
 					    AND e.courseid=v.courseid
 					  GROUP BY e.department ORDER BY e.department";
             } else {
                 $query = "SELECT $allKeyV AS $allKeyV, AVG (value::INTEGER)::NUMERIC(10,2) as average
 					  FROM {evaluation_value} 
-					  WHERE item=$question->id AND value IN ($fValues) $filter $subquery
+					  WHERE item=$question->id AND value IN ($qfValues)  $subquery
 					  GROUP BY $allKeyV ORDER BY $allKeyV";
             }
 
@@ -1169,16 +1175,16 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     $zeroReplies[$question->name . "_F"][$qCount] = $tmp;
                 }
                 $query = "SELECT COUNT (*) as count FROM {evaluation_value} 
-						WHERE item=$question->id AND value NOT IN ($fValues) $filter $subquery";
+						WHERE item=$question->id AND value NOT IN ($qfValues) $filter $subquery";
                 $tmp = $DB->get_record_sql($query)->count;
                 if ($tmp > 0) {
                     $ignoredReplies[$question->name . "_F"][$qCount] = $tmp;
                 }
             }
             $query = "SELECT AVG (value::INTEGER)::NUMERIC(10,2) as average FROM {evaluation_value}
-					  WHERE item=$question->id AND value IN ($fValues) $filter";
+					  WHERE item=$question->id AND value IN ($qfValues) $filter";
             $record = $DB->get_record_sql($query);
-            //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter" $subquery)->count;
+            //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($qfValues) $filter" $subquery)->count;
             if (!empty($record) and $record->average >= 1) {
                 $average = round($record->average, 2);
                 if ($YesNo) {
@@ -1204,9 +1210,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
         }
         if ($subquery) {
             $query = "SELECT AVG (value::INTEGER)::NUMERIC(10,2) as average FROM {evaluation_value}
-			    		  WHERE item=$question->id AND value IN ($fValues) $filter $subquery";
+			    		  WHERE item=$question->id AND value IN ($qfValues) $filter $subquery";
             $record = $DB->get_record_sql($query);
-            //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($fValues) $filter" $subquery)->count;
+            //$count = $DB->get_record_sql("SELECT COUNT (*) as count WHERE item=$question->id AND value IN ($qfValues) $filter" $subquery)->count;
             if (!empty($record) and $record->average >= 1) {
                 $average = round($record->average, 2);
                 if ($YesNo) {
