@@ -871,7 +871,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     "<br>allValues=".nl2br(substr(var_export( $allValues[0], true),0,150))	 . "<br>\n";*/
     if ($courseid) {    //$divisor = ($evaluation->teamteaching AND !$teacherid )?$numTeachers :1 ;
         //$numTeachers = safeCount($_SESSION["allteachers"][$courseid]);
-        $divisor = (!$teacherid) ? $numTeachers : 1;
+        $divisor = (!$teacherid) ? $numTeachers :1;
         $students = get_evaluation_participants($evaluation, false, $courseid, false, true);
         $participated = $completed = 0;
 
