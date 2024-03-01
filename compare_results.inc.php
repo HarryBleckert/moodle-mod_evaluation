@@ -193,7 +193,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $presentationraw = $presentation =
                     /*explode("|", str_replace(array("<<<<<1", "r>>>>>", "c>>>>>", "r>>>>>", "\n"), "",
                             $question->presentation));*/
-                    explode("!", str_replace(array("\n\n","\n", "<<<<<1", "r>>>>>", "c>>>>>", "r>>>>>"), "",
+                    explode("|", str_replace(array("\n\n","\n", "<<<<<1", "r>>>>>", "c>>>>>", "r>>>>>"), "",
                             $question->presentation));
 
             // sub queries
