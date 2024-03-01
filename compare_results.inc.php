@@ -941,7 +941,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     . evaluation_number_format($_SESSION["duplicated"]) . " duplizierter Abgaben)</small>" : "") . '</th>
 			<th colspan="2">' . 'Mittelwert' . '</th></tr>' . "\n";
     print  '<tr><td style="text-align:left;">' . "Alle Abgaben:" . '</td>
-				<td>' . $numresults . '</td>
+				<td>' . evaluation_number_format($numresults) . '</td>
 				<td style="text-align:left;"><span id="totalPresentation"></span></td>
 				<td><span id="totalAvg"></span></td></tr>' . "\n";
     $title = "";
