@@ -944,8 +944,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     print '<style> table, th, td { border:1px solid black;} th, td { padding:5px; text-align:right; vertical-align:bottom;}</style>';
     print '<table id="chartResultsTable" style="border-collapse:collapse;margin: 5px 30px;font-size:12pt;font-weight:normal;">';
-    print  "\n" . '<tr style="font-weight:bold;background-color:lightgrey;">'
-			"\n" . '<th colspan="2" style="text-align:left">' . "Abgaben"
+    print   "\n" . '<tr style="font-weight:bold;background-color:lightgrey;">'
+            . "\n" . '<th colspan="2" style="text-align:left">' . "Abgaben"
             . ($_SESSION["duplicated"] ? " <small>(inkl. "
                     . evaluation_number_format($_SESSION["duplicated"]) . " duplizierter Abgaben)</small>"
                     : "") . '</th>
