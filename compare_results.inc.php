@@ -944,10 +944,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     print '<style> table, th, td { border:1px solid black;} th, td { padding:5px; text-align:right; vertical-align:bottom;}</style>';
     print '<table id="chartResultsTable" style="border-collapse:collapse;margin: 5px 30px;font-size:12pt;font-weight:normal;">';
-    print  '<tr style="font-weight:bold;background-color:lightgrey;">
-			<th colspan="2" style="text-align:left">' . "Abgaben" . ($_SESSION["duplicated"] ? " <small>(inkl. "
-                    . evaluation_number_format($_SESSION["duplicated"]) . " duplizierter Abgaben)</small>" : "") . '</th>
-			<th colspan="2">' . 'Mittelwert' . '</th></tr>' . "\n";
+    print  "\n" . '<tr style="font-weight:bold;background-color:lightgrey;">'
+			"\n" . '<th colspan="2" style="text-align:left">' . "Abgaben"
+            . ($_SESSION["duplicated"] ? " <small>(inkl. "
+                    . evaluation_number_format($_SESSION["duplicated"]) . " duplizierter Abgaben)</small>"
+                    : "") . '</th>
+			<th colspan="2">' . 'Mittelwert' . "</th>\n</tr>\n";
     print  '<tr><td style="text-align:left;">' . "Alle Abgaben:" . '</td>
 				<td>' . evaluation_number_format($numresults) . '</td>
 				<td style="text-align:left;"><span id="totalPresentation"></span></td>
