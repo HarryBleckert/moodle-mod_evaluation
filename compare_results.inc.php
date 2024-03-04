@@ -1488,12 +1488,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
     //print " - maxval2: $maxval<br>";
 
-    // message regarding max charts to display
-    //if ( $allKey AND safeCount($allResults) > $maxCharts )
-    if ($allKey and $evaluatedResults >= $maxCharts) {
-        print "<br><b>Es werden nur die ersten $maxCharts Ergebnisese grafisch angezeigt, da die Auswahl > $maxCharts ist!</b><br>\n";
-    }
-
 
 
 
@@ -1505,6 +1499,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
         /*
             ChartAxis.helpers.color(color).lighten(0.2);
         */
+
+        // message regarding max charts to display
+        //if ( $allKey AND safeCount($allResults) > $maxCharts )
+        if ($allKey and $evaluatedResults >= $maxCharts) {
+            print "<br><b>Es werden nur die ersten $maxCharts Ergebnisese grafisch angezeigt, da die Auswahl > $maxCharts ist!</b><br>\n";
+        }
 
         $colors0 = array("black", "red", "green", "blue","orange", "purple", "cyan",
                 "magenta", "Lime", "pink",
