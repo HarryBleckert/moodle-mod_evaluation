@@ -1337,11 +1337,11 @@ print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ<hr>";
                 $hintLink = $hint;
             }
             $rowsA[] = array("key" => $key, "sortKey" => $sortCol,
-                    "row" => 'row = table.insertRow(-1); '
-                            . 'nCell = row.insertCell(0); nCell.innerHTML = \'' . $allLinks[$key] . '\'; '
-                            . 'nCell.style.textAlign ="left"; '
-                            . 'nCell = row.insertCell(1); nCell.innerHTML = \'' . $replies . '\'; '
-                            . 'nCell = row.insertCell(2); nCell.innerHTML = \'' . $hintLink . '\'; '
+                    "row" => 'row = table.insertRow(-1); ' ."\n"
+                            . 'nCell = row.insertCell(0); nCell.innerHTML = "' . $allLinks[$key] . "';\n"
+                            . 'nCell.style.textAlign ="left";' ."\n"
+                            . 'nCell = row.insertCell(1); nCell.innerHTML = "' . $replies . "';\n"
+                            . 'nCell = row.insertCell(2); nCell.innerHTML = "' . $hintLink . "';\n"
                             . 'nCell.style.textAlign ="left"; '
                             . 'nCell = row.insertCell(3); nCell.innerHTML = "' . $filterAvg . '";'
                             . "\n");
