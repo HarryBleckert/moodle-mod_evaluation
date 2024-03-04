@@ -2498,8 +2498,12 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
         }
         $str .= "</table>\n";
         $possible_evaluations_txt = "";
+        $maxevaluations = ($userResults ? $possible_evaluations_per_teacher : $possible_evaluations);
         if ($isTeacher) {
-            $possible_evaluations_txt = "/" . ($userResults ? $possible_evaluations_per_teacher : $possible_evaluations);
+            $possible_evaluations_txt = "/" . $maxevaluations;
+            if ($maxevaluations && $myCourseReplies){
+                $possible_evaluations_txt .=  evaluation_calc_perc($myCourseReplies, $maxevaluations);
+            }
         }
         if ($myCourseReplies > 0 and $showCounter) {
             $str .= "<b style=\"color:darkgreen;\">" . get_string('completed_evaluations', "evaluation")
