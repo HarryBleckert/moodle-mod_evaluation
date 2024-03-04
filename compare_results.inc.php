@@ -1342,7 +1342,7 @@ print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ<hr>";
                     "row" => 'row = table.insertRow(-1); ' ."\n"
                             . 'nCell = row.insertCell(0); nCell.innerHTML = \'' . $allLinks[$key] . '\';' ."\n"
                             . 'nCell.style.textAlign ="left";' ."\n"
-                            . 'nCell = row.insertCell(1); nCell.innerHTML = "' . $replies . "';\n"
+                            . 'nCell = row.insertCell(1); nCell.innerHTML = \'' . $replies . "';\n"
                             . 'nCell = row.insertCell(2); nCell.innerHTML = \'' . $hintLink . '\';' . "\n"
                             . 'nCell.style.textAlign ="left"; '
                             . 'nCell = row.insertCell(3); nCell.innerHTML = "' . $filterAvg . '";'
