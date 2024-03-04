@@ -192,9 +192,10 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $itemInfo = $itemobj->get_info($question);
 
             $presentationraw = $presentation =
-                    /*explode("|", str_replace(array("<<<<<1", "r>>>>>", "c>>>>>", "r>>>>>", "\n"), "",
+                    /*explode("|", str_replace(array("<<<<<1", "r>>>>>", "c>>>>>", "d>>>>>", "\n"), "",
                             $question->presentation));*/
-                    explode("|", str_replace(array("\n\n","\n", "<<<<<1", "r>>>>>", "c>>>>>", "r>>>>>"), "",
+                    explode("|", str_replace(array("\t", "\r", "\n", "<<<<<1", "r>>>>>", "c>>>>>", "d>>>>>"),
+                            "",
                             $question->presentation));
 
             // sub queries
@@ -219,7 +220,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
                 $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
             }
-            $scheme = implode(", ", $presentation) . " <=> $qfValues";
+            $scheme = implode(",", $presentation) . " <=> $qfValues";
 
             array_unshift($presentation, ($validation ? "ungültig" : "keine Antwort"));
             break;
@@ -243,13 +244,13 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $present = $quest->presentation;
             break;
         }
-        $qfValues = "";
-        for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
-            $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
-        }
         if ($numQuestions and stristr($present, "trifft")) {
             $presentation = array_merge(array(($validation ? "ungültig" : "keine Antwort")), $trifftzu);
             $scheme = '"trifft zu"=1 - "trifft nicht zu"=4<br>';
+        }
+        $qfValues = "";
+        for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
+            $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
         }
         print '<span title="' . $hint . '">Ausgewertete Single Choice Fragen: </span><span style="'
                 . $boldStyle . '">' . $numQuestions . "</span> - ";
@@ -1001,7 +1002,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 				<td><span id="omittedAvg"></span></td></tr>' . "\n";
     }
 
-print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ<hr>";
+print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ\n".nl2br(var_export($presentation,true))."<hr>";
     print '</table><div style="display:block;" id="chartResultsList"></div>' . "\n";
 
 
