@@ -1338,8 +1338,8 @@ print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ<hr>";
             }
             $rowsA[] = array("key" => $key, "sortKey" => $sortCol,
                     "row" => 'row = table.insertRow(-1); '
-                            . 'nCell = row.insertCell(0); nCell.innerHTML = \'' . $allLinks[$key] .
-                            '\';nCell.style.textAlign ="left"; '
+                            . 'nCell = row.insertCell(0); nCell.innerHTML = \'' . $allLinks[$key] . '\'; '
+                            . 'nCell.style.textAlign ="left"; '
                             . 'nCell = row.insertCell(1); nCell.innerHTML = \'' . $replies . '\'; '
                             . 'nCell = row.insertCell(2); nCell.innerHTML = \'' . $hintLink . '\'; '
                             . 'nCell.style.textAlign ="left"; '
@@ -1469,7 +1469,7 @@ print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ<hr>";
         print "\n<script>document.getElementById('showFilter').style.display='none';</script>\n";
         unset($data["averageF"]);
     }
-print "<hr>$totalAvg:" .nl2br(var_export($tags,true)."<hr>\n");
+print "<hr>$totalAvg: " .nl2br(var_export($tags,true)."<hr>\n");
     print "<script>\n";
     // print 'document.getElementById("showFilter").display="table-row";'. "\n";
     foreach ($tags as $key => $value) {
