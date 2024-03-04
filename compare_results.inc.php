@@ -220,7 +220,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
                 $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
             }
-            $scheme = implode(",", $presentation) . " <=> $qfValues";
+            $scheme = implode(", ", $presentation) . " <=> $qfValues";
 
             array_unshift($presentation, ($validation ? "ungültig" : "keine Antwort"));
             break;
@@ -1002,8 +1002,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
 				<td><span id="omittedAvg"></span></td></tr>' . "\n";
     }
 
-print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ\n\$presentation: "
-        .implode(", ",$presentation)."<hr>";
+    /* print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ\n\$presentation: "
+        .implode(", ",$presentation)."<hr>"; */
     print '</table><div style="display:block;" id="chartResultsList"></div>' . "\n";
 
 
@@ -1473,7 +1473,7 @@ print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ\n\$pre
         print "\n<script>document.getElementById('showFilter').style.display='none';</script>\n";
         unset($data["averageF"]);
     }
-print "<hr>$totalAvg: " .nl2br(var_export($tags,true)."<hr>\n");
+    // print "<hr>$totalAvg: " .nl2br(var_export($tags,true)."<hr>\n");
     print "<script>\n";
     // print 'document.getElementById("showFilter").display="table-row";'. "\n";
     foreach ($tags as $key => $value) {
