@@ -1494,7 +1494,10 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
 
     // we do not need graphics if we have only 1 data point and this data is already shown in list
-    if (!$qSelected) {    // Use source Chartjs With Wrapper Class
+    if (false or $qSelected) {
+        print "<br><b>Für die Antworten auf einzelne Fragen werden keine grafischen Ergebnisese angezeigt!</b><br>\n";
+    }else{
+        // Use source Chartjs With Wrapper Class
         // using own php wrapper
         /*
             ChartAxis.helpers.color(color).lighten(0.2);
