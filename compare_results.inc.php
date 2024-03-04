@@ -999,6 +999,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 				<td><span id="omittedAvg"></span></td></tr>' . "\n";
     }
 
+print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ<hr>"
     print '</table><div style="display:block;" id="chartResultsList"></div>' . "\n";
 
 
