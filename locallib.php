@@ -4388,7 +4388,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                         "<p>Dies ist ein Entwurf für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen$nrs.</p><hr>";
             }
 
-            $to = "Harry Bleckert <Harry@Bleckert.com>,";
+            $to = "Harry Bleckert <Harry@Bleckert.com>";
             //$to = "Berthe Khayat <khayat@ash-berlin.eu>";
             //$to = "Anja Voss <voss@ash-berlin.eu>";
             $fullname = "Test";
