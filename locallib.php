@@ -4389,7 +4389,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             }
 
             $to = "Harry <Harry@Bleckert.com>";
-            //$to = "Berthe Khayat <khayat@ash-berlin.eu>";
+            $to = "Berthe Khayat <khayat@ash-berlin.eu>";
             //$to = "Anja Voss <voss@ash-berlin.eu>";
             $fullname = "Test";
             if (strpos($test,"@")){
