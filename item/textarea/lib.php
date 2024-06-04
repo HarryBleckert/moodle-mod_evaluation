@@ -106,8 +106,9 @@ class evaluation_item_textarea extends evaluation_item_base {
     }
 
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid = false,
-            $course_of_studies = false, $Chart = "bar") {
-        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies);
+            $course_of_studies = false, $department = false, $subquery = "", $Chart = "bar") {
+        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid,
+                $course_of_studies, $department, $subquery);
         if ($values) {
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
             echo '<tr><th colspan="2" align="left">';
@@ -131,9 +132,9 @@ class evaluation_item_textarea extends evaluation_item_base {
 
     public function excelprint_item(&$worksheet, $row_offset,
             $xls_formats, $item,
-            $groupid, $courseid = false, $teacherid = false, $course_of_studies = false) {
+            $groupid, $courseid = false, $teacherid = false, $course_of_studies = false, $department = false, $subquery ="") {
 
-        $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
+        $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department, $subquery);
 
         $worksheet->write_string($row_offset, 0, $item->label, $xls_formats->head2);
         $worksheet->write_string($row_offset, 1, $item->name, $xls_formats->head2);
@@ -161,14 +162,15 @@ class evaluation_item_textarea extends evaluation_item_base {
      * @param int $courseid
      * @return stdClass
      */
-    protected function get_analysed($item, $groupid = false, $courseid = false, $teacherid = false, $course_of_studies = false) {
+    protected function get_analysed($item, $groupid = false, $courseid = false, $teacherid = false,
+            $course_of_studies = false, $department = false, $subquery = "") {
         global $DB;
 
         $analysed_val = new stdClass();
         $analysed_val->data = array();
         $analysed_val->name = $item->name;
 
-        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies);
+        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies, $department, $subquery);
         if ($values) {
             $data = array();
             foreach ($values as $value) {
@@ -208,10 +210,10 @@ class evaluation_item_textarea extends evaluation_item_base {
      * @since  Moodle 3.3
      */
     public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid = false,
-            $course_of_studies = false) {
+            $course_of_studies = false, $department = false, $subquery = "") {
 
         $externaldata = array();
-        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
+        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department, $subquery);
 
         if (is_array($data->data)) {
             return $data->data; // No need to json, scalar type.

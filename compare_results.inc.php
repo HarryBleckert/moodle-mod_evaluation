@@ -455,6 +455,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
             print        "\n<br>";
 
+            // start of snippet duplicated in analysis_course.php
             if ($qSelected) {
                 print "<b>Ausgewertete Frage</b>: ";
             }
@@ -526,7 +527,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     print "&nbsp;&nbsp;";
                 }
             }
-
+            // end of snippet duplicated in analysis_course.php
             } // if isTeacher OR isStudent or Owner
             ?>
             <input type="hidden" name="id" value="<?php echo $id; ?>">

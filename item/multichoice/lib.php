@@ -196,9 +196,10 @@ class evaluation_item_multichoice extends evaluation_item_base {
     }
 
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false, $teacherid = false,
-            $course_of_studies = false, $department = false, $Chart = "bar") {
+            $course_of_studies = false, $department = false, $subquery = "", $Chart = "bar") {
         global $OUTPUT;
-        $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department);
+        $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies,
+                $department, $subquery);
         $analysed_itemC = array();
 
         if ($analysed_item) {
@@ -264,7 +265,7 @@ class evaluation_item_multichoice extends evaluation_item_base {
      * @return array
      */
     protected function get_analysed($item, $groupid = false, $courseid = false,
-            $teacherid = false, $course_of_studies = false, $department = false) {
+            $teacherid = false, $course_of_studies = false, $department = false, $subquery = "") {
         $info = $this->get_info($item);
 
         $analysed_item = array();
@@ -281,7 +282,8 @@ class evaluation_item_multichoice extends evaluation_item_base {
         //get the values
         $values =
                 evaluation_get_group_values($item, $groupid, $courseid,
-                        $teacherid, $course_of_studies, $department, $this->ignoreempty($item));
+                        $teacherid, $course_of_studies, $department,
+                        $subquery, $this->ignoreempty($item));
         if (!$values) {
             return null;
         }
@@ -328,9 +330,11 @@ class evaluation_item_multichoice extends evaluation_item_base {
 
     public function excelprint_item(&$worksheet, $row_offset,
             $xls_formats, $item,
-            $groupid, $courseid = false, $teacherid = false, $course_of_studies = false, $department = false) {
+            $groupid, $courseid = false, $teacherid = false, $course_of_studies = false,
+            $department = false, $subquery = "") {
 
-        $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department);
+        $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies,
+                $department, $subquery);
 
         $data = $analysed_item[2];
 
@@ -519,10 +523,10 @@ class evaluation_item_multichoice extends evaluation_item_base {
      * @since  Moodle 3.3
      */
     public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid = false,
-            $course_of_studies = false, $department = false) {
+            $course_of_studies = false, $department = false, $subquery = "") {
 
         $externaldata = array();
-        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department);
+        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department, $subquery);
 
         if (!empty($data[2]) && is_array($data[2])) {
             foreach ($data[2] as $d) {

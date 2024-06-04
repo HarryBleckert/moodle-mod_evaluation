@@ -60,13 +60,14 @@ if ($courseitemfiltertyp !== '0') {
     $url->param('courseitemfiltertyp', $courseitemfiltertyp);
 }
 
+
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
 $context = context_module::instance($cm->id);
 
 require_course_login($course, true, $cm);
 
 $evaluation = $PAGE->activityrecord;
-
+$subquery = "";
 // handle CoS privileged user
 $cosPrivileged = evaluation_cosPrivileged($evaluation);
 if ($cosPrivileged) {
@@ -276,6 +277,211 @@ evaluation_showLoading();
 
 // set filter forms
 if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context) || defined('EVALUATION_OWNER'))) {
+
+    // construct questions and subquery arrays
+    // start of snippets duplicated in compare_results.php
+    $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id 
+				AND (typ='multichoice' OR typ='numeric') AND hasvalue=1 
+				AND name NOT ILIKE '%" . get_string("course_of_studies", "evaluation") . "%' 
+				ORDER by position ASC";
+    $allQuestions = $DB->get_records_sql($query);
+    $numAllQuestions = safeCount($allQuestions);
+
+    $qSelected = intval(ev_session_request("qSelected", ""));
+    $applysubquery = intval(ev_session_request("applysubquery", 0));
+    $subqueries = ev_session_request("subqueries", array());
+    $subqueryids = array();
+    $presentation = array();
+    $scheme = $numQuestions = "";
+    $stimmezu = array("stimme zu", "stimme eher zu", "stimme eher nicht zu", "stimme nicht zu");
+    $trifftzu = array("trifft zu", "trifft eher zu", "trifft eher nicht zu", "trifft nicht zu");
+    $schemeQ = "( presentation ilike '%stimme zu%' OR presentation ilike '%trifft zu%')";
+
+    if ($qSelected) {
+
+        $query = "SELECT * FROM {evaluation_item} WHERE id = $qSelected 
+                                    AND evaluation=$evaluation->id ORDER by position ASC";
+        $question = array();
+        $questions = $DB->get_records_sql($query);
+        //extract presentation list
+        foreach ($questions as $question) {    //$question = $question1; break; }
+            $itemobj = evaluation_get_item_class($question->typ);
+            $itemInfo = $itemobj->get_info($question);
+
+            $presentationraw = $presentation =
+                    /*explode("|", str_replace(array("<<<<<1", "r>>>>>", "c>>>>>", "d>>>>>", "\n"), "",
+                            $question->presentation));*/
+                    explode("|", str_replace(array("\t", "\r", "\n", "<<<<<1", "r>>>>>", "c>>>>>", "d>>>>>"),
+                            "",
+                            $question->presentation));
+
+            // sub queries
+            if (isset($_REQUEST['sqfilter']) ) {
+                if (intval($_REQUEST['sqfilter']) == 1 and $_REQUEST['subreply']) {
+                    $applysubquery = 1;
+                    $_SESSION['subqueries'][$qSelected]['item'] = $qSelected;
+                    $_SESSION['subqueries'][$qSelected]['name'] = trim($question->name);
+                    $_SESSION['subqueries'][$qSelected]['value'] = $_REQUEST['subreply'];
+                    $_SESSION['subqueries'][$qSelected]['reply'] = trim($presentationraw[intval($_REQUEST['subreply']) - 1]);
+                } else if (intval($_REQUEST['sqfilter']) == 2) {
+                    unset($_SESSION['subqueries'][$qSelected]);
+                }
+            }
+
+            if (in_array("k.b.", $presentation) or in_array("keine Angabe", $presentation) or
+                    in_array("Kann ich nicht beantworten", $presentation)) {
+                array_pop($presentation);
+            }
+            // $presentationraw = $presentation; // used for subqueries
+            $qfValues = "";
+            for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
+                $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
+            }
+            $scheme = implode(", ", $presentation) . " <=> $qfValues";
+
+            array_unshift($presentation, ($validation ? "ungültig" : "keine Antwort"));
+            break;
+            //print "<br>qfValues: $qfValues<br>Scheme: $scheme<br>presentation: " . var_export($presentation,true)
+            //. "<br>info: " .var_export($info,true) . "<br>" ;
+            //print 'Ausgewertete Frage: <span style="' . $boldStyle .'">'	. $question->name . "</span><br>\n";
+        }
+    } else {
+        $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id 
+                    AND (typ like'multichoice%' OR typ='numeric') AND $schemeQ
+					ORDER BY position ASC";
+        $questions = $DB->get_records_sql($query);
+        //print "<br><hr>".var_export($questions,true);exit;
+        $numQuestions = safeCount($questions);
+        //$presentation = array( ($validation ?"ungültig" :"keine Antwort") ) + $stimmezu;
+        $presentation = array_merge(array(($validation ? "ungültig" : "keine Antwort")), $stimmezu);
+        //, "stimme zu", "stimme eher zu", "stimme eher nicht zu", "stimme nicht zu" );
+        $scheme = '"stimme zu"=1 - "stimme nicht zu"=4<br>';
+        $present = "nope";
+        foreach ($questions as $quest) {
+            $present = $quest->presentation;
+            break;
+        }
+        if ($numQuestions and stristr($present, "trifft")) {
+            $presentation = array_merge(array(($validation ? "ungültig" : "keine Antwort")), $trifftzu);
+            $scheme = '"trifft zu"=1 - "trifft nicht zu"=4<br>';
+        }
+        $qfValues = "";
+        for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
+            $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
+        }
+        /*print '<span title="' . $hint . '">Ausgewertete Single Choice Fragen: </span><span style="'
+                . $boldStyle . '">' . $numQuestions . "</span> - ";
+        */
+    }
+    if (false) //empty($presentation) )
+    {
+        echo $OUTPUT->notification("Es gibt keine multichoice Fragen und auch keine Fragen mit numerischen Antworten. 
+				Eine statistische Auswertung ist für diese Evaluation nicht möglich!");
+        echo $OUTPUT->footer();
+        flush();
+        exit;
+    }
+
+    if (!empty($_SESSION['subqueries'])) {
+        $subquerytxt = "Filter auf Fragen: ";
+        foreach ($_SESSION['subqueries'] as $subqueryid) {
+            $subqueryids[] = $subqueryid['item'];
+            if ($applysubquery) {
+                /*$subquery .= " AND completed IN ((SELECT completed AS done FROM {evaluation_value}
+		                        WHERE item=" .$subqueryid['item'] ." and value='".$subqueryid['value']."'))";
+                // not working...
+                $subquery .= " AND EXISTS (SELECT completed AS done FROM {evaluation_value}
+		                        WHERE item=" .$subqueryid['item'] ." and value='".$subqueryid['value']."')";
+                */
+                $subquery .= " AND completed IN ((SELECT completed AS done FROM {evaluation_value}
+		                        WHERE item=" . $subqueryid['item'] . " and value='" . $subqueryid['value'] . "'))";
+                $subqueryC .= str_ireplace("AND completed", "AND id", $subquery);
+            }
+            $subquerytxt .= " '" . $subqueryid['name'] . "' mit Antwort: '" . $subqueryid['reply'] . "', ";
+        }
+        $subquerytxt = substr($subquerytxt, 0, -2);
+        // print "subqueries: ".nl2br(var_dump($_SESSION['subqueries'], true));
+        // print "subquery: " . $subqueryC;
+    }
+
+    print "<form style='display:inline;' method='post'>\n";
+    // start of snippet duplicated in compare_results.php
+    if ($qSelected) {
+        print "<b>Ausgewertete Frage</b>: ";
+    }
+
+    print    '<select name="qSelected" style="' . $buttonStyle . '" onchange="this.form.submit();">' . "\n"
+            . '<option value="">' . get_string("all") . " " . $numQuestions
+            . " vergleichbar auswertbaren " .
+            get_string("questions", "evaluation") . "</option>\n";
+    foreach ($allQuestions as $question) {
+        $selected = "";
+        if ($question->id == $qSelected) {
+            $selected = ' selected="' . $selected . '" ';
+        }
+        if ($isStudent AND stristr($question->name,"Geschlecht")){
+            continue;
+        }
+        $qname = $question->name;
+        if (strlen($qname) > 90) {
+            $qname = substr($qname, 0, 87) . "...";
+        }
+        print '<option value="' . $question->id . '"' . $selected
+                . ' title="' . htmlentities($question->name) . '">' . $qname
+                . "</option>\n";
+    }
+    print "</select>\n";
+    if ($qSelected) {
+        if (defined('EVALUATION_OWNER')) {
+            $value = in_array($qSelected, $subqueryids) ? "2" : "1";
+            $label = "Filter " . (in_array($qSelected, $subqueryids) ? "entfernen" : "setzen");
+            ?>
+            <button name="sqfilter" style="<?php echo $style; ?>" value="<?php echo $value; ?>"
+                    onclick="this.form.submit();"><?php
+                echo $label; ?></button>
+            <?php
+            if ($value == 1) {
+                print '<span id="replies">';
+                $cnt = 1;
+                $hide_reply = array("k.b.", "keine Angabe", "Kann ich nicht beantworten");
+                foreach ($presentationraw as $reply) {
+                    if ( !in_array($reply, $hide_reply)) {
+                        print '<label>';
+                        print '<input type="radio" name="subreply" value="' . $cnt . '">';
+                        print "$reply&nbsp;</label>";
+                    }
+                    $cnt++;
+                }
+                print "</span>\n";
+            }
+        }
+        if ($itemInfo->subtype == 'c') {
+            print '<br><span style="color:blue;">Dies ist eine Multi Choice Frage. 
+                            Es können nur Single Choice Antworten sinnvoll ausgwertet werden'
+                    . "</span><br>\n";
+        }
+    }
+    // subqueries
+    if (!empty($_SESSION['subqueries'])) {
+        ?><br><b>Filter</b> anwenden:&nbsp;
+        <label><input type="radio" name="applysubquery" <?php echo($applysubquery ? "checked" : ""); ?>
+                      onclick="this.form.submit();" value="1">Ja</label>&nbsp;
+        <label><input type="radio" name="applysubquery" <?php echo(!$applysubquery ? "checked" : ""); ?>
+                      onclick="this.form.submit();" value="0">Nein</label>
+        <?php
+
+        // results for subqueries
+        if ($subquerytxt) {
+            print '<span style="font-weight:normal;color:blue;"> - ' . $subquerytxt . "</span>";
+        } else {
+            print "&nbsp;&nbsp;";
+        }
+    }
+    print "</form>\n";
+    // end of snippets duplicated in compare_results.php
+
+
+
     echo "\n" . '<div style="display:none;" id="evFilters" class="d-print-none">';
     if (is_siteadmin()) {
         echo '<span id="evFiltersMsg"></span>';
@@ -485,6 +691,32 @@ foreach ($items as $item) {    // export only rateable items
 }
 $itemsText = safeCount($items) - $itemsCounted;
 
+
+if ( $subquery AND $applysubquery){
+    $filter = "";
+    if ($courseid){
+        $filter .= " AND courseid=" . $courseid;
+    }
+    if ($teacherid){
+        $filter .= " AND teacherid=" . $teacherid;
+    }
+    if ($course_of_studies){
+        $filter .= " AND course_of_studies='$course_of_studies'";
+    }
+    if ($department){
+        $filter .= str_replace("completed.","",$evaluationstructure->get_department_filter());
+    }
+
+    $numresultsSq =
+            safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
+                WHERE evaluation=$evaluation->id $filter $subqueryC"));
+    $sqTitle = "Alle gefilterten Abgaben: ";
+    echo '<span><b>' . $sqTitle . '</b></span>: '
+            . $numresultsSq
+            . "<br>\n";
+}
+
+
 // Show the summary.
 echo "<b>" . get_string('completed_evaluations', "evaluation") . "</b>: " . $completed_responses . "<br>\n";
 echo "<b>" . get_string("questions", "evaluation") . "</b>: " . safeCount($items) .
@@ -571,11 +803,11 @@ if ($courseitemfilter > 0) {
         if (in_array($item->typ, array("multichoice", "multichoicerated"))) {
             $itemobj->print_analysed($item, $printnr, $mygroupid, $evaluationstructure->get_courseid(),
                     $evaluationstructure->get_teacherid(),
-                    $evaluationstructure->get_course_of_studies(), $evaluationstructure->get_department(), $Chart );
+                    $evaluationstructure->get_course_of_studies(), $evaluationstructure->get_department(), $subquery, $Chart );
         } else {
             $itemobj->print_analysed($item, $printnr, $mygroupid, $evaluationstructure->get_courseid(),
                     $evaluationstructure->get_teacherid(),
-                    $evaluationstructure->get_course_of_studies(), $evaluationstructure->get_department());
+                    $evaluationstructure->get_course_of_studies(), $evaluationstructure->get_department(), $subquery);
         }
         if (false and is_siteadmin() and $courseid) {
             if ($course->id == SITEID and defined("SiteEvaluation") and

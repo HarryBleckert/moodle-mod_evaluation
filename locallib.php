@@ -1527,9 +1527,11 @@ function evaluation_get_course_studies($evaluation, $link = false, $raw = false)
     global $DB;
     $is_closed = (!evaluation_is_open($evaluation) and $evaluation->timeopen < time());
     list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation, false);
-    if (!empty($courses_filter)) {
+
+    /*if (!empty($courses_filter)) {
         $sg_courses_filter = evaluation_get_course_of_studies_from_courseids($courses_filter);
-    }
+    }*/
+
     $sgTmp = $sgNtmp = $studynames = array();
     /*if ( $is_closed ) {
 		$course_studies_raw = $DB->get_records_sql( "select DISTINCT ON (course_of_studies) completed.* from {evaluation_completed} AS completed
@@ -1538,14 +1540,15 @@ function evaluation_get_course_studies($evaluation, $link = false, $raw = false)
 	else{*/
     $evaluation_semester = get_evaluation_semester($evaluation);
     // get path of current semester
-    $cat = $DB->get_record_sql("select id,idnumber,path from {course_categories} where idnumber='$evaluation_semester' LIMIT 1");
+    $cat = $DB->get_record_sql("select id,idnumber,path from {course_categories} 
+                        where idnumber='$evaluation_semester' LIMIT 1");
     //print_r("PATH:" .$cat->path);
     if (empty($cat->path)) {
         return array();
     }
     $course_studies_raw =
-            $DB->get_records_sql("select id,idnumber,name AS course_of_studies from {course_categories} where path like '" .
-                    $cat->path . "/%' AND array_length(string_to_array(path, '/'), 1)-1 =2");
+            $DB->get_records_sql("select id,idnumber,name AS course_of_studies from {course_categories} 
+                    where path like '" . $cat->path . "/%' AND array_length(string_to_array(path, '/'), 1)-1 =2");
     if (empty($course_studies_raw)) {
         return array();
     }
@@ -4385,7 +4388,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                         "<p>Dies ist ein Entwurf für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen$nrs.</p><hr>";
             }
 
-            $to = "Harry Bleckert <Harry@Bleckert.com>";
+            $to = "Harry Bleckert <Harry@Bleckert.com>,";
             // $to = "Berthe Khayat <khayat@ash-berlin.eu>";
             //$to = "Anja Voss <voss@ash-berlin.eu>";
             $fullname = "Test";

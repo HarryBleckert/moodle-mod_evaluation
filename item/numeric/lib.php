@@ -121,8 +121,8 @@ class evaluation_item_numeric extends evaluation_item_base {
     }
 
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false,
-            $teacherid = false, $course_of_studies = false, $department = false ) {
-        $values = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department);
+            $teacherid = false, $course_of_studies = false, $department = false, $subquery = "" ) {
+        $values = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department, $subquery);
 
         if (isset($values->data) and is_array($values->data)) {
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
@@ -161,14 +161,14 @@ class evaluation_item_numeric extends evaluation_item_base {
      * @return stdClass
      */
     protected function get_analysed($item, $groupid = false, $courseid = false,
-            $teacherid = false, $course_of_studies = false, $department = false) {
+            $teacherid = false, $course_of_studies = false, $department = false, $subquery = "") {
 
         global $DB;
 
         $analysed = new stdClass();
         $analysed->data = array();
         $analysed->name = $item->name;
-        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies,$department);
+        $values = evaluation_get_group_values($item, $groupid, $courseid, $teacherid, $course_of_studies, $department, false, $subquery);
 
         $avg = 0.0;
         $counter = 0;
@@ -190,9 +190,9 @@ class evaluation_item_numeric extends evaluation_item_base {
 
     public function excelprint_item(&$worksheet, $row_offset,
             $xls_formats, $item,
-            $groupid, $courseid = false, $teacherid = false, $course_of_studies = false) {
+            $groupid, $courseid = false, $teacherid = false, $course_of_studies = false, $department = false, $subquery = "") {
 
-        $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
+        $analysed_item = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department, $subquery);
 
         $worksheet->write_string($row_offset, 0, $item->label, $xls_formats->head2);
         $worksheet->write_string($row_offset, 1, $item->name, $xls_formats->head2);
@@ -320,10 +320,10 @@ class evaluation_item_numeric extends evaluation_item_base {
      * @since  Moodle 3.3
      */
     public function get_analysed_for_external($item, $groupid = false, $courseid = false, $teacherid = false,
-            $course_of_studies = false) {
+            $course_of_studies = false, $department = false, $subquery = "") {
 
         $externaldata = array();
-        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies);
+        $data = $this->get_analysed($item, $groupid, $courseid, $teacherid, $course_of_studies, $department, $subquery);
 
         if (is_array($data->data)) {
             return $data->data; // No need to json, scalar type.

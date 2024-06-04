@@ -2067,7 +2067,9 @@ function evaluation_get_group_values($item,
         $teacherid = false,
         $course_of_studies = false,
         $department = false,
-        $ignore_empty = false) {
+        $subquery = "",
+        $ignore_empty = false
+        ) {
     global $CFG, $DB;
 
     //if the groupid is given?
@@ -2120,6 +2122,9 @@ function evaluation_get_group_values($item,
             global $evaluationstructure;
             $filterD = str_ireplace("completed.", "",$evaluationstructure->get_department_filter());
             $select .= "$filterD ";
+        }
+        if ($subquery){
+            $select .= " $subquery ";
         }
         $values = $DB->get_records_select('evaluation_value', $select, $params);
     }

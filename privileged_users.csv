@@ -1,9 +1,9 @@
-﻿#,Für den privilegierten Zugriff per Studiengang benötige ich für jede Person die exakte Bezeichnung des Studiengangs sowie den vollen Namen und den Anmeldenamen des jeweiligen ASH Kontos.,,,,,
-#,Hier die Liste aller Studiengänge und der zusätzlichen Kategorien:,,,,,
-#,https://moodle.ash-berlin.eu/mod/evaluation/print.php?id=414804&showCourses_of_studies=1,,,,,
+#,Für den privilegierten Zugriff per Studiengang benötige ich für jede Person die exakte Bezeichnung des Studiengangs sowie den vollen Namen und den Anmeldenamen des jeweiligen ASH Kontos.,,,,,
+#,Hier die Liste aller Studiengänge und der zusätzlichen Kategorien: https://moodle.ash-berlin.eu/mod/evaluation/print.php?id=414804&showCourses_of_studies=1,,,,,
+#,,,,,,
 #,Bei global privilegierten Personen entfällt die Angabe eines Studiengangs,,,,,
 #,Bitte unbedingt auf korrekte Groß- und Kleinschreibung achten.,,,,,
-#,"Studiengänge und Namen können mehrfach eingegeben werden, je nach Zuordnung.",,,,,
+#,Studiengänge und Namen können mehrfach eingegeben werden, je nach Zuordnung.,,,,,
 #,Fehlerhafte Daten können nicht zugeordnet werden.,,,,,
 #,,Bitte für jeden Studiengang den Fachbereich eintragen,,,,
 #,bei den farblich markierten Studiengängen handelt es sich um die weiterbildenden Masterstudiengänge an der ASH,,Das Feld WM markiert weiterbildende Master,,,
@@ -12,7 +12,7 @@ voelterb,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Bett
 voss,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Anja,Voss,Prorektorin
 khayat,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Berthe,Khayat,QM Referentin
 gorling,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Karsten,Gorling,Leiter ComZ
-#Noch unbekannt,#alle grundständigen Studiengänge,,Nein,,,stud. Beschäftigte Evaluation
+00053389,#alle grundständigen Studiengänge,,Nein,Zumrud,Guliyeva,stud. Beschäftigte LVE
 fuchsb,#alle grundständigen Studiengänge,,Nein,Benjamin,Fuchs,Wissenschaftliche Beratung
 bettig,Pflege (primärqualifizierend) (B.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
 bettig,Physiotherapie-Ergotherapie - AddIS (B.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
