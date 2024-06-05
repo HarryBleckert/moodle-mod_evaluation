@@ -174,7 +174,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
             $mform->setType('teamteaching', PARAM_INT);
             $mform->addHelpButton('teamteaching_static', 'teamteaching', 'evaluation');
         } else {
-            $mform->setDefault('teamteaching', 1);
+            $mform->setDefault('teamteaching', 0);
             $mform->addElement('selectyesno',
                     'teamteaching',
                     get_string('teamteaching', 'evaluation'));
