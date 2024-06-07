@@ -4606,7 +4606,7 @@ function ev_get_reminders($evaluation, $id) {
             ?>
                 <form method="POST" action="view.php">
                     <p><b>Hinweismails versenden an:</b><br>
-                        <input type="hidden" name="id" value="<?php echo $id;?>">
+                        <input type="hidden" name="id" value="<?php print $id;?>">
                        <select name="role">
                            <option value="teacher">Teachers</option>
                            <option value="student">Students</option>
