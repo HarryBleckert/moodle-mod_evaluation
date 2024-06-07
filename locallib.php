@@ -4591,9 +4591,6 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
 function ev_get_reminders($evaluation, $id) {
     $reminders = $evaluation->reminders;
     $nonresponding = " (NR)";
-    if (empty($reminders)){
-        return "";
-    }
     $reminders = "Hinweismails wurden versandt am";
     /*
      20240102:teachers,students
@@ -4605,7 +4602,7 @@ function ev_get_reminders($evaluation, $id) {
         $role = optional_param('role', false, PARAM_INT);
         $noreplies = optional_param('noreplies', false, PARAM_INT);
         $test = optional_param('test', false, PARAM_INT);
-        $reminders = '<a href="?send_reminders=1">' . $reminders . "</a>";
+        $reminders = '<a href="?id='.$id.'&send_reminders=1">' . $reminders . "</a>";
         if ( $send_reminders ){
             ?>
                 <form method="POST">
@@ -4626,8 +4623,12 @@ function ev_get_reminders($evaluation, $id) {
             ev_send_reminders($evaluation, $role, $noreplies, $test);
         }
     }
+    elseif (empty($reminders)){
+        return "";
+    }
     $remindersA = explode("\n",$reminders);
-    echo '<b title="Hinweismails können nur von Admins versandt werden.\nDer Vermerk "NR" weist darauf hin, dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben'
+    echo '<b title="Hinweismails können nur von Admins versandt werden. Der Vermerk "NR" weist darauf hin,'
+            . 'dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben'
             . " angeschrieben wurden.>$reminders:</b> ";
     foreach ( $remindersA AS $line){
         if (!strpos($line,":")){
