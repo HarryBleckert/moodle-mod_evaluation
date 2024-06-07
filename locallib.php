@@ -4610,6 +4610,7 @@ function ev_get_reminders($evaluation, $id) {
             ?>
                 <form method="POST">
                     <p><b>Hinweismails versenden an:</b><br>
+                        <input type="hidden" nam="id" value="<?php echo $id;?>">
                        <select name="role">
                            <option value="teachers">Teachers</option>
                            <option value="students">Students</option>
@@ -4624,7 +4625,6 @@ function ev_get_reminders($evaluation, $id) {
         elseif ( $role ) {
             ev_send_reminders($evaluation, $role, $noreplies, $test);
         }
-
     }
     $remindersA = explode("\n",$reminders);
     echo '<b title="Hinweismails können nur von Admins versandt werden.\nDer Vermerk "NR" weist darauf hin, dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben'
