@@ -4613,8 +4613,9 @@ function ev_get_reminders($evaluation, $id) {
                            <option value="students">Students</option>
                        </select>
                         - <input type="text" name="test" value="Berthe Khayat <khayat@ash-berlin.eu>"></input>
-                        - Nur Non Responders? <radio name="noreplies" value="0">Nein</radio>
-                        <radio name="noreplies" value="1">Ja</radio>
+                        - Nur Non Responders?
+                        <input type="radio" name="noreplies" value="0" checked>Nein</input>
+                        <input type="radio" name="noreplies" value="1">Ja</input>
                     </p>
                 </form>
             <?php
