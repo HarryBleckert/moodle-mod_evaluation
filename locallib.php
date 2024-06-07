@@ -4605,7 +4605,7 @@ function ev_get_reminders($evaluation, $id) {
         $reminders = '<a href="?id='.$id.'&send_reminders=1">' . $reminders . "</a>";
         if ( $send_reminders ){
             ?>
-                <form method="POST">
+                <form method="POST" action="view.php">
                     <p><b>Hinweismails versenden an:</b><br>
                         <input type="hidden" nam="id" value="<?php echo $id;?>">
                        <select name="role">
