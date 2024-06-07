@@ -4596,7 +4596,6 @@ function ev_get_reminders($evaluation, $id) {
      20240102:teachers,students
      20240122:teachers,students
      */
-
     if( is_siteadmin() ){
         $send_reminders = optional_param('send_reminders', false, PARAM_INT);
         $role = optional_param('role', false, PARAM_INT);
@@ -4609,8 +4608,8 @@ function ev_get_reminders($evaluation, $id) {
                     <p><b>Hinweismails versenden an:</b><br>
                         <input type="hidden" name="id" value="<?php echo $id;?>">
                        <select name="role">
-                           <option value="teachers">Teachers</option>
-                           <option value="students">Students</option>
+                           <option value="teacher">Teachers</option>
+                           <option value="student">Students</option>
                        </select>
                         - <input type="text" name="test" value="Berthe Khayat <khayat@ash-berlin.eu>"></input>
                         - Nur Non Responders?
