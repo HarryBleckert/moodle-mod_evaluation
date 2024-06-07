@@ -577,7 +577,7 @@ echo "<b>" . get_string('mode', 'evaluation') . "</b>: " . ($evaluation->anonymo
         . "<b>" . get_string("questions", "evaluation") . "</b>: " . $_SESSION["questions"] . " " . $previewQ . "<br>\n";
 
 if ($privGlobalUser AND !$courseid) {
-    print ev_get_reminders($evaluation);
+    print ev_get_reminders($evaluation,$id);
 }
 
 if ($evaluationcompletion->can_complete()) {

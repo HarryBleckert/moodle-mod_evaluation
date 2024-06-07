@@ -4304,6 +4304,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($test) {
         ev_show_reminders_log("Test Mode $test");
     }
+    if ( !$CFG->noemailever ) {
+        ev_show_reminders_log("No mails to be sent for this Moodle instance");
+    }
     //get all participating students/teachers
     $evaluation_users = get_evaluation_participants($evaluation, false, false, ($role == "teacher"), ($role == "student"));
     $minResults = evaluation_min_results($evaluation);
@@ -4512,9 +4515,10 @@ Alice-Salomon-Platz 5, 12627 Berlin
 </html>
 HEREDOC;
         }
-
-        mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
         $testinfo = ($test ?" Test: " :"");
+        if ( !$CFG->noemailever ) {
+            mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
+        }
         ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
         $cnt++;
     }
@@ -4584,18 +4588,47 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
 
 
 
-function ev_get_reminders($evaluation) {
+function ev_get_reminders($evaluation, $id) {
     $reminders = $evaluation->reminders;
     $nonresponding = " (NR)";
     if (empty($reminders)){
         return "";
     }
+    $reminders = "Hinweismails wurden versandt am";
     /*
      20240102:teachers,students
      20240122:teachers,students
      */
+
+    if( is_siteadmin() ){
+        $send_reminders = optional_param('send_reminders', false, PARAM_INT);
+        $role = optional_param('role', false, PARAM_INT);
+        $noreplies = optional_param('noreplies', false, PARAM_INT);
+        $test = optional_param('test', false, PARAM_INT);
+        $reminders = '<a href="?send_reminders=1">' . $reminders . "</a>";
+        if ( $send_reminders ){
+            ?>
+                <form method="POST">
+                    <p><b>Hinweismails versenden an:</b><br>
+                       <select name="role">
+                           <option value="teachers">Teachers</option>
+                           <option value="students">Students</option>
+                       </select>
+                        - <input type="text" name="test" value="Berthe Khayat <khayat@ash-berlin.eu>"></input>
+                        - Nur Non Responders? <radio name="noreplies" value="0">Nein</radio>
+                        <radio name="noreplies" value="1">Ja</radio>
+                    </p>
+                </form>
+            <?php
+        }
+        elseif ( $role ) {
+            ev_send_reminders($evaluation, $role, $noreplies, $test);
+        }
+
+    }
     $remindersA = explode("\n",$reminders);
-    echo '<b title="Der Vermerk NR weist darauf hin, dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben angeschrieben wurden.">Hinweismails wurden versandt am:</b> ';
+    echo '<b title="Hinweismails können nur von Admins versandt werden.\nDer Vermerk "NR" weist darauf hin, dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben'
+            . " angeschrieben wurden.>$reminders:</b> ";
     foreach ( $remindersA AS $line){
         if (!strpos($line,":")){
             continue;
@@ -4628,5 +4661,8 @@ function ev_get_reminders($evaluation) {
                 echo ". ";
             }
         }
+    }
+    if( is_siteadmin() ){
+
     }
 }
