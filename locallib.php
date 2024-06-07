@@ -4627,7 +4627,7 @@ function ev_get_reminders($evaluation, $id) {
         return "";
     }
     $remindersA = explode("\n",$reminders);
-    echo '<b title="Hinweismails können nur von Admins versandt werden. Der Vermerk "NR" weist darauf hin,'
+    echo '<b title="Hinweismails können nur von Admins versandt werden. Der Vermerk \"NR\" weist darauf hin,'
             . 'dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben'
             . " angeschrieben wurden.>$reminders:</b> ";
     foreach ( $remindersA AS $line){
