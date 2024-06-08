@@ -4279,7 +4279,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($verbose) {
         $DB->set_debug(true);
     }
-    if ($CFG->dbname != 'moodle_production' AND !$test){
+    if ($CFG->noemailever){
         $test = true;
     }
     if (!isset($evaluation->id)) {
@@ -4304,7 +4304,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($test) {
         ev_show_reminders_log("Test Mode $test");
     }
-    if ( !$CFG->noemailever && !$test ) {
+    elseif ( !$CFG->noemailever ) {
         ev_show_reminders_log("CFG->noemailever: No mails to be sent for this Moodle instance");
     }
     //get all participating students/teachers
@@ -4516,7 +4516,7 @@ Alice-Salomon-Platz 5, 12627 Berlin
 HEREDOC;
         }
         $testinfo = ($test ?" Test: " :"");
-        if ( !$CFG->noemailever && !$test ) {
+        if ( !$CFG->noemailever || $test ) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
         }
         ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
