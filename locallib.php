@@ -4624,7 +4624,7 @@ function ev_get_reminders($evaluation, $id) {
     }
     $reminders = $evaluation->reminders;
     if (empty($reminders)){
-        return "./.";
+        return "$remindertxt: ./.";
     }
     $remindersA = explode("\n",$reminders);
     echo '<b title="Hinweismails können nur von Admins versandt werden. Der Vermerk \"NR\" weist darauf hin,'
