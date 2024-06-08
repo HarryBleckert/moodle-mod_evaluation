@@ -4304,8 +4304,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($test) {
         ev_show_reminders_log("Test Mode $test");
     }
-    elseif ( !$CFG->noemailever ) {
-        ev_show_reminders_log("CFG->noemailever: No mails to be sent for this Moodle instance");
+    if ( $CFG->noemailever ) {
+        ev_show_reminders_log("CFG->noemailever: Only Test mails to be sent for this Moodle instance");
     }
     //get all participating students/teachers
     $evaluation_users = get_evaluation_participants($evaluation, false, false, ($role == "teacher"), ($role == "student"));
@@ -4589,9 +4589,8 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
 
 
 function ev_get_reminders($evaluation, $id) {
-    $reminders = $evaluation->reminders;
     $nonresponding = " (NR)";
-    $reminders = "Hinweismails wurden versandt am";
+    $remindertxt = "Hinweismails wurden versandt am";
     /*
      20240102:teachers,students
      20240122:teachers,students
@@ -4601,7 +4600,7 @@ function ev_get_reminders($evaluation, $id) {
         $role = optional_param('role', false, PARAM_INT);
         $noreplies = optional_param('noreplies', false, PARAM_INT);
         $test = optional_param('test', false, PARAM_INT);
-        $reminders = '<a href="?id='.$id.'&send_reminders=1">' . $reminders . "</a>";
+        $remindertxt = '<a href="?id='.$id.'&send_reminders=1">' . $remindertxt . "</a>";
         if ( $send_reminders ){
             ?>
                 <form method="POST" action="view.php">
@@ -4623,13 +4622,14 @@ function ev_get_reminders($evaluation, $id) {
             ev_send_reminders($evaluation, $role, $noreplies, $test);
         }
     }
-    elseif (empty($reminders)){
-        return "";
+    $reminders = $evaluation->reminders;
+    if (empty($reminders)){
+        return "./.";
     }
     $remindersA = explode("\n",$reminders);
     echo '<b title="Hinweismails können nur von Admins versandt werden. Der Vermerk \"NR\" weist darauf hin,'
             . 'dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben'
-            . " angeschrieben wurden.>$reminders:</b> ";
+            . " angeschrieben wurden.>$remindertxt:</b> ";
     foreach ( $remindersA AS $line){
         if (!strpos($line,":")){
             continue;
