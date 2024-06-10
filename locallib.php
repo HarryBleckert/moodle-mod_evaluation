@@ -4624,6 +4624,10 @@ function ev_get_reminders($evaluation, $id) {
             <?php
         }
         elseif ( $role ) {
+            //print nl2br(var_export($test,true));
+            if ( !strstr($test,"@")){
+                $test = false;
+            }
             ev_send_reminders($evaluation, $role, $noreplies, $test);
         }
     }
