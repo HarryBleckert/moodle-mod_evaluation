@@ -4536,7 +4536,7 @@ HEREDOC;
     }
     echo "\n";
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
-            date("Ymd H:m:s"));
+            date("Ymd H:i:s"));
     $USER = $saveduser;
     if (!$test){
         $role = ($role == "teacher" ?$role :"participant");
