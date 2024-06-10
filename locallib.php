@@ -4285,11 +4285,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     }
     */
     if (!isset($evaluation->id)) {
-        ev_show_reminders_log("ERROR: Evaluation with ID $evaluationid not found!");
+        ev_show_reminders_log("ERROR: Evaluation with ID $evaluation->id not found!");
         return false;
     }
     if (!evaluation_is_open($evaluation)){
-        ev_show_reminders_log("ERROR: This evaluation is not open. Reminders can not be mailed!");
+        ev_show_reminders_log("ERROR: The evaluation '$evaluation->name' is not open. Reminders can not be mailed!");
         return false;
     }
     // set user var to Admin Harry
@@ -4303,7 +4303,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
     setlocale(LC_ALL, 'de_DE');
 
-    ev_show_reminders_log("\n" . date("Ymd H:m:s") .
+    ev_show_reminders_log("\n" . date("Ymd H:i:s") .
             "\nSending reminders to all participants with role $role in evaluation $evaluation->name (ID: $evaluation->id)");
 
     if ($test) {
@@ -4555,11 +4555,10 @@ function ev_show_reminders_log($msg) {
         echo nl2br($msg . "\n");
     }
     if (is_writable($logfile)){
-        system("echo \"$msg\">>$logfile");
+        system("echo ".date("Ymd H:i:s") . " - \"$msg\">>$logfile");
     }
     return true;
 }
-
 
 function ev_set_reminders($evaluation,$action,$noreplies=false) {
     global $DB;
@@ -4625,7 +4624,7 @@ function ev_get_reminders($evaluation, $id) {
         }
         elseif ( $role ) {
             //print nl2br(var_export($test,true));
-            if ( !strstr($test,"@")){
+            if (!str_contains($test, "@")){
                 $test = false;
             }
             ev_send_reminders($evaluation, $role, $noreplies, $test);
