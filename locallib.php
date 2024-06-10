@@ -4315,7 +4315,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         else{
             $norpliestxt = "Nur Studiernde die bisher noch nicht an der Evaluation teilgenommen haben";
         }
-        ev_show_reminders_log("Test Mode $test");
+        ev_show_reminders_log($norpliestxt);
     }
 
     if ($test) {
