@@ -4304,7 +4304,19 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     setlocale(LC_ALL, 'de_DE');
 
     ev_show_reminders_log("\n" . date("Ymd H:i:s") .
-            "\nSending reminders to all participants with role $role in evaluation $evaluation->name (ID: $evaluation->id)");
+            "\nSending reminders to all participants with role $role in evaluation "
+            ."'$evaluation->name' (ID: $evaluation->id)");
+
+    $norpliestxt = "";
+    if ($noreplies){
+        if ($role == "teacher") {
+            $norpliestxt = "Nur Lehrende für die es bisher weniger als 3 Abgbaen gibt";
+        }
+        else{
+            $norpliestxt = "Nur Studiernde die bisher noch nicht an der Evaluation teilgenommen haben";
+        }
+        ev_show_reminders_log("Test Mode $test");
+    }
 
     if ($test) {
         ev_show_reminders_log("Test Mode $test");
@@ -4382,18 +4394,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         if ($test) {
             if ($role == "student" || $role == "participants") {
-                $nrs = "";
-                if ($noreplies){
-                    $nrs = " und die bisher noch nicht an der Evaluation teilgenommen haben";
-                }
                 $testMsg =
-                        "<p>Dies ist ein Entwurf für die Mail an die Studierenden, deren Kurse an der Evaluation teilnehmen$nrs.</p><hr>";
+                        "<p>Dies ist ein Entwurf für die Mail an die Studierenden, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
             } else {
-                if ($noreplies){
-                    $nrs = " und für die es bisher weniger als 3 Abgbaen gibt";
-                }
                 $testMsg =
-                        "<p>Dies ist ein Entwurf für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen$nrs.</p><hr>";
+                        "<p>Dies ist ein Entwurf für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
             }
 
             $to = "Harry <Harry@Bleckert.com>";
@@ -4424,7 +4429,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     */
         $reminder = ($remaining_evaluation_days <= 9 ?
                 "<b>nur noch $remaining_evaluation_days Tage bis zum $lastEvaluationDay laufenden</b> " : "laufenden ");
-        if ($role == "student" || $role == "participants") {    //$user = core_user::get_user($userid);
+        if ($role == "student" || $role == "participants") {
             $hasParticipated = evaluation_has_user_participated($evaluation, $userid);
             if ($noreplies AND $hasParticipated) {
                 continue;
