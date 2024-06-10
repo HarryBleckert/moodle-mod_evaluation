@@ -4601,7 +4601,7 @@ function ev_get_reminders($evaluation, $id) {
      */
     if( is_siteadmin() ){
         $send_reminders = optional_param('send_reminders', false, PARAM_INT);
-        $role = optional_param('role', false, PARAM_INT);
+        $role = optional_param('role', false, PARAM_TEXT);
         $noreplies = optional_param('noreplies', false, PARAM_INT);
         $test = optional_param('test', false, PARAM_TEXT);
         $remindertxt = '<a href="?id='.$id.'&send_reminders=1">' . $remindertxt . "</a>";
@@ -4609,7 +4609,7 @@ function ev_get_reminders($evaluation, $id) {
             ?>
                 <form method="POST" action="view.php">
                     <p><b>Hinweismails versenden an:</b><br>
-                        <input type="hidden" name="id" value="<?php print $id;?>">
+                        <input type="hidden" name="id" value="<?php echo $id;?>">
                        <select name="role">
                            <option value="teacher">Teachers</option>
                            <option value="student">Students</option>
