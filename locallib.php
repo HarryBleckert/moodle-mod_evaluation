@@ -4279,9 +4279,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($verbose) {
         $DB->set_debug(true);
     }
-    if ($CFG->noemailever){
+    /*
+     * if ($CFG->noemailever){
         $test = true;
     }
+    */
     if (!isset($evaluation->id)) {
         ev_show_reminders_log("ERROR: Evaluation with ID $evaluationid not found!");
         return false;
@@ -4292,6 +4294,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     }
     // set user var to Admin Harry
     if (empty($USER) or !isset($USER->username)) {
+        /*
+        SELECT value FROM mdl_config WHERE name = 'siteadmins'; (30421,26259)
+        */
         $USER = core_user::get_user(30421);
     }
     $saveduser = $USER;
