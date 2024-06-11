@@ -737,7 +737,7 @@ if (is_siteadmin()) {
     }
 
 
-    if (isset($_GET['send_reminders'])) {
+    if ( false AND isset($_GET['send_reminders'])) {
        $test = true;
        $noreplies = false;
        if (isset($_GET['test'])){
