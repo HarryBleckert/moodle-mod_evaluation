@@ -4628,7 +4628,7 @@ function ev_get_reminders($evaluation, $id) {
             <?php
         }
         elseif ( $role ) {
-            //print nl2br(var_export($test,true));
+            print nl2br(var_export($noreplies,true));
             if (!str_contains($test, "@")){
                 $test = false;
             }
