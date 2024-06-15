@@ -4337,6 +4337,10 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
     //$subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
     $subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
+    $senderName = '=?UTF-8?B?' . base64_encode('ASH Berlin (Qualitätsmanagement)') . '?=';
+    $senderMail = "<khayat@ash-berlin.eu>";
+    $sender = $senderName  . " " . $senderMail;
+
     $cntStudents = $cntTeachers = 0;
     $cnt = 1;
     foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
@@ -4348,9 +4352,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $userid = $evaluation_user["id"];
         // $role = $evaluation_user["role"];
         $to = '=?UTF-8?B?' . base64_encode($evaluation_user["fullname"]) . '?=' . " <$email>";
-        $senderName = '=?UTF-8?B?' . base64_encode('ASH Berlin (Qualitätsmanagement)') . '?=';
-        $senderMail = "<khayat@ash-berlin.eu>";
-        $sender = $senderName  . " " . $senderMail;
         $headers = array("From" => $sender, "Return-Path" => $senderMail, "Reply-To" => $sender, "MIME-Version" => "1.0",
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
         // $start2 = time();
@@ -4640,7 +4641,7 @@ function ev_get_reminders($evaluation, $id) {
         return "$remindertxt: ./.";
     }
     $remindersA = explode("\n",$reminders);
-    echo '<b title="Hinweismails können nur von Admins versandt werden. Der Vermerk \"NR\" weist darauf hin,'
+    echo '<b title="Hinweismails können nur von Admins versandt werden. Der Vermerk NR weist darauf hin,'
             . 'dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben'
             . " angeschrieben wurden.>$remindertxt:</b> ";
     foreach ( $remindersA AS $line){

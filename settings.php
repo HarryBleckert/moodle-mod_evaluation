@@ -25,20 +25,23 @@ if ($ADMIN->fulltree) {
 
 
     /*
-    // set default role(s) of participants. Defaults to role 5 (student)
+    // set default role(s) of participants and result viewers
     global $DB;
     $roles = $DB->get_records_sql("SELECT id,shortname FROM {role} WHERE trim(name) <> '' ORDER BY name asc");
     $participant_roles = array();
     foreach ( $roles as $role ){
         $participant_roles[$role->id] = ucfirst(trim($role->shortname));
     }
-    $name = new lang_string('participant_roles', 'evaluation');
+    // set default role(s) of participants. Defaults to role 5 (student)
+        $name = new lang_string('participant_roles', 'evaluation');
     $description = new lang_string('participant_roles_help', 'evaluation');
     $element = new admin_setting_configmultiselect('evaluation_participant_roles',
             $name,
             $description,
             array(5), $participant_roles);
     $settings->add($element);
+    // set default role(s) of users to view results. Defaults to role 3 (editingteacher)
+
     */
 
     /*
