@@ -32,7 +32,7 @@ if ($ADMIN->fulltree) {
     foreach ( $roles as $role ){
         $participant_roles[$role->id] = ucfirst(trim($role->shortname));
     }
-    // set default role(s) of participants. Defaults to role 5 (student)
+    // set default role(s) of evaluators. Defaults to role 5 (student)
         $name = new lang_string('participant_roles', 'evaluation');
     $description = new lang_string('participant_roles_help', 'evaluation');
     $element = new admin_setting_configmultiselect('evaluation_participant_roles',
@@ -40,6 +40,8 @@ if ($ADMIN->fulltree) {
             $description,
             array(5), $participant_roles);
     $settings->add($element);
+    // set default role(s) of evaluated users. Defaults to role 3 (editingteacher)
+
     // set default role(s) of users to view results. Defaults to role 3 (editingteacher)
 
     */
