@@ -4343,7 +4343,12 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
     $cntStudents = $cntTeachers = 0;
     $cnt = 1;
+    if (!defined('NO_OUTPUT_BUFFERING')) {
+        define('NO_OUTPUT_BUFFERING', true);
+    }
+    ini_set("output_buffering", 350);
     foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
+        @ob_flush();@ob_end_flush();@flush();@ob_start();
         //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
         $username = $evaluation_user["username"];
         $fullname = $evaluation_user["fullname"];
@@ -4543,7 +4548,7 @@ HEREDOC;
     echo "\n";
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
             date("Ymd H:i:s"));
-    $USER = $saveduser;
+    $USER = core_user::get_user($saveduser);
     if (!$test){
         $role = ($role == "teacher" ?$role :"participant");
         ev_set_reminders($evaluation,$role."s", $noreplies);
