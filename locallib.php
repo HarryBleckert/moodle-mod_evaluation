@@ -4604,6 +4604,7 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
 
 
 function ev_get_reminders($evaluation, $id) {
+    global $DB;
     $nonresponding = " (NR)";
     $remindertxt = "Hinweismails wurden versandt am";
     /*
@@ -4639,6 +4640,7 @@ function ev_get_reminders($evaluation, $id) {
                 $test = false;
             }
             ev_send_reminders($evaluation, $role, $noreplies, $test);
+            $evaluation = $DB->get_record("evaluation", array('id' => $evaluation->id), '*');
         }
     }
     $reminders = $evaluation->reminders;
