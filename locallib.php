@@ -4299,7 +4299,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         */
         $USER = core_user::get_user(30421);
     }
-    $saveduser = $USER;
+    // $saveduser = $USER;
 
     setlocale(LC_ALL, 'de_DE');
 
@@ -4364,7 +4364,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
         // $start2 = time();
         // get student courses to evaluate
-        $USER = core_user::get_user($userid);
+        // $USER = core_user::get_user($userid);
 
         unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         //$teamteaching = $evaluation->teamteaching;
@@ -4551,7 +4551,7 @@ HEREDOC;
     echo "\n";
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
             date("Ymd H:i:s"));
-    $USER = core_user::get_user($saveduser->id);
+    // $USER = core_user::get_user($saveduser->id);
     if (!$test){
         $role = ($role == "teacher" ?$role :"participant");
         ev_set_reminders($evaluation,$role."s", $noreplies);
