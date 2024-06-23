@@ -4377,17 +4377,19 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         //$teamteaching = $evaluation->teamteaching;
-        $myEvaluations = get_evaluation_participants($evaluation, $userid);
-        //$evaluation->teamteaching = $teamteaching;
-        if (empty($myEvaluations)) {
-            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
-                    . "Teilnehmende Kurse: " . count(evaluation_is_user_enrolled($evaluation, $userid)));
-            continue;
-        }
 
         ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
         $cnt++;
         continue;
+
+        $myEvaluations = get_evaluation_participants($evaluation, $userid);
+        //$evaluation->teamteaching = $teamteaching;
+        if (empty($myEvaluations)) {
+            /*ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
+                    . "Teilnehmende Kurse: " . count(evaluation_is_user_enrolled($evaluation, $userid)));
+            */
+            continue;
+        }
 
         if ($role == "student" || $role == "participants") {
             $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
