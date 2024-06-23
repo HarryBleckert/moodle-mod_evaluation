@@ -4535,7 +4535,7 @@ Alice-Salomon-Platz 5, 12627 Berlin
 HEREDOC;
         }
         $testinfo = ($test ?" Test: " :"");
-        if ( false ) { //!$CFG->noemailever || $test ) {
+        if ( $test ) { //!$CFG->noemailever || $test ) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
         }
         ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
