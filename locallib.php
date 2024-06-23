@@ -4367,8 +4367,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         // get student courses to evaluate
         // $USER = core_user::get_user($userid);
 
-        ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
-        $cnt++;
         unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         //$teamteaching = $evaluation->teamteaching;
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
@@ -4379,11 +4377,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             continue;
         }
 
-        continue;
         if (empty($email) or strtolower($email) == "unknown" or !strstr($email, "@") or stristr($email, "unknown@")) {
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to unknown@");
             continue;
         }
+        ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
+        $cnt++;
+        continue;
+
         if ($role == "student" || $role == "participants") {
             $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
         } else {
