@@ -4356,7 +4356,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $email = $evaluation_user["email"];
         $userid = $evaluation_user["id"];
         // $role = $evaluation_user["role"];
-        $to = '=?UTF-8?B?' . base64_encode($evaluation_user["fullname"]) . '?=' . " <$email>";
+        $to = '=?UTF-8?B?' . base64_encode($evaluation_user["firstname"] . " ".$evaluation_user["lastname"] ) . '?=' . " <$email>";
         $headers = array("From" => $sender, "Return-Path" => $senderMail, "Reply-To" => $sender, "MIME-Version" => "1.0",
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
         // $start2 = time();
