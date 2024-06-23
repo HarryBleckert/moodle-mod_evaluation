@@ -4366,6 +4366,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         // get student courses to evaluate
         // $USER = core_user::get_user($userid);
 
+        ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
+
         unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         //$teamteaching = $evaluation->teamteaching;
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
@@ -4538,7 +4540,7 @@ HEREDOC;
         if ( $test ) { //!$CFG->noemailever || $test ) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
         }
-        ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
+        // ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
         $cnt++;
     }
     $elapsed = time() - $start;
