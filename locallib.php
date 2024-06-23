@@ -4351,12 +4351,15 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         @ob_flush();@ob_end_flush();@flush();@ob_start();
         //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
         $username = $evaluation_user["username"];
+        $firstname = $evaluation_user["firstname"];
+        $lastname = $evaluation_user["lastname"];
         $fullname = $evaluation_user["fullname"];
         //$fullname = $evaluation_user["firstname"] . " " . $evaluation_user["lastname"];
         $email = $evaluation_user["email"];
         $userid = $evaluation_user["id"];
         // $role = $evaluation_user["role"];
-        $to = '=?UTF-8?B?' . base64_encode($evaluation_user["firstname"] . " ".$evaluation_user["lastname"] ) . '?=' . " <$email>";
+        $to = '=?UTF-8?B?' . base64_encode($firstname . " " . $lastname )
+                . '?=' . " <$email>";
         $headers = array("From" => $sender, "Return-Path" => $senderMail, "Reply-To" => $sender, "MIME-Version" => "1.0",
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
         // $start2 = time();
@@ -4532,7 +4535,7 @@ Alice-Salomon-Platz 5, 12627 Berlin
 HEREDOC;
         }
         $testinfo = ($test ?" Test: " :"");
-        if ( !$CFG->noemailever || $test ) {
+        if ( false ) { //!$CFG->noemailever || $test ) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
         }
         ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
