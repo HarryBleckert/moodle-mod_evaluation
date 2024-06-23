@@ -4346,7 +4346,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if (!defined('NO_OUTPUT_BUFFERING')) {
         define('NO_OUTPUT_BUFFERING', true);
     }
-    ini_set("output_buffering", 350);
+    ini_set("output_buffering", 600);
     foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
         @ob_flush();@ob_end_flush();@flush();@ob_start();
         //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
