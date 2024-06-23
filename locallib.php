@@ -4367,6 +4367,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         // $USER = core_user::get_user($userid);
 
         ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
+        $cnt++;
         continue;
         unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         //$teamteaching = $evaluation->teamteaching;
@@ -4541,7 +4542,7 @@ HEREDOC;
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
         }
         // ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
-        $cnt++;
+        // $cnt++;
     }
     $elapsed = time() - $start;
     echo "";
