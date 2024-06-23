@@ -4366,6 +4366,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         // $start2 = time();
         // get student courses to evaluate
         // $USER = core_user::get_user($userid);
+        if( empty($username) || empty($firstname)){
+            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user");
+            continue;
+        }
+        if (empty($email) or strtolower($email) == "unknown" or !strstr($email, "@") or stristr($email, "unknown@")) {
+            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to unknown@");
+            continue;
+        }
 
         unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         //$teamteaching = $evaluation->teamteaching;
@@ -4377,10 +4385,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             continue;
         }
 
-        if (empty($email) or strtolower($email) == "unknown" or !strstr($email, "@") or stristr($email, "unknown@")) {
-            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to unknown@");
-            continue;
-        }
         ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
         $cnt++;
         continue;
