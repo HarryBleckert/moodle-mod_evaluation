@@ -4347,6 +4347,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         define('NO_OUTPUT_BUFFERING', true);
     }*/
     ini_set("output_buffering", 600);
+    $testinfo = ($test ?" Test: " :"");
     foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
         @ob_flush();@ob_end_flush();@flush();@ob_start();
         //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
@@ -4368,7 +4369,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
         $cnt++;
-        continue;
         unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         //$teamteaching = $evaluation->teamteaching;
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
@@ -4379,6 +4379,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             continue;
         }
 
+        continue;
         if (empty($email) or strtolower($email) == "unknown" or !strstr($email, "@") or stristr($email, "unknown@")) {
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to unknown@");
             continue;
@@ -4537,7 +4538,6 @@ Alice-Salomon-Platz 5, 12627 Berlin
 </html>
 HEREDOC;
         }
-        $testinfo = ($test ?" Test: " :"");
         if ( $test ) { //!$CFG->noemailever || $test ) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
         }
