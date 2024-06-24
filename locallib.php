@@ -1993,7 +1993,8 @@ function array_merge_recursive_new() {
 function get_evaluation_participants($evaluation, $userid = false, $courseid = false, $getTeachers = false, $getStudents = false) {
     global $DB, $USER;
     if ($userid > 0) {
-        $user = core_user::get_user($userid);
+        // $user = core_user::get_user($userid);
+        $user = $DB->get_record("user", array('id' => $userid), '*');
     } else {
         $user = false;
     }
@@ -3628,7 +3629,8 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
 // get fullname of user by userid
 function evaluation_get_user_field($userid, $field = false) {
     global $DB, $USER;
-    $user = core_user::get_user($userid);
+    // $user = core_user::get_user($userid);
+    $user = $DB->get_record("user", array('id' => $userid), '*');
     if (isset($user->id)) {
         if (!$field or $field == 'fullname') {
             $data = ($user->alternatename ? $user->alternatename : $user->firstname) . " " . $user->lastname;
@@ -4260,6 +4262,7 @@ function evaluation_get_empty_courses($sdate=false) {
                     .$course->id.'</a></td>'
                     ."<td>$course->shortname</td><td>$course->fullname</td><td>$course->idnumber</td>
                 <td>".date("Y-m-d",$course->startdate)."</td></tr>\n";
+
             $empty_courses++;
         }
         $cnt++;
@@ -4297,7 +4300,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         /*
         SELECT value FROM mdl_config WHERE name = 'siteadmins'; (30421,26259)
         */
-        $USER = core_user::get_user(30421);
+        // $USER = core_user::get_user(30421);
+        $USER = $DB->get_record("user", array('id' => 30421), '*');
     }
     // $saveduser = $USER;
 
@@ -4366,6 +4370,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         // $start2 = time();
         // get student courses to evaluate
         // $USER = core_user::get_user($userid);
+        $USER = $DB->get_record("user", array('id' => 30421), '*');
         if( empty($username) || empty($firstname)){
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user");
             continue;
