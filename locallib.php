@@ -4550,8 +4550,11 @@ HEREDOC;
         }
         if ( !$CFG->noemailever || $test ) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
+            ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
         }
-        ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
+        else{
+            ev_show_reminders_log("$cnt.  Mail not sent.$testinfo $fullname - $username - $email - ID: $userid");
+        }
         $cnt++;
     }
     $elapsed = time() - $start;
