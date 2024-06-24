@@ -4464,8 +4464,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 $cnt++;
                 continue;
             }
-
-            $testStudent = true;
             $cntStudents++;
             $also = (($hasParticipated or remaining_evaluation_days($evaluation) > 15) ? "" :
                     "auch");
@@ -4550,7 +4548,7 @@ Alice-Salomon-Platz 5, 12627 Berlin
 </html>
 HEREDOC;
         }
-        if ( $test ) { //!$CFG->noemailever || $test ) {
+        if ( !$CFG->noemailever || $test ) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
         }
         ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
