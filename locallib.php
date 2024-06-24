@@ -4385,15 +4385,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
 
-        ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
+        /*ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
         $cnt++;
         continue;
-
+        */
         //$evaluation->teamteaching = $teamteaching;
         if (empty($myEvaluations)) {
-            /*ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
+            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
                     . "Teilnehmende Kurse: " . count(evaluation_is_user_enrolled($evaluation, $userid)));
-            */
             continue;
         }
 
@@ -4554,8 +4553,8 @@ HEREDOC;
         if ( $test ) { //!$CFG->noemailever || $test ) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
         }
-        // ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
-        // $cnt++;
+        ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
+        $cnt++;
     }
     $elapsed = time() - $start;
     echo "";
