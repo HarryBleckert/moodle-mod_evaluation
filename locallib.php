@@ -680,11 +680,17 @@ function evaluation_cosPrivileged($evaluation) {
     if (false and evaluation_debug(false)) {
         print "<br><hr>:\n_SESSION['CoS_privileged']: " . nl2br(var_export($_SESSION['CoS_privileged'], true)) . "<hr>\n";
     }
-    return (isset($_SESSION['CoS_privileged'][$USER->username]) and !empty($_SESSION['CoS_privileged'][$USER->username]));
+    if (isset($_SESSION['CoS_privileged'][$USER->username]) and !empty($_SESSION['CoS_privileged'][$USER->username])) {
+        return evaluation_is_cosPrivileged_filter($_SESSION['CoS_privileged'][$USER->username],
+                $_SESSION['filter_course_of_studies']);
+    }
 }
 
-// is any value in array
-function in_array_any(array $needles, array $haystack): bool {
+
+function evaluation_is_cosPrivileged_filter($needles, $haystack) {
+    if (empty($needles) OR empty($haystack)){
+        return false;
+    }
     return array_intersect($needles, $haystack) !== [];
 }
 // is user CoS privileged users
@@ -701,16 +707,16 @@ function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
     {
         print "<br><hr>:\n_SESSION['CoS_privileged']: " . nl2br(var_export($_SESSION['CoS_privileged'], true)) . "<hr>\n";
     }
-    if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
-       if (!empty($_SESSION['filter_course_of_studies'])
-            AND in_array_any($_SESSION['filter_course_of_studies'],$_SESSION['CoS_privileged'][$USER->username])) {
+    if (!empty($_SESSION['CoS_privileged'][$USER->username]) AND !empty($_SESSION['filter_course_of_studies'])
+            AND evaluation_is_cosPrivileged_filter($_SESSION['CoS_privileged'][$USER->username],$_SESSION['filter_course_of_studies'])) {
            $setfilter = true;
-        }
-        if ($setfilter AND safeCount($_SESSION['CoS_privileged'][$USER->username]) > 0) {
-            $filter = " AND " . ($tableName ? $tableName . "." : "") . "course_of_studies ";
-            $filter .= " IN ('" . implode("','", $_SESSION['CoS_privileged'][$USER->username]) . "')";
-        }
-        //else
+       }
+
+       if ($setfilter AND safeCount($_SESSION['CoS_privileged'][$USER->username]) > 0) {
+           $filter = " AND " . ($tableName ? $tableName . "." : "") . "course_of_studies ";
+           $filter .= " IN ('" . implode("','", $_SESSION['CoS_privileged'][$USER->username]) . "')";
+       }
+    //else
         //{	$filter .= "= '" . $_SESSION['CoS_privileged'][$USER->username][0] . "' "; }
     } // exclude WM course_of_studies from list
     else if (evaluation_is_WM_disabled($evaluation)) {
