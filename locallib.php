@@ -3396,7 +3396,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             }
             $is_WM = (strtolower($WM) == "ja");
             // if global privileged user
-            $priv_user = true:
+            $priv_user = true;
             if (empty($CoS) or substr($CoS, 0, 1) == "#") {
                 if (!defined("EVALUATION_OWNER") and $username == $USER->username) {
                     define("EVALUATION_OWNER", $username);
