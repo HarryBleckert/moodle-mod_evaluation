@@ -331,7 +331,7 @@ if ($is_open) {
 }
 
 
-if (defined('EVALUATION_OWNER') and !evaluation_cosPrivileged($evaluation)) {
+if (defined('EVALUATION_OWNER') and !$cosPrivileged) {
     $minResults = $minResultsText = $minResultsPriv;
 }
 
