@@ -3361,7 +3361,7 @@ function pass_evaluation_filters($evaluation, $courseid) {
 }
 
 function ev_set_privileged_users($show = false, $getEmails = false) {
-    global $CFG, $DB, $USER;
+    global $CFG, $DB, $USER, $evaluation;
     $cfgFile = $CFG->dirroot . "/mod/evaluation/privileged_users.csv";
     if (is_readable($cfgFile)) {
         $cfgA = explode("\n", file_get_contents($cfgFile));
@@ -3396,6 +3396,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             }
             $is_WM = (strtolower($WM) == "ja");
             // if global privileged user
+            $priv_user = true:
             if (empty($CoS) or substr($CoS, 0, 1) == "#") {
                 if (!defined("EVALUATION_OWNER") and $username == $USER->username) {
                     define("EVALUATION_OWNER", $username);
@@ -3407,13 +3408,18 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                     $_SESSION["privileged_global_users_wm"][$username] = $username;
                 }
             } else {
-                //if (is_array($_SESSION['filter_course_of_studies']) and !empty($_SESSION['filter_course_of_studies'])
-                //   and in_array($CoS, $_SESSION['filter_course_of_studies'])
-                // ) {
-                $_SESSION['CoS_privileged'][$username][$CoS] = $CoS;
-                //print "<hr>\$users: " .var_export($users,true) .$user[0].": ". $_SESSION['CoS_privileged'][$user[0]][$user[1]] = $user[1]."<hr>";
+                if (is_array($_SESSION['filter_course_of_studies']) and !empty($_SESSION['filter_course_of_studies'])
+                   and in_array($CoS, $_SESSION['filter_course_of_studies'])) {
+                    $_SESSION['CoS_privileged'][$username][$CoS] = $CoS;
+                    //print "<hr>\$users: " .var_export($users,true) .$user[0].": ". $_SESSION['CoS_privileged'][$user[0]][$user[1]] = $user[1]."<hr>";
+                }
+                else{
+                    $priv_user = false;
+                }
             }
-            $privileged_users[$username] = $username;
+            if ($priv_user) {
+                $privileged_users[$username] = $username;
+            }
             if (!empty($CoS) and substr($CoS, 0, 1) != "#") {
                 $_SESSION["course_of_studies_wm"][$CoS] = $is_WM;
             }
@@ -3451,7 +3457,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                             continue;
                         }
                     }
-                    if ( !in_array($CoS, $_SESSION['filter_course_of_studies'])){
+                    if ( !empty($_SESSION['filter_course_of_studies']) AND !in_array($CoS, $_SESSION['filter_course_of_studies'])){
                         continue;
                     }
                 }
