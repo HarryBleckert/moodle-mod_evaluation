@@ -683,10 +683,16 @@ function evaluation_cosPrivileged($evaluation) {
     return (isset($_SESSION['CoS_privileged'][$USER->username]) and !empty($_SESSION['CoS_privileged'][$USER->username]));
 }
 
+// is any value in array
+function in_array_any(array $needles, array $haystack): bool {
+    return array_intersect($needles, $haystack) !== [];
+}
 // is user CoS privileged users
 function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
     global $USER;
     $filter = ""; //" AND true";
+
+     = false;
     // get CoS privileged users
     if (!isset($_SESSION['CoS_privileged'])) {
         ev_set_privileged_users();
@@ -696,9 +702,13 @@ function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
     {
         print "<br><hr>:\n_SESSION['CoS_privileged']: " . nl2br(var_export($_SESSION['CoS_privileged'], true)) . "<hr>\n";
     }
-    if (!empty($_SESSION['CoS_privileged'][$USER->username]))  //isset($_SESSION['CoS_privileged'][$USER->username]) AND
-    {
-        if (safeCount($_SESSION['CoS_privileged'][$USER->username]) > 0) {
+    if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
+       if (!empty($evaluation->filter_course_of_studies)
+            AND in_array_any($evaluation->filter_course_of_studies,$_SESSION['CoS_privileged'][$USER->username])) {
+           $setfilter = true;
+       }
+    }
+        if ($setfilter AND safeCount($_SESSION['CoS_privileged'][$USER->username]) > 0) {
             $filter = " AND " . ($tableName ? $tableName . "." : "") . "course_of_studies ";
             $filter .= " IN ('" . implode("','", $_SESSION['CoS_privileged'][$USER->username]) . "')";
         }
