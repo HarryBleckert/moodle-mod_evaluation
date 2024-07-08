@@ -702,8 +702,8 @@ function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
         print "<br><hr>:\n_SESSION['CoS_privileged']: " . nl2br(var_export($_SESSION['CoS_privileged'], true)) . "<hr>\n";
     }
     if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
-       if (!empty($evaluation->filter_course_of_studies)
-            AND in_array_any($evaluation->filter_course_of_studies,$_SESSION['CoS_privileged'][$USER->username])) {
+       if (!empty($_SESSION['filter_course_of_studies'])
+            AND in_array_any($_SESSION['filter_course_of_studies'],$_SESSION['CoS_privileged'][$USER->username])) {
            $setfilter = true;
         }
         if ($setfilter AND safeCount($_SESSION['CoS_privileged'][$USER->username]) > 0) {
