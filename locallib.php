@@ -690,9 +690,8 @@ function in_array_any(array $needles, array $haystack): bool {
 // is user CoS privileged users
 function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
     global $USER;
-    $filter = ""; //" AND true";
-
-     = false;
+    $filter = "";
+    $setfilter = false;
     // get CoS privileged users
     if (!isset($_SESSION['CoS_privileged'])) {
         ev_set_privileged_users();
@@ -705,7 +704,7 @@ function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
     if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
        if (!empty($evaluation->filter_course_of_studies)
             AND in_array_any($evaluation->filter_course_of_studies,$_SESSION['CoS_privileged'][$USER->username])) {
-           $setfilter = true;
+            $setfilter = true;
        }
     }
         if ($setfilter AND safeCount($_SESSION['CoS_privileged'][$USER->username]) > 0) {
