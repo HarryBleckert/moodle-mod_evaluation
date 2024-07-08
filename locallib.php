@@ -710,9 +710,9 @@ function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
     if (!empty($_SESSION['CoS_privileged'][$USER->username]) AND !empty($_SESSION['filter_course_of_studies'])
             AND evaluation_is_cosPrivileged_filter($_SESSION['CoS_privileged'][$USER->username],$_SESSION['filter_course_of_studies'])) {
            $setfilter = true;
-       }
 
-       if ($setfilter AND safeCount($_SESSION['CoS_privileged'][$USER->username]) > 0) {
+
+       if ($setfilter) {
            $filter = " AND " . ($tableName ? $tableName . "." : "") . "course_of_studies ";
            $filter .= " IN ('" . implode("','", $_SESSION['CoS_privileged'][$USER->username]) . "')";
        }
