@@ -684,6 +684,7 @@ function evaluation_cosPrivileged($evaluation) {
         return evaluation_is_cosPrivileged_filter($_SESSION['CoS_privileged'][$USER->username],
                 $_SESSION['filter_course_of_studies']);
     }
+    return false;
 }
 
 
