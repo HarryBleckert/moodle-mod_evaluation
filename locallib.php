@@ -689,6 +689,7 @@ function evaluation_cosPrivileged($evaluation) {
 
 
 function evaluation_is_cosPrivileged_filter($needles, $haystack) {
+    global $evaluation;
     if (empty($needles) OR empty($haystack)){
         return false;
     }
@@ -696,7 +697,7 @@ function evaluation_is_cosPrivileged_filter($needles, $haystack) {
 }
 // is user CoS privileged users
 function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
-    global $USER;
+    global $USER, $evaluation;
     $filter = "";
     $setfilter = false;
     // get CoS privileged users
@@ -3334,6 +3335,12 @@ function evaluation_is_closed($evaluation) {
     return ($evaluation->timeclose < time());
 }    // $evaluation->timeclose > 0 AND
 
+// validate if course of studies is part of completed evaluations
+function ev_is_cos_in_completed($evaluation, $cos){
+    global $DB;
+    return $DB->count_records("completed", array("evaluation => $evaluation->id", "course_of_studies => $cos"));
+}
+
 // get filters set for evaluation and set CoS_privileged users
 function pass_evaluation_filters($evaluation, $courseid) {
     $passed = true;
@@ -3353,7 +3360,7 @@ function pass_evaluation_filters($evaluation, $courseid) {
     } else if (!empty($courses_filter) and is_array($courses_filter)
             and !in_array($courseid, $courses_filter)) {
         $passed = false;
-    }
+    } // else if (ev_is_cos_in_completed($evaluation, $CoS))
     if (false and is_siteadmin() and $passed) {
         echo "\n<br>pass_evaluation_filters: passed: \$courseid: $courseid - \$Studiengang: $Studiengang";
     }
@@ -3408,8 +3415,8 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                     $_SESSION["privileged_global_users_wm"][$username] = $username;
                 }
             } else {
-                if (is_array($_SESSION['filter_course_of_studies']) and !empty($_SESSION['filter_course_of_studies'])
-                   and in_array($CoS, $_SESSION['filter_course_of_studies'])) {
+                if ((is_array($_SESSION['filter_course_of_studies']) and !empty($_SESSION['filter_course_of_studies'])
+                   and in_array($CoS, $_SESSION['filter_course_of_studies'])) OR ev_is_cos_in_completed($evaluation, $CoS)) {
                     $_SESSION['CoS_privileged'][$username][$CoS] = $CoS;
                     //print "<hr>\$users: " .var_export($users,true) .$user[0].": ". $_SESSION['CoS_privileged'][$user[0]][$user[1]] = $user[1]."<hr>";
                 }
