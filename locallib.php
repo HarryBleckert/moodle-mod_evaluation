@@ -3338,7 +3338,7 @@ function evaluation_is_closed($evaluation) {
 // validate if course of studies is part of completed evaluations
 function ev_is_cos_in_completed($evaluation, $cos){
     global $DB;
-    return $DB->count_records("evaluation_completed", array("evaluation => $evaluation->id", "course_of_studies => $cos"));
+    return $DB->count_records("evaluation_completed", array("evaluation" => $evaluation->id, "course_of_studies" => $cos));
 }
 
 // get filters set for evaluation and set CoS_privileged users
