@@ -103,7 +103,7 @@ function evaluation_additional_html() {
 				if ( document.getElementsByClassName("page-header-image").length > 0 ) 
         		{	document.getElementsByClassName("page-header-image")[0].style.display="none"; }
                 if ( document.getElementsByClassName("page-header-headings").length > 0 ) 
-        		{	document.getElementsByClassName("page-header-headingse")[0].style.display="none"; }
+        		{	document.getElementsByClassName("page-header-headings")[0].style.display="none"; }
 
 				if ( document.getElementsByClassName("page-context-header").length > 0 ) 
 				{	document.getElementsByClassName("page-context-header")[0].style.display="none"; }
