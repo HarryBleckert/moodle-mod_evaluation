@@ -100,6 +100,11 @@ function evaluation_additional_html() {
 					';
 
         $html = '<script>
+				if ( document.getElementsByClassName("page-header-image").length > 0 ) 
+        		{	document.getElementsByClassName("page-header-image")[0].style.display="none"; }
+                if ( document.getElementsByClassName("page-header-headings").length > 0 ) 
+        		{	document.getElementsByClassName("page-header-headingse")[0].style.display="none"; }
+
 				if ( document.getElementsByClassName("page-context-header").length > 0 ) 
 				{	document.getElementsByClassName("page-context-header")[0].style.display="none"; }
 				if ( document.getElementsByClassName("secondary-navigation").length > 0 ) 
@@ -127,7 +132,7 @@ function evaluation_additional_html() {
 		{	var nav = document.getElementsByClassName("fixed-top");	for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; } }
 		if ( document.getElementsByClassName("breadcrumb-item").length > 0 ) 
 		{	var nav = document.getElementsByClassName("breadcrumb-item"); nav[0].style.display="none"; }
-		if ( document.getElementsById("page-footer").length > 0 ) 
+		if ( document.getElementById("page-footer").length > 0 ) 
 		{	document.getElementById("page-footer").style.display="none"; }
 		if ( document.getElementsByClassName("footnote").length > 0 ) 
 		{	var nav = document.getElementsByClassName("footnote"); for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; }; }
