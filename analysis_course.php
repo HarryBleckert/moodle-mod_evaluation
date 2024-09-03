@@ -443,7 +443,8 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
             if ($value == 1) {
                 print '<span id="replies">';
                 $cnt = 1;
-                $hide_reply = array("k.b.", "keine Angabe", "Kann ich nicht beantworten");
+                // $hide_reply = array("k.b.", "keine Angabe", "Kann ich nicht beantworten");
+                $hide_reply = array();
                 foreach ($presentationraw as $reply) {
                     if ( !in_array($reply, $hide_reply)) {
                         print '<label>';
