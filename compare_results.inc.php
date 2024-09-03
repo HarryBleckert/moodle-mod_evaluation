@@ -493,7 +493,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     if ($value == 1) {
                         print '<span id="replies">';
                         $cnt = 1;
-                        $hide_reply = array("k.b.", "keine Angabe", "Kann ich nicht beantworten");
+                        // $hide_reply = array("k.b.", "keine Angabe", "Kann ich nicht beantworten");
+                        $hide_reply = array();
                         foreach ($presentationraw as $reply) {
                             if ( !in_array($reply, $hide_reply)) {
                                 print '<label>';
