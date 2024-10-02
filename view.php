@@ -736,9 +736,9 @@ if (is_siteadmin()) {
        evaluation_get_empty_courses($_GET['empty_courses']);
     }
 
-    $assign = $DB->get_record("assign", array("id" => $submission->assignment));
+    $assign = $DB->get_record("assign", array("id" => 10171));
     print "<hr>assign: <br>";print var_dump($assign). "<hr>\n\n";
-    print "Submission:<br>" . var_export($submission,true);
+    // print "Submission:<br>" . var_export($submission,true);
 
     if ( false AND isset($_GET['send_reminders'])) {
        $test = true;
