@@ -628,7 +628,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         print "<br>\n";
     }
     if ($department  AND !empty($filterDept)){
-        $filter .= Dept$filter;
+        $filter .= $filterDept;
         $fTitle[] = get_string("department", "evaluation") . ":  $department";
         $anker = get_string("department", "evaluation") .
                 ': <span style="font-size:12pt;font-weight:bold;display:inline;">'
