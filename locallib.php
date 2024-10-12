@@ -934,7 +934,7 @@ function evaluation_LoginAs() {
             foreach (array_keys($CoS_privileged) as $uKey) {
                 if ($cnt == $choice) {
                     $username = $uKey;
-                    print "<br><hr>uKey: \n" .nl2br(var_export($uKey,true))."<hr>\n";
+                    // print "<br><hr>uKey: \n" .nl2br(var_export($uKey,true))."<hr>\n";
                     if ($user = $DB->get_record_sql("SELECT id from {user} WHERE $isActive username='$username'") and isset($user->id)) {
                         $userid = $user->id;
                         break;

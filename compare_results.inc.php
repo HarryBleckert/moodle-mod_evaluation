@@ -628,7 +628,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         print "<br>\n";
     }
     if ($department  AND !empty($filterDept)){
-        $filter .= $filterDept;
+        $filter .= Dept$filter;
         $fTitle[] = get_string("department", "evaluation") . ":  $department";
         $anker = get_string("department", "evaluation") .
                 ': <span style="font-size:12pt;font-weight:bold;display:inline;">'
@@ -649,15 +649,13 @@ function evaluation_compare_results($evaluation, $courseid = false,
             safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
                 WHERE evaluation=$evaluation->id $filter $subqueryC"));
     if ($filter and $numresultsF < $minReplies) {
-        /*if (!is_siteadmin()) {
-            $filter = $filter = "";
-        }*/
         print '<span style="color:red;font-weight:bold;">' . "Es gibt für</span> '" . implode(", ", $fTitle) . "' "
                 . '<span style="color:red;font-weight:bold;">' . "weniger als $minReplies Abgaben</span>. "
                 . "<b>Daher wird keine Auswertung angezeigt!</b><br>" . (is_siteadmin() ? "- except for siteadmin" : "") . "<br>\n";
     }
     //handle CoS priv users
-    $filter .= $cosPrivileged_filter;;
+    $setFilter = $filter;
+    $filter .= $cosPrivileged_filter;
 
     // subquery needs filter
     if ($isFilter and !empty($subquery)) {
@@ -723,7 +721,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY course_of_studies ORDER BY course_of_studies"));
         $allResults = $DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
 											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id $filter $subqueryC
+											 WHERE evaluation=$evaluation->id $setFilter $subqueryC
 											 GROUP BY course_of_studies ORDER BY course_of_studies");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
@@ -734,11 +732,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $course_of_studiesID =
                     evaluation_get_course_of_studies_id_from_evc($id, $allResult->course_of_studies, $evaluation);
             $allCosIDs[] = $course_of_studiesID;
-            if (defined('EVALUATION_OWNER')) {
+            if (defined('EVALUATION_OWNER') && (($cosPrivileged ?:false)
+                            AND isset($_SESSION['CoS_privileged'][$USER->username][$allResult->course_of_studies])) ) {
                 $links = '<a href="analysis_course.php?id=' . $id .
                         '&course_of_studiesID='
                         . $course_of_studiesID
-                        . '" target="analysis">' . $allResult->course_of_studies . "</a>";
+                        . '" target="analysis"><font color="navy">' . $allResult->course_of_studies . "</font></a>";
             } else {
                 $links = $allResult->course_of_studies;
             }
@@ -1333,12 +1332,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 }
             }
 
-            if (defined('EVALUATION_OWNER') || $allSelected == "allCourses"){
+            if ((defined('EVALUATION_OWNER') || $allSelected == "allCourses") && stristr($allLinks[$key],"<a") ){
                 //{	$hintLink = '<a href="print.php?showCompare=1&allSelected=useFilter&id='
                 $selector = ($allSelected == "allDepartments") ?"department" : $allKey;
 
                 $hintLink = '<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
-                        . $id . '&' . $selector . '=' . $value . '" target="compare">' . $hint . '</a>';
+                        . $id . '&' . $selector . '=' . $value . '" target="compare"><font color="navy">' . $hint . '</font></a>';
             } else {
                 $hintLink = $hint;
             }
