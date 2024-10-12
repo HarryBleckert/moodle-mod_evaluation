@@ -737,7 +737,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $links = '<a href="analysis_course.php?id=' . $id .
                         '&course_of_studiesID='
                         . $course_of_studiesID
-                        . '" target="analysis"><font color="navy">' . $allResult->course_of_studies . "</font></a>";
+                        . '" target="analysis"><span style="color:navy;font-weight:bold;">' . $allResult->course_of_studies . "</span></a>";
             } else {
                 $links = $allResult->course_of_studies;
             }
@@ -1337,7 +1337,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $selector = ($allSelected == "allDepartments") ?"department" : $allKey;
 
                 $hintLink = '<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
-                        . $id . '&' . $selector . '=' . $value . '" target="compare"><font color="navy">' . $hint . '</font></a>';
+                        . $id . '&' . $selector . '=' . $value . '" target="compare"><span style="color:navy;font-weight:bold;">' . $hint . '</span></a>';
             } else {
                 $hintLink = $hint;
             }
