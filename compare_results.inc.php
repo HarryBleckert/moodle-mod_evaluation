@@ -732,8 +732,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $course_of_studiesID =
                     evaluation_get_course_of_studies_id_from_evc($id, $allResult->course_of_studies, $evaluation);
             $allCosIDs[] = $course_of_studiesID;
-            if (defined('EVALUATION_OWNER') && (($cosPrivileged ?:false)
-                            AND isset($_SESSION['CoS_privileged'][$USER->username][$allResult->course_of_studies])) ) {
+            if (defined('EVALUATION_OWNER') && ($cosPrivileged ?
+                            isset($_SESSION['CoS_privileged'][$USER->username][$allResult->course_of_studies])
+                            :true) ) {
                 $links = '<a href="analysis_course.php?id=' . $id .
                         '&course_of_studiesID='
                         . $course_of_studiesID
