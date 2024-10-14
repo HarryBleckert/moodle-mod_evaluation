@@ -211,17 +211,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
             $default_values['min_results_text'] = 6;
             $default_values['min_results_priv'] = 0;
             $default_values['show_on_index'] = 1;
-            $ev_tags = explode(" ",$this->current->name);
-            $ev_name = "";
-            $n = 0;
-            foreach ($ev_tags as $ev){
-                $ev_name .= $ev;
-                if ($n == 4){
-                    break;
-                }
-                $n++;
-            }
-            $default_values['sort_tag'] = $ev_name;
+            $default_values['sort_tag'] = "ASH";
             $default_values['semester'] = evaluation_get_current_semester();
             // no context yet, itemid not used
             file_prepare_draft_area($draftitemid, null, 'mod_evaluation', 'page_after_submit', false);
