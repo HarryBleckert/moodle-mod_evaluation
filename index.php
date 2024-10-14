@@ -98,12 +98,18 @@ if ($usesections) {
 }
 
 if (count($evaluations) > 1) {
+    array_multisort(array_column($evaluations, 'name'), SORT_NATURAL,
+            array_column($evaluations, 'timeopen'), SORT_DESC, $evaluations);
+    /*
     usort($evaluations, function($a, $b) {
+        static $ev_name = $a->name;
+
         if ($a->timeopen == $b->timeopen) {
             return 0;
         }
         return ($a->timeopen < $b->timeopen) ? 1 : -1;
     });
+    */
 }
 
 // unset $_SESSION["EvaluationsName"] to reset stored evaluation data

@@ -92,6 +92,7 @@ $string['select_teacher'] = '<b>Bitte wählen Sie die Dozentin/den Dozenten für
 $string['semesters'] = 'Semester';
 $string['sexes'] = 'Geschlechter';
 $string['show_on_index'] = 'Evaluation auf der Evaluationsübersicht anzeigen';
+$string['sort_tag'] = 'Tag zur Sortierung der Evaluationen in der Übersicht';
 $string['statistics'] = 'Statistik';
 $string['student'] = 'Student_in';
 $string['students'] = 'Student_innen';

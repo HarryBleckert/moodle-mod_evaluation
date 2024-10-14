@@ -119,6 +119,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'publish_stats', get_string('show_analysepage_after_submit', 'evaluation'));
 
         $mform->addElement('selectyesno', 'show_on_index', get_string('show_on_index', 'evaluation'));
+        $mform->addElement('text', 'sort_tag', get_string('sort_tag', 'evaluation'));
 
         $mform->addElement('editor',
                 'page_after_submit_editor',
@@ -210,6 +211,17 @@ class mod_evaluation_mod_form extends moodleform_mod {
             $default_values['min_results_text'] = 6;
             $default_values['min_results_priv'] = 0;
             $default_values['show_on_index'] = 1;
+            $ev_tags = explode(" ",$this->current->name);
+            $ev_name = "";
+            $n = 0;
+            foreach ($ev_tags as $ev){
+                $ev_name .= $ev;
+                if ($n == 4){
+                    break;
+                }
+                $n++;
+            }
+            $default_values['sort_tag'] = $ev_name;
             $default_values['semester'] = evaluation_get_current_semester();
             // no context yet, itemid not used
             file_prepare_draft_area($draftitemid, null, 'mod_evaluation', 'page_after_submit', false);

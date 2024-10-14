@@ -86,6 +86,7 @@ $string['select_teacher'] = '<b>Please select a teacher for this evaluation!</b>
 $string['semesters'] = 'Semesters';
 $string['sexes'] = 'Gender';
 $string['show_on_index'] = 'Show Evaluation on Evaluation index page';
+$string['sort_tag'] = 'Tag for sorting Evaluations in overview';
 $string['statistics'] = 'Statistics';
 $string['student'] = 'Student';
 $string['students'] = 'Students';
