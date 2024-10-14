@@ -98,7 +98,7 @@ if ($usesections) {
 }
 
 if (count($evaluations) > 1) {
-    array_multisort(array_column($evaluations, 'name'), SORT_NATURAL,
+    array_multisort(array_column($evaluations, 'sort_tag'), SORT_NATURAL,
             array_column($evaluations, 'timeopen'), SORT_DESC, $evaluations);
     /*
     usort($evaluations, function($a, $b) {
