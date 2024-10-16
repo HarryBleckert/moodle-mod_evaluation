@@ -115,6 +115,7 @@ if (count($evaluations) > 1) {
 // unset $_SESSION["EvaluationsName"] to reset stored evaluation data
 unset($_SESSION["EvaluationsName"]);
 
+$current_tag = "XX@XX";
 foreach ($evaluations as $evaluation) {
     //get the responses of each evaluation
 
@@ -134,6 +135,18 @@ foreach ($evaluations as $evaluation) {
     } else {
         $tabledata = array($link);
     }
+
+    // handle tag_sort and collapse by tag_sort
+    $tabledata->attributes['tag_sort'] = $evaluation->tag_sort;
+    if ($current_tag !== $evaluation->tag_sort){
+        $current_tag = $evaluation->tag_sort;
+        $tabledata->attributes['style'] = "display:inline;";
+
+    }
+    else{
+        $tabledata->attributes['style'] = "display:none;";
+    }
+
     $timeopen = $evaluation->timeopen ? date("d.m.Y", $evaluation->timeopen) : "";
     $timeclose = $evaluation->timeclose ? date("d.m.Y", $evaluation->timeclose) : "";
     $tabledata[] = $timeopen . ' - ' . $timeclose . " (" . total_evaluation_days($evaluation) . " " . get_string("days") . ")";
