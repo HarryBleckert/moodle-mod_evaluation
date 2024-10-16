@@ -142,7 +142,7 @@ foreach ($evaluations as $evaluation) {
     $tablerow->attributes['style'] = "display:none;";
     if ($current_tag != $evaluation->tag_sort){
         $current_tag = $evaluation->tag_sort;
-        $tablerow->attributes['style'] = "display:inline;";
+        //$tablerow->attributes['style'] = "display:inline;";
     }
     else{
         $tablerow->attributes['style'] = "display:none;";
