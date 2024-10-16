@@ -137,6 +137,7 @@ foreach ($evaluations as $evaluation) {
     }
 
     // handle tag_sort and collapse by tag_sort
+    /*
     $tabledata->attributes['tag_sort'] = $evaluation->tag_sort;
     if ($current_tag !== $evaluation->tag_sort){
         $current_tag = $evaluation->tag_sort;
@@ -146,7 +147,7 @@ foreach ($evaluations as $evaluation) {
     else{
         $tabledata->attributes['style'] = "display:none;";
     }
-
+    */
     $timeopen = $evaluation->timeopen ? date("d.m.Y", $evaluation->timeopen) : "";
     $timeclose = $evaluation->timeclose ? date("d.m.Y", $evaluation->timeclose) : "";
     $tabledata[] = $timeopen . ' - ' . $timeclose . " (" . total_evaluation_days($evaluation) . " " . get_string("days") . ")";
