@@ -129,7 +129,7 @@ foreach ($evaluations as $evaluation) {
 
     $dimmedclass = $evaluation->visible ? '' : 'class="dimmed"';
     $link = '<a ' . $dimmedclass . ' href="' . $viewurl->out() . '">' . $evaluation->name . '</a>';
-
+    $tablerow = html_table_row();
     if ($usesections) {
         $tabledata = array(get_section_name($course, $evaluation->section), $link);
     } else {
@@ -137,17 +137,16 @@ foreach ($evaluations as $evaluation) {
     }
 
     // handle tag_sort and collapse by tag_sort
-    /*
-    $tabledata->attributes['tag_sort'] = $evaluation->tag_sort;
+
+    $tablerow->attributes['tag_sort'] = $evaluation->tag_sort;
     if ($current_tag !== $evaluation->tag_sort){
         $current_tag = $evaluation->tag_sort;
-        $tabledata->attributes['style'] = "display:inline;";
-
+        $tablerow->attributes['style'] = "display:inline;";
     }
     else{
-        $tabledata->attributes['style'] = "display:none;";
+        $tablerow->attributes['style'] = "display:none;";
     }
-    */
+
     $timeopen = $evaluation->timeopen ? date("d.m.Y", $evaluation->timeopen) : "";
     $timeclose = $evaluation->timeclose ? date("d.m.Y", $evaluation->timeclose) : "";
     $tabledata[] = $timeopen . ' - ' . $timeclose . " (" . total_evaluation_days($evaluation) . " " . get_string("days") . ")";
@@ -170,7 +169,9 @@ foreach ($evaluations as $evaluation) {
     $tabledata[] = '<span title="' . date("Y-m-d H:i") . '">' . evaluation_number_format($completed_responses) . '</span>';
     $tabledata[] = ($days ? evaluation_number_format($completed_responses / $days) : 0);
 
-    $table->data[] = $tabledata;
+    $tablerow->cells = $tabledata;
+    $table->data[] = $tablerow;
+    // $table->data[] = $tabledata;
 
 }
 echo "<br\n>";
