@@ -129,7 +129,7 @@ foreach ($evaluations as $evaluation) {
 
     $dimmedclass = $evaluation->visible ? '' : 'class="dimmed"';
     $link = '<a ' . $dimmedclass . ' href="' . $viewurl->out() . '">' . $evaluation->name . '</a>';
-    $tablerow = html_table_row();
+    $tablerow = new html_table_row();
     if ($usesections) {
         $tabledata = array(get_section_name($course, $evaluation->section), $link);
     } else {
