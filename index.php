@@ -139,10 +139,10 @@ foreach ($evaluations as $evaluation) {
     // handle tag_sort and collapse by tag_sort
     $tablerow = new html_table_row();
     $tablerow->attributes['tag_sort'] = $evaluation->tag_sort;
-    $tablerow->attributes['style'] = "display:none;";
+    $tablerow->attributes['class'] = substr($evaluation->tag_sort,0,21);
     if ($current_tag != $evaluation->tag_sort){
         $current_tag = $evaluation->tag_sort;
-        //$tablerow->attributes['style'] = "display:inline;";
+        $tablerow->attributes['style'] = "display:inline;";
     }
     else{
         $tablerow->attributes['style'] = "display:none;";
