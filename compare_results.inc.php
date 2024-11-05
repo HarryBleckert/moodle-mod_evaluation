@@ -419,7 +419,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             echo get_string("courses", "evaluation");
             echo "</button>";
 
-            if ($isStudent or (defined('EVALUATION_OWNER') AND !isset($_SESSION['CoS_privileged_sgl'][$USER->username]))) { // ($isTeacher and $teacherid)
+            if ($isStudent or (defined('EVALUATION_OWNER'))){ // AND !isset($_SESSION['CoS_privileged_sgl'][$USER->username]))) { // ($isTeacher and $teacherid)
                 if ($allSelected == "allTeachers") {
                     $style = $selectStyle;
                     $value = "";
