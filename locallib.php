@@ -906,8 +906,8 @@ function evaluation_LoginAs() {
 
     if ($role == "logout" and !empty($USER->realuser)) {
         $userid = $_SESSION["EVALUATION_OWNER"] = $USER->realuser;
-    } else if (stristr($role, "privileg")) {
-        $role = "Privilegierte Person";
+    } else if ($role == "privileg") {
+        // $role = "Privilegierte Person";
         if (!empty($evaluation->privileged_users) or !empty($_SESSION["privileged_global_users"])) {
             $privileged_users = explode("\n", $evaluation->privileged_users);
             if (!empty($_SESSION["privileged_global_users"])) {    //array_merge_recursive_distinct( $privileged_users, $_SESSION["privileged_global_users"]);
@@ -932,8 +932,8 @@ function evaluation_LoginAs() {
                 $cnt++;
             }
         }
-    } else if (stristr($role, "priv_sg")) {
-        $role = "Privilegierte Person (Studiengang)";
+    } else if ($role == "priv_sg") { // stristr($role, "priv_sg")) {
+        // $role = "Privilegierte Person (Studiengang)";
 
         if ($CoS_privileged_cnt) {
             $cnt = 0;
@@ -957,8 +957,8 @@ function evaluation_LoginAs() {
                 $cnt++;
             }
         }
-    } else if (stristr($role, "priv_sg_sgl")) {
-        $role = "Privilegierte Person (Studiengang, SGL)";
+    } else if ($role == "priv_sg_sgl") {
+        // $role = "Privilegierte Person (Studiengang, SGL)";
 
         if ($CoS_privileged_sgl_cnt) {
             $cnt = 0;
@@ -1092,8 +1092,8 @@ function evaluation_LoginAs() {
     if (!empty($_SESSION["LoggedInAs"])) {
         $showStop = '<span style="color:maroon;font-weight:bold;">Rollenansicht beenden</span>';
         $role = (stristr($_SESSION["LoggedInAs"], "privileg") ? "privilegierte Person"
-                : (stristr($_SESSION["LoggedInAs"], "priv_sg") ? "Privilegierte Person (Studiengang)"
-                : (stristr($_SESSION["LoggedInAs"], "priv_sg_sgl") ? "Privilegierte Person (Studiengang, SGL)"
+                : ($_SESSION["LoggedInAs"] == "priv_sg" ? "Privilegierte Person (Studiengang)"
+                : ($_SESSION["LoggedInAs"] == "priv_sg_sgl" ? "Privilegierte Person (Studiengang, SGL)"
                 : $DB->get_record('role', array('shortname' => $_SESSION["LoggedInAs"]), '*')->name)));
         $msg .= "Aktuelle Ansicht: " . $role . '&nbsp; <a href="' . $url . '&LoginAs=logout">'.$showStop.'</a>';
     } else {
@@ -1101,7 +1101,7 @@ function evaluation_LoginAs() {
                 . ((!empty($evaluation->privileged_users) or !empty($_SESSION["privileged_global_users"]))
                         ? '<a href="' . $url . '&LoginAs=privileg">Privilegiert</a> - ' : "")
                 . ($CoS_privileged_cnt ? '<a href="' . $url . '&LoginAs=priv_sg">Privilegiert (SG)</a> - ' : "")
-                . ($CoS_privileged_cnt ? '<a href="' . $url . '&LoginAs=priv_sg_sgl">Privilegiert (SG,SGL)</a> - ' : "")
+                . ($CoS_privileged_sgl_cnt ? '<a href="' . $url . '&LoginAs=priv_sg_sgl">Privilegiert (SG,SGL)</a> - ' : "")
                 . '<a href="' . $url . '&LoginAs=teacher">Dozent_in</a> - <a href="'
                 . $url . '&LoginAs=student">Student_in</a> - <a href="' . $url . '&LoginAs=user">ASH Mitglied</a>';
         // not done: $msg .= ' - <a href="' . $url . '&LoginAs=username">' .get_string('username'). '</a>";
