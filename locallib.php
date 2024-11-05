@@ -877,7 +877,7 @@ function evaluation_LoginAs() {
         return false;
     }
     $userid = false;
-    $role = optional_param('LoginAs', "", PARAM_ALPHANUM);
+    $role = optional_param('LoginAs', "", PARAM_TEXT);
     $cmid = $id;
     $isActive = "deleted=0 AND suspended=0 AND ";
     list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation);
