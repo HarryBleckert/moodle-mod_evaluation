@@ -1092,7 +1092,7 @@ function evaluation_LoginAs() {
         $role = (stristr($_SESSION["LoggedInAs"], "privileg") ? "privilegierte Person"
                 : (stristr($_SESSION["LoggedInAs"], "priv_sg") ? "Privilegierte Person (Studiengang)"
                 : (stristr($_SESSION["LoggedInAs"], "priv_sg_sgl") ? "Privilegierte Person (Studiengang, SGL)"
-                :        $DB->get_record('role', array('shortname' => $_SESSION["LoggedInAs"]), '*')->name));
+                : $DB->get_record('role', array('shortname' => $_SESSION["LoggedInAs"]), '*')->name)));
         $msg .= "Aktuelle Ansicht: " . $role . '&nbsp; <a href="' . $url . '&LoginAs=logout">'.$showStop.'</a>';
     } else {
         $msg .= 'Rollenansicht wählen: '
