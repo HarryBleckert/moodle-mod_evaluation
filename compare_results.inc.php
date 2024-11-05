@@ -132,6 +132,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $hideInvalid = false;
     }
     // access control
+    $myEvaluations = get_evaluation_participants($evaluation, $USER->id);
     if (defined('EVALUATION_OWNER')) {
         get_evaluation_filters($evaluation);
         if ($department AND isset($_SESSION['CoS_department']) and safeCount($_SESSION['CoS_department'])) {
@@ -140,7 +141,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
         }
     }else {
         $department = false;
-        $myEvaluations = get_evaluation_participants($evaluation, $USER->id);
         if ($course_of_studiesID or ($teacherid and $teacherid != $USER->id)
                 or ($courseid and !evaluation_is_my_courseid($myEvaluations, $courseid))
         ) {
@@ -850,6 +850,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     continue;
                 }
                 $fullname = ($uRecord->alternatename ? $uRecord->alternatename : $uRecord->firstname) . " " . $uRecord->lastname;
+            }
+            if (isset($_SESSION['CoS_privileged_sgl'][$USER->username]) AND $USER->id != $allResult->teacherid){
+                continue;
             }
             if (defined('EVALUATION_OWNER') && !isset($_SESSION['CoS_privileged_sgl'][$USER->username])) {
                 $links = '<a href="print.php?id=' . $id . '&showTeacher=' . $allResult->teacherid
