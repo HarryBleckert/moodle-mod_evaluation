@@ -891,6 +891,16 @@ function evaluation_LoginAs() {
         }
     }
     $CoS_privileged_cnt = safeCount($CoS_privileged);
+    // SGL
+    $CoS_privileged_sgl = array();
+    foreach ($_SESSION['CoS_privileged_sgl'] AS $CoSuser=>$CoSA){
+        foreach ( $CoSA AS $cusername => $CoS){
+            if ( in_array($CoS, $sg_filter)){
+                $CoS_privileged_sgl[$CoSuser] = $CoS;
+            }
+        }
+    }
+    $CoS_privileged_sgl_cnt = safeCount($CoS_privileged_sgl);
 
     if ($role == "logout" and !empty($USER->realuser)) {
         $userid = $_SESSION["EVALUATION_OWNER"] = $USER->realuser;
@@ -920,8 +930,8 @@ function evaluation_LoginAs() {
                 $cnt++;
             }
         }
-    } else if (stristr($role, "Dekan")) {
-        $role = "Dekan_in";
+    } else if (stristr($role, "priv_sg")) {
+        $role = "Privilegierte Person (Studiengang)";
 
         if ($CoS_privileged_cnt) {
             $cnt = 0;
@@ -939,6 +949,31 @@ function evaluation_LoginAs() {
                         $userid = $user->id;
                         break;
                     } else if ($CoS_privileged_cnt > $cnt) {
+                        $choice++;
+                    }
+                }
+                $cnt++;
+            }
+        }
+    } else if (stristr($role, "priv_sg_sgl")) {
+        $role = "Privilegierte Person (Studiengang, SGL)";
+
+        if ($CoS_privileged_sgl_cnt) {
+            $cnt = 0;
+            $choice = random_int(0, $CoS_privileged_sgl_cnt);
+            if (false) //evaluation_debug( false ) )
+            {
+                print "<br><hr>\$CoS_privileged_cnt: $CoS_privileged_cnt:\n_CoS_privileged: "
+                        . nl2br(var_export($CoS_privileged, true)) . "<hr>\n";
+            }
+            foreach (array_keys($CoS_privileged_sgl) as $uKey) {
+                if ($cnt == $choice) {
+                    $username = $uKey;
+                    // print "<br><hr>uKey: \n" .nl2br(var_export($uKey,true))."<hr>\n";
+                    if ($user = $DB->get_record_sql("SELECT id from {user} WHERE $isActive username='$username'") and isset($user->id)) {
+                        $userid = $user->id;
+                        break;
+                    } else if ($CoS_privileged_sgl_cnt > $cnt) {
                         $choice++;
                     }
                 }
@@ -1033,7 +1068,7 @@ function evaluation_LoginAs() {
             evHideSettings();
             unset($_SESSION["EvaluationsName"]);
             $role = stristr($role, "privileg") ? "privilegierte Person"
-                    : (stristr($role, "dekan") ? "Dekan_in"
+                    : (stristr($role, "SG_priv") ? "SG Priv"
                             : $DB->get_record('role', array('shortname' => $role), '*')->name);
             $roleuser = $DB->get_record_sql("SELECT id,firstname,lastname from {user} WHERE id=$userid");
             print '<br><h2 style="font-weight:bold;color:#131313;background-color:#131314;">Sie sind jetzt im Kontext der Evaluationen als '
@@ -1055,14 +1090,16 @@ function evaluation_LoginAs() {
     if (!empty($_SESSION["LoggedInAs"])) {
         $showStop = '<span style="color:maroon;font-weight:bold;">Rollenansicht beenden</span>';
         $role = (stristr($_SESSION["LoggedInAs"], "privileg") ? "privilegierte Person"
-                : (stristr($_SESSION["LoggedInAs"], "dekan") ? "Dekan_in" :
-                        $DB->get_record('role', array('shortname' => $_SESSION["LoggedInAs"]), '*')->name));
+                : (stristr($_SESSION["LoggedInAs"], "priv_sg") ? "Privilegierte Person (Studiengang)"
+                : (stristr($_SESSION["LoggedInAs"], "priv_sg_sgl") ? "Privilegierte Person (Studiengang, SGL)"
+                :        $DB->get_record('role', array('shortname' => $_SESSION["LoggedInAs"]), '*')->name));
         $msg .= "Aktuelle Ansicht: " . $role . '&nbsp; <a href="' . $url . '&LoginAs=logout">'.$showStop.'</a>';
     } else {
         $msg .= 'Rollenansicht wählen: '
                 . ((!empty($evaluation->privileged_users) or !empty($_SESSION["privileged_global_users"]))
                         ? '<a href="' . $url . '&LoginAs=privileg">Privilegiert</a> - ' : "")
-                . ($CoS_privileged_cnt ? '<a href="' . $url . '&LoginAs=dekan">Dekan_in</a> - ' : "")
+                . ($CoS_privileged_cnt ? '<a href="' . $url . '&LoginAs=priv_sg">Privilegiert (SG)</a> - ' : "")
+                . ($CoS_privileged_cnt ? '<a href="' . $url . '&LoginAs=priv_sg_sgl">Privilegiert (SG,SGL)</a> - ' : "")
                 . '<a href="' . $url . '&LoginAs=teacher">Dozent_in</a> - <a href="'
                 . $url . '&LoginAs=student">Student_in</a> - <a href="' . $url . '&LoginAs=user">ASH Mitglied</a>';
         // not done: $msg .= ' - <a href="' . $url . '&LoginAs=username">' .get_string('username'). '</a>";
@@ -1351,7 +1388,8 @@ function validate_evaluation_sessions($evaluation) {
                 $_SESSION["teamteaching_courses"], $_SESSION["teamteaching_courseids"], $_SESSION["questions"],
                 $_SESSION["participating_courses_of_studies"], $_SESSION['EVALUATION_OWNER'],
                 $_SESSION['filter_course_of_studies'], $_SESSION['course_of_studies'], $_SESSION["notevaluated"], $_SESSION['CoS_department'],
-                $_SESSION['CoS_privileged'], $_SESSION['filter_courses'], $_SESSION["numStudents"], $_SESSION["possible_evaluations"],
+                $_SESSION['CoS_privileged'], $_SESSION['CoS_privileged_SGL'], $_SESSION['filter_courses'],
+                $_SESSION["numStudents"], $_SESSION["possible_evaluations"],
                 $_SESSION["possible_active_evaluations"], $_SESSION["active_teacher"], $_SESSION["active_student"],
                 $_SESSION["num_courses_of_studies"], $_SESSION["duplicated"], $_SESSION["orderBy"],
                 $_SESSION["distinct_users"], $_SESSION["evaluated_teachers"], $_SESSION["evaluated_courses"], $_SESSION["privileged_global_users"],
@@ -3379,7 +3417,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
         $cfgA = explode("\n", file_get_contents($cfgFile));
         $privileged_users = $_SESSION["privileged_global_users"]
                 = $_SESSION["privileged_global_users_wm"] = $_SESSION["course_of_studies_wm"]
-                = $_SESSION['CoS_department'] = $_SESSION['CoS_privileged'] = array();
+                = $_SESSION['CoS_department'] = $_SESSION['CoS_privileged']  = $_SESSION['CoS_privileged_SGL'] = array();
         foreach ($cfgA as $line) {
             $CoS = "";
             $WM = "Nein";
@@ -3423,6 +3461,9 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                 if ((is_array($_SESSION['filter_course_of_studies']) and !empty($_SESSION['filter_course_of_studies'])
                    and in_array($CoS, $_SESSION['filter_course_of_studies'])) OR ev_is_cos_in_completed($evaluation, $CoS)) {
                     $_SESSION['CoS_privileged'][$username][$CoS] = $CoS;
+                    if (isset($parts[6]) AND $parts[6]=="SGL"){
+                        $_SESSION['CoS_privileged_SGL'][$username][$CoS] = $CoS;
+                    }
                     //print "<hr>\$users: " .var_export($users,true) .$user[0].": ". $_SESSION['CoS_privileged'][$user[0]][$user[1]] = $user[1]."<hr>";
                 }
                 else{

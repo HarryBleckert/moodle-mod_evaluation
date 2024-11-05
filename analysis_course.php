@@ -526,7 +526,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
         echo "</div>\n";
     }
     //print safeCount($_SESSION["allteachers"][$courseid]);nl2br(var_export($_SESSION["allteachers"][$courseid]));
-    if (!$courseid or safeCount($_SESSION["allteachers"][$courseid]) > 1)  // ( $evaluation->teamteaching ) )
+    if ( (!$courseid or safeCount($_SESSION["allteachers"][$courseid]) > 1) AND !isset($_SESSION['CoS_privileged_sgl'][$USER->username]))
     {    // Process teachers select form.
         $teacherselectform = new mod_evaluation_teachers_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
         if ($data = $teacherselectform->get_data()) {

@@ -419,7 +419,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             echo get_string("courses", "evaluation");
             echo "</button>";
 
-            if ($isStudent or defined('EVALUATION_OWNER')) { // ($isTeacher and $teacherid)
+            if ($isStudent or (defined('EVALUATION_OWNER') AND !isset($_SESSION['CoS_privileged_sgl'][$USER->username]))) { // ($isTeacher and $teacherid)
                 if ($allSelected == "allTeachers") {
                     $style = $selectStyle;
                     $value = "";
@@ -851,7 +851,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 }
                 $fullname = ($uRecord->alternatename ? $uRecord->alternatename : $uRecord->firstname) . " " . $uRecord->lastname;
             }
-            if (defined('EVALUATION_OWNER')) {
+            if (defined('EVALUATION_OWNER') && !isset($_SESSION['CoS_privileged_sgl'][$USER->username])) {
                 $links = '<a href="print.php?id=' . $id . '&showTeacher=' . $allResult->teacherid
                         . '" target="analysis">' . $fullname . "</a>";
             } else {
