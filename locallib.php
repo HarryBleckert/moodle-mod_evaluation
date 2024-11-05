@@ -886,7 +886,9 @@ function evaluation_LoginAs() {
     foreach ($_SESSION['CoS_privileged'] AS $CoSuser=>$CoSA){
         foreach ( $CoSA AS $cusername => $CoS){
             if ( in_array($CoS, $sg_filter)){
-                $CoS_privileged[$CoSuser] = $CoS;
+                if (!isset($_SESSION['CoS_privileged_sgl'][$CoSuser])) {
+                    $CoS_privileged[$CoSuser] = $CoS;
+                }
             }
         }
     }
