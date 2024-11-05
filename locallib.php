@@ -1390,7 +1390,7 @@ function validate_evaluation_sessions($evaluation) {
                 $_SESSION["teamteaching_courses"], $_SESSION["teamteaching_courseids"], $_SESSION["questions"],
                 $_SESSION["participating_courses_of_studies"], $_SESSION['EVALUATION_OWNER'],
                 $_SESSION['filter_course_of_studies'], $_SESSION['course_of_studies'], $_SESSION["notevaluated"], $_SESSION['CoS_department'],
-                $_SESSION['CoS_privileged'], $_SESSION['CoS_privileged_SGL'], $_SESSION['filter_courses'],
+                $_SESSION['CoS_privileged'], $_SESSION['CoS_privileged_sgl'], $_SESSION['filter_courses'],
                 $_SESSION["numStudents"], $_SESSION["possible_evaluations"],
                 $_SESSION["possible_active_evaluations"], $_SESSION["active_teacher"], $_SESSION["active_student"],
                 $_SESSION["num_courses_of_studies"], $_SESSION["duplicated"], $_SESSION["orderBy"],
@@ -3419,7 +3419,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
         $cfgA = explode("\n", file_get_contents($cfgFile));
         $privileged_users = $_SESSION["privileged_global_users"]
                 = $_SESSION["privileged_global_users_wm"] = $_SESSION["course_of_studies_wm"]
-                = $_SESSION['CoS_department'] = $_SESSION['CoS_privileged']  = $_SESSION['CoS_privileged_SGL'] = array();
+                = $_SESSION['CoS_department'] = $_SESSION['CoS_privileged']  = $_SESSION['CoS_privileged_sgl'] = array();
         foreach ($cfgA as $line) {
             $CoS = "";
             $WM = "Nein";
@@ -3464,7 +3464,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                    and in_array($CoS, $_SESSION['filter_course_of_studies'])) OR ev_is_cos_in_completed($evaluation, $CoS)) {
                     $_SESSION['CoS_privileged'][$username][$CoS] = $CoS;
                     if (isset($parts[6]) AND $parts[6]=="SGL"){
-                        $_SESSION['CoS_privileged_SGL'][$username][$CoS] = $CoS;
+                        $_SESSION['CoS_privileged_sgl'][$username][$CoS] = $CoS;
                     }
                     //print "<hr>\$users: " .var_export($users,true) .$user[0].": ". $_SESSION['CoS_privileged'][$user[0]][$user[1]] = $user[1]."<hr>";
                 }
