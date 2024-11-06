@@ -3463,7 +3463,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                 if ((is_array($_SESSION['filter_course_of_studies']) and !empty($_SESSION['filter_course_of_studies'])
                    and in_array($CoS, $_SESSION['filter_course_of_studies'])) OR ev_is_cos_in_completed($evaluation, $CoS)) {
                     $_SESSION['CoS_privileged'][$username][$CoS] = $CoS;
-                    if (isset($parts[6]) AND $parts[6]=="SGL"){
+                    if (isset($parts[6]) AND (strtolower($parts[6])=="sgl" OR strtolower($parts[6])=="studiengangsleitung")){
                         $_SESSION['CoS_privileged_sgl'][$username][$CoS] = $CoS;
                     }
                     //print "<hr>\$users: " .var_export($users,true) .$user[0].": ". $_SESSION['CoS_privileged'][$user[0]][$user[1]] = $user[1]."<hr>";
