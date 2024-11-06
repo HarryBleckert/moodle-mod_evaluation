@@ -868,7 +868,7 @@ function evaluation_LoginAs() {
            $courseid, $teacherid, $course_of_studiesID, $evaluation, $downloading;
 
     //if ( $USER->username !=="khayat" AND !evaluation_debug( false ) AND empty($_SESSION["LoggedInAs"]) )
-    if ((!is_siteadmin() OR $USER->username !=="khayat") and empty($_SESSION["LoggedInAs"])) {
+    if ((!is_siteadmin() OR $USER->username !=="gorling" OR $USER->username !=="khayat") and empty($_SESSION["LoggedInAs"])) {
         return false;
     }
     if (!defined("SiteEvaluation") or !empty($downloading)
@@ -3548,16 +3548,6 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
         return $privileged_users;
     } else if (!isset($_SESSION['ev_global_cfgfile'])) {
         $_SESSION['ev_global_cfgfile'] = false;
-        print "<br><hr><b>Datei für Liste der privilegierten Personen ($cfgFile) kann nicht eingelesen werden!</b><br>
-				Format: comma separated csv file. No text delimiters<br>
-				Kommentare: vorangestelltes '#'.<br>
-				Header: Anmeldename,Exakter Moodle Name des Studiengangs,Fachbereich,Weiterbildende Master,Vorname,Name,Funktion<br>
-				- Wenn die Spalte Studiengang leer bleibt sind die Privilegien Global auf alle evaluierten Studiengänge.<br>
-				- Wenn die Spalte Fachbereich (FB) leer bleibt gilt der Fachbereich als nicht gesetzt.
-				- Wenn bei Personen mit globalen Privilegien die Spalte Weiterbildende Master auf \"Nein\" gesetzt ist, ist der Zugriff auf WM Studiengänge ausgeschlossen.<br>
-				- Wenn die Spalte Weiterbildende Master auf \"Ja\" gesetzt ist, gilt der Studiengang als WM Studiengang.<br>
-				- Wenn die Spalte Studiengang einen evaluierten Studiengang benennt, dann sind die Privilegien auf diesen Studiengang begrenzt.<hr><br>
-		\n";
     }
 }
 
