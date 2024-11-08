@@ -866,9 +866,8 @@ function get_department_from_cos($cos) {
 function evaluation_LoginAs() {
     global $CFG, $DB, $USER, $PAGE, $OUTPUT, $id, $teacheridSaved,
            $courseid, $teacherid, $course_of_studiesID, $evaluation, $downloading;
-
-    //if ( $USER->username !=="khayat" AND !evaluation_debug( false ) AND empty($_SESSION["LoggedInAs"]) )
-    if ((!is_siteadmin() AND $USER->username !=="bleckerth"
+    // !is_siteadmin() AND
+    if (($USER->username !=="harry"
                     AND $USER->username !=="gorling" AND $USER->username !=="khayat") and empty($_SESSION["LoggedInAs"])) {
         return false;
     }
