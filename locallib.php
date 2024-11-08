@@ -868,7 +868,8 @@ function evaluation_LoginAs() {
            $courseid, $teacherid, $course_of_studiesID, $evaluation, $downloading;
 
     //if ( $USER->username !=="khayat" AND !evaluation_debug( false ) AND empty($_SESSION["LoggedInAs"]) )
-    if ((!is_siteadmin() AND $USER->username !=="gorling" AND $USER->username !=="khayat") and empty($_SESSION["LoggedInAs"])) {
+    if ((!is_siteadmin() AND $USER->username !=="bleckerth"
+                    AND $USER->username !=="gorling" AND $USER->username !=="khayat") and empty($_SESSION["LoggedInAs"])) {
         return false;
     }
     if (!defined("SiteEvaluation") or !empty($downloading)
