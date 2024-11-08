@@ -5,13 +5,22 @@
 #,Bitte unbedingt auf korrekte Groß- und Kleinschreibung achten.,,,,,
 #,Studiengänge und Namen können mehrfach eingegeben werden, je nach Zuordnung.,,,,,
 #,Fehlerhafte Daten können nicht zugeordnet werden.,,,,,
-#,,Bitte für jeden Studiengang den Fachbereich eintragen,,,,
+#,Erweiterte Hinweise zum Ausfüllen der Tabelle: ,,,,,
+#,Kommentare: vorangestelltes '#'. ,,,,,
+#,Header: Anmeldename,Exakter Moodle Name des Studiengangs, Fachbereich, Weiterbildende Master, Vorname, Name, Funktion ,,,,,
+#,- Wenn die Spalte Studiengang leer bleibt sind die Privilegien Global auf alle evaluierten Studiengänge.,,,,,
+#,- Wenn die Spalte Fachbereich (FB) leer bleibt gilt der Fachbereich als nicht gesetzt.,,,,,
+#,- Wenn bei Personen mit globalen Privilegien die Spalte Weiterbildende Master auf 'Nein' gesetzt ist, ist der Zugriff auf WM Studiengänge ausgeschlossen.,,,,,
+#,- Wenn die Spalte Weiterbildende Master auf \"Ja\" gesetzt ist, gilt der Studiengang als WM Studiengang.,,,,,
+#,- Wenn die Spalte Studiengang einen evaluierten Studiengang benennt, dann sind die Privilegien auf diesen Studiengang begrenzt.,,,,,
+#,- Wenn die Spalte Funktion zusätzlich den Text 'SGL' oder 'Studiengangsleitung' enthält, dann können die Auswertungen für Dozent_innen nicht eingesehen werden.,,,,,
+#,,,,,,
 #,bei den farblich markierten Studiengängen handelt es sich um die weiterbildenden Masterstudiengänge an der ASH,,Das Feld WM markiert weiterbildende Master,,,
 #Anmeldename,Exakter Moodle Name des Studiengangs,FB,WM,Vorname,Name,Funktion
-voss,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Anja,Voss,Prorektorin
-khayat,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Berthe,Khayat,QM Referentin
-gorling,#alle grundständigen Studiengänge und weiterbildenden Master,,Ja,Karsten,Gorling,Leiter ComZ
-00053389,#alle grundständigen Studiengänge,,Nein,Zumrud,Guliyeva,stud. Beschäftigte LVE
+voss,,,Ja,Anja,Voss,Prorektorin
+khayat,,,Ja,Berthe,Khayat,QM Referentin
+gorling,,,Ja,Karsten,Gorling,Leiter ComZ
+00053389,,,Nein,Zumrud,Guliyeva,stud. Beschäftigte LVE
 bettig,Pflege (primärqualifizierend) (B.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
 bettig,Physiotherapie-Ergotherapie - AddIS (B.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
 bettig,Physiotherapie-Ergotherapie - PQS (B.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
@@ -22,20 +31,35 @@ bettig,Management und Versorgung im Gesundheitswesen (B.Sc.),2,Nein,Uwe,Bettig,D
 bettig,Kindheitspädagogik (B.A.),2,Nein,Uwe,Bettig,Dekan FB2
 bettig,Management und Qualitätsentwicklung im Gesundheitswesen (M.Sc.),2,Nein,Uwe,Bettig,Dekan FB2
 brodowskim,Pflege (primärqualifizierend) (B.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Physiotherapie-Ergotherapie - AddIS (B.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Physiotherapie-Ergotherapie - PQS (B.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Gesundheits- und Pflegemanagement (B.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Erziehung und Bildung in der Kindheit (B.A.),2,Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Erziehung und Bildung in der Kindheit (B.A.) - berufsintegrierend,2,Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Management und Versorgung im Gesundheitswesen (B.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
+brodowskim,Physiotherapie-Ergotherapie - AddIS (B.Sc.),2,Nein,Michael,Brodowski,Dekan FB2
+brodowskim,Physiotherapie-Ergotherapie - PQS (B.Sc.),2,Nein,Michael,Brodowski,Dekan FB2
+brodowskim,Gesundheits- und Pflegemanagement (B.Sc.),2,Nein,Michael,Brodowski,Dekan FB2
+brodowskim,Erziehung und Bildung in der Kindheit (B.A.),2,Nein,Michael,Brodowski,Dekan FB2
+brodowskim,Erziehung und Bildung in der Kindheit (B.A.) - berufsintegrierend,2,Nein,Michael,Brodowski,Dekan FB2
+brodowskim,Management und Versorgung im Gesundheitswesen (B.Sc.),2,Nein,Michael,Brodowski,Dekan FB2
 brodowskim,Kindheitspädagogik (B.A.),2,Nein,Michael,Brodowski,Prodekan FB2
-brodowskim,Management und Qualitätsentwicklung im Gesundheitswesen (M.Sc.),2,Nein,Michael,Brodowski,Prodekan FB2
+brodowskim,Management und Qualitätsentwicklung im Gesundheitswesen (M.Sc.),2,Nein,Michael,Brodowski,Dekan FB2
 beyerl,Praxisforschung in Sozialer Arbeit und Pädagogik (M.A.),1,Nein,Luzi,Beyer,Prodekanin FB1
 beyerl,Soziale Arbeit (B.A.),1,Nein,Luzi,Beyer,Prodekanin FB1
-beyerl,Soziale Arbeit - Kritische Diversity und Community Studies (KriDiCo) (M.A.),1,Nein,Luzi,Beyer,Prodekanin FB1
+beyerl,Soziale Arbeit - Kritische Diversity und Community Studies (KriDiCo) (M.A.),1,Nein,Luzi,Beyer,Prodekan FB2
 stapfh,Praxisforschung in Sozialer Arbeit und Pädagogik (M.A.),1,Nein,Heinz,Stapf-Finé,Dekan FB1
 stapfh,Soziale Arbeit (B.A.),1,Nein,Heinz,Stapf-Finé,Dekan FB1
 stapfh,Soziale Arbeit - Kritische Diversity und Community Studies (KriDiCo) (M.A.),1,Nein,Heinz,Stapf-Finé,Dekan FB1
+mayerm,Soziale Arbeit (B.A.),1,Nein,Marion,Mayer,Studiengangsleitung
+lehnerte,Praxisforschung in Sozialer Arbeit und Pädagogik (M.A.),1,Nein,Esther,Lehnert,Studiengangsleitung
+schumacherl,Gesundheits- und Pflegemanagement (B.Sc.),2,Nein,Lutz,Schumacher,Studiengangsleitung
+schumacherl,Management und Versorgung im Gesundheitswesen (B.Sc.),2,Nein,Lutz,Schumacher,Studiengangsleitung
+smykallas,Soziale Arbeit - Kritische Diversity und Community Studies (KriDiCo) (M.A.),1,Nein,Sandra ,Smykalla,Studiengangsleitung
+russoj,Soziale Arbeit - Kritische Diversity und Community Studies (KriDiCo) (M.A.),1,Nein,Jasna,Russo,Studiengangsleitung
+rottenkolber,Management und Qualitätsentwicklung im Gesundheitswesen (M.Sc.),2,Nein,Dominik,Rottenkolber,Studiengangsleitung
+schmudec,Erziehung und Bildung in der Kindheit (B.A.),2,Nein,Corinna ,Schmude,Studiengangsleitung
+widdascheckc,Erziehung und Bildung in der Kindheit (B:A:),2,Nein,Christian ,Widdascheck,Studiengangsleitung
+graeske,Pflege (primärqualifizierend) (B.Sc.),2,Nein,Johannes,Gräske,Studiengangsleitung
+boguthk,Pflege (primärqualifizierend) (B.Sc.),2,Nein,Katja ,Boguth,Studiengangsleitung
+kraus,Physiotherapie-Ergotherapie - PQS (B.Sc.),2,Nein,Elke,Kraus,Studiengangsleitung
+erhartm,Physiotherapie-Ergotherapie - PQS (B.Sc.),2,Nein,Michael,Erhart,Studiengangsleitung
+kraus,Physiotherapie-Ergotherapie - AddIS (B.Sc.),2,Nein,Elke,Kraus,Studiengangsleitung
+erhartm,Physiotherapie-Ergotherapie- AddIS (B.SC.),2,Nein,Michael,Erhart,Studiengangsleitung
 baerg,Biographisches und Kreatives Schreiben (M.A.),,Ja,Gesine,Bär,Prorektorin
 baerg,Klinische Sozialarbeit (M. A.),,Ja,Gesine,Bär,Prorektorin
 baerg,Kinderschutz (M.A.),,Ja,Gesine,Bär,Prorektorin
