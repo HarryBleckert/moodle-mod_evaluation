@@ -176,7 +176,7 @@ if ($evaluation->course == SITEID) {
             }
             // Show all results for $cosPrivileged
             if ($cosPrivileged){
-                $urlparamsIDT['analysisCoS'] = 1;
+                $urlparams['analysisCoS'] = 1;
                 $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparams);
                 $row[] = new tabobject('analysisCoS', $analysisurl->out(), "Auswertung eigene Studiengänge");
             }
