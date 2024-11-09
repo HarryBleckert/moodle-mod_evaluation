@@ -180,16 +180,15 @@ if ($Teacher) {
 
 /// print the tabs
 $current_tab = 'analysis';
-if ($Teacher and !$courseid) {
+if ($analysisCoS){
+    $current_tab = 'analysisCoS';
+} else if ($Teacher and !$courseid) {
     if ($teacherid) {
         $current_tab = 'analysisTeacher';
     } else {
         $current_tab = 'analysisASH';
     }
-} else if ($analysisCoS){
-    $current_tab = 'analysisCoS';
-}
-else if ((!$isPermitted and !$courseid) and !$is_open) {
+} else if ((!$isPermitted and !$courseid) and !$is_open) {
     $current_tab = 'analysisASH';
 }
 
