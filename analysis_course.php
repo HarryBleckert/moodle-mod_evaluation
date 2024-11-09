@@ -503,8 +503,10 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
         echo "</div>\n";
     }
     // Process course of studies select form.
-    if ($SiteEvaluation and (!$cosPrivileged OR $cosStudies)
-            AND !$courseid AND $_SESSION["participating_courses_of_studies"]>1) {
+    if ($SiteEvaluation and $cosStudies>1
+            AND !$courseid AND $_SESSION["participating_courses_of_studies"]>1
+            AND (!$cosPrivileged OR (isset($_SESSION['CoS_privileged'][$USER->username])
+                    ?count($_SESSION['CoS_privileged'][$USER->username])>1:false))){
         $studyselectform =
                 new mod_evaluation_course_of_studies_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
         if ($data = $studyselectform->get_data()) {
