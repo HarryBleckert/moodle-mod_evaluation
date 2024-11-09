@@ -134,7 +134,7 @@ if (!isset($_SESSION['myEvaluations'])) {
     $_SESSION["myEvaluationsName"] = $evaluation->name;
 }
 $evaluationstructure = new mod_evaluation_structure($evaluation, $PAGE->cm, $courseid, null, 0,
-            $teacherid, $course_of_studies, $course_of_studiesID, $department,$analysisCoS);
+            $teacherid, $course_of_studies, $course_of_studiesID, $department, $analysisCoS);
 
 $cosStudies = safeCount($evaluationstructure->get_completed_course_of_studies());
 $completed_responses = $evaluationstructure->count_completed_responses();
@@ -186,7 +186,10 @@ if ($Teacher and !$courseid) {
     } else {
         $current_tab = 'analysisASH';
     }
-} else if ((!$isPermitted and !$courseid) and !$is_open) {
+} else if ($analysisCoS){
+    $current_tab = 'analysisCoS';
+}
+else if ((!$isPermitted and !$courseid) and !$is_open) {
     $current_tab = 'analysisASH';
 }
 
