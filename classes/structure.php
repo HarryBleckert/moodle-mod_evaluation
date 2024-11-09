@@ -58,6 +58,7 @@ class mod_evaluation_structure {
     protected $course_of_studies = "";
     protected $course_of_studiesID = 0;
     protected $department = 0;
+    protected $analysisCoS = 0;
 
     /**
      * Constructor
@@ -72,7 +73,7 @@ class mod_evaluation_structure {
      * @param int $teacherid for selected teacher (for teamteaching only). Set to 0 as default.
      */
     public function __construct($evaluation, $cm = false, $courseid = 0, $templateid = null, $userid = 0, $teacherid = 0,
-            $course_of_studies = "", $course_of_studiesID = 0, $department = 0) {
+            $course_of_studies = "", $course_of_studiesID = 0, $department = 0, $analysisCoS = 0) {
         global $USER;
         if ((empty($evaluation->id) || empty($evaluation->course)) && (empty($cm->instance) || empty($cm->course))) {
             throw new coding_exception('Either $evaluation or $cm must be passed to constructor');
@@ -91,6 +92,7 @@ class mod_evaluation_structure {
         $this->course_of_studies = "";
         $this->course_of_studiesID = 0;
         $this->department = 0;
+        $this->analysisCoS = $analysisCoS ?: 0;
         if ($this->evaluation->course == SITEID) {
             $this->courseid = $courseid ?: 0;
             $this->teacherid = $teacherid ?: 0;
@@ -351,7 +353,10 @@ class mod_evaluation_structure {
      */
     public function count_completed_responses($groupid = 0, $today = false) {
         global $DB;
-        $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($this->evaluation, "completed");
+        $cosPrivileged_filter = "";
+        if ($this->analysisCoS) {
+            $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($this->evaluation, "completed");
+        }
         $params = ['evaluation' => $this->evaluation->id, 'groupid' => $groupid, 'courseid' => $this->courseid];
         $filter = $fstudies = $fteacher = $ftoday = $fcourseid = "";
         if ($this->get_course_of_studies()) {
@@ -464,7 +469,7 @@ class mod_evaluation_structure {
             return $this->allcourses;
         }
         $is_open = evaluation_is_open($this->evaluation);
-        $filter = "";
+        $filter = $CoS_Filter = "";
         if ($this->get_teacherid()) {
             $filter .= " AND completed.teacherid=" . $this->get_teacherid();
         }
@@ -473,7 +478,9 @@ class mod_evaluation_structure {
         }
 
         // handle CoS privileged users
-        $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
+        if ($this->analysisCoS) {
+            $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
+        }
         if ($CoS_Filter) {
             $filter .= $CoS_Filter;
         }
@@ -518,7 +525,7 @@ class mod_evaluation_structure {
             return $this->allstudies;
         }
 
-        $filter = "";
+        $filter = $CoS_Filter = "";
         if ($this->get_teacherid()) {
             $filter .= " AND completed.teacherid=" . $this->get_teacherid();
         }
@@ -527,7 +534,9 @@ class mod_evaluation_structure {
         }
 
         // handle CoS privileged users
-        $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation()); // , "completed" );
+        if ($this->analysisCoS) {
+            $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation());
+        }
         if ($CoS_Filter) {
             $filter .= $CoS_Filter;
         }
@@ -578,7 +587,7 @@ class mod_evaluation_structure {
         }
 
         $is_open = evaluation_is_open($this->evaluation);
-        $filter = "";
+        $filter = $CoS_Filter = "";
         if ($this->get_courseid()) {
             $filter .= " AND completed.courseid=" . $this->get_courseid();
         } else if ($this->get_course_of_studies()) {
@@ -586,7 +595,9 @@ class mod_evaluation_structure {
         }
 
         // handle CoS privileged users
-        $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
+        if ($this->analysisCoS) {
+            $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
+        }
         if ($CoS_Filter) {
             $filter .= $CoS_Filter;
         }
@@ -625,7 +636,7 @@ class mod_evaluation_structure {
             return $this->alldepartments;
         }
         /*
-        $filter = "";
+        $filter = $CoS_Filter = "";
         if ($this->get_courseid()) {
             $filter .= " AND completed.courseid=" . $this->get_courseid();
         } else if ($this->get_course_of_studies()) {
@@ -636,7 +647,9 @@ class mod_evaluation_structure {
         }
 
         // handle CoS privileged users
-        $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
+        if ($this->analysisCoS) {
+            $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
+        }
         if ($CoS_Filter) {
             $filter .= $CoS_Filter;
         }

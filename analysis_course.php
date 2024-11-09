@@ -38,6 +38,7 @@ $TextOnly = optional_param('TextOnly', false, PARAM_INT);
 $graphicsonly= optional_param('graphicsonly', false, PARAM_INT);
 $Chart = optional_param('Chart', false, PARAM_ALPHANUM);
 $SetShowGraf = optional_param('SetShowGraf', 'verbergen', PARAM_ALPHANUM);
+$analysisCoS = optional_param('analysisCoS', false, PARAM_INT);
 if (!isset($_SESSION["Chart"])) {
     $_SESSION["Chart"] = "bar";
 }
@@ -133,7 +134,8 @@ if (!isset($_SESSION['myEvaluations'])) {
     $_SESSION["myEvaluationsName"] = $evaluation->name;
 }
 $evaluationstructure = new mod_evaluation_structure($evaluation, $PAGE->cm, $courseid, null, 0,
-        $teacherid, $course_of_studies, $course_of_studiesID,$department);
+            $teacherid, $course_of_studies, $course_of_studiesID, $department,$analysisCoS);
+
 $cosStudies = safeCount($evaluationstructure->get_completed_course_of_studies());
 $completed_responses = $evaluationstructure->count_completed_responses();
 $minResults = evaluation_min_results($evaluation);
@@ -187,7 +189,10 @@ if ($Teacher and !$courseid) {
 } else if ((!$isPermitted and !$courseid) and !$is_open) {
     $current_tab = 'analysisASH';
 }
+
+
 require('tabs.php');
+
 
 if ($SiteEvaluation and !$courseid and (!defined('EVALUATION_OWNER') ? true : !$cosPrivileged)) {
     $CourseTitle = "\n<span style=\"font-size:12pt;font-weight:bold;display:inline;\">" . get_string("all_courses", "evaluation") .
@@ -280,7 +285,8 @@ if (!$courseid) {
 evaluation_showLoading();
 
 // set filter forms
-if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context) || defined('EVALUATION_OWNER'))) {
+if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context)
+                || (defined('EVALUATION_OWNER') AND ($cosPrivileged ?!$analysisCoS:true )))) {
 
     // construct questions and subquery arrays
     // start of snippets duplicated in compare_results.php

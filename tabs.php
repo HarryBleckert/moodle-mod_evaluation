@@ -174,6 +174,12 @@ if ($evaluation->course == SITEID) {
             } else {
                 $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'evaluation'));
             }
+            // Show all results for $cosPrivileged
+            if ($cosPrivileged){
+                $urlparamsIDT['analysisCoS'] = 1;
+                $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparams);
+                $row[] = new tabobject('analysisCoS', $analysisurl->out(), "Auswertung eigene Studiengänge");
+            }
             //$txt = ($courseid||$teacherid) ?" mit Vergleich" :"";
             // if (!$is_open or $isTeacher OR defined('EVALUATION_OWNER')) {
                 $urlparamsIDT['showCompare'] = 1;
@@ -181,8 +187,6 @@ if ($evaluation->course == SITEID) {
                 $row[] = new tabobject('statistics', $statsurl->out(), "Statistik");
             // }
 
-            $cosPrivileged = evaluation_cosPrivileged($evaluation);
-            //if ( defined('EVALUATION_OWNER') ?!$cosPrivileged :false )
             //if ( is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]) )
             if (is_siteadmin() or isset($_SESSION["privileged_global_users"][$USER->username])) {
                 $reporturl = new moodle_url('/mod/evaluation/show_entries.php', $urlparams);
