@@ -149,7 +149,7 @@ if (!isset($_SESSION["myEvaluations"])) {
     $_SESSION["myEvaluations"] = get_evaluation_participants($evaluation, $USER->id);
 }
 
-$evaluationstructure = new mod_evaluation_structure($evaluation, $cm, $courseid, null, 0, $teacherid);
+$evaluationstructure = new mod_evaluation_structure($evaluation, $cm, $courseid, null, 0, $teacherid, , , ,1);
 
 if ($courseid) {
     $completed_responses = $evaluationstructure->count_completed_responses();
