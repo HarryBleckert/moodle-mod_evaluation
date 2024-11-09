@@ -867,7 +867,7 @@ function evaluation_LoginAs() {
     global $CFG, $DB, $USER, $PAGE, $OUTPUT, $id, $teacheridSaved,
            $courseid, $teacherid, $course_of_studiesID, $evaluation, $downloading;
     // !is_siteadmin() AND
-    if (!(!is_siteadmin() OR $USER->username =="harry" OR $USER->username =="bleckerth" OR $USER->username =="gorling" OR $USER->username =="khayat")
+    if (!(is_siteadmin() OR $USER->username =="harry" OR $USER->username =="bleckerth" OR $USER->username =="gorling" OR $USER->username =="khayat")
             AND empty($_SESSION["LoggedInAs"])) {
         return false;
     }
