@@ -288,7 +288,7 @@ evaluation_showLoading();
 
 // set filter forms
 if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context)
-                || (defined('EVALUATION_OWNER') AND ($cosPrivileged ?!$analysisCoS:true )))) {
+                || (defined('EVALUATION_OWNER') AND ($cosPrivileged ?$analysisCoS:true )))) {
 
     // construct questions and subquery arrays
     // start of snippets duplicated in compare_results.php
