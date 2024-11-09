@@ -145,6 +145,10 @@ if ($privGlobalUser) {
     $minResults = $minResultsText = $minResultsPriv;
 }
 
+if (isset($_SESSION['CoS_privileged_sgl'][$USER->username])){
+    $graphicsonly = true;
+}
+
 
 $numTextQ = evaluation_count_qtype($evaluation, "textarea");
 $is_open = evaluation_is_open($evaluation);
@@ -235,7 +239,7 @@ if ($Teacher) {    //if ( !defined( "isTeacher") ) { define( "isTeacher", true )
         }
     }
 }
-if ($numTextQ and $showUnmatched_minResults) {
+if (!$graphicsonly AND $numTextQ and $showUnmatched_minResults) {
     echo '<br><b style="color:#000065;">Für diese Auswertung wurden weniger als ' . ($minResultsText)
             . " Abgaben gemacht. Daher können Sie keine Textantworten einsehen!</b><br>\n";
 }
@@ -634,6 +638,7 @@ if (($isPermitted or ($Teacher and $teacherid)) and $evaluationstructure->count_
 
 // show / print only text
 if ($numTextQ and (((!$showUnmatched_minResults and ($completed_responses >= $minResultsText
+                                AND !isset($_SESSION['CoS_privileged_sgl'][$USER->username])
                                 AND ($cosPrivileged or $Teacher)))) or
                 (defined('EVALUATION_OWNER') ? !$cosPrivileged : false))) {
     ?>
@@ -763,7 +768,6 @@ if ($courseitemfilter > 0) {
     echo get_string('back');
     echo '</a></p>';
 } else {
-
 
     // new feature to compare results -- not working, need print - function to compare average values
     $compare = false; // is_siteadmin() AND ( $courseid OR $course_of_studiesID OR $teacherid);
