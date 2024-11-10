@@ -194,7 +194,6 @@ $showPrivDocu = '<a href="print.php?id='.$id.'&showPrivUsers=1">'
 . "<b>Übersicht privilegierte Personen</b></a> - "
 . '<a href="/downloads/Evaluationen mit ASH Moodle -Dokumentation.pdf" target="doku">'
 . "<b>Dokumentation öffnen/herunterladen</b></a><br>\n";
-print $showPrivDocu;
 
 if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
     $evaluation_is_WM_disabled =
@@ -577,8 +576,10 @@ if ($evaluation->timeopen and $evaluation->timeclose) {
 echo "<b>" . get_string('mode', 'evaluation') . "</b>: " . ($evaluation->anonymous ? "Anonym" : "Personalisiert") . " - "
         . "<b>" . get_string("questions", "evaluation") . "</b>: " . $_SESSION["questions"] . " " . $previewQ . "<br>\n";
 
-if ($privGlobalUser AND !$courseid) {
+if (!$courseid AND ($privGlobalUser OR !$is_open) {
     print ev_get_reminders($evaluation,$id);
+    // show kiat of privileged persons and link to docu
+    print $showPrivDocu;
 }
 
 if ($evaluationcompletion->can_complete()) {
