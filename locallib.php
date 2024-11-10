@@ -4692,11 +4692,13 @@ function ev_get_reminders($evaluation, $id) {
     global $DB;
     $nonresponding = " (NR)";
     $remindertxt = "Hinweismails wurden versandt am";
+    $is_open = evaluation_is_open($evaluation);
     /*
      20240102:teachers,students
      20240122:teachers,students
      */
-    if( is_siteadmin() ){
+
+    if( is_siteadmin() AND $is_open){
         $send_reminders = optional_param('send_reminders', false, PARAM_INT);
         $role = optional_param('role', false, PARAM_TEXT);
         $noreplies = optional_param('noreplies', false, PARAM_INT);
@@ -4730,10 +4732,11 @@ function ev_get_reminders($evaluation, $id) {
     }
     $reminders = $evaluation->reminders;
     if (empty($reminders)){
-        return "$remindertxt: ./.";
+        return "$remindertxt: " . ($is_open ?"./." :"nicht erfasst");
     }
     $remindersA = explode("\n",$reminders);
-    echo '<b title="Hinweismails können nur von Admins versandt werden. Der Vermerk NR weist darauf hin,'
+    $retval = "";
+    $retval .=  '<b title="Hinweismails können nur von Admins versandt werden. Der Vermerk NR weist darauf hin,'
             . ' dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben'
             . ' angeschrieben wurden.">' . $remindertxt . '</b>: ';
     foreach ( $remindersA AS $line){
@@ -4746,7 +4749,7 @@ function ev_get_reminders($evaluation, $id) {
             continue;
         }
         $ndate = $lineA[0];
-        echo "<b>$ndate</b>: ";
+        $retval .= "<b>$ndate</b>: ";
         $roles = explode(",",$lineA[1]);
         $cnt = 0;
         $alen = safeCount($roles);
@@ -4759,17 +4762,15 @@ function ev_get_reminders($evaluation, $id) {
             if (strstr("students,teachers,participants",$role)) {
                 $role =  get_string($role,"evaluation");
             }
-            echo $role . $nrd;
+            $retval .= $role . $nrd;
             $cnt++;
             if ($cnt<$alen){
-                echo ", ";
+                $retval .= ", ";
             }
             else{
-                echo ". ";
+                $retval .= ". ";
             }
         }
     }
-    if( is_siteadmin() ){
-
-    }
+    return $retval ."</b>\n";
 }
