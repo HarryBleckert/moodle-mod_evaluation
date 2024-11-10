@@ -576,7 +576,7 @@ if ($evaluation->timeopen and $evaluation->timeclose) {
 echo "<b>" . get_string('mode', 'evaluation') . "</b>: " . ($evaluation->anonymous ? "Anonym" : "Personalisiert") . " - "
         . "<b>" . get_string("questions", "evaluation") . "</b>: " . $_SESSION["questions"] . " " . $previewQ . "<br>\n";
 
-if (!$courseid AND ($privGlobalUser OR !$is_open) {
+if (!$courseid AND ($privGlobalUser OR !$is_open)) {
     print ev_get_reminders($evaluation,$id);
     // show kiat of privileged persons and link to docu
     print $showPrivDocu;
