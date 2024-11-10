@@ -310,7 +310,8 @@ $msg_teachers = "Guten Tag $fullname<br>
                 ? "nehmen. Bitte motivieren Sie die Studierenden zur Teilnahme" : "genommen haben") . ".<br>
                         Für Ihre eigenen Kurse können Sie die statistische Auswertung einsehen, sobald $minResults Abgaben vorliegen. 
                         Ab $minResultsText Abgaben können Sie auch die Textantworten einsehen.<br>\n
-                        Herzliche Grüße vom Team der Lehrveranstaltungsevaluation<br>\n";
+                        Herzliche Grüße vom Team der Lehrveranstaltungsevaluation<br>\n"
+                        . $showPrivDocu;
 if ($is_open) {
     $days = remaining_evaluation_days($evaluation);
     $alert = "";
