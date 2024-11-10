@@ -19,7 +19,7 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_evaluation
+ * @package mod_valuation
  * patched by Harry.Bleckert@ASH-Berlin.eu to allow course teachers view results
  */
 
@@ -190,6 +190,11 @@ if (!$isNonResponStudent) {    // Print the tabs.
 } else {
     print "<br>\n";
 }
+$showPrivDocu = '<a href="print.php?id='.$id.'&showPrivUsers=1">'
+. "<b>Übersicht privilegierte Personen</b></a> - "
+. '<a href="/downloads/Evaluationen mit ASH Moodle -Dokumentation.pdf" target="doku">'
+. "<b>Dokumentation öffnen/herunterladen</b></a><br>\n";
+print $showPrivDocu;
 
 if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
     $evaluation_is_WM_disabled =
@@ -202,12 +207,7 @@ if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
                     . implode("\n", $_SESSION['CoS_privileged'][$USER->username])
                     . "\">Ihrer Studiengänge einsehen und herunterladen.</span><br>\n"
                     : " einsehen und herunterladen.$evaluation_is_WM_disabled<br>\n"
-                )
-            . '<a href="print.php?id='.$id.'&showPrivUsers=1">'
-            . "<b>Übersicht privilegierte Personen</b></a> - "
-
-            . '<a href="/downloads/Evaluationen mit ASH Moodle -Dokumentation.pdf" target="doku">'
-            . "<b>Dokumentation öffnen/herunterladen</b></a><hr>\n";
+                );
     echo $msg_privPersons;
 }
 

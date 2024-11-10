@@ -289,7 +289,9 @@ evaluation_showLoading();
 // set filter forms
 if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context)
                 || (defined('EVALUATION_OWNER') AND ($cosPrivileged ?$analysisCoS:true )))) {
-
+    if ($courseid){
+        print "<br>";
+    }
     // construct questions and subquery arrays
     // start of snippets duplicated in compare_results.php
     $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id 
