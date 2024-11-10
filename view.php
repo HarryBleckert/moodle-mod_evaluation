@@ -577,7 +577,7 @@ echo "<b>" . get_string('mode', 'evaluation') . "</b>: " . ($evaluation->anonymo
         . "<b>" . get_string("questions", "evaluation") . "</b>: " . $_SESSION["questions"] . " " . $previewQ . "<br>\n";
 
 if (!$courseid AND ($privGlobalUser OR !$is_open)) {
-    print ev_get_reminders($evaluation,$id);
+    print ev_get_reminders($evaluation,$id) . "<br>\n";
     // show kiat of privileged persons and link to docu
     print $showPrivDocu;
 }
