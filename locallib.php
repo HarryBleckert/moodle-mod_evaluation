@@ -4732,7 +4732,7 @@ function ev_get_reminders($evaluation, $id) {
     }
     $reminders = $evaluation->reminders;
     if (empty($reminders)){
-        return "$remindertxt: " . ($is_open ?"./." :"nicht erfasst");
+        return ""; // $remindertxt: " . ($is_open ?"./." :"nicht erfasst");
     }
     $remindersA = explode("\n",$reminders);
     $retval = "";
