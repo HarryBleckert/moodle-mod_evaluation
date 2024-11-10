@@ -4772,5 +4772,5 @@ function ev_get_reminders($evaluation, $id) {
             }
         }
     }
-    return $retval ."</b>\n";
+    return $retval ."</br>\n";
 }
