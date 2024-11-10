@@ -191,7 +191,7 @@ if (!$isNonResponStudent) {    // Print the tabs.
     print "<br>\n";
 }
 $showPrivDocu = '<a href="print.php?id='.$id.'&showPrivUsers=1">'
-. "<b>Übersicht privilegierte Personen</b></a> - "
+. "<b>Übersicht der für diese Evaluation zur Auswertung privilegierten Personen</b></a> - "
 . '<a href="/downloads/Evaluationen mit ASH Moodle -Dokumentation.pdf" target="doku">'
 . "<b>Dokumentation öffnen/herunterladen</b></a><br>\n";
 
@@ -206,7 +206,8 @@ if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
                     . implode("\n", $_SESSION['CoS_privileged'][$USER->username])
                     . "\">Ihrer Studiengänge einsehen und herunterladen.</span><br>\n"
                     : " einsehen und herunterladen.$evaluation_is_WM_disabled<br>\n"
-                );
+                )
+            . $showPrivDocu;
     echo $msg_privPersons;
 }
 
@@ -579,7 +580,7 @@ echo "<b>" . get_string('mode', 'evaluation') . "</b>: " . ($evaluation->anonymo
 if (!$courseid AND ($privGlobalUser OR !$is_open)) {
     print ev_get_reminders($evaluation,$id);
     // show kiat of privileged persons and link to docu
-    print $showPrivDocu;
+    // print $showPrivDocu;
 }
 
 if ($evaluationcompletion->can_complete()) {
