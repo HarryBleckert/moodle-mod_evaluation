@@ -871,9 +871,9 @@ function evaluation_LoginAs() {
             AND empty($_SESSION["LoggedInAs"])) {
         return false;
     }
-    if (!defined("SiteEvaluation") or !empty($downloading)
-            or (isset($_SESSION["EVALUATION_OWNER"]) and
-                    $_SESSION["EVALUATION_OWNER"] !== $USER->id and empty($_SESSION["LoggedInAs"]) and empty($USER->realuser))) {
+    if ($evaluation->course !== SITEID or !empty($downloading)){
+            // or (isset($_SESSION["EVALUATION_OWNER"]) and
+            //        $_SESSION["EVALUATION_OWNER"] !== $USER->id and empty($_SESSION["LoggedInAs"]) and empty($USER->realuser))) {
         return false;
     }
     $userid = false;
