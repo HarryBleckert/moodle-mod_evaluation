@@ -502,10 +502,37 @@ function xmldb_evaluation_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, $newversion, 'evaluation');
     }
+
     $newversion = 2024101400;
     if ($oldversion < $newversion) {
         $table = new xmldb_table('evaluation');
         $field = new xmldb_field('sort_tag',  XMLDB_TYPE_CHAR, '150', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
+
+    $newversion = 20241111100;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation');
+
+        $field = new xmldb_field('automaticreminders',  XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('sendername',  XMLDB_TYPE_CHAR, '150', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('sendermail',  XMLDB_TYPE_CHAR, '150', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('signature',  XMLDB_TYPE_CHAR, '150', null, null, null, '');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
