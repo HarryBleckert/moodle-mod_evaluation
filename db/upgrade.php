@@ -513,7 +513,7 @@ function xmldb_evaluation_upgrade($oldversion) {
         upgrade_mod_savepoint(true, $newversion, 'evaluation');
     }
 
-    $newversion = 2024111100;
+    $newversion = 2024111101;
     if ($oldversion < $newversion) {
         $table = new xmldb_table('evaluation');
 
