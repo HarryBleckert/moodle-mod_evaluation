@@ -234,6 +234,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
                 $default_values['sendermail'] = "khayat@ash-berlin.eu";
                 $default_values['sendername'] = "ASH Berlin (Qualitätsmanagement)";
                 $default_values['autoreminders'] = 1;
+                $default_values['signature'] = "Berthe Khayat und Harry Bleckert für das Evaluationsteam";
             }
             $default_values['semester'] = evaluation_get_current_semester();
             // no context yet, itemid not used
