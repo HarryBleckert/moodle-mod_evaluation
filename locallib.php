@@ -3519,6 +3519,8 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                 if (strstr( $row[0], "#")){
                     continue;
                 }
+                $username = trim($row[0]);
+                //$_SESSION["privileged_global_users_wm"][$username] = $username;
                 $out .= "<tr>\n";
                 if ($first) {
                     foreach ($row as $col) {

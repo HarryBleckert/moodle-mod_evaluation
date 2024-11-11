@@ -119,18 +119,20 @@ if (defined('EVALUATION_OWNER')) {
         require_once("print.js.php");
         exit;
     }
+
+    if ($showPrivUsers){
+        echo $goBack;
+        echo evPrintButton();
+        echo "\n<p>&nbsp;</p>\n";
+        print ev_set_privileged_users(true);
+        evaluation_footer();
+        $printWidth = "135vw";
+        require_once("print.js.php");
+        exit;
+    }
+
 }
 
-if ($showPrivUsers){
-    echo $goBack;
-    echo evPrintButton();
-    echo "\n<p>&nbsp;</p>\n";
-    print ev_set_privileged_users(true);
-    evaluation_footer();
-    $printWidth = "135vw";
-    require_once("print.js.php");
-    exit;
-}
 
 if ($showCompare) {
     require_once("compare_results.inc.php");

@@ -581,9 +581,9 @@ echo "<b>" . get_string('mode', 'evaluation') . "</b>: " . ($evaluation->anonymo
 if (!$courseid AND ($privGlobalUser OR !$is_open)) {
     print ev_get_reminders($evaluation,$id);
     // show kiat of privileged persons and link to docu
-    if ($isTeacher AND !$is_open AND !(defined('EVALUATION_OWNER') and $evaluation->course == SITEID)) {
+    /*if ($isTeacher AND !$is_open AND !(defined('EVALUATION_OWNER') and $evaluation->course == SITEID)) {
         print $showPrivDocu;
-    }
+    }*/
 }
 
 if ($evaluationcompletion->can_complete()) {
