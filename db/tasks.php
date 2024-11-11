@@ -26,6 +26,7 @@ $tasks = [
         [
                 'classname' => 'mod_evaluation\task\cron_task',
                 'blocking' => 0,
+                'disabled' => 0,
                 'minute' => '30',
                 'hour' => '17',
                 'day' => '*',
