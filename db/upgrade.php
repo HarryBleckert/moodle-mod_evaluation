@@ -517,7 +517,7 @@ function xmldb_evaluation_upgrade($oldversion) {
     if ($oldversion < $newversion) {
         $table = new xmldb_table('evaluation');
 
-        $field = new xmldb_field('automaticreminders',  XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $field = new xmldb_field('autoreminders',  XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
