@@ -4776,3 +4776,22 @@ function ev_get_reminders($evaluation, $id) {
     }
     return $retval ."</br>\n";
 }
+
+public static function cron() {
+    global $DB;
+
+    mtrace('Start processing send_reminders');
+
+    // Only ever send a max of one days worth of updates.
+    $yesterday = time() - (24 * 3600);
+    $timenow = time();
+    $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
+    $lastruntime = $task->get_last_run_time();
+    mtrace("Time now: $timenow - last runtime: $lastruntime");
+
+    mtrace('Done processing send_reminders');
+    // \core\cron::setup_user();
+
+
+    return true;
+}

@@ -15,19 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Evaluation version information
+ * Task schedule configuration for the plugintype_pluginname plugin.
  *
- * @package mod_evaluation
- * @author     Andreas Grabs
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   plugintype_pluginname
+ * @copyright Year, You Name <your@email.address>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2024111102;    // The current module version (Date: YYYYMMDDXX)
-$plugin->requires = 2020101100;    // Requires this Moodle version (3.9))
-$plugin->component = 'mod_evaluation';   // Full name of the plugin (used for diagnostics)
-$plugin->cron = 0;
-$plugin->maturity = MATURITY_STABLE; //MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC or MATURITY_STABLE
-$plugin->release = 'v1.4.10';
-$evaluation_version_intern = 1; //this version is used for restore older backups -- NOT YET UPDATED !!
+$tasks = [
+        [
+                'classname' => 'mod_evaluation\task\cron_task',
+                'blocking' => 0,
+                'minute' => '30',
+                'hour' => '17',
+                'day' => '*',
+                'month' => '*',
+                'dayofweek' => '0',
+        ],
+];
