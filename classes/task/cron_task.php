@@ -53,7 +53,7 @@ class cron_task extends \core\task\scheduled_task {
         // return true;
         require_once($CFG->dirroot . '/mod/evaluation/locallib.php');
         // \evaluation::cron();
-        cron();
+        ev_cron();
         return true;
     }
 }
