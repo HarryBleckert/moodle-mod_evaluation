@@ -93,7 +93,7 @@ $string['select_teacher'] = '<b>Bitte wählen Sie die Dozentin/den Dozenten für
 		Sie können einen Fragebogen pro Dozent_in ausfüllen<b>';
 $string['semesters'] = 'Semester';
 $string['sendername'] = 'Hinweismails: Absender Name';
-$string['sendername'] = 'Hinweismails: Absender Mailadresse';
+$string['sendermail'] = 'Hinweismails: Absender Mailadresse';
 $string['sexes'] = 'Geschlechter';
 $string['signature'] = 'Hinweismails: Signatur';
 $string['show_on_index'] = 'Evaluation auf der Evaluationsübersicht anzeigen';

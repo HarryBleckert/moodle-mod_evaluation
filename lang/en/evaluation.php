@@ -87,7 +87,7 @@ $string['select_teacher'] = '<b>Please select a teacher for this evaluation!</b>
 		You can give a separate evaluation of each teacher<b>';
 $string['semesters'] = 'Semesters';
 $string['sendername'] = 'Reminders: Sender name';
-$string['sendername'] = 'Reminders: Sender mailaddress';
+$string['sendermail'] = 'Reminders: Sender mailaddress';
 $string['sexes'] = 'Gender';
 $string['signature'] = 'Reminders: Signature';
 $string['show_on_index'] = 'Show Evaluation on Evaluation index page';
