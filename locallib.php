@@ -4777,7 +4777,7 @@ function ev_get_reminders($evaluation, $id) {
     return $retval ."</br>\n";
 }
 
-public static function cron() {
+static function cron() {
     global $DB;
 
     mtrace('Start processing send_reminders');
