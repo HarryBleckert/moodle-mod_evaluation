@@ -4409,8 +4409,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
     //$subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
     $subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
-    $senderName = '=?UTF-8?B?' . base64_encode('ASH Berlin (Qualitätsmanagement)') . '?=';
-    $senderMail = "<khayat@ash-berlin.eu>";
+    $senderName = '=?UTF-8?B?' . base64_encode($evaluation->sendername) . '?=';
+    $senderMail = $evaluation->sendermail;
     $sender = $senderName  . " " . $senderMail;
 
     $cntStudents = $cntTeachers = 0;
@@ -4495,7 +4495,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             }
 
             $to = "Harry <Harry@Bleckert.com>";
-            // $to = "Berthe Khayat <khayat@ash-berlin.eu>";
+            // $to = $sender;
             // $to = "Anja Voss <voss@ash-berlin.eu>";
             $fullname = "Test";
             if (strpos($test,"@")){
@@ -4553,7 +4553,7 @@ Ausgenommen sind aus Datenschutzgründen die persönlichen Angaben, sowie die An
 <a href="$evUrl"><b>$evaluation->name</b></a> teilnehmen:</p>
 $myCourses
 <p style="margin-bottom: 0cm">Mit besten Grüßen<br>
-Berthe Khayat und Harry Bleckert für das Evaluationsteam<hr>
+$evaluation->signature<hr>
 <b>Alice Salomon Hochschule Berlin</b><br>
 - University of Applied Sciences -<br>
 Alice-Salomon-Platz 5, 12627 Berlin
@@ -4607,7 +4607,7 @@ Nur wenn mindestens $minResultsText Abgaben für Sie gemacht wurden, können Sie
 <a href="$evUrl"><b>$evaluation->name</b></a> teilnehmen:</p>
 $myCourses
 <p style="margin-bottom: 0cm">Mit besten Grüßen<br>
-Berthe Khayat und Harry Bleckert für  das Evaluationsteam<hr>
+$evaluation->signature<hr>
 <b>Alice Salomon Hochschule Berlin</b><br>
 - University of Applied Sciences -<br>
 Alice-Salomon-Platz 5, 12627 Berlin
