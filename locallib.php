@@ -4782,7 +4782,7 @@ function ev_get_reminders($evaluation, $id) {
 }
 
 function ev_cron() {
-    global $DB;
+    global $CFG, $DB;
     // return true;
     mtrace('Start processing send_reminders');
 
