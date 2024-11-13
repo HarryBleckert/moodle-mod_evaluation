@@ -4356,11 +4356,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     }
     */
     if (!isset($evaluation->id)) {
-        ev_show_reminders_log("ERROR: Evaluation with ID $evaluation->id not found!");
+        ev_show_reminders_log("ERROR: Evaluation with ID $evaluation->id not found!", $cronjob);
         return false;
     }
     if (!evaluation_is_open($evaluation)){
-        ev_show_reminders_log("ERROR: The evaluation '$evaluation->name' is not open. Reminders can not be mailed!");
+        ev_show_reminders_log("ERROR: The evaluation '$evaluation->name' is not open. Reminders can not be mailed!", $cronjob);
         return false;
     }
     // set user var to Admin Harry
@@ -4377,7 +4377,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
     ev_show_reminders_log("\n" . date("Ymd H:i:s") .
             "\nSending reminders to all participants with role $role in evaluation "
-            ."'$evaluation->name' (ID: $evaluation->id)");
+            ."'$evaluation->name' (ID: $evaluation->id)", $cronjob);
 
     $norpliestxt = "";
     if ($noreplies){
@@ -4387,14 +4387,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         else{
             $norpliestxt = "Nur Studiernde die bisher noch nicht an der Evaluation teilgenommen haben";
         }
-        ev_show_reminders_log($norpliestxt);
+        ev_show_reminders_log($norpliestxt, $cronjob);
     }
 
     if ($test) {
-        ev_show_reminders_log("Test Mode $test");
+        ev_show_reminders_log("Test Mode $test", $cronjob);
     }
     if ( $CFG->noemailever ) {
-        ev_show_reminders_log("CFG->noemailever: Only Test mails to be sent for this Moodle instance");
+        ev_show_reminders_log("CFG->noemailever: Only Test mails to be sent for this Moodle instance", $cronjob);
     }
     //get all participating students/teachers
     $evaluation_users = get_evaluation_participants($evaluation, false, false, ($role == "teacher"), ($role == "student"));
@@ -4445,11 +4445,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         // $USER = core_user::get_user($userid);
         $USER = $DB->get_record("user", array('id' => 30421), '*');
         if( empty($username) || empty($firstname)){
-            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user");
+            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user", $cronjob);
             continue;
         }
         if (empty($email) or strtolower($email) == "unknown" or !strstr($email, "@") or stristr($email, "unknown@")) {
-            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to unknown@");
+            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to unknown@", $cronjob);
             continue;
         }
 
@@ -4458,14 +4458,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
 
-        /*ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
+        /*ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         $cnt++;
         continue;
         */
         //$evaluation->teamteaching = $teamteaching;
         if (empty($myEvaluations)) {
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
-                    . "Teilnehmende Kurse: " . count(evaluation_is_user_enrolled($evaluation, $userid)));
+                    . "Teilnehmende Kurse: " . count(evaluation_is_user_enrolled($evaluation, $userid)), $cronjob);
             continue;
         }
 
@@ -4487,7 +4487,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         if (false and $cnt < 2) {
             ev_show_reminders_log("time used get_participants: " . date("i:s", time() - $start) . " - get_participant_courses: " .
-                    date("i:s", time() - $start2));
+                    date("i:s", time() - $start2), $cronjob);
         }
 
         if ($test) {
@@ -4533,7 +4533,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 continue;
             }
             if (hasUserEvaluationCompleted($evaluation, $userid)) {
-                ev_show_reminders_log("$cnt. $fullname - $username - $userid - $email - COMPLETED ALL!!");
+                ev_show_reminders_log("$cnt. $fullname - $username - $userid - $email - COMPLETED ALL!!", $cronjob);
                 $cnt++;
                 continue;
             }
@@ -4623,23 +4623,23 @@ HEREDOC;
         }
         if ( !$CFG->noemailever || $test ) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
-            ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid");
+            ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
         else{
-            ev_show_reminders_log("$cnt.  Mail not sent.$testinfo $fullname - $username - $email - ID: $userid");
+            ev_show_reminders_log("$cnt.  Mail not sent.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
         $cnt++;
     }
     $elapsed = time() - $start;
     echo "";
     if ($role == "student") {
-        ev_show_reminders_log("Sent reminder to $cntStudents students");
+        ev_show_reminders_log("Sent reminder to $cntStudents students", $cronjob);
     } else {
-        ev_show_reminders_log("Sent reminder to $cntTeachers teachers");
+        ev_show_reminders_log("Sent reminder to $cntTeachers teachers", $cronjob);
     }
     echo "\n";
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
-            date("Ymd H:i:s"));
+            date("Ymd H:i:s"), $cronjob);
     // $USER = core_user::get_user($saveduser->id);
     if (!$test){
         $role = ($role == "teacher" ?$role :"participant");
@@ -4649,7 +4649,7 @@ HEREDOC;
 }
 
 
-function ev_show_reminders_log($msg) {
+function ev_show_reminders_log($msg, $cronjob=false) {
     $logfile = "/var/log/moodle/evaluation_send_reminders.log";
     if (isset($_SESSION['ev_cli']) AND $_SESSION['ev_cli']){
         echo $msg . "\n";
