@@ -4792,7 +4792,7 @@ return true;
     $timenow = time();
     $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
     $lastruntime = $task->get_last_run_time();
-    mtrace("Time now: ".date("d.m,Y H:i:s,$timenow). " - last runtime: ".date("d.m,Y H:i:s,$lastruntime));
+    mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: ".date("d.m,Y H:i:s",$lastruntime));
 
     $evaluations = $DB->get_records_sql("SELECT * from {evaluation}");
     // only run in test mode
