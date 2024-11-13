@@ -51,7 +51,7 @@ class cron_task extends \core\task\scheduled_task {
         // only template, not done yet
         //need for send_reminders
         // return true;
-        require_once($CFG->dirroot . '/mod/evaluation/locallib.php');
+        require_once($CFG->dirroot . '/mod/evaluation/lib.php');
         // \evaluation::cron();
         ev_cron();
         return true;
