@@ -2082,7 +2082,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 
     if ($evaluation->course !== SITEID) {
         $filter = " AND id=$evaluation->course";
-    } else if ($courseid) //AND stristr($filter,"idnumber") )
+    } else if ($courseid AND is_numeric($courseid)) //AND stristr($filter,"idnumber") )
     {
         $filter = " AND id=$courseid";
     } else if ($userid and $userid > 0) {    //$ids = evaluation_participating_courses($evaluation, $userid );
