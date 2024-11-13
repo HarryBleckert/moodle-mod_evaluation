@@ -4784,7 +4784,7 @@ function ev_get_reminders($evaluation, $id) {
 
 function ev_cron() {
     global $DB;
-return true;
+    // return true;
     mtrace('Start processing send_reminders');
 
     // Only ever send a max of one days worth of updates.
