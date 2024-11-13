@@ -4341,7 +4341,7 @@ function evaluation_get_empty_courses($sdate=false) {
 
 
 function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=true,
-        $verbose=false,$cli=false) {
+        $verbose=false,$cli=false,$cronjob=false) {
     global $CFG, $DB, $USER;
     $_SESSION['ev_cli'] = $cli;
     set_time_limit(3000);
@@ -4422,6 +4422,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $testinfo = ($test ?" Test: " :"");
     foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
         @ob_flush();@ob_end_flush();@flush();@ob_start();
+        $allTeachers  = $_SESSION["allteachers"];
+        unset($_SESSION["EvaluationsName"]);
+        validate_evaluation_sessions($evaluation);
+        $_SESSION["allteachers"] = $allTeachers;
+        unset($allTeachers);
         //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
         $username = $evaluation_user["username"];
         $firstname = $evaluation_user["firstname"];
@@ -4649,7 +4654,7 @@ function ev_show_reminders_log($msg) {
     if (isset($_SESSION['ev_cli']) AND $_SESSION['ev_cli']){
         echo $msg . "\n";
     }
-    else{
+    else if (!$cronjob){
         echo nl2br($msg . "\n");
     }
     if (is_writable($logfile)){
@@ -4779,7 +4784,7 @@ function ev_get_reminders($evaluation, $id) {
 
 function ev_cron() {
     global $DB;
-
+return true;
     mtrace('Start processing send_reminders');
 
     // Only ever send a max of one days worth of updates.
@@ -4787,11 +4792,63 @@ function ev_cron() {
     $timenow = time();
     $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
     $lastruntime = $task->get_last_run_time();
-    mtrace("Time now: $timenow - last runtime: $lastruntime");
+    mtrace("Time now: ".date("d.m,Y H:i:s,$timenow). " - last runtime: ".date("d.m,Y H:i:s,$lastruntime));
 
-    mtrace('Done processing send_reminders');
-    // \core\cron::setup_user();
+    $evaluations = $DB->get_records_sql("SELECT * from {evaluation}");
+    // only run in test mode
+    $test = true;
+    $cronjob = true;
+    $cli = false;
+    $verbose = false;
+    $noreplies = false;
+    $tsent = $ssent = $tsentNR = $ssentNR = array();
+    foreach ($evaluations AS $evaluation){
 
+        $is_open = evaluation_is_open($evaluation);
+        if ( $is_open ) {
 
+            $reminders = $evaluation->reminders;
+            if (empty($reminders)){
+                mtrace('Evaluation '$evaluation->name': Sending reminders to teachers and students');
+                ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
+                ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
+                break;
+            }
+            else {
+                /*
+                 * format:
+                 * 04.06.2024:teachers
+                 * 04.06.2024:students
+                 * */
+                $remindersA = explode("\n", $reminders);
+                foreach ($remindersA AS $reminder ){
+                    $items = explode(":",$reminder);
+                    $role = $items[1];
+                    $nr = (stristr($role," (NR)") ?true:false);
+                    if ($nr){
+                        $role = str_ireplace(" (NR)","",$role);
+                        $tsentNR[] = $items[0];
+                    }
+                    if ($role=="teacher"){
+                        $tsent[] = $items[0];
+                    }
+                    else if ($role=="student"){
+                        $ssent[] = $items[0];
+                    }
+                }
+            }
+        }
+
+        if (!empty($tsent)) {
+            $last = $tsend[count($tsent)-1];
+
+            // ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
+        }
+        // ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
+        mtrace('Done processing send_reminders');
+        // \core\cron::setup_user();
+        unset($_SESSION["EvaluationsName"]);
+        validate_evaluation_sessions($evaluation);
+    }
     return true;
 }
