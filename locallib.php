@@ -4846,10 +4846,10 @@ function ev_cron() {
             // ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
         }
         // ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
-        mtrace('Done processing send_reminders');
         // \core\cron::setup_user();
         unset($_SESSION["EvaluationsName"]);
         validate_evaluation_sessions($evaluation);
     }
+    mtrace('Completed processing send_reminders');
     return true;
 }
