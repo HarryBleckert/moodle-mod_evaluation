@@ -2080,7 +2080,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
     $ids = array();
     $filter = " AND RIGHT(idnumber,5) = '$evaluation_semester' ";
 
-    if ($evaluation->course !== SITEID) {
+    if (!empty($evaluation->course) AND $evaluation->course !== SITEID) {
         $filter = " AND id=$evaluation->course";
     } else if ($courseid AND is_numeric($courseid)){
         $filter = " AND id=$courseid";
