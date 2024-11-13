@@ -2080,7 +2080,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
     $ids = array();
     $filter = " AND RIGHT(idnumber,5) = '$evaluation_semester' ";
 
-    if (false && $evaluation->course !== SITEID) {
+    if ($evaluation->course !== SITEID) {
         $filter = " AND id=$evaluation->course";
     } else if ($courseid AND is_numeric($courseid)){
         $filter = " AND id=$courseid";
@@ -4410,7 +4410,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
     $senderName = '=?UTF-8?B?' . base64_encode($evaluation->sendername) . '?=';
     $senderMail = $evaluation->sendermail;
-    $sender = $senderName  . " " . $senderMail;
+    $sender = $senderName  . " <$senderMail>";
 
     $cntStudents = $cntTeachers = 0;
     $cnt = 1;
