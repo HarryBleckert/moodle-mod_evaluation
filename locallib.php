@@ -4641,7 +4641,7 @@ HEREDOC;
             date("Ymd H:i:s"), $cronjob);
     // $USER = core_user::get_user($saveduser->id);
     if (!$test){
-        $role = ($role == "teacher" ?$role :"participant");
+        $role = ($role == "teacher" ?$role :"student");
         ev_set_reminders($evaluation,$role."s", $noreplies);
     }
     return true;
