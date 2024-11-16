@@ -4781,12 +4781,15 @@ function ev_get_reminders($evaluation, $id) {
     return $retval ."</br>\n";
 }
 
+// cron for scheduled tasks. But works extremely slow and therefore disabled.
+// maybe better use as a non-Moodle cron job, meanwhile call reminders from view.php
 function ev_cron() {
     global $CFG, $DB;
-    // return true;
+    mtrace('send_reminders cron is currently disabled in function ev_cron');
+    return true;
     mtrace('Start processing send_reminders');
 
-    // Only ever send a max of one days worth of updates.
+    setlocale(LC_ALL, 'de_DE');
     $yesterday = time() - (24 * 3600);
     $timenow = time();
     $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
