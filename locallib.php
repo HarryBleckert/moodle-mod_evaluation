@@ -876,7 +876,14 @@ function evaluation_LoginAs() {
             //        $_SESSION["EVALUATION_OWNER"] !== $USER->id and empty($_SESSION["LoggedInAs"]) and empty($USER->realuser))) {
         return false;
     }
-    $teachers = $students = true;
+    $teachers = $DB->get_records_sql("SELECT DISTINCT ON (teacherid) teacherid, id 
+                                from {evaluation_completed} 
+								WHERE evaluation=$evaluation->id ORDER BY teacherid");
+
+    $students = $DB->get_records_sql("SELECT DISTINCT ON (userid) userid, 
+                            id from {evaluation_completed} 
+							WHERE evaluation=$evaluation->id ORDER BY userid");
+
     $userid = false;
     $role = optional_param('LoginAs', "", PARAM_TEXT);
     $cmid = $id;
@@ -988,9 +995,6 @@ function evaluation_LoginAs() {
         if (false AND $teacheridSaved) {
             $userid = $teacheridSaved;
         } else {
-            $teachers = $DB->get_records_sql("SELECT DISTINCT ON (teacherid) teacherid, id 
-                                from {evaluation_completed} 
-								WHERE evaluation=$evaluation->id ORDER BY teacherid");
             if ( $teachers ) {
                 $choice = random_int(1, intval(safeCount($teachers)));
                 $cnt = 1;
@@ -1008,9 +1012,6 @@ function evaluation_LoginAs() {
             }
         }
     } else if ($role == "student") {
-        $students = $DB->get_records_sql("SELECT DISTINCT ON (userid) userid, 
-                            id from {evaluation_completed} 
-							WHERE evaluation=$evaluation->id ORDER BY userid");
         if ( $students ) {
             $choice = random_int(1, intval(safeCount($students)));
             $cnt = 1;
