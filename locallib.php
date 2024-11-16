@@ -876,6 +876,7 @@ function evaluation_LoginAs() {
             //        $_SESSION["EVALUATION_OWNER"] !== $USER->id and empty($_SESSION["LoggedInAs"]) and empty($USER->realuser))) {
         return false;
     }
+    $teachers = $students = true;
     $userid = false;
     $role = optional_param('LoginAs', "", PARAM_TEXT);
     $cmid = $id;
@@ -1102,8 +1103,9 @@ function evaluation_LoginAs() {
                         ? '<a href="' . $url . '&LoginAs=privileg">Privilegiert</a> - ' : "")
                 . ($CoS_privileged_cnt ? '<a href="' . $url . '&LoginAs=priv_sg">Privilegiert (SG)</a> - ' : "")
                 . ($CoS_privileged_sgl_cnt ? '<a href="' . $url . '&LoginAs=priv_sg_sgl">Privilegiert (SG,SGL)</a> - ' : "")
-                . '<a href="' . $url . '&LoginAs=teacher">Dozent_in</a> - <a href="'
-                . $url . '&LoginAs=student">Student_in</a> - <a href="' . $url . '&LoginAs=user">ASH Mitglied</a>';
+                . ($teachers ?'<a href="' . $url . '&LoginAs=teacher">Dozent_in</a> - ' :"")
+                . ($students ?'<a href="' . $url . '&LoginAs=student">Student_in</a> - ' :"")
+                . '<a href="' . $url . '&LoginAs=user">ASH Mitglied</a>';
         // not done: $msg .= ' - <a href="' . $url . '&LoginAs=username">' .get_string('username'). '</a>";
     }
     print "\n" . '<script>document.getElementById("LoginAs").innerHTML = "' . str_replace('"', '\"', $msg) . '<br>";</script>' .
