@@ -4737,7 +4737,7 @@ function ev_get_reminders($evaluation, $id) {
         }
     }
     $reminders = $evaluation->reminders;
-    if (empty($reminders)){
+    if (empty($reminders) AND !is_siteadmin()){
         return ""; // $remindertxt: " . ($is_open ?"./." :"nicht erfasst");
     }
     $remindersA = explode("\n",$reminders);
