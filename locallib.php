@@ -3662,7 +3662,6 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
             $showEval = false;
             $reminder = "";
         }
-        print nl2br("Reminder: ".var_export($reminder)); exit;
         return array($showEval, $reminder);
     }
     if (!$no_user and isset($_SESSION["myEvaluations"]) and safeCount($_SESSION["myEvaluations"])) {
@@ -3670,7 +3669,7 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
     }
 
     // if student
-    if (!$no_user and $showEval and !$isPermitted and intval(date("Ymd", $timeopen)) <= intval(date("Ymd"))) {
+    if (!$no_user and $showEval and !$isPermitted ){ // and intval(date("Ymd", $timeopen)) <= intval(date("Ymd"))) {
         if ($is_open) {
             if (!isEvaluationCompleted($evaluation, $courseid, $user->id)) {
                 $has_user_participated = evaluation_has_user_participated($evaluation, $user->id);
@@ -4448,7 +4447,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         // $start2 = time();
         // get student courses to evaluate
         // $USER = core_user::get_user($userid);
-        $USER = $DB->get_record("user", array('id' => 30421), '*');
+        // $USER = $DB->get_record("user", array('id' => 30421), '*');
         if( empty($username) || empty($firstname)){
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user", $cronjob);
             continue;
