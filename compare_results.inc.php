@@ -249,10 +249,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     in_array("Kann ich nicht beantworten", $presentation)) {
                 array_pop($presentation);
             }
-            $qfValues = "";
-            for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
-                $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
-            }
             $scheme = implode(", ", $presentation) . " <=> $qfValues";
             array_unshift($presentation, ($validation ? "ungültig" : "keine Antwort"));
             break;
