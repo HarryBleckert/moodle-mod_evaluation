@@ -179,8 +179,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $stimmezu = array("stimme zu", "stimme eher zu", "stimme eher nicht zu", "stimme nicht zu");
     $trifftzu = array("trifft zu", "trifft eher zu", "trifft eher nicht zu", "trifft nicht zu");
     $schemeQ = "( presentation ilike '%stimme zu%' OR presentation ilike '%trifft zu%'
-                  OR (presentation ilike '%hoch% AND presentation ilike '%niedrig%)
-                  OR (presentation ilike '%positiv% AND presentation ilike '%negativ%)
+                  OR (presentation ilike '%hoch%' AND presentation ilike '%niedrig%')
+                  OR (presentation ilike '%positiv%' AND presentation ilike '%negativ%')
                   )";
 
     if ($qSelected) {
