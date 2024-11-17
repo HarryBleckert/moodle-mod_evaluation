@@ -3662,6 +3662,7 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
             $showEval = false;
             $reminder = "";
         }
+        print nl2br("Reminder: ".var_export($reminder)); exit;
         return array($showEval, $reminder);
     }
     if (!$no_user and isset($_SESSION["myEvaluations"]) and safeCount($_SESSION["myEvaluations"])) {
@@ -4461,7 +4462,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         //$teamteaching = $evaluation->teamteaching;
 
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
-        print nl2br(var_export($myEvaluations)); exit;
+        // print nl2br(var_export($myEvaluations)); exit;
         if (empty($myEvaluations)) {
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
                     . "Teilnehmende Kurse: " . count(evaluation_is_user_enrolled($evaluation, $userid)), $cronjob);
