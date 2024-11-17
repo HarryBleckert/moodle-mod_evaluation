@@ -3557,6 +3557,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                     $out .= "<tr>\n<td>$privileged_user</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>"
                             . "<td>$eMail->firstname</td><td>$eMail->lastname</td><td>&nbsp;</td>\n</tr>\n";
                     $privileged_users[$privileged_user] = $privileged_user;
+                    $_SESSION["privileged_users"][$privileged_user] = $privileged_user;
                     $_SESSION["privileged_global_users"][$privileged_user] = $privileged_user;
                 }
             }
