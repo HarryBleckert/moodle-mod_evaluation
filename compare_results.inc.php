@@ -178,10 +178,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $scheme = $numQuestions = "";
     $stimmezu = array("stimme zu", "stimme eher zu", "stimme eher nicht zu", "stimme nicht zu");
     $trifftzu = array("trifft zu", "trifft eher zu", "trifft eher nicht zu", "trifft nicht zu");
-    $schemeQ = "( presentation ilike '%stimme zu%' OR presentation ilike '%trifft zu%')";
+    $schemeQ = "( presentation ilike '%stimme zu%' OR presentation ilike '%trifft zu%'
+                  OR (presentation ilike '%hoch% AND presentation ilike '%niedrig%)
+                  OR (presentation ilike '%positiv% AND presentation ilike '%negativ%)
+                  ";
 
     if ($qSelected) {
-
         $query = "SELECT * FROM {evaluation_item} WHERE id = $qSelected 
                                     AND evaluation=$evaluation->id ORDER by position ASC";
         $question = array();
@@ -235,16 +237,32 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $questions = $DB->get_records_sql($query);
         //print "<br><hr>".var_export($questions,true);exit;
         $numQuestions = safeCount($questions);
-        //$presentation = array( ($validation ?"ungültig" :"keine Antwort") ) + $stimmezu;
-        $presentation = array_merge(array(($validation ? "ungültig" : "keine Antwort")), $stimmezu);
-        //, "stimme zu", "stimme eher zu", "stimme eher nicht zu", "stimme nicht zu" );
-        $scheme = '"stimme zu"=1 - "stimme nicht zu"=4<br>';
+
         $present = "nope";
-        foreach ($questions as $quest) {
-            $present = $quest->presentation;
+        foreach ($questions as $question) {
+            $present = $question->presentation;
+            $presentationraw = $presentation = explode("|",
+                            str_replace(array("\t", "\r", "\n", "<<<<<1", "r>>>>>", "c>>>>>", "d>>>>>"),
+                            "",
+                            $question->presentation));
+            if (in_array("k.b.", $presentation) or in_array("keine Angabe", $presentation) or
+                    in_array("Kann ich nicht beantworten", $presentation)) {
+                array_pop($presentation);
+            }
+            $qfValues = "";
+            for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
+                $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
+            }
+            $scheme = implode(", ", $presentation) . " <=> $qfValues";
+            array_unshift($presentation, ($validation ? "ungültig" : "keine Antwort"));
             break;
         }
-        if ($numQuestions and stristr($present, "trifft")) {
+        if ($numQuestions and stristr($present, "stimme")) {
+            $presentation = array_merge(array(($validation ? "ungültig" : "keine Antwort")), $stimmezu);
+            //, "stimme zu", "stimme eher zu", "stimme eher nicht zu", "stimme nicht zu" );
+            $scheme = '"stimme zu"=1 - "stimme nicht zu"=4<br>';
+        }
+ion        else if ($numQuestions and stristr($present, "trifft")) {
             $presentation = array_merge(array(($validation ? "ungültig" : "keine Antwort")), $trifftzu);
             $scheme = '"trifft zu"=1 - "trifft nicht zu"=4<br>';
         }
