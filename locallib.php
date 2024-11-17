@@ -3489,8 +3489,17 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                 $_SESSION['CoS_department'][$CoS] = $department;
             }
         }
+
     } else if (!isset($_SESSION['ev_global_cfgfile'])) {
         $_SESSION['ev_global_cfgfile'] = false;
+    }
+    if (!empty($evaluation->privileged_users)) {
+        $ev_privileged_users = explode("\n", $evaluation->privileged_users);
+        foreach ($ev_privileged_users AS $privileged_user){
+            $privileged_users[$privileged_user] = $privileged_user;
+            $_SESSION["privileged_users"][$privileged_user] = $privileged_user;
+            $_SESSION["privileged_global_users"][$privileged_user] = $privileged_user;
+        }
     }
 
     // display list as html table
@@ -3546,19 +3555,14 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             }
             $out .= "</tr>\n";
         }
-        if (!empty($evaluation->privileged_users)) {
-            $ev_privileged_users = explode("\n", $evaluation->privileged_users);
+        if (!empty($ev_privileged_users)) {
             foreach ($ev_privileged_users AS $privileged_user){
-                if (!isset($_SESSION["privileged_global_users"][$privileged_user]) AND
-                        $eMail = $DB->get_record("user",array("username" => $privileged_user))) {
-                    $eMails[$row[0]] = '"' . $eMail->firstname . ' ' . $eMail->lastname
+                if ($eMail = $DB->get_record("user",array("username" => $privileged_user))) {
+                    $eMails[$privileged_user] = '"' . $eMail->firstname . ' ' . $eMail->lastname
                             . '" &lt;' . $eMail->email . "&gt;";
 
                     $out .= "<tr>\n<td>$privileged_user</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>"
                             . "<td>$eMail->firstname</td><td>$eMail->lastname</td><td>&nbsp;</td>\n</tr>\n";
-                    $privileged_users[$privileged_user] = $privileged_user;
-                    $_SESSION["privileged_users"][$privileged_user] = $privileged_user;
-                    $_SESSION["privileged_global_users"][$privileged_user] = $privileged_user;
                 }
             }
         }
