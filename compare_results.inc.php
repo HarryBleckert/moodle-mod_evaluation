@@ -181,7 +181,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $schemeQ = "( presentation ilike '%stimme zu%' OR presentation ilike '%trifft zu%'
                   OR (presentation ilike '%hoch% AND presentation ilike '%niedrig%)
                   OR (presentation ilike '%positiv% AND presentation ilike '%negativ%)
-                  ";
+                  )";
 
     if ($qSelected) {
         $query = "SELECT * FROM {evaluation_item} WHERE id = $qSelected 
