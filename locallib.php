@@ -3623,7 +3623,7 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
     //if ( !isset($_SESSION["EVALUATION_OWNER"]) )
     //{	evaluation_isPrivilegedUser($evaluation, $user ); }
 
-    $showPriv = ((isset($_SESSION["EVALUATION_OWNER"]) and $_SESSION["EVALUATION_OWNER"]) or evaluation_debug(false));
+    $showPriv = ((isset($_SESSION["EVALUATION_OWNER"]) and $_SESSION["EVALUATION_OWNER"]));  // or evaluation_debug(false));
     if ($no_user) {
         $isPermitted = true;
     }
@@ -3642,7 +3642,8 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
     }
     if (($SiteEvaluation and trim(substr($course->idnumber, -5)) != $evaluation_semester)
             or (intval(date("Ymd", $timeopen)) > intval(date("Ymd")) and
-                    !$showPriv)) {    //print "<br><hr>Evaluation: $evaluation->name - idnumber,-5: ".trim(substr( $course->idnumber, -5))
+                    !$showPriv)) {
+        //print "<br><hr>Evaluation: $evaluation->name - idnumber,-5: ".trim(substr( $course->idnumber, -5))
         //		." - showPriv: ".($showPriv ?"Yes" :"No") ." - evaluation_semester: $evaluation_semester<br>\n";
         return array(false, "");
     }
