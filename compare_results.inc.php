@@ -262,7 +262,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             //, "stimme zu", "stimme eher zu", "stimme eher nicht zu", "stimme nicht zu" );
             $scheme = '"stimme zu"=1 - "stimme nicht zu"=4<br>';
         }
-ion        else if ($numQuestions and stristr($present, "trifft")) {
+        else if ($numQuestions and stristr($present, "trifft")) {
             $presentation = array_merge(array(($validation ? "ungültig" : "keine Antwort")), $trifftzu);
             $scheme = '"trifft zu"=1 - "trifft nicht zu"=4<br>';
         }
