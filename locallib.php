@@ -3544,16 +3544,14 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             }
             if (!empty($evaluation->privileged_users)) {
                 $privileged_users = explode("\n", $evaluation->privileged_users);
-                print "<tr>\n";
                 foreach ($privileged_users AS $privileged_user){
                     if ($eMail = $DB->get_record("user",array("username" => $privileged_user))){
                         $eMails[$row[0]] = '"' . $eMail->firstname .' '. $eMail->lastname
                                 .'" &lt;' . $eMail->email . "&gt;";
                     }
-                    print "<td>$privileged_user</td><td colspan='3'>&nbsp;</td><td>$eMail->firstname</td><td>$eMail->lastname</td><td>&bpsp;</td>\n";
+                    $out .= "<tr>\n<td>$privileged_user</td><td colspan='3'>&nbsp;</td>"
+                            ."<td>$eMail->firstname</td><td>$eMail->lastname</td><td>&bpsp;</td>\n</tr>\n";
                 }
-                print "</tr>\n";
-
             }
             $out .=  "</table>";
             // print nl2br(var_export($_SESSION['filter_course_of_studies'],true));
