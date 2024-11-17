@@ -56,7 +56,9 @@ $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
 
-require_capability('mod/evaluation:edititems', $context);
+if ( !isset($_SESSION["privileged_users"][$USER->username])) {
+    require_capability('mod/evaluation:edititems', $context);
+}
 
 $mform = new evaluation_import_form();
 $newformdata = array('id' => $id,

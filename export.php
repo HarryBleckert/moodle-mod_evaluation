@@ -24,7 +24,7 @@
 
 require_once("../../config.php");
 require_once("lib.php");
-
+global $USER;
 // get parameters
 $id = required_param('id', PARAM_INT);
 $action = optional_param('action', false, PARAM_ALPHA);
@@ -50,8 +50,9 @@ if (!$evaluation = $DB->get_record("evaluation", array("id" => $cm->instance))) 
 $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
-
-require_capability('mod/evaluation:edititems', $context);
+if ( !isset($_SESSION["privileged_users"][$USER->username])) {
+    require_capability('mod/evaluation:edititems', $context);
+}
 
 if ($action == 'exportfile') {
     if (!$exportdata = evaluation_get_xml_data($evaluation->id)) {
