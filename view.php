@@ -715,6 +715,10 @@ if (is_siteadmin()) {
             .$pluginfo->release ." (Build: ".$pluginfo->version.")<hr>\n";
     print $info;
 
+    if (isset($_GET['activityrecord'])) {
+        print nl2br(var_export($evaluation));
+    }
+
     if ($SiteEvaluation and (!isset($_SESSION["make_block_evaluation_visible"]) or
                     $_SESSION["make_block_evaluation_visible"] !== $evaluation->name)) {
         $_SESSION["make_block_evaluation_visible"] = $evaluation->name;

@@ -3674,11 +3674,11 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
                 $has_user_participated = evaluation_has_user_participated($evaluation, $user->id);
                 $fullname = ($user->alternatename ? $user->alternatename : $user->firstname) . " " . $user->lastname;
                 $days = remaining_evaluation_days($evaluation);
-                $style = '<b style="color:darkgreen;">';
+                $style = '<b style="color:#000000;">';
 
                 if ($days < 7) {
-                    $style = '<b style="color:red;">Die Abgabefrist endet ' . ($days > 0 ? "in " . $days . ' Tagen' : "heute") .
-                            '</b><br><b style="color:teal;"> ';
+                    $style = '<b style="color:#000000;">Die Abgabefrist endet ' . ($days > 0 ? "in " . $days . ' Tagen' : "heute") .
+                            '</b><br><b style="color:#000000;"> ';
                 }
                 $reminder = 'Guten Tag ' . $fullname
                         . '<br>Sie haben '
