@@ -621,7 +621,7 @@ function evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, $se
             $CourseName = $CourseRec->fullname;
         }
     }  // if $courseid
-    if (evaluation_isPrivilegedUser($evaluation, $user) or is_siteadmin()) //AND $evaluation->course == SITEID) )
+    if ($setD AND (evaluation_isPrivilegedUser($evaluation, $user) or is_siteadmin())) //AND $evaluation->course == SITEID) )
     {
         $isPermitted = true; //( empty($_SESSION['CoS_privileged'][$user->username]) ?true :!$courseid );
         if ($setD and !defined("EVALUATION_OWNER")) {
