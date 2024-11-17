@@ -3421,7 +3421,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
         $cfgA = explode("\n", file_get_contents($cfgFile));
         $privileged_users = $_SESSION["privileged_global_users"]
                 = $_SESSION["privileged_global_users_wm"] = $_SESSION["course_of_studies_wm"]
-                = $_SESSION['CoS_department'] = $_SESSION['CoS_privileged']  = $_SESSION['CoS_privileged_sgl'] = array();
+                = $_SESSION['CoS_department'] = $_SESSION['CoS_privileged'] = $_SESSION['CoS_privileged_sgl'] = array();
         foreach ($cfgA as $line) {
             $CoS = "";
             $WM = "Nein";
@@ -3463,14 +3463,14 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                 }
             } else {
                 if ((is_array($_SESSION['filter_course_of_studies']) and !empty($_SESSION['filter_course_of_studies'])
-                   and in_array($CoS, $_SESSION['filter_course_of_studies'])) OR ev_is_cos_in_completed($evaluation, $CoS)) {
+                                and in_array($CoS, $_SESSION['filter_course_of_studies'])) or
+                        ev_is_cos_in_completed($evaluation, $CoS)) {
                     $_SESSION['CoS_privileged'][$username][$CoS] = $CoS;
-                    if (isset($parts[6]) AND (strtolower($parts[6])=="sgl" OR strtolower($parts[6])=="studiengangsleitung")){
+                    if (isset($parts[6]) and (strtolower($parts[6]) == "sgl" or strtolower($parts[6]) == "studiengangsleitung")) {
                         $_SESSION['CoS_privileged_sgl'][$username][$CoS] = $CoS;
                     }
                     //print "<hr>\$users: " .var_export($users,true) .$user[0].": ". $_SESSION['CoS_privileged'][$user[0]][$user[1]] = $user[1]."<hr>";
-                }
-                else{
+                } else {
                     $priv_user = false;
                 }
             }
@@ -3485,87 +3485,90 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                 $department = "WM";
             }*/
 
-            if ( !empty($department)) {
+            if (!empty($department)) {
                 $_SESSION['CoS_department'][$CoS] = $department;
             }
         }
-        // display list as html table
-        if ( $show){
-            $cfgData = file_get_contents($cfgFile);
-            $pos = strpos($cfgData,"#Anmeldename");
-            $eMails = array();
-            if ( $pos){
-                $cfgData = substr($cfgData, $pos+1);
-            }
-            $rows = explode("\n", $cfgData);
-            print "<style>tr:nth-child(odd) {background-color:lightgrey;}</style>";
-            $out = "<b>Übersicht privilegierte Personen</b> (diese Evaluation)<br><br>\n";
-            $out .= '<table style="">'."\n";
-            $first = true;
-            foreach ($rows as $srow) {
-                $CoS = "";
-                $row = explode(",", $srow);
-                if (isset($row[1]) AND !strstr($row[1], "#")) {
-                    $CoS = trim($row[1]);
-                }
-                if ( !$first AND !empty($CoS)) {
-                    if ( isset($_SESSION['CoS_privileged'][$USER->username])) {
-                        if (!isset($_SESSION['CoS_privileged'][$USER->username][$CoS])) {
-                            continue;
-                        }
-                    }
-                    if ( !empty($_SESSION['filter_course_of_studies']) AND !in_array($CoS, $_SESSION['filter_course_of_studies'])){
-                        continue;
-                    }
-                }
-                if (strstr( $row[0], "#")){
-                    continue;
-                }
-                $username = trim($row[0]);
-                //$_SESSION["privileged_global_users_wm"][$username] = $username;
-                $out .= "<tr>\n";
-                if ($first) {
-                    foreach ($row as $col) {
-                        $out .=  '<th style="font-weight:bold;">'.htmlspecialchars($col)."</th>\n";
-                    }
-                    $first = false;
-                } else {
-                    foreach ($row as $col) {
-                        $out .=  "<td>".htmlspecialchars($col)."</td>\n";
-                    }
-                    if ($getEmails){
-                        if ($eMail = $DB->get_record("user",array("username" => $row[0]))){
-                            $eMails[$row[0]] = '"' . $eMail->firstname .' '. $eMail->lastname
-                                    .'" &lt;' . $eMail->email . "&gt;";
-                        }
-                    }
-                }
-                $out .= "</tr>\n";
-            }
-            if (!empty($evaluation->privileged_users)) {
-                $privileged_users = explode("\n", $evaluation->privileged_users);
-                foreach ($privileged_users AS $privileged_user){
-                    if (!isset($_SESSION["privileged_global_users"][$privileged_user]) AND
-                            $eMail = $DB->get_record("user",array("username" => $privileged_user))) {
-                        $eMails[$row[0]] = '"' . $eMail->firstname . ' ' . $eMail->lastname
-                                . '" &lt;' . $eMail->email . "&gt;";
-
-                        $out .= "<tr>\n<td>$privileged_user</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>"
-                                . "<td>$eMail->firstname</td><td>$eMail->lastname</td><td>&nbsp;</td>\n</tr>\n";
-                    }
-                }
-            }
-            $out .=  "</table>";
-            // print nl2br(var_export($_SESSION['filter_course_of_studies'],true));
-            if ($getEmails) {
-                return implode(",", $eMails);
-            }
-            return $out;
-        }
-        return $privileged_users;
     } else if (!isset($_SESSION['ev_global_cfgfile'])) {
         $_SESSION['ev_global_cfgfile'] = false;
     }
+
+    // display list as html table
+    if ( is_readable($cfgFile) AND $show){
+        $cfgData = file_get_contents($cfgFile);
+        $pos = strpos($cfgData,"#Anmeldename");
+        $eMails = array();
+        if ( $pos){
+            $cfgData = substr($cfgData, $pos+1);
+        }
+        $rows = explode("\n", $cfgData);
+        print "<style>tr:nth-child(odd) {background-color:lightgrey;}</style>";
+        $out = "<b>Übersicht privilegierte Personen</b> (diese Evaluation)<br><br>\n";
+        $out .= '<table style="">'."\n";
+        $first = true;
+        foreach ($rows as $srow) {
+            $CoS = "";
+            $row = explode(",", $srow);
+            if (isset($row[1]) AND !strstr($row[1], "#")) {
+                $CoS = trim($row[1]);
+            }
+            if ( !$first AND !empty($CoS)) {
+                if ( isset($_SESSION['CoS_privileged'][$USER->username])) {
+                    if (!isset($_SESSION['CoS_privileged'][$USER->username][$CoS])) {
+                        continue;
+                    }
+                }
+                if ( !empty($_SESSION['filter_course_of_studies']) AND !in_array($CoS, $_SESSION['filter_course_of_studies'])){
+                    continue;
+                }
+            }
+            if (strstr( $row[0], "#")){
+                continue;
+            }
+            $username = trim($row[0]);
+            //$_SESSION["privileged_global_users_wm"][$username] = $username;
+            $out .= "<tr>\n";
+            if ($first) {
+                foreach ($row as $col) {
+                    $out .=  '<th style="font-weight:bold;">'.htmlspecialchars($col)."</th>\n";
+                }
+                $first = false;
+            } else {
+                foreach ($row as $col) {
+                    $out .=  "<td>".htmlspecialchars($col)."</td>\n";
+                }
+                if ($getEmails){
+                    if ($eMail = $DB->get_record("user",array("username" => $row[0]))){
+                        $eMails[$row[0]] = '"' . $eMail->firstname .' '. $eMail->lastname
+                                .'" &lt;' . $eMail->email . "&gt;";
+                    }
+                }
+            }
+            $out .= "</tr>\n";
+        }
+        if (!empty($evaluation->privileged_users)) {
+            $ev_privileged_users = explode("\n", $evaluation->privileged_users);
+            foreach ($ev_privileged_users AS $privileged_user){
+                if (!isset($_SESSION["privileged_global_users"][$privileged_user]) AND
+                        $eMail = $DB->get_record("user",array("username" => $privileged_user))) {
+                    $eMails[$row[0]] = '"' . $eMail->firstname . ' ' . $eMail->lastname
+                            . '" &lt;' . $eMail->email . "&gt;";
+
+                    $out .= "<tr>\n<td>$privileged_user</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>"
+                            . "<td>$eMail->firstname</td><td>$eMail->lastname</td><td>&nbsp;</td>\n</tr>\n";
+                    $privileged_users[$privileged_user] = $privileged_user;
+                    $_SESSION["privileged_global_users"][$privileged_user] = $privileged_user;
+                }
+            }
+        }
+        $out .=  "</table>";
+        // print nl2br(var_export($_SESSION['filter_course_of_studies'],true));
+        if ($getEmails) {
+            return implode(",", $eMails);
+        }
+        return $out;
+    }
+    return $privileged_users;
 }
 
 // get filters set for evaluation and set CoS_privileged users
