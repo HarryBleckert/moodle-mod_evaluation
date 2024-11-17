@@ -3545,12 +3545,13 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             if (!empty($evaluation->privileged_users)) {
                 $privileged_users = explode("\n", $evaluation->privileged_users);
                 foreach ($privileged_users AS $privileged_user){
-                    if ($eMail = $DB->get_record("user",array("username" => $privileged_user))){
-                        $eMails[$row[0]] = '"' . $eMail->firstname .' '. $eMail->lastname
-                                .'" &lt;' . $eMail->email . "&gt;";
+                    if ($eMail = $DB->get_record("user",array("username" => $privileged_user))) {
+                        $eMails[$row[0]] = '"' . $eMail->firstname . ' ' . $eMail->lastname
+                                . '" &lt;' . $eMail->email . "&gt;";
+
+                        $out .= "<tr>\n<td>$privileged_user</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>"
+                                . "<td>$eMail->firstname</td><td>$eMail->lastname</td><td>&nbsp;</td>\n</tr>\n";
                     }
-                    $out .= "<tr>\n<td>$privileged_user</td><td colspan='3'>&nbsp;</td>"
-                            ."<td>$eMail->firstname</td><td>$eMail->lastname</td><td>&bpsp;</td>\n</tr>\n";
                 }
             }
             $out .=  "</table>";
