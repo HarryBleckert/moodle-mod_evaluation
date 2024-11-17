@@ -241,7 +241,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $present = "nope";
         foreach ($questions as $question) {
             $present = $question->presentation;
-
             $presentationraw = $presentation = explode("|",
                             str_replace(array("\t", "\r", "\n", "<<<<<1", "r>>>>>", "c>>>>>", "d>>>>>"),
                             "",
