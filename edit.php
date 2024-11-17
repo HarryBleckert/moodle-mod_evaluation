@@ -27,7 +27,7 @@ require_once('lib.php');
 require_once('edit_form.php');
 
 evaluation_init_evaluation_session();
-
+global $USER;
 $id = required_param('id', PARAM_INT);
 
 if (($formdata = data_submitted()) and !confirm_sesskey()) {
@@ -71,7 +71,8 @@ if ($deleteitem) {
 }
 
 // Process the create template form.
-$cancreatetemplates = has_capability('mod/evaluation:createprivatetemplate', $context) ||
+$cancreatetemplates =  isset($_SESSION["privileged_users"][$USER->username])
+                        OR has_capability('mod/evaluation:createprivatetemplate', $context) ||
         has_capability('mod/evaluation:createpublictemplate', $context);
 $create_template_form = new evaluation_edit_create_template_form(null, array('id' => $id));
 if ($data = $create_template_form->get_data()) {
@@ -153,7 +154,7 @@ if ($do_show == 'templates') {
         echo '&nbsp;';
     }
 
-    if (has_capability('mod/evaluation:edititems', $context)) {
+    if (isset($_SESSION["privileged_users"][$USER->username]) OR has_capability('mod/evaluation:edititems', $context)) {
         $urlparams = array('action' => 'exportfile', 'id' => $id);
         $exporturl = new moodle_url('/mod/evaluation/export.php', $urlparams);
         $importurl = new moodle_url('/mod/evaluation/import.php', array('id' => $id));
