@@ -46,7 +46,9 @@ list($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
 
 $context = context_module::instance($cm->id);
 require_login($course, false, $cm);
-require_capability('mod/evaluation:edititems', $context);
+if ( !isset($_SESSION["privileged_users"][$USER->username])) {
+    require_capability('mod/evaluation:edititems', $context);
+}
 $evaluation = $PAGE->activityrecord;
 $evaluationstructure = new mod_evaluation_structure($evaluation, $cm);
 
