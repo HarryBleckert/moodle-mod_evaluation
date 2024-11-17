@@ -24,7 +24,7 @@
 
 require_once("../../config.php");
 require_once("lib.php");
-
+global $USER;
 $current_tab = 'templates';
 
 $id = required_param('id', PARAM_INT);
@@ -37,7 +37,10 @@ list($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
 $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
-require_capability('mod/evaluation:deletetemplate', $context);
+
+if ( !isset($_SESSION["privileged_users"][$USER->username])) {
+    require_capability('mod/evaluation:deletetemplate', $context);
+}
 
 $evaluation = $PAGE->activityrecord;
 $systemcontext = context_system::instance();
