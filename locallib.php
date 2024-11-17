@@ -3545,7 +3545,8 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             if (!empty($evaluation->privileged_users)) {
                 $privileged_users = explode("\n", $evaluation->privileged_users);
                 foreach ($privileged_users AS $privileged_user){
-                    if ($eMail = $DB->get_record("user",array("username" => $privileged_user))) {
+                    if (!isset($_SESSION["privileged_global_users"][$privileged_user]) AND
+                            $eMail = $DB->get_record("user",array("username" => $privileged_user))) {
                         $eMails[$row[0]] = '"' . $eMail->firstname . ' ' . $eMail->lastname
                                 . '" &lt;' . $eMail->email . "&gt;";
 
