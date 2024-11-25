@@ -577,7 +577,7 @@ if ($evaluation->timeopen and $evaluation->timeclose) {
     echo "<br>\n";
 }
 
-echo "<b>Semester:</b> " . $evaluation_semester . "<b>" . get_string('mode', 'evaluation') . "</b>: " . ($evaluation->anonymous ? "Anonym" : "Personalisiert")
+echo "<b>Semester:</b> " . $evaluation_semester . " - <b>" . get_string('mode', 'evaluation') . "</b>: " . ($evaluation->anonymous ? "Anonym" : "Personalisiert")
         . " - " . "<b>" . get_string("questions", "evaluation") . "</b>: " . $_SESSION["questions"] . " " . $previewQ . "<br>\n";
 
 if (!$courseid AND ($privGlobalUser OR !$is_open)) {
