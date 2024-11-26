@@ -98,7 +98,7 @@ else{
     $syear = substr($evaluation_semester, 0, 4);
     $semester = "Sommersemester " . $syear;
     if (substr($evaluation_semester, -1,1) == "2"){
-        $syear2 = intval(substr($evaluation_semester, 2, 2)) + 1
+        $syear2 = intval(substr($evaluation_semester, 2, 2)) + 1;
         $semester = "Wintersemester " . $syear . "/" . $syear2;
     }
 }
