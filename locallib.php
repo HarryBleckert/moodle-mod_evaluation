@@ -655,14 +655,14 @@ function evaluation_isPrivilegedUser($evaluation, $user = false) {
     if (!empty($evaluation->privileged_users)) {
         $privileged_users = explode("\n", $evaluation->privileged_users);
     }
-    if (in_array($user->username, $privileged_users) or evaluation_cosPrivileged($evaluation)) {
+    if (in_arrayi($user->username, $privileged_users) or evaluation_cosPrivileged($evaluation)) {
         $_SESSION["EVALUATION_OWNER"] = $user->username;
         return true;
     }
     if ( !isset($_SESSION["privileged_global_users"]) OR !is_array($_SESSION["privileged_global_users"])) {
         ev_set_privileged_users();
     }
-    if (in_array($user->username, $_SESSION["privileged_global_users"])) {
+    if (in_arrayi($user->username, $_SESSION["privileged_global_users"])) {
         $_SESSION["EVALUATION_OWNER"] = $user->username;
         return true;
     }
@@ -753,7 +753,7 @@ function evaluation_is_WM_disabled($evaluation) {
         $sg_filter = explode("\n", $evaluation->filter_course_of_studies);
         $excluded = array();
         foreach ($_SESSION["course_of_studies_wm"] as $CoS => $is_WM) {
-            if ($is_WM and in_array($CoS, $sg_filter)) {
+            if ($is_WM and in_arrayi($CoS, $sg_filter)) {
                 $excluded[] = $CoS;
             }
         }
@@ -893,7 +893,7 @@ function evaluation_LoginAs() {
     $CoS_privileged = array();
     foreach ($_SESSION['CoS_privileged'] AS $CoSuser=>$CoSA){
         foreach ( $CoSA AS $cusername => $CoS){
-            if ( in_array($CoS, $sg_filter)){
+            if ( in_arrayi($CoS, $sg_filter)){
                 if (!isset($_SESSION['CoS_privileged_sgl'][$CoSuser])) {
                     $CoS_privileged[$CoSuser] = $CoS;
                 }
@@ -905,7 +905,7 @@ function evaluation_LoginAs() {
     $CoS_privileged_sgl = array();
     foreach ($_SESSION['CoS_privileged_sgl'] AS $CoSuser=>$CoSA){
         foreach ( $CoSA AS $cusername => $CoS){
-            if ( in_array($CoS, $sg_filter)){
+            if ( in_arrayi($CoS, $sg_filter)){
                 $CoS_privileged_sgl[$CoSuser] = $CoS;
             }
         }
@@ -1626,15 +1626,15 @@ function evaluation_get_course_studies($evaluation, $link = false, $raw = false)
                 continue;
             }
             if (!empty($sg_filter)) {
-                if (!in_array($course_studies->course_of_studies, $sg_filter)) {
+                if (!in_arrayi($course_studies->course_of_studies, $sg_filter)) {
                     continue;
                 }
-                /*if (!empty($courses_filter) and in_array($course_studies->course_of_studies, $sg_courses_filter)) {
+                /*if (!empty($courses_filter) and in_arrayi($course_studies->course_of_studies, $sg_courses_filter)) {
                     continue;
                 }*/
             } else if (!empty($courses_filter)) {
                 $sg_filter = evaluation_get_course_of_studies_from_courseids($courses_filter);
-                if (!in_array($course_studies->course_of_studies, $sg_filter)) {
+                if (!in_arrayi($course_studies->course_of_studies, $sg_filter)) {
                     continue;
                 }
             }
@@ -2771,7 +2771,7 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
                 print "<br><hr>Studiengang: " . trim(strip_tags($Studiengang)) . " - _SESSION['CoS_privileged'][$USER->username]: "
                         . var_export($_SESSION['CoS_privileged'][$USER->username], true) . "<hr>\n";
             }
-            if ($cosPrivileged_filter and !in_array(trim(strip_tags($Studiengang)), $_SESSION['CoS_privileged'][$USER->username])) {
+            if ($cosPrivileged_filter and !in_arrayi(trim(strip_tags($Studiengang)), $_SESSION['CoS_privileged'][$USER->username])) {
                 continue;
             }
             $listed_courses++;
@@ -3398,9 +3398,9 @@ function pass_evaluation_filters($evaluation, $courseid) {
     $courses_filter = $_SESSION['filter_courses'];
     if (!empty($sg_filter) and is_array($sg_filter)) {
         $Studiengang = evaluation_get_course_of_studies($courseid);
-        $passed = ((!empty($Studiengang) and in_array($Studiengang, $sg_filter)) ? true : false);
+        $passed = ((!empty($Studiengang) and in_arrayi($Studiengang, $sg_filter)) ? true : false);
         // courses in courses_filter are to be excluded
-        if ($passed and !empty($courses_filter) and in_array($courseid, $courses_filter)) {
+        if ($passed and !empty($courses_filter) and in_arrayi($courseid, $courses_filter)) {
             $passed = false;
         }
         //print "<br><br><hr>Evaluation: $evaluation->name - Studiengang: $Studiengang - ".var_export($sg_filter,true)." - showEval: ".($showEval ?"Yes" :"No") ."<br>\n";
@@ -3463,7 +3463,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                 }
             } else {
                 if ((is_array($_SESSION['filter_course_of_studies']) and !empty($_SESSION['filter_course_of_studies'])
-                                and in_array($CoS, $_SESSION['filter_course_of_studies'])) or
+                                and in_arrayi($CoS, $_SESSION['filter_course_of_studies'])) or
                         ev_is_cos_in_completed($evaluation, $CoS)) {
                     $_SESSION['CoS_privileged'][$username][$CoS] = $CoS;
                     if (isset($parts[6]) and (strtolower($parts[6]) == "sgl" or strtolower($parts[6]) == "studiengangsleitung")) {
@@ -3527,7 +3527,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                         continue;
                     }
                 }
-                if ( !empty($_SESSION['filter_course_of_studies']) AND !in_array($CoS, $_SESSION['filter_course_of_studies'])){
+                if ( !empty($_SESSION['filter_course_of_studies']) AND !in_arrayi($CoS, $_SESSION['filter_course_of_studies'])){
                     continue;
                 }
             }
@@ -4876,3 +4876,10 @@ function ev_cron() {
     mtrace('Completed processing send_reminders');
     return true;
 }
+
+// Case insensitive in_array
+function in_arrayi($needle, $haystack) {
+    return in_array(strtolower($needle), array_map('strtolower', $haystack));
+}
+
+/

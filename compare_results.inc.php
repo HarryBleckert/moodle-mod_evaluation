@@ -213,8 +213,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 }
             }
 
-            if (in_array("k.b.", $presentation) or in_array("keine Angabe", $presentation) or
-                    in_array("Kann ich nicht beantworten", $presentation)) {
+            if (in_arrayi("k.b.", $presentation) or in_arrayi("keine Angabe", $presentation) or
+                    in_arrayi("Kann ich nicht beantworten", $presentation)) {
                 array_pop($presentation);
             }
             // $presentationraw = $presentation; // used for subqueries
@@ -245,8 +245,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                             str_replace(array("\t", "\r", "\n", "<<<<<1", "r>>>>>", "c>>>>>", "d>>>>>"),
                             "",
                             $question->presentation));
-            if (in_array("k.b.", $presentation) or in_array("keine Angabe", $presentation) or
-                    in_array("Kann ich nicht beantworten", $presentation)) {
+            if (in_arrayi("k.b.", $presentation) or in_arrayi("keine Angabe", $presentation) or
+                    in_arrayi("Kann ich nicht beantworten", $presentation)) {
                 array_pop($presentation);
             }
             $scheme = implode(", ", $presentation) . " <=> $qfValues";
@@ -510,7 +510,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                         // $hide_reply = array("k.b.", "keine Angabe", "Kann ich nicht beantworten");
                         $hide_reply = array();
                         foreach ($presentationraw as $reply) {
-                            if ( !in_array($reply, $hide_reply)) {
+                            if ( !in_arrayi($reply, $hide_reply)) {
                                 print '<label>';
                                 print '<input type="radio" name="subreply" value="' . $cnt . '">';
                                 print "$reply&nbsp;</label>";

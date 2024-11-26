@@ -80,7 +80,7 @@ if ($cosPrivileged) {
     }
     if ($course_of_studiesID) {
         $course_of_studies = evaluation_get_course_of_studies_from_evc($course_of_studiesID, $evaluation);
-        if (!in_array($course_of_studies, $_SESSION['CoS_privileged'][$USER->username])) {
+        if (!in_arrayi($course_of_studies, $_SESSION['CoS_privileged'][$USER->username])) {
             $course_of_studiesID = false;
         }
     }
@@ -342,8 +342,8 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
                 }
             }
 
-            if (in_array("k.b.", $presentation) or in_array("keine Angabe", $presentation) or
-                    in_array("Kann ich nicht beantworten", $presentation)) {
+            if (in_arrayi("k.b.", $presentation) or in_arrayi("keine Angabe", $presentation) or
+                    in_arrayi("Kann ich nicht beantworten", $presentation)) {
                 array_pop($presentation);
             }
             // $presentationraw = $presentation; // used for subqueries
@@ -460,7 +460,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
                 // $hide_reply = array("k.b.", "keine Angabe", "Kann ich nicht beantworten");
                 $hide_reply = array();
                 foreach ($presentationraw as $reply) {
-                    if ( !in_array($reply, $hide_reply)) {
+                    if ( !in_arrayi($reply, $hide_reply)) {
                         print '<label>';
                         print '<input type="radio" name="subreply" value="' . $cnt . '">';
                         print "$reply&nbsp;</label>";
