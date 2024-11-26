@@ -422,7 +422,7 @@ class mod_evaluation_structure {
     public function set_department($studies) {
         if ( isset($_SESSION['CoS_department']) AND safeCount($_SESSION['CoS_department']) ) {
             $keys = array_keys($_SESSION['CoS_department']);
-            $dept = array_search($studies, $keys);
+            $dept = array_searchi($studies, $keys);
             if ($dept AND isset($_SESSION['CoS_department'][$keys[$dept]]) ) {
                 $this->$department = $_SESSION['CoS_department'][$keys[$dept]];
                 return $this->$department;

@@ -788,7 +788,7 @@ if (is_siteadmin()) {
         $dept = $departmentF = "";
         if ( $dept AND isset($_SESSION['CoS_department']) AND safeCount($_SESSION['CoS_department']) ) {
             $keys = array_keys($_SESSION['CoS_department']);
-            $dept = array_search($course_of_studies, $keys);
+            $dept = array_searchi($course_of_studies, $keys);
             if (isset($_SESSION['CoS_department'][$keys[$dept]]) ) {
                 $departmentF = $_SESSION['CoS_department'][$keys[$dept]];
                 //return $department;

@@ -853,7 +853,7 @@ function ev_roles_in_course($userid, $courseid) {
 function get_department_from_cos($cos) {
     if ( isset($_SESSION['CoS_department']) AND safeCount($_SESSION['CoS_department']) ) {
         $keys = array_keys($_SESSION['CoS_department']);
-        $dept = array_search($cos, $keys);
+        $dept = array_searchi($cos, $keys);
         if ($dept AND isset($_SESSION['CoS_department'][$keys[$dept]]) ) {
             $department = $_SESSION['CoS_department'][$keys[$dept]];
             return $department;
@@ -1765,7 +1765,7 @@ function evaluation_get_course_of_studies_id_from_evc($id, $course_of_studies, $
     list($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
     $evaluationstructure = new mod_evaluation_structure($evaluation, $cm, false, null, 0, false, $course_of_studies, false);
     $allStudies = $evaluationstructure->get_completed_course_of_studies();
-    return array_search($course_of_studies, $allStudies);
+    return array_searchi($course_of_studies, $allStudies);
 
 }
 
@@ -4046,7 +4046,7 @@ function evaluation_is_item_course_of_studies($evaluationid) {
 }
 
 // auto-generate replies from courseid to fill studiengang
-function evaluation_autofill_item_studiengang($evaluation) {
+function evaluation_autofill_item_studiengang($evaluation, $force = false) {
     // check settings before execution!
     //return;
 
@@ -4144,7 +4144,7 @@ function evaluation_autofill_item_studiengang($evaluation) {
         unset($newval->id);
         $newval->item = $itemid;
         $Studiengang = evaluation_get_course_of_studies($courseid->courseid);
-        $position = array_search($Studiengang, $sg_arr);
+        $position = array_searchi($Studiengang, $sg_arr);
         $newval->value = (is_numeric($position) ? $position : 0) + 1;
         $val_id = $DB->insert_record('evaluation_value', $newval);
         //print "<hr><br>$cnt/$hits: $val_id - $courseid->courseid - $Studiengang - position: $position - newval: ".$newval->value."<hr>";
@@ -4882,3 +4882,12 @@ function in_arrayi($needle, $haystack) {
     return in_array(strtolower($needle), array_map('strtolower', $haystack));
 }
 
+// case insensitive array_search
+function array_searchi($needle, $haystack) {
+    foreach ($haystack as $key => $value) {
+        if ($value == $needle) {
+            return $key;
+        }
+    }
+    return false;
+}
