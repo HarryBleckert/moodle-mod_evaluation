@@ -129,16 +129,16 @@ class mod_evaluation_mod_form extends moodleform_mod {
         $mform->addHelpButton('autoreminders', 'autoreminders', 'evaluation');
 
         $mform->setType('sendername', PARAM_TEXT);
-        $mform->setDefault('sendername','ASH Berlin (Qualitätsmanagement)');
         $mform->addElement('text', 'sendername', get_string('sendername', 'evaluation'));
+        $mform->setDefault('sendername','ASH Berlin (Qualitätsmanagement)');
 
         $mform->setType('sendermail', PARAM_TEXT);
-        $mform->setDefault('sendermail','khayat@ash-berlin.eu');
         $mform->addElement('text', 'sendermail', get_string('sendermail', 'evaluation'));
+        $mform->setDefault('sendermail','khayat@ash-berlin.eu');
 
         $mform->setType('signature', PARAM_TEXT);
-        $mform->setDefault('signature','Das Evaluationsteam');
         $mform->addElement('text', 'signature', get_string('signature', 'evaluation'));
+        $mform->setDefault('signature','Das Evaluationsteam');
 
         $mform->addElement('editor',
                 'page_after_submit_editor',
