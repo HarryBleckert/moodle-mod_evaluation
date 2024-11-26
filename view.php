@@ -741,6 +741,10 @@ if (is_siteadmin()) {
     if (isset($_GET['shuffle'])) {
         ev_shuffle_completed_userids($evaluation, true);
     }
+
+    if ($CFG->dbname == 'moodle_staging' AND isset($_GET['renumber'])) {
+        evaluation_renumber_items($evaluation->id);
+    }
     //if( !safeCount( $DB->get_records_sql("SELECT * FROM {evaluation_item}
     //									WHERE name ILIKE '%studiengang%' AND evaluation=$evaluation->id and typ='multichoice'")) )
     //{	evaluation_autofill_item_studiengang( $evaluation ); }
