@@ -91,6 +91,9 @@ if ($privGlobalUser) {
 }
 
 $evaluation_semester = get_evaluation_semester($evaluation);
+if (empty($evaluation_semester)){
+    $evaluation_semester = "Alle Semester";
+}
 
 //$previewimg = '<i style="color:blue;" class="fa fa-search-plus fa-fw fa-2x" title="'.get_string('preview').'">';
 $previewimg = $OUTPUT->pix_icon('t/preview', get_string('preview'));
@@ -576,8 +579,8 @@ if ($evaluation->timeopen and $evaluation->timeclose) {
     }
     echo "<br>\n";
 }
-
-echo "<b>Semester:</b> " . $evaluation_semester . " - <b>" . get_string('mode', 'evaluation') . "</b>: " . ($evaluation->anonymous ? "Anonym" : "Personalisiert")
+echo "<b>Semester:</b> " . $evaluation_semester . " - <b>" . get_string('mode', 'evaluation') . "</b>: "
+        . ($evaluation->anonymous ? "Anonym" : "Personalisiert")
         . " - " . "<b>" . get_string("questions", "evaluation") . "</b>: " . $_SESSION["questions"] . " " . $previewQ . "<br>\n";
 
 if (!$courseid AND ($privGlobalUser OR !$is_open)) {
