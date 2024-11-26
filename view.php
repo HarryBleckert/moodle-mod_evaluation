@@ -101,6 +101,7 @@ else{
         $syear2 = intval(substr($evaluation_semester, 2, 2)) + 1;
         $semester = "Wintersemester " . $syear . "/" . $syear2;
     }
+    $evaluation_semester = $semester;
 }
 
 //$previewimg = '<i style="color:blue;" class="fa fa-search-plus fa-fw fa-2x" title="'.get_string('preview').'">';
