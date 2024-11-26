@@ -124,9 +124,9 @@ class mod_evaluation_mod_form extends moodleform_mod {
         $mform->addElement('text', 'sort_tag', get_string('sort_tag', 'evaluation'));
 
         $mform->setType('autoreminders', PARAM_TEXT);
-        $mform->addHelpButton('autoreminders', 'autoreminders', 'evaluation');
         $mform->setDefault('autoreminders','1');
         $mform->addElement('selectyesno', 'autoreminders', get_string('autoreminders', 'evaluation'));
+        $mform->addHelpButton('autoreminders', 'autoreminders', 'evaluation');
 
         $mform->setType('sendername', PARAM_TEXT);
         $mform->setDefault('sendername','ASH Berlin (Qualitätsmanagement)');
