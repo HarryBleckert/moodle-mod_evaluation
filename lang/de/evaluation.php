@@ -208,7 +208,7 @@ $string['edit_item'] = 'Element bearbeiten';
 $string['edit_items'] = 'Elemente bearbeiten';
 $string['email_notification'] = 'Systemnachricht bei Abgabe senden';
 $string['email_notification_help'] =
-        'Wenn diese Option aktiviert ist, bekommen die Trainer/innen bei Evaluation-Abgaben eine Systemnachricht.';
+        'Wenn diese Option aktiviert ist, bekommen die Lehrenden naach Abgaben eine Systemnachricht.';
 $string['emailteachermail'] = '{$a->username} hat die Evaluation \'{$a->evaluation}\' abgeschlossen.
 
 Sie können es hier anschauen:
