@@ -120,8 +120,8 @@ class mod_evaluation_mod_form extends moodleform_mod {
 
         $mform->addElement('selectyesno', 'show_on_index', get_string('show_on_index', 'evaluation'));
         $mform->setType('sort_tag', PARAM_TEXT);
-        $mform->setDefault('sort_tag','ASH');
         $mform->addElement('text', 'sort_tag', get_string('sort_tag', 'evaluation'));
+        $mform->setDefault('sort_tag','ASH');
 
         $mform->setType('autoreminders', PARAM_TEXT);
         $mform->setDefault('autoreminders','1');
