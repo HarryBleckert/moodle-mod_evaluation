@@ -94,6 +94,14 @@ $evaluation_semester = get_evaluation_semester($evaluation);
 if (empty($evaluation_semester)){
     $evaluation_semester = "Alle Semester";
 }
+else{
+    $syear = substr($evaluation_semester, 0, 4);
+    $semester = "Sommersemester " . $syear;
+    if (substr($evaluation_semester, -1,1) == "2"){
+        $syear2 = intval(substr($evaluation_semester, 2, 2)) + 1
+        $semester = "Wintersemester " . $syear . "/" . $syear2;
+    }
+}
 
 //$previewimg = '<i style="color:blue;" class="fa fa-search-plus fa-fw fa-2x" title="'.get_string('preview').'">';
 $previewimg = $OUTPUT->pix_icon('t/preview', get_string('preview'));
