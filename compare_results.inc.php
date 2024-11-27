@@ -807,7 +807,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
             if ((defined('EVALUATION_OWNER') && !isset($_SESSION['CoS_privileged_sgl'][$USER->username]))
                     OR evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)) {
-            {
                 $links = '<a href="analysis_course.php?id=' . $id . '&courseid=' . $allResult->courseid
                         . '" title="' . $fullname . '" target="analysis">'
                         . (strlen($fullname) > 120 ? substr($fullname, 0, 120) . "..." : $fullname) . "</a>";
