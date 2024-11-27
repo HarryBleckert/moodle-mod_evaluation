@@ -804,7 +804,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $fullname = $uRecord->fullname;
             }
 
-            if (true) //defined('EVALUATION_OWNER') )
+
+            if ((defined('EVALUATION_OWNER') && !isset($_SESSION['CoS_privileged_sgl'][$USER->username]))
+                    OR evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)) {
             {
                 $links = '<a href="analysis_course.php?id=' . $id . '&courseid=' . $allResult->courseid
                         . '" title="' . $fullname . '" target="analysis">'
