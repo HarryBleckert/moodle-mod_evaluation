@@ -4115,7 +4115,7 @@ function evaluation_autofill_item_studiengang($evaluation, $force = false) {
         $item->presentation = "r>>>>>" . str_replace("\n", "\n|",
                         implode("\n", $sg_arr) . "<<<<<1");
         $itemid = $DB->insert_record('evaluation_item', $item);
-        // evaluation_renumber_items($evaluation->id);
+        evaluation_renumber_items($evaluation->id);
     }
     // make sure this is never run twice!
     if (!$itemid or !$template) {

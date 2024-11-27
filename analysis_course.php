@@ -849,8 +849,8 @@ if ($courseitemfilter > 0) {
 // display graphs once page is loaded
 print "\n</div> <!-- end evCharts-->\n";
 
-//echo nl2br(var_export($GLOBALS['CFG'],true));
-//echo "<br>evaluationstructure: ".nl2br(var_export($evaluationstructure,true));
+echo nl2br(var_export($items,true));
+echo "<br>evaluationstructure: ".nl2br(var_export($evaluationstructure,true));
 //echo "<br>teacherid: ".$evaluationstructure->get_teacherid();
 //echo " - course_of_studies: ".$evaluationstructure->get_course_of_studies();
 
