@@ -808,10 +808,12 @@ if ($courseitemfilter > 0) {
             continue;
         }
 
+        // purpose?
         if ((!empty($course_of_studiesID) or $courseid) and
                 stripos($item->name, get_string("course_of_studies", "evaluation")) !== false) {
             continue;
         }
+
         echo '<table style="width:100%;">';
         //echo nl2br(var_export($key,true)).nl2br(var_export($item,true));
         $itemobj = evaluation_get_item_class($item->typ);
@@ -849,10 +851,10 @@ if ($courseitemfilter > 0) {
 // display graphs once page is loaded
 print "\n</div> <!-- end evCharts-->\n";
 
-echo nl2br(var_export($items,true));
-echo "<br>evaluationstructure: ".nl2br(var_export($evaluationstructure,true));
-//echo "<br>teacherid: ".$evaluationstructure->get_teacherid();
-//echo " - course_of_studies: ".$evaluationstructure->get_course_of_studies();
+// echo nl2br(var_export($items,true));
+// echo "<br>evaluationstructure: ".nl2br(var_export($evaluationstructure,true));
+// echo "<br>teacherid: ".$evaluationstructure->get_teacherid();
+// echo " - course_of_studies: ".$evaluationstructure->get_course_of_studies();
 
 // js code for closing spinner
 evaluation_spinnerJS();

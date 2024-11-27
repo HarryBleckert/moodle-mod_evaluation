@@ -273,7 +273,7 @@ class evaluation_item_multichoice extends evaluation_item_base {
         $analysed_item[] = format_string($item->name);
 
         //get the possible answers
-        $answers = null;
+        // $answers = null;
         $answers = explode(EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
         if (!is_array($answers)) {
             return null;
