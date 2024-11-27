@@ -2129,10 +2129,10 @@ function evaluation_get_group_values($item,
         $values = $DB->get_records_select('evaluation_value', $select, $params);
     }
 
-    if (is_siteadmin()){
-        echo nl2br("Params: ".var_export($params,true));
-        echo nl2br("Select: ".var_export($select,true));
-        echo nl2br("Valuest: ".var_export($values,true));
+    if (false AND is_siteadmin()){
+        echo nl2br("<hr>Params: ".var_export($params,true));
+        echo nl2br("<hr>Select: ".var_export($select,true));
+        echo nl2br("<hr>Values: ".var_export($values,true));
     }
     $answers = explode(EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
     $params = array('id' => $item->evaluation);
