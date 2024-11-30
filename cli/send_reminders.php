@@ -174,7 +174,7 @@ function ev_cron2() {
     $evaluations = $DB->get_records_sql("SELECT * from {evaluation}");
     // only run in test mode
     $test = (true AND $CFG->dbname    != 'moodle_staging');
-    $cronjob = true;
+    $cronjob = false;
     $cli = false;
     $verbose = false;
     $noreplies = false;
