@@ -4744,7 +4744,7 @@ function ev_get_reminders($evaluation, $id) {
                         - Nur Non Responders?
                         <input type="radio" name="noreplies" value="0" checked>Nein</input>
                         <input type="radio" name="noreplies" value="1">Ja</input>&nbsp;
-                        <input type="submit">Go</input>
+                        <button type="submit">Go</button>
                     </p>
                 </form>
             <?php
