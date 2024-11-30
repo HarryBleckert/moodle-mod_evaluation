@@ -163,7 +163,7 @@ function ev_cron2() {
     // return true;
     // mtrace('Start processing send_reminders');
 
-    setlocale(LC_ALL, 'de_DE');
+    // setlocale(LC_ALL, 'de_DE');
     $yesterday = time() - (24 * 3600);
     $timenow = time();
     // $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
