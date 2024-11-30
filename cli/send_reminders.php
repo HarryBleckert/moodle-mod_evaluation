@@ -32,7 +32,8 @@
 define('CLI_SCRIPT', true);
 $PHP_SELF = basename($_SERVER['PHP_SELF']);
 
-$configFile = '../../../config.php';
+// $configFile = '../../../config.php';
+$configFile = '../../config.php';
 if (!is_file($configFile)) {
     print "ERROR: Script $PHP_SELF must be located in folder mod/evaluation/cli of Moodle instance.\nCurrent location is: " .
             __DIR__ . "\n\n";
