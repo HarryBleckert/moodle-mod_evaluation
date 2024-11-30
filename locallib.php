@@ -4698,7 +4698,7 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
          30.11.2024:teachers (NR),students
         */
         foreach ( $remindersA AS $key => $line) {
-            if (!strstr($line, $ndate.":")) {
+            if (false && !strstr($line, $ndate.":")) {
                 continue;
             }
             $remindersA[$key] .= "," . $action . $nonresponding;
