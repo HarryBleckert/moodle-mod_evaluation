@@ -4702,13 +4702,13 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
                 continue;
             }
             $remindersA[$key] .= "," . $action . $nonresponding;
-            $GLOBALS['evaluation']->reminders = $evUpdate->reminders = implode("\n",$remindersA);
+            $evUpdate->reminders = implode("\n",$remindersA);
             $DB->update_record("evaluation",$evUpdate);
 
             return true;
         }
     }
-    $GLOBALS['evaluation']->reminders = $evUpdate->reminders = $reminders . $ndate . ":" . $action . $nonresponding . "\n";
+    $evUpdate->reminders = $reminders . $ndate . ":" . $action . $nonresponding . "\n";
     $DB->update_record("evaluation",$evUpdate);
     return true;
 }
@@ -4834,6 +4834,7 @@ function ev_cron($cronjob = true) {
             if (empty($reminders)){
                 // mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students");
                 ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
+                $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
                 ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
                 break;
             }
