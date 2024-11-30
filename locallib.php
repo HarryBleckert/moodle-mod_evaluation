@@ -4805,18 +4805,19 @@ function ev_get_reminders($evaluation, $id) {
 
 // cron for scheduled tasks. But works extremely slow and therefore disabled.
 // maybe better use as a non-Moodle cron job, meanwhile call reminders from view.php
+// for testing as non-cron task: commented all cron related lines...
 function ev_cron() {
     global $CFG, $DB;
-    mtrace('send_reminders cron is currently disabled in function ev_cron');
+    // mtrace('send_reminders cron is currently disabled in function ev_cron');
     return true;
-    mtrace('Start processing send_reminders');
+    // mtrace('Start processing send_reminders');
 
     setlocale(LC_ALL, 'de_DE');
     $yesterday = time() - (24 * 3600);
     $timenow = time();
-    $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
-    $lastruntime = $task->get_last_run_time();
-    mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: "
+    // $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
+    // $lastruntime = $task->get_last_run_time();
+    // mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: "
             .date("d.m,Y H:i:s",$lastruntime));
 
     $evaluations = $DB->get_records_sql("SELECT * from {evaluation}");
@@ -4834,7 +4835,7 @@ function ev_cron() {
 
             $reminders = $evaluation->reminders;
             if (empty($reminders)){
-                mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students");
+                // mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students");
                 ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
                 ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
                 break;
@@ -4874,7 +4875,7 @@ function ev_cron() {
         unset($_SESSION["EvaluationsName"]);
         validate_evaluation_sessions($evaluation);
     }
-    mtrace('Completed processing send_reminders');
+    // mtrace('Completed processing send_reminders');
     return true;
 }
 
