@@ -4809,7 +4809,7 @@ function ev_get_reminders($evaluation, $id) {
 function ev_cron() {
     global $CFG, $DB;
     // mtrace('send_reminders cron is currently disabled in function ev_cron');
-    return true;
+    // return true;
     // mtrace('Start processing send_reminders');
 
     setlocale(LC_ALL, 'de_DE');
