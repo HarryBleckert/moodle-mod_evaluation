@@ -47,8 +47,8 @@ require_once($CFG->dirroot . '/mod/evaluation/lib.php');
 global $CFG, $DB, $USER;
 
 // run as manually called non-moodle cron task
-// ev_cron();
-// exit;
+ev_cron2();
+exit;
 
 
 // usage need be updated to fit!
@@ -150,3 +150,82 @@ $verbose = $options['verbose'];
 ev_show_reminders_log("\n" . date("Ymd H:m:s") . "\nSend using script $PHP_SELF");
 ev_send_reminders($evaluation,$role,false,$test,$verbose,true);
 exit;
+
+
+
+
+// cron for scheduled tasks. But works extremely slow and therefore disabled.
+// maybe better use as a non-Moodle cron job, meanwhile call reminders from view.php
+// for testing as non-cron task: commented all cron related lines...
+function ev_cron2() {
+    global $CFG, $DB;
+    // mtrace('send_reminders cron is currently disabled in function ev_cron');
+    // return true;
+    // mtrace('Start processing send_reminders');
+
+    setlocale(LC_ALL, 'de_DE');
+    $yesterday = time() - (24 * 3600);
+    $timenow = time();
+    // $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
+    // $lastruntime = $task->get_last_run_time();
+    // mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: "
+    //        .date("d.m,Y H:i:s",$lastruntime));
+
+    $evaluations = $DB->get_records_sql("SELECT * from {evaluation}");
+    // only run in test mode
+    $test = (true AND $CFG->dbname    != 'moodle_staging');
+    $cronjob = true;
+    $cli = false;
+    $verbose = false;
+    $noreplies = false;
+    $tsent = $ssent = $tsentNR = $ssentNR = array();
+    foreach ($evaluations AS $evaluation){
+
+        $is_open = evaluation_is_open($evaluation);
+        if ( $is_open ) {
+
+            $reminders = $evaluation->reminders;
+            if (empty($reminders)){
+                // mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students");
+                ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
+                ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
+                break;
+            }
+            else {
+                /*
+                 * format:
+                 * 04.06.2024:teachers
+                 * 04.06.2024:students
+                 * */
+                $remindersA = explode("\n", $reminders);
+                foreach ($remindersA AS $reminder ){
+                    $items = explode(":",$reminder);
+                    $role = $items[1];
+                    $nr = (stristr($role," (NR)") ?true:false);
+                    if ($nr){
+                        $role = str_ireplace(" (NR)","",$role);
+                        $tsentNR[] = $items[0];
+                    }
+                    if ($role=="teacher"){
+                        $tsent[] = $items[0];
+                    }
+                    else if ($role=="student"){
+                        $ssent[] = $items[0];
+                    }
+                }
+            }
+        }
+
+        if (!empty($tsent)) {
+            $last = $tsend[count($tsent)-1];
+
+            // ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
+        }
+        // ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
+        // \core\cron::setup_user();
+        unset($_SESSION["EvaluationsName"]);
+        validate_evaluation_sessions($evaluation);
+    }
+    // mtrace('Completed processing send_reminders');
+    return true;
+}
