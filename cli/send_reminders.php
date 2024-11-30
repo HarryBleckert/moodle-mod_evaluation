@@ -133,7 +133,8 @@ if (($role !== "student" and $role !== "teacher")) {
 
 
 $_SESSION['ev_cli'] = true;
-$test = ($CFG->dbname == 'moodle_production' ? !$options['send'] : true);
+// $test = ($CFG->dbname == 'moodle_production' ? !$options['send'] : true);
+$test = !$options['send'];
 
 $evaluationid = $options["evaluation"];
 $evaluation = $DB->get_record_sql("SELECT * FROM {evaluation} WHERE id=" . $evaluationid);
