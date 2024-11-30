@@ -4743,7 +4743,8 @@ function ev_get_reminders($evaluation, $id) {
                         - <input type="text" name="test" value="Berthe Khayat <khayat@ash-berlin.eu>"></input>
                         - Nur Non Responders?
                         <input type="radio" name="noreplies" value="0" checked>Nein</input>
-                        <input type="radio" name="noreplies" value="1">Ja</input>
+                        <input type="radio" name="noreplies" value="1">Ja</input>&nbsp;
+                        <input type="submit">Go</input>
                     </p>
                 </form>
             <?php
@@ -4836,7 +4837,7 @@ function ev_cron($cronjob = true) {
                 ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
                 ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
-                break;
+                continue;
             }
             else {
                 /*
