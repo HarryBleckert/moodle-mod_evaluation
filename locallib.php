@@ -4698,16 +4698,17 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
          30.11.2024:teachers (NR),students
         */
         foreach ( $remindersA AS $key => $line) {
-            if (false && !strstr($line, $ndate.":")) {
+            if (!strstr($line, $ndate.":")) {
                 continue;
             }
             $remindersA[$key] .= "," . $action . $nonresponding;
-            $evUpdate->reminders = implode("\n",$remindersA);
+            $GLOBALS['evaluation']->reminders = $evUpdate->reminders = implode("\n",$remindersA);
             $DB->update_record("evaluation",$evUpdate);
+
             return true;
         }
     }
-    $evUpdate->reminders = $reminders . $ndate . ":" . $action . $nonresponding . "\n";
+    $GLOBALS['evaluation']->reminders = $evUpdate->reminders = $reminders . $ndate . ":" . $action . $nonresponding . "\n";
     $DB->update_record("evaluation",$evUpdate);
     return true;
 }
