@@ -4804,7 +4804,7 @@ function ev_get_reminders($evaluation, $id) {
 // cron for scheduled tasks. But works extremely slow and therefore disabled.
 // maybe better use as a non-Moodle cron job, meanwhile call reminders from view.php
 // for testing as non-cron task: commented all cron related lines...
-function ev_cron() {
+function ev_cron($cronjob = true) {
     global $CFG, $DB;
     // mtrace('send_reminders cron is currently disabled in function ev_cron');
     // return true;
@@ -4820,8 +4820,7 @@ function ev_cron() {
 
     $evaluations = $DB->get_records_sql("SELECT * from {evaluation}");
     // only run in test mode
-    $test = (true AND $CFG->dbname    != 'moodle_staging');
-    $cronjob = false;
+    $test = (true AND $CFG->dbname != 'moodle_staging');
     $cli = false;
     $verbose = false;
     $noreplies = false;
@@ -4830,7 +4829,6 @@ function ev_cron() {
 
         $is_open = evaluation_is_open($evaluation);
         if ( $is_open ) {
-
             $reminders = $evaluation->reminders;
             if (empty($reminders)){
                 // mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students");
