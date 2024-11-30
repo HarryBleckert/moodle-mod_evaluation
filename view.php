@@ -745,6 +745,10 @@ if (is_siteadmin()) {
     if (isset($_GET['renumber'])) {
         evaluation_renumber_items($evaluation->id);
     }
+
+    if (isset($_GET['cron'])) {
+        ev_cron();
+    }
     //if( !safeCount( $DB->get_records_sql("SELECT * FROM {evaluation_item}
     //									WHERE name ILIKE '%studiengang%' AND evaluation=$evaluation->id and typ='multichoice'")) )
     //{	evaluation_autofill_item_studiengang( $evaluation ); }
