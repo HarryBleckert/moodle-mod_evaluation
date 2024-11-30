@@ -4690,24 +4690,22 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
     $evUpdate = new stdClass();
     $evUpdate->id = $evaluation->id;
     $reminders = $evaluation->reminders;
-    $remindersA = array();
     $ndate = date("d.m.Y");
     if (!empty($reminders)){
         $remindersA = explode("\n",$reminders);
-    }
-    /*
-     20240102:teachers,students
-     20240122:teachers,students
-    */
-
-    foreach ( $remindersA AS $key => $line) {
-        if (!strpos($line, $ndate.":")) {
-            continue;
+        /*
+         17.11.2024:teachers,students
+         30.11.2024:teachers (NR),students
+        */
+        foreach ( $remindersA AS $key => $line) {
+            if (!strpos($line, $ndate.":")) {
+                continue;
+            }
+            $remindersA[$key] .= "," . $action . $nonresponding;
+            $evUpdate->reminders = implode("\n",$remindersA);
+            $DB->update_record("evaluation",$evUpdate);
+            return true;
         }
-        $remindersA[$key] .= "," . $action . $nonresponding;
-        $evUpdate->reminders = implode("\n",$remindersA);
-        $DB->update_record("evaluation",$evUpdate);
-        return true;
     }
     $evUpdate->reminders = $reminders . $ndate . ":" . $action . $nonresponding . "\n";
     $DB->update_record("evaluation",$evUpdate);
