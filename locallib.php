@@ -4481,7 +4481,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             continue;
         }
 
-        unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
+        // unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         //$teamteaching = $evaluation->teamteaching;
 
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
