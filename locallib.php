@@ -4848,8 +4848,7 @@ function ev_cron($cronjob = true) {
                 $remindersA = explode("\n", $reminders);
                 foreach ($remindersA AS $reminder ){
                     $items = explode(":",$reminder);
-                    $date = DateTime::createFromFormat('d.m.Y', $items[0]);
-                    $timestamp = $date->getTimestamp();
+                    $timestamp = strtotimeformat($items[0], 'd.m.Y');
                     $roles = explode(",", $items[1]);
                     foreach ($roles as $role){
                         $nr = (stristr($role," (NR)") ?true:false);
