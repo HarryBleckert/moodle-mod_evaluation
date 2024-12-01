@@ -4854,10 +4854,12 @@ function ev_cron($cronjob = true) {
                     $timestamp = strtotime($items[0]);
                     print "<hr>timestamp: $timestamp - Date: ".date("d.m.Y",$timestamp)."<hr>";
                     $roles = explode(",", $items[1]);
+                    print "- Role: ";
                     foreach ($roles as $role){
                         if (stristr($role," (NR)")){
                             $role = str_ireplace(" (NR)","",$role);
                         }
+                        print $role.", ";
                         if ($role == "teacher") {
                             $tsent = $timestamp;
                         } else if ($role == "student") {
@@ -4868,7 +4870,8 @@ function ev_cron($cronjob = true) {
                 }
                 $week = 86400 * 7;
                 $days = remaining_evaluation_days($evaluation);
-                print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: ".date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
+                print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: "
+                        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
 
                 if ($tsent AND ($tsent+(2*$week) < time())){
                     ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
