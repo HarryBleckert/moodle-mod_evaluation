@@ -4807,7 +4807,7 @@ function ev_get_reminders($evaluation, $id) {
 // cron for scheduled tasks. But works extremely slow and therefore disabled.
 // maybe better use as a non-Moodle cron job, meanwhile call reminders from view.php
 // for testing as non-cron task: commented all cron related lines...
-function ev_cron($cronjob = true) {
+function ev_cron($cronjob = true,$test = false) {
     global $CFG, $DB;
     // mtrace('send_reminders cron is currently disabled in function ev_cron');
     // return true;
@@ -4823,7 +4823,7 @@ function ev_cron($cronjob = true) {
 
     $evaluations = $DB->get_records_sql("SELECT * from {evaluation}");
     // only run in test mode
-    $test = (true AND $CFG->dbname != 'moodle_staging');
+    // $test = (true AND $CFG->dbname != 'moodle_staging');
     $cli = false;
     $verbose = false;
     $noreplies = false;
@@ -4854,14 +4854,14 @@ function ev_cron($cronjob = true) {
                         continue;
                     }
                     $timestamp = strtotime($items[0]);
-                    print "<hr>timestamp: $timestamp - Date: ".date("d.m.Y",$timestamp)."<hr>";
+                    // print "<hr>timestamp: $timestamp - Date: ".date("d.m.Y",$timestamp)."<hr>";
                     $roles = explode(",", $items[1]);
-                    print "- Role: ";
+                    // print "- Role: ";
                     foreach ($roles as $role){
                         if (stristr($role," (NR)")){
                             $role = str_ireplace(" (NR)","",$role);
                         }
-                        print $role.", ";
+                        // print $role.", ";
                         if ($role == "teachers") {
                             $tsent = $timestamp;
                         } else if ($role == "students") {
@@ -4872,8 +4872,8 @@ function ev_cron($cronjob = true) {
                 }
                 $week = 86400 * 7;
                 $days = remaining_evaluation_days($evaluation);
-                print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: "
-                        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
+                // print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: "
+                //        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
 
                 if ($tsent AND ($tsent+(2*$week) < time())){
                     ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
