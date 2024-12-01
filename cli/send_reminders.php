@@ -48,7 +48,7 @@ require_once($CFG->dirroot . '/mod/evaluation/lib.php');
 global $CFG, $DB, $USER;
 
 // run as manually called non-moodle cron task
-ev_cron_cli(false, true);
+ev_cron(false, true);
 exit;
 
 
