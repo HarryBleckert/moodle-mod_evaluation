@@ -4848,6 +4848,9 @@ function ev_cron($cronjob = true) {
                 $remindersA = explode("\n", $reminders);
                 foreach ($remindersA AS $reminder ){
                     $items = explode(":",$reminder);
+                    if ( empty($reminder) OR empty($items[0])) {
+                        continue;
+                    }
                     $timestamp = strtotime($items[0]);
                     print "<hr>timestamp: $timestamp<hr>";
                     $roles = explode(",", $items[1]);
