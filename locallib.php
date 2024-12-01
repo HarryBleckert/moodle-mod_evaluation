@@ -4887,15 +4887,15 @@ function ev_cron($cronjob = true) {
                 }
                 
                 if (($ssent+(2*$week)) < time()){
-                    ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
+                    ev_send_reminders($evaluation, "student", false, $test, $cli, $verbose, $cronjob);
 
                 }
                 else if (($ssentnr+(1*$week)) < time()){
-                    ev_send_reminders($evaluation, "teacher", true, $test, $cli, $verbose, $cronjob);
+                    ev_send_reminders($evaluation, "student", true, $test, $cli, $verbose, $cronjob);
 
                 }
                 else if ($days<4 and ($ssent+(3*86400)) < time()){
-                    ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
+                    ev_send_reminders($evaluation, "student", true, $test, $cli, $verbose, $cronjob);
 
                 }
 
