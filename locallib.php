@@ -4807,7 +4807,7 @@ function ev_get_reminders($evaluation, $id) {
 // cron for scheduled tasks. But works extremely slow and therefore disabled.
 // maybe better use as a non-Moodle cron job, meanwhile call reminders from view.php
 // for testing as non-cron task: commented all cron related lines...
-function ev_cron($cronjob = true, $cli = false, $test = false, $verbose=false) {
+function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     global $CFG, $DB;
     // mtrace('send_reminders cron is currently disabled in function ev_cron');
     // return true;
