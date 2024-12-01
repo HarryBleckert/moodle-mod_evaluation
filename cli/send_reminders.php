@@ -42,13 +42,13 @@ if (!is_file($configFile)) {
     }
 }
 require($configFile);
-require_once($CFG->libdir . '/clilib.php');
-require_once($CFG->dirroot . '/course/modlib.php');
+// require_once($CFG->libdir . '/clilib.php');
+// require_once($CFG->dirroot . '/course/modlib.php');
 require_once($CFG->dirroot . '/mod/evaluation/lib.php');
 global $CFG, $DB, $USER;
 
 // run as manually called non-moodle cron task
-ev_cron(false, true);
+ev_cron(false, true, false, true);
 exit;
 
 
