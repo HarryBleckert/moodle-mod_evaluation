@@ -4828,7 +4828,9 @@ function ev_cron($cronjob = true) {
     $verbose = false;
     $noreplies = false;
     foreach ($evaluations AS $evaluation){
-
+        if (!$evaluation->autoreminders){
+            continue;
+        }
         $is_open = evaluation_is_open($evaluation);
         if ( $is_open ) {
             $reminders = $evaluation->reminders;
