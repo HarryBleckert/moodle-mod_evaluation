@@ -4446,8 +4446,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $testinfo = ($test ?" Test: " :"");
     foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
         @ob_flush();@ob_end_flush();@flush();@ob_start();
-        $allTeachers  = $_SESSION["allteachers"];
+
         /*
+        $allTeachers  = $_SESSION["allteachers"];
         unset($_SESSION["EvaluationsName"]);
         validate_evaluation_sessions($evaluation);
         $_SESSION["allteachers"] = $allTeachers;
@@ -4826,7 +4827,6 @@ function ev_cron($cronjob = true) {
     $cli = false;
     $verbose = false;
     $noreplies = false;
-    $tsent = $ssent = $tsentNR = $ssentNR = array();
     foreach ($evaluations AS $evaluation){
 
         $is_open = evaluation_is_open($evaluation);
@@ -4842,35 +4842,67 @@ function ev_cron($cronjob = true) {
             else {
                 /*
                  * format:
-                 * 04.06.2024:teachers
-                 * 04.06.2024:students
+                 * 04.06.2024:teachers,students
                  * */
+                $tsent = $ssent = $tsentnr = $ssentnr = 0;
                 $remindersA = explode("\n", $reminders);
                 foreach ($remindersA AS $reminder ){
                     $items = explode(":",$reminder);
-                    $role = $items[1];
-                    $nr = (stristr($role," (NR)") ?true:false);
-                    if ($nr){
-                        $role = str_ireplace(" (NR)","",$role);
-                        $tsentNR[] = $items[0];
-                    }
-                    if ($role=="teacher"){
-                        $tsent[] = $items[0];
-                    }
-                    else if ($role=="student"){
-                        $ssent[] = $items[0];
+                    $timestamp = DateTime::createFromFormat('d.m.Y', $items[0])->getTimestamp();
+                    $roles = explode(",", $items[1]);
+                    foreach ($roles as $role){
+                        $nr = (stristr($role," (NR)") ?true:false);
+                        if ($nr){
+                            $role = str_ireplace(" (NR)","",$role);
+                            if ($role=="teacher") {
+                                $tsentnr = $tsent = $timestamp;
+                            }
+                            else if ($role=="student"){
+                                $ssentnr = $tsent = $timestamp;
+                            }
+                        } else {
+                            if ($role == "teacher") {
+                                $tsent = $timestamp;
+                            } else if ($role == "student") {
+                                $ssent = $timestamp;
+                            }
+                        }
                     }
                 }
+                $week = 86400 * 7;
+                $days = remaining_evaluation_days($evaluation);
+                
+                if (($tsent+(2*$week)) < time()){
+                    ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
+
+                }
+                else if (($tsentnr+(1*$week)) < time()){
+                    ev_send_reminders($evaluation, "teacher", true, $test, $cli, $verbose, $cronjob);
+
+                }
+                else if ($days<4 and ($tsent+(3*86400)) < time()){
+                    ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
+
+                }
+                
+                if (($ssent+(2*$week)) < time()){
+                    ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
+
+                }
+                else if (($ssentnr+(1*$week)) < time()){
+                    ev_send_reminders($evaluation, "teacher", true, $test, $cli, $verbose, $cronjob);
+
+                }
+                else if ($days<4 and ($ssent+(3*86400)) < time()){
+                    ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
+
+                }
+
+
+                // ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
+                // \core\cron::setup_user();
             }
         }
-
-        if (!empty($tsent)) {
-            $last = $tsend[count($tsent)-1];
-
-            // ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
-        }
-        // ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
-        // \core\cron::setup_user();
         unset($_SESSION["EvaluationsName"]);
         validate_evaluation_sessions($evaluation);
     }
