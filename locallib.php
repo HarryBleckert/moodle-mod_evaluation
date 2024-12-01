@@ -4855,22 +4855,15 @@ function ev_cron($cronjob = true) {
                     print "<hr>timestamp: $timestamp - Date: ".date("d.m.Y",$timestamp)."<hr>";
                     $roles = explode(",", $items[1]);
                     foreach ($roles as $role){
-                        $nr = (stristr($role," (NR)") ?true:false);
-                        if ($nr){
+                        if (stristr($role," (NR)")){
                             $role = str_ireplace(" (NR)","",$role);
-                            if ($role=="teacher") {
-                                $tsentnr = $tsent = $timestamp;
-                            }
-                            else if ($role=="student"){
-                                $ssentnr = $ssent = $timestamp;
-                            }
-                        } else {
-                            if ($role == "teacher") {
-                                $tsent = $timestamp;
-                            } else if ($role == "student") {
-                                $ssent = $timestamp;
-                            }
                         }
+                        if ($role == "teacher") {
+                            $tsent = $timestamp;
+                        } else if ($role == "student") {
+                            $ssent = $timestamp;
+                        }
+
                     }
                 }
                 $week = 86400 * 7;
