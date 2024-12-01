@@ -4868,7 +4868,8 @@ function ev_cron($cronjob = true) {
                 }
                 $week = 86400 * 7;
                 $days = remaining_evaluation_days($evaluation);
-                
+                print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: ".date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
+
                 if ($tsent AND ($tsent+(2*$week) < time())){
                     ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
                 }
@@ -4886,7 +4887,7 @@ function ev_cron($cronjob = true) {
                     ev_send_reminders($evaluation, "student", true, $test, $cli, $verbose, $cronjob);
                 }
                 else if ($days<4 and ($ssent+(3*86400)) < time()){
-                    ev_send_reminders($evaluation, "student", true, $test, $cli, $verbose, $cronjob);
+                    ev_send_reminders($evaluation, "student", false, $test, $cli, $verbose, $cronjob);
                 }
             }
         }
