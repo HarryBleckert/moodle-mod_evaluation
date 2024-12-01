@@ -32,7 +32,7 @@
 define('CLI_SCRIPT', true);
 $PHP_SELF = basename($_SERVER['PHP_SELF']);
 
-$configFile = __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
+$configFile = __DIR__ . DIRECTORY_SEPARATOR . '../../../config.php';
 if (!is_file($configFile)) {
     $configFile = '../../../config.php';
     if (!is_file($configFile)) {
