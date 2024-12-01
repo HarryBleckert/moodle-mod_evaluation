@@ -4836,9 +4836,9 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
             $reminders = $evaluation->reminders;
             if (empty($reminders)){
                 // mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students");
-                ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
+                ev_send_reminders($evaluation, "teacher", $noreplies, $test, $verbose, $cli, $cronjob);
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
-                ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
+                ev_send_reminders($evaluation, "student", $noreplies, $test, $verbose, $cli, $cronjob);
                 continue;
             }
             else {
@@ -4876,23 +4876,23 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                 //        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
 
                 if ($tsent AND ($tsent+(2*$week) < time())){
-                    ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
+                    ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
                 }
                 else if (($tsent+(1*$week)) < time()){
-                    ev_send_reminders($evaluation, "teacher", true, $test, $cli, $verbose, $cronjob);
+                    ev_send_reminders($evaluation, "teacher", true, $test, $verbose, $cli, $cronjob);
                 }
                 else if ($days<4 and ($tsent+(3*86400))< time()){
-                    ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
+                    ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
                 }
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
                 if (($ssent+(2*$week)) < time()){
-                    ev_send_reminders($evaluation, "student", false, $test, $cli, $verbose, $cronjob);
+                    ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
                 }
                 else if (($ssent+(1*$week)) < time()){
-                    ev_send_reminders($evaluation, "student", true, $test, $cli, $verbose, $cronjob);
+                    ev_send_reminders($evaluation, "student", true, $test, $verbose, $cli, $cronjob);
                 }
                 else if ($days<4 and ($ssent+(3*86400)) < time()){
-                    ev_send_reminders($evaluation, "student", false, $test, $cli, $verbose, $cronjob);
+                    ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
                 }
             }
         }
