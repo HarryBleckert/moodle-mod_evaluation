@@ -4447,13 +4447,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
         @ob_flush();@ob_end_flush();@flush();@ob_start();
 
-        /*
+
         $allTeachers  = $_SESSION["allteachers"];
         unset($_SESSION["EvaluationsName"]);
         validate_evaluation_sessions($evaluation);
         $_SESSION["allteachers"] = $allTeachers;
         unset($allTeachers);
-        */
+
+
         //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
         $username = $evaluation_user["username"];
         $firstname = $evaluation_user["firstname"];
