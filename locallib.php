@@ -4852,7 +4852,7 @@ function ev_cron($cronjob = true) {
                         continue;
                     }
                     $timestamp = strtotime($items[0]);
-                    print "<hr>timestamp: $timestamp<hr>";
+                    print "<hr>timestamp: $timestamp - Date: ".date("d.m.Y",$timestamp)."<hr>";
                     $roles = explode(",", $items[1]);
                     foreach ($roles as $role){
                         $nr = (stristr($role," (NR)") ?true:false);
