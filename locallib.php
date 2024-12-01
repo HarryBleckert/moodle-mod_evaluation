@@ -4860,9 +4860,9 @@ function ev_cron($cronjob = true) {
                             $role = str_ireplace(" (NR)","",$role);
                         }
                         print $role.", ";
-                        if ($role == "teacher") {
+                        if ($role == "teachers") {
                             $tsent = $timestamp;
-                        } else if ($role == "student") {
+                        } else if ($role == "students") {
                             $ssent = $timestamp;
                         }
 
