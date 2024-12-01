@@ -48,7 +48,7 @@ require_once($CFG->dirroot . '/mod/evaluation/lib.php');
 global $CFG, $DB, $USER;
 
 // run as manually called non-moodle cron task
-ev_cron();
+ev_cron_cli(false);
 exit;
 
 
@@ -158,7 +158,7 @@ exit;
 // cron for scheduled tasks. But works extremely slow and therefore disabled.
 // maybe better use as a non-Moodle cron job, meanwhile call reminders from view.php
 // for testing as non-cron task: commented all cron related lines...
-function ev_cron2() {
+function ev_cron_cli($cronjob = true,$test = false) {
     global $CFG, $DB;
     // mtrace('send_reminders cron is currently disabled in function ev_cron');
     // return true;
@@ -174,56 +174,79 @@ function ev_cron2() {
 
     $evaluations = $DB->get_records_sql("SELECT * from {evaluation}");
     // only run in test mode
-    $test = (true AND $CFG->dbname    != 'moodle_staging');
-    $cronjob = false;
-    $cli = true;
+    // $test = (true AND $CFG->dbname != 'moodle_staging');
+    $cli = false;
     $verbose = false;
     $noreplies = false;
-    $tsent = $ssent = $tsentNR = $ssentNR = array();
     foreach ($evaluations AS $evaluation){
-
+        if (!$evaluation->autoreminders){
+            continue;
+        }
         $is_open = evaluation_is_open($evaluation);
         if ( $is_open ) {
-
             $reminders = $evaluation->reminders;
             if (empty($reminders)){
                 // mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students");
                 ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
+                $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
                 ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
-                break;
+                continue;
             }
             else {
                 /*
                  * format:
-                 * 04.06.2024:teachers
-                 * 04.06.2024:students
+                 * 04.06.2024:teachers,students
                  * */
+                $tsent = $ssent = $tsentnr = $ssentnr = 0;
                 $remindersA = explode("\n", $reminders);
                 foreach ($remindersA AS $reminder ){
                     $items = explode(":",$reminder);
-                    $role = $items[1];
-                    $nr = (stristr($role," (NR)") ?true:false);
-                    if ($nr){
-                        $role = str_ireplace(" (NR)","",$role);
-                        $tsentNR[] = $items[0];
+                    if ( empty($reminder) OR empty($items[0])) {
+                        continue;
                     }
-                    if ($role=="teacher"){
-                        $tsent[] = $items[0];
+                    $timestamp = strtotime($items[0]);
+                    // print "<hr>timestamp: $timestamp - Date: ".date("d.m.Y",$timestamp)."<hr>";
+                    $roles = explode(",", $items[1]);
+                    // print "- Role: ";
+                    foreach ($roles as $role){
+                        if (stristr($role," (NR)")){
+                            $role = str_ireplace(" (NR)","",$role);
+                        }
+                        // print $role.", ";
+                        if ($role == "teachers") {
+                            $tsent = $timestamp;
+                        } else if ($role == "students") {
+                            $ssent = $timestamp;
+                        }
+
                     }
-                    else if ($role=="student"){
-                        $ssent[] = $items[0];
-                    }
+                }
+                $week = 86400 * 7;
+                $days = remaining_evaluation_days($evaluation);
+                // print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: "
+                //        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
+
+                if ($tsent AND ($tsent+(2*$week) < time())){
+                    ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
+                }
+                else if (($tsent+(1*$week)) < time()){
+                    ev_send_reminders($evaluation, "teacher", true, $test, $cli, $verbose, $cronjob);
+                }
+                else if ($days<4 and ($tsent+(3*86400))< time()){
+                    ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
+                }
+                $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
+                if (($ssent+(2*$week)) < time()){
+                    ev_send_reminders($evaluation, "student", false, $test, $cli, $verbose, $cronjob);
+                }
+                else if (($ssent+(1*$week)) < time()){
+                    ev_send_reminders($evaluation, "student", true, $test, $cli, $verbose, $cronjob);
+                }
+                else if ($days<4 and ($ssent+(3*86400)) < time()){
+                    ev_send_reminders($evaluation, "student", false, $test, $cli, $verbose, $cronjob);
                 }
             }
         }
-
-        if (!empty($tsent)) {
-            $last = $tsend[count($tsent)-1];
-
-            // ev_send_reminders($evaluation, "teacher", $noreplies, $test, $cli, $verbose, $cronjob);
-        }
-        // ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
-        // \core\cron::setup_user();
         unset($_SESSION["EvaluationsName"]);
         validate_evaluation_sessions($evaluation);
     }
