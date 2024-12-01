@@ -4876,35 +4876,26 @@ function ev_cron($cronjob = true) {
                 $week = 86400 * 7;
                 $days = remaining_evaluation_days($evaluation);
                 
-                if ($tsent AND ($tsent+(2*$week)) < time()){
+                if ($tsent AND ($tsent+(2*$week) < time())){
                     ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
 
                 }
-                else if ($tsentnr AND ($tsentnr+(1*$week)) < time()){
+                else if ($tsentnr AND ($tsentnr+(1*$week) < time())){
                     ev_send_reminders($evaluation, "teacher", true, $test, $cli, $verbose, $cronjob);
-
                 }
-                else if ($days<4 and $tsent AND ($tsent+(3*86400)) < time()){
+                else if ($days<4 and $tsent AND ($tsent+(3*86400)< time())){
                     ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
-
                 }
                 
-                if ($ssent AND ($ssent+(2*$week)) < time()){
+                if ($ssent AND ($ssent+(2*$week) < time())){
                     ev_send_reminders($evaluation, "student", false, $test, $cli, $verbose, $cronjob);
-
                 }
-                else if ($ssentnr AND ($ssentnr+(1*$week)) < time()){
+                else if ($ssentnr AND ($ssentnr+(1*$week) < time())){
                     ev_send_reminders($evaluation, "student", true, $test, $cli, $verbose, $cronjob);
-
                 }
-                else if ($days<4 and $ssent AND ($ssent+(3*86400)) < time()){
+                else if ($days<4 and $ssent AND ($ssent+(3*86400) < time())){
                     ev_send_reminders($evaluation, "student", true, $test, $cli, $verbose, $cronjob);
-
                 }
-
-
-                // ev_send_reminders($evaluation, "student", $noreplies, $test, $cli, $verbose, $cronjob);
-                // \core\cron::setup_user();
             }
         }
         unset($_SESSION["EvaluationsName"]);
