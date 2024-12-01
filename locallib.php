@@ -4849,6 +4849,7 @@ function ev_cron($cronjob = true) {
                 foreach ($remindersA AS $reminder ){
                     $items = explode(":",$reminder);
                     $timestamp = strtotime($items[0]);
+                    print "<hr>timestamp: $timestamp<hr>";
                     $roles = explode(",", $items[1]);
                     foreach ($roles as $role){
                         $nr = (stristr($role," (NR)") ?true:false);
@@ -4858,7 +4859,7 @@ function ev_cron($cronjob = true) {
                                 $tsentnr = $tsent = $timestamp;
                             }
                             else if ($role=="student"){
-                                $ssentnr = $tsent = $timestamp;
+                                $ssentnr = $ssent = $timestamp;
                             }
                         } else {
                             if ($role == "teacher") {
