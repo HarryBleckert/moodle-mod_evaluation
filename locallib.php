@@ -4878,7 +4878,6 @@ function ev_cron($cronjob = true) {
                 
                 if ($tsent AND ($tsent+(2*$week) < time())){
                     ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
-
                 }
                 else if ($tsent AND ($tsent+(1*$week) < time())){
                     ev_send_reminders($evaluation, "teacher", true, $test, $cli, $verbose, $cronjob);
@@ -4886,7 +4885,7 @@ function ev_cron($cronjob = true) {
                 else if ($days<4 and $tsent AND ($tsent+(3*86400)< time())){
                     ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
                 }
-                
+                $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
                 if ($ssent AND ($ssent+(2*$week) < time())){
                     ev_send_reminders($evaluation, "student", false, $test, $cli, $verbose, $cronjob);
                 }
