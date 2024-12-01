@@ -4880,7 +4880,7 @@ function ev_cron($cronjob = true) {
                     ev_send_reminders($evaluation, "teacher", false, $test, $cli, $verbose, $cronjob);
 
                 }
-                else if ($tsentnr AND ($tsentnr+(1*$week) < time())){
+                else if ($tsent AND ($tsent+(1*$week) < time())){
                     ev_send_reminders($evaluation, "teacher", true, $test, $cli, $verbose, $cronjob);
                 }
                 else if ($days<4 and $tsent AND ($tsent+(3*86400)< time())){
@@ -4890,7 +4890,7 @@ function ev_cron($cronjob = true) {
                 if ($ssent AND ($ssent+(2*$week) < time())){
                     ev_send_reminders($evaluation, "student", false, $test, $cli, $verbose, $cronjob);
                 }
-                else if ($ssentnr AND ($ssentnr+(1*$week) < time())){
+                else if ($ssent AND ($ssent+(1*$week) < time())){
                     ev_send_reminders($evaluation, "student", true, $test, $cli, $verbose, $cronjob);
                 }
                 else if ($days<4 and $ssent AND ($ssent+(3*86400) < time())){
