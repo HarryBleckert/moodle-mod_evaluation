@@ -2335,7 +2335,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
 function ev_get_participants($myEvaluations, $courseid = false) {
     global $evaluation;
     $possible_evaluations = 0;
-    if ( evaluation_is_closed($evaluation) ) { // AND $courseid AND !isset($_SESSION["possible_evaluations"][$courseid]) ){
+    if ( evaluation_is_closed($evaluation) ) {
         possible_evaluations($evaluation);
     }
     if (!$courseid AND safeCount($_SESSION["possible_evaluations"])){
@@ -4481,7 +4481,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             continue;
         }
 
-        // unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
+        unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
 
         if (empty($myEvaluations)) {
