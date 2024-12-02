@@ -2332,8 +2332,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
     }
 }
 
-function ev_get_participants($myEvaluations, $courseid = false) {
-    global $evaluation;
+function ev_get_participants($evaluation, $myEvaluations, $courseid = false) {
     $possible_evaluations = 0;
     if ( evaluation_is_closed($evaluation) ) {
         possible_evaluations($evaluation);
@@ -2421,7 +2420,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
             $numCourses[$myEvaluation["courseid"]] = $myEvaluation["courseid"];
             evaluation_get_course_teachers($myEvaluation['courseid']);
             $teachers = $_SESSION["allteachers"][$myEvaluation['courseid']];
-            $ev_get_participantsc = ev_get_participants($myEvaluations, $myEvaluation["courseid"]);
+            $ev_get_participantsc = ev_get_participants($evaluation, $myEvaluations, $myEvaluation["courseid"]);
             if (safeCount($teachers)) {
                 $possible_evaluations_per_teacher += round($ev_get_participantsc / safeCount($teachers), 0);
             }
@@ -4578,7 +4577,7 @@ HEREDOC;
                 continue;
             }
             $testTeacher = true;
-            // $possible_evaluations = ev_get_participants($myEvaluations);
+            // $possible_evaluations = ev_get_participants($evaluation, $myEvaluations);
             // Bis zu $possible_evaluations Abgaben für Sie sind möglich.
             $onlyfew = "";
 
