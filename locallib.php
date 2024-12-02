@@ -2421,11 +2421,11 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
             $numCourses[$myEvaluation["courseid"]] = $myEvaluation["courseid"];
             evaluation_get_course_teachers($myEvaluation['courseid']);
             $teachers = $_SESSION["allteachers"][$myEvaluation['courseid']];
+            $ev_get_participantsc = ev_get_participants($myEvaluations, $myEvaluation["courseid"]);
             if (safeCount($teachers)) {
-                // $possible_evaluations_per_teacher += round(ev_get_participants($myEvaluations, $myEvaluation["courseid"]) / safeCount($teachers),0);
-                $possible_evaluations_per_teacher += round(ev_get_participants($myEvaluations, $myEvaluation["courseid"]) / safeCount($teachers), 0);
+                $possible_evaluations_per_teacher += round($ev_get_participantsc / safeCount($teachers), 0);
             }
-            $possible_evaluations += round(ev_get_participants($myEvaluations, $myEvaluation["courseid"]), 0);
+            $possible_evaluations += round($ev_get_participantsc, 0);
             $actionTxt = get_string("evaluate_now", "evaluation");
             $color = "darkred";
             $min_resInfo = $min_resTitle;
@@ -4482,13 +4482,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         }
 
         // unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
-        //$teamteaching = $evaluation->teamteaching;
-        $elapsed = time() - $start;
-        ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .date("Ymd H:i:s"), $cronjob);
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
-        $elapsed = time() - $start;
-        ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .date("Ymd H:i:s"), $cronjob);
-        // print nl2br(var_export($myEvaluations)); exit;
 
         if (empty($myEvaluations)) {
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
@@ -4496,22 +4490,12 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             continue;
         }
 
-        $elapsed = time() - $start;
-        ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .date("Ymd H:i:s"), $cronjob);
         if ($role == "student" || $role == "participants") {
             $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
         } else {
             $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, true, true);
         }
-        $elapsed = time() - $start;
-        ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .date("Ymd H:i:s"), $cronjob);
-
         $testMsg = "";
-
-        if (false and $cnt < 2) {
-            ev_show_reminders_log("time used get_participants: " . date("i:s", time() - $start) . " - get_participant_courses: " .
-                    date("i:s", time() - $start2), $cronjob);
-        }
 
         if ($test) {
             if ($role == "student" || $role == "participants") {
