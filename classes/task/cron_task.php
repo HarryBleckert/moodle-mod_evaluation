@@ -53,8 +53,8 @@ class cron_task extends \core\task\scheduled_task {
         // return true;
         require_once($CFG->dirroot . '/mod/evaluation/lib.php');
         // \evaluation::cron();
-        mtrace("Evaluationn: Scheduled cron task has been disabled for performance reasons and is now called from index.php");
-        // ev_cron();
+        //mtrace("Evaluationn: Scheduled cron task has been disabled for performance reasons and is now called from index.php");
+        ev_cron();
         return true;
     }
 }

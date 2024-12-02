@@ -4496,7 +4496,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         }
         $testMsg = "";
 
-        if ($test) {
+        if ($test OR ($cnt<2 AND $CFG->noemailever)) {
             if ($role == "student" || $role == "participants") {
                 $testMsg =
                         "<p>Dies ist ein Entwurf für die Mail an die Studierenden, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
@@ -4795,15 +4795,14 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     global $CFG, $DB;
     // mtrace('send_reminders cron is currently disabled in function ev_cron');
     // return true;
-    // mtrace('Start processing send_reminders');
+    mtrace('mod_evaluation: Start processing send_reminders');
 
     setlocale(LC_ALL, 'de_DE');
-    // $yesterday = time() - (24 * 3600);
-    // $timenow = time();
-    // $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
-    // $lastruntime = $task->get_last_run_time();
-    // mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: "
-    //        .date("d.m,Y H:i:s",$lastruntime));
+    $timenow = time();
+    $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
+    $lastruntime = $task->get_last_run_time();
+    mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: "
+           .date("d.m,Y H:i:s",$lastruntime));
 
     $evaluations = $DB->get_records_sql("SELECT * from {evaluation}");
     // only run in test mode
@@ -4818,7 +4817,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
         if ( $is_open ) {
             $reminders = $evaluation->reminders;
             if (empty($reminders)){
-                // mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students");
+                mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students");
                 ev_send_reminders($evaluation, "teacher", $noreplies, $test, $verbose, $cli, $cronjob);
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
                 ev_send_reminders($evaluation, "student", $noreplies, $test, $verbose, $cli, $cronjob);
@@ -4857,7 +4856,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                 $days = remaining_evaluation_days($evaluation);
                 // print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: "
                 //        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
-
+                mtrace("Evaluation '$evaluation->name': Checking for due reminders to teachers and students");
                 if ($tsent AND ($tsent+(2*$week) < time())){
                     ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
                 }
@@ -4882,7 +4881,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
         unset($_SESSION["EvaluationsName"]);
         validate_evaluation_sessions($evaluation);
     }
-    // mtrace('Completed processing send_reminders');
+    mtrace('mod_evaluation: Completed processing send_reminders');
     return true;
 }
 
