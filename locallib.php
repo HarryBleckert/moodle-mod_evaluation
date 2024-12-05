@@ -4657,11 +4657,12 @@ HEREDOC;
 
 function ev_show_reminders_log($msg, $cronjob=false) {
     $logfile = "/var/log/moodle/evaluation_send_reminders.log";
-    if (isset($_SESSION['ev_cli']) AND $_SESSION['ev_cli']){
-        echo $msg . "\n";
-    }
-    else if (!$cronjob){
-        echo nl2br($msg . "\n");
+    if (!$cronjob) {
+        if (isset($_SESSION['ev_cli']) and $_SESSION['ev_cli']) {
+            echo $msg . "\n";
+        } else {
+            echo nl2br($msg . "\n");
+        }
     }
     if (is_writable($logfile)){
         system("echo ".date("Ymd H:i:s") . " - \"$msg\">>$logfile");
@@ -4798,6 +4799,8 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     mtrace('mod_evaluation: Start processing send_reminders');
 
     setlocale(LC_ALL, 'de_DE');
+
+    $autosent = false;
     $timenow = time();
     $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
     $lastruntime = $task->get_last_run_time();
@@ -4858,25 +4861,40 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                 //        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
                 mtrace("Evaluation '$evaluation->name': Checking for due reminders to teachers and students");
                 if ($tsent AND ($tsent+(2*$week) < time())){
+                    $autosent = true;
+                    mtrace("Evaluation '$evaluation->name': Sending reminders to teachers");
                     ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
                 }
                 else if (($tsent+(1*$week)) < time()){
+                    $autosent = true;
+                    mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding teachers");
                     ev_send_reminders($evaluation, "teacher", true, $test, $verbose, $cli, $cronjob);
                 }
                 else if ($days<4 and ($tsent+(3*86400))< time()){
+                    $autosent = true;
+                    mtrace("Evaluation '$evaluation->name': Sending final reminders to teachers");
                     ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
                 }
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
                 if (($ssent+(2*$week)) < time()){
+                    $autosent = true;
+                    mtrace("Evaluation '$evaluation->name': Sending reminders to students");
                     ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
                 }
                 else if (($ssent+(1*$week)) < time()){
+                    $autosent = true;
+                    mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding students");
                     ev_send_reminders($evaluation, "student", true, $test, $verbose, $cli, $cronjob);
                 }
                 else if ($days<4 and ($ssent+(3*86400)) < time()){
+                    $autosent = true;
+                    mtrace("Evaluation '$evaluation->name': Sending final reminders to students");
                     ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
                 }
             }
+        }
+        if (!$autosent){
+            // mtrace("Evaluation '$evaluation->name': No reminders due gor sending");
         }
         unset($_SESSION["EvaluationsName"]);
         validate_evaluation_sessions($evaluation);

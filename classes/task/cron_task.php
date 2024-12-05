@@ -40,7 +40,7 @@ class cron_task extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('crontask', 'mod_assign');
+        return get_string('crontask', 'mod_evaluation');
     }
 
     /**
