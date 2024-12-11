@@ -230,16 +230,6 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
     if (evaluation_is_closed($evaluation)) {    // create item Studiengang
         $timecloseSaved = $evaluation->timeclose;
         $timeopen = ($evaluation->timeopen ? $evaluation->timeopen : time() - 86400);
-
-        if (is_siteadmin()) {
-            if ($CFG->ash and !evaluation_is_item_course_of_studies($evaluation->id)) {
-                evaluation_autofill_item_studiengang($evaluation);
-            }
-            // shuffle userids per evaluation and course
-            if ($evaluation->anonymous and !$evaluation->anonymized) {
-                ev_shuffle_completed_userids($evaluation);
-            }
-        }
         $teamteaching = $evaluation->teamteaching;
 
         //$DB->update_record('evaluation', $evaluation);
@@ -476,6 +466,16 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
                 }
             }
         }
+
+        if (is_siteadmin()) {
+            if ($CFG->ash and !evaluation_is_item_course_of_studies($evaluation->id)) {
+                evaluation_autofill_item_studiengang($evaluation);
+            }
+            // shuffle userids per evaluation and course
+            if ($evaluation->anonymous and !$evaluation->anonymized) {
+                ev_shuffle_completed_userids($evaluation);
+            }
+        }
         $evaluation->timeclose = $timecloseSaved;
     }
     return true;
@@ -494,7 +494,7 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
     }
     $courses = evaluation_participating_courses($evaluation);
     $cntC = 1;
-    print '<br><hr>ev_shuffle_completed_userids(): Course id = <span id="showCourseRec_' . $evaluation->id . '">&nbsp;</span><hr>';
+    print "'<br><hr>ev_shuffle_completed_userids(): Courses:</span><hr>\n";
     ini_set("output_buffering", 350);
     @ob_flush();@ob_end_flush();@flush();@ob_start();
     foreach ($courses as $courseid) {
