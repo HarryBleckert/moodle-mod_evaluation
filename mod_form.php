@@ -212,14 +212,6 @@ class mod_evaluation_mod_form extends moodleform_mod {
         global $CFG;
         $editoroptions = evaluation_get_editor_options();
 
-        if ($CFG->ash) {
-            $default_values['semester'] = evaluation_get_current_semester();
-            $default_values['sort_tag'] = "ASH";
-            $default_values['sendermail'] = "khayat@ash-berlin.eu";
-            $default_values['sendername'] = "ASH Berlin (Qualitätsmanagement)";
-            $default_values['autoreminders'] = 1;
-            $default_values['signature'] = "Berthe Khayat und Harry Bleckert für das Evaluationsteam";
-        }
         if ($this->current->instance) {
             // editing an existing evaluation - let us prepare the added editor elements (intro done automatically)
             $draftitemid = file_get_submitted_draft_itemid('page_after_submit');
@@ -239,7 +231,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
             $default_values['min_results_priv'] = 0;
             $default_values['show_on_index'] = 1;
             $default_values['semester'] = evaluation_get_current_semester();
-            if (false && $CFG->ash) {
+            if ( $CFG->ash) {
                 $default_values['sort_tag'] = "ASH";
                 $default_values['sendermail'] = "khayat@ash-berlin.eu";
                 $default_values['sendername'] = "ASH Berlin (Qualitätsmanagement)";

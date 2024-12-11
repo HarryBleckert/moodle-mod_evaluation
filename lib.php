@@ -113,9 +113,9 @@ function evaluation_add_instance($evaluation) {
     if (!isset($evaluation->filter_courses) or empty($evaluation->filter_courses)) {
         $evaluation->filter_courses = '';
     }
-    if (empty($evaluation->autoreminders)) {
+    /*if (empty($evaluation->autoreminders)) {
         $evaluation->autoreminders = 1;
-    }
+    }*/
     if (empty($evaluation->semester)) {
         $evaluation->semester = evaluation_get_current_semester();
     }
@@ -189,9 +189,9 @@ function evaluation_update_instance($evaluation) {
     if (!isset($evaluation->privileged_users) or empty($evaluation->privileged_users)) {
         $evaluation->privileged_users = '';
     }
-    if (empty($evaluation->autoreminders)) {
+    /*if (empty($evaluation->autoreminders)) {
         $evaluation->autoreminders = 1;
-    }
+    }*/
     if (empty($evaluation->semester)) {
         $evaluation->semester = evaluation_get_current_semester();
     }
