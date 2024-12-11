@@ -93,7 +93,7 @@ function evaluation_supports($feature) {
  * @global object
  */
 function evaluation_add_instance($evaluation) {
-    global $DB;
+    global $CFG, $DB;
 
     $evaluation->timemodified = time();
     $evaluation->id = '';
@@ -113,7 +113,23 @@ function evaluation_add_instance($evaluation) {
     if (!isset($evaluation->filter_courses) or empty($evaluation->filter_courses)) {
         $evaluation->filter_courses = '';
     }
-
+    if (empty($evaluation->autoreminders)) {
+        $evaluation->autoreminders = 1;
+    }
+    if ($CFG->ash) {
+        if (empty($evaluation->sort_tag)) {
+            $evaluation->sort_tag = "ASH";
+        }
+        if (empty($evaluation->sendermail)) {
+            $evaluation->sendermail = "khayat@ash-berlin.eu";
+        }
+        if (empty($evaluation->sendername)) {
+            $evaluation->sendername = "ASH Berlin (Qualitätsmanagement)";
+        }
+        if (empty($evaluation->signature)) {
+            $evaluation->signature = "Berthe Khayat und Harry Bleckert für das Evaluationsteam";
+        }
+    }
     //saving the evaluation in db
     $evaluationid = $DB->insert_record("evaluation", $evaluation);
 
@@ -156,7 +172,7 @@ function evaluation_add_instance($evaluation) {
  * @global object
  */
 function evaluation_update_instance($evaluation) {
-    global $DB;
+    global $CFG,$DB;
 
     $evaluation->timemodified = time();
     $evaluation->id = $evaluation->instance;
@@ -171,6 +187,23 @@ function evaluation_update_instance($evaluation) {
         $evaluation->privileged_users = '';
     }
 
+    if (empty($evaluation->autoreminders)) {
+        $evaluation->autoreminders = 1;
+    }
+    if ($CFG->ash) {
+        if (empty($evaluation->sort_tag)) {
+            $evaluation->sort_tag = "ASH";
+        }
+        if (empty($evaluation->sendermail)) {
+            $evaluation->sendermail = "khayat@ash-berlin.eu";
+        }
+        if (empty($evaluation->sendername)) {
+            $evaluation->sendername = "ASH Berlin (Qualitätsmanagement)";
+        }
+        if (empty($evaluation->signature)) {
+            $evaluation->signature = "Berthe Khayat und Harry Bleckert für das Evaluationsteam";
+        }
+    }
     //save the evaluation into the db
     $DB->update_record("evaluation", $evaluation);
 
@@ -343,7 +376,12 @@ function evaluation_delete_instance($id) {
 
     //deleting old events
     $DB->delete_records('event', array('modulename' => 'evaluation', 'instance' => $id));
-    return $DB->delete_records("evaluation", array("id" => $id));
+
+    // deleting evaluation_users_la
+    return $DB->delete_records("evaluation_users_la", array("id" => $id));
+
+    // deleting evaluation_enrolment
+    return $DB->delete_records("evaluation_enrolment", array("id" => $id));
 }
 
 /**
