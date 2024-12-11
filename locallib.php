@@ -2082,7 +2082,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
     //$from_course = ($evaluation_is_open OR $evaluation->timeopen > time());
     //$from_course = true;
     $total_evaluation_days = total_evaluation_days($evaluation);
-    $timeopen = ($evaluation->timeopen > 0) ? $evaluation->timeopen : (time() - 80600);
+    $timeopen = ($evaluation->timeopen > 0 AND $evaluation->timeopen>time()) ? $evaluation->timeopen : (time() - 80600);
     $timeclose = ($evaluation->timeclose > 0) ? $evaluation->timeclose : (time() + 80600);
     $cnt_courses = $cnt_empty_courses = $cnt_students = $cnt_teachers = $cnt_students_active = $cnt_teachers_active = 0;
     $distinct_s_active = $distinct_s = $distinct_t_active = $distinct_t = $courseTeachers = array();
