@@ -1399,6 +1399,7 @@ function validate_evaluation_sessions($evaluation) {
                 $_SESSION["num_courses_of_studies"], $_SESSION["duplicated"], $_SESSION["orderBy"],
                 $_SESSION["distinct_users"], $_SESSION["evaluated_teachers"], $_SESSION["evaluated_courses"], $_SESSION["privileged_global_users"],
                 $_SESSION["privileged_global_users_wm"], $_SESSION["course_of_studies_wm"], $_SESSION['ev_global_cfgfile'],
+                $_SESSION['set_results_'.$evaluation->id],
         );
     }
     $_SESSION["EvaluationsName"] = $evaluation->name;
