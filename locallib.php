@@ -500,7 +500,7 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
     $cntC = 1;
 
     print "<br><hr><b>ev_shuffle_completed_userids(): Courses:</b><hr>\n
-        <span id='showCourseRec_".$evaluation->id."'>&nbsp;</span>";
+        <span id='showCourseRec_".$evaluation->id."'>&nbsp;</span><br>\n";
     ini_set("output_buffering", 350);
     @ob_flush();@ob_end_flush();@flush();@ob_start();
     foreach ($courses as $courseid) {
