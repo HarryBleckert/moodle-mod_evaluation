@@ -467,6 +467,7 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
             }
         }
 
+        $evaluation->timeclose = $timecloseSaved;
         if (is_siteadmin()) {
             if ($CFG->ash and !evaluation_is_item_course_of_studies($evaluation->id)) {
                 evaluation_autofill_item_studiengang($evaluation);
@@ -476,7 +477,6 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
                 ev_shuffle_completed_userids($evaluation);
             }
         }
-        $evaluation->timeclose = $timecloseSaved;
     }
     return true;
 }

@@ -386,7 +386,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
         }
 
         $get_from_table = false;
-        if (!$is_open and $evaluation->timeopen < time() and $is_closed AND $completed_responses) {
+        if (!$is_open and $evaluation->timeopen < time() and $is_closed ){ // AND $completed_responses) {
             if (evaluation_set_results($evaluation)) {
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} WHERE id=$evaluation->id");
             }
