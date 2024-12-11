@@ -3386,8 +3386,8 @@ function evaluation_is_open($evaluation) {
 }
 
 function evaluation_is_closed($evaluation) {
-    return ($evaluation->timeclose < time());
-}    // $evaluation->timeclose > 0 AND
+    return ($evaluation->timeclose>0 AND $evaluation->timeclose < time());
+}
 
 // validate if course of studies is part of completed evaluations
 function ev_is_cos_in_completed($evaluation, $cos){

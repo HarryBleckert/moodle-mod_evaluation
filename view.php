@@ -406,9 +406,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             }
         }
         if (!$get_from_table) {
-            if (!isset($_SESSION['distinct_s']) or !isset($_SESSION["distinct_s_active"])
-                    or empty($_SESSION['distinct_s']) or empty($_SESSION['distinct_s_active'])
-            ) {
+            if (!isset($_SESSION['distinct_s']) or empty($_SESSION['distinct_s'])) {
                 list($_SESSION["participating_courses"], $_SESSION["participating_empty_courses"],
                         $_SESSION["distinct_s"], $_SESSION["distinct_s_active"], $_SESSION["students"],
                         $_SESSION["students_active"],
