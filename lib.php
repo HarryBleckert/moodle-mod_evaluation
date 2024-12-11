@@ -116,6 +116,9 @@ function evaluation_add_instance($evaluation) {
     if (empty($evaluation->autoreminders)) {
         $evaluation->autoreminders = 1;
     }
+    if (empty($evaluation->semester)) {
+        $evaluation->semester = evaluation_get_current_semester();
+    }
     if ($CFG->ash) {
         if (empty($evaluation->sort_tag)) {
             $evaluation->sort_tag = "ASH";
@@ -186,9 +189,11 @@ function evaluation_update_instance($evaluation) {
     if (!isset($evaluation->privileged_users) or empty($evaluation->privileged_users)) {
         $evaluation->privileged_users = '';
     }
-
     if (empty($evaluation->autoreminders)) {
         $evaluation->autoreminders = 1;
+    }
+    if (empty($evaluation->semester)) {
+        $evaluation->semester = evaluation_get_current_semester();
     }
     if ($CFG->ash) {
         if (empty($evaluation->sort_tag)) {
