@@ -493,8 +493,14 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
         return;
     }
     $courses = evaluation_participating_courses($evaluation);
+    if (!$courses) {
+        print "'<br><hr><b>ev_shuffle_completed_userids(): No courses found! Aborting.</b><hr>\n";
+        return false;
+    }
     $cntC = 1;
-    print "'<br><hr>ev_shuffle_completed_userids(): Courses:</span><hr>\n";
+
+    print "<br><hr><b>ev_shuffle_completed_userids(): Courses:</b><hr>\n
+        <span id='showCourseRec_".$evaluation->id."'>&nbsp;</span>";
     ini_set("output_buffering", 350);
     @ob_flush();@ob_end_flush();@flush();@ob_start();
     foreach ($courses as $courseid) {
@@ -519,13 +525,11 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
             }
         }
     }
-    if ($courses) {
-        $recObj = new stdClass();
-        //$DB->get_record_sql("SELECT * FROM {evaluation} WHERE id=$evaluation->id");
-        $recObj->id = $evaluation->id;
-        $recObj->anonymized = 1;
-        $DB->update_record('evaluation', $recObj);
-    }
+    $recObj = new stdClass();
+    //$DB->get_record_sql("SELECT * FROM {evaluation} WHERE id=$evaluation->id");
+    $recObj->id = $evaluation->id;
+    $recObj->anonymized = 1;
+    $DB->update_record('evaluation', $recObj);
 }
 
 // identify course roles and set permissions
