@@ -1053,7 +1053,7 @@ function evaluation_LoginAs() {
         {
             $realuser = \core\session\manager::get_realuser();
             complete_user_login($realuser);
-            unset($_SESSION["LoggedInAs"], $_SESSION["myEvaluations"], $_SESSION["EvaluationsName"]);
+            unset($_SESSION["LoggedInAs"], $_SESSION["myEvaluations"], $_SESSION["EvaluationsID"]);
             redirect(new moodle_url($url), "", 0);
         } else {
             require_once(__DIR__ . '/../../course/lib.php');
@@ -1076,7 +1076,7 @@ function evaluation_LoginAs() {
             //$CFG->additionalhtmlfooter = evaluation_additional_html();
             //$CFG->additionalhtmlfooter = "";
             evHideSettings();
-            unset($_SESSION["EvaluationsName"]);
+            unset($_SESSION["EvaluationsID"]);
             $role = stristr($role, "privileg") ? "privilegierte Person"
                     : (stristr($role, "SG_priv") ? "SG Priv"
                             : $DB->get_record('role', array('shortname' => $role), '*')->name);
@@ -1389,7 +1389,7 @@ function evaluation_showteachers($evaluation, $courseid, $cmid = false, $user = 
 
 // unset evaluation sessions if required
 function validate_evaluation_sessions($evaluation) {
-    if (!isset($_SESSION["EvaluationsName"]) || $_SESSION["EvaluationsName"] != $evaluation->name) {
+    if (!isset($_SESSION["EvaluationsID"]) || $_SESSION["EvaluationsID"] != $evaluation->id) {
         unset( $_SESSION['allteachers'] );
         unset($_SESSION["myEvaluations"], $_SESSION['anonresponsestable'], $_SESSION['responsestable'],
                 $_SESSION["numStudents"], $_SESSION["teachers"], $_SESSION["showTeachers"],
@@ -1405,10 +1405,11 @@ function validate_evaluation_sessions($evaluation) {
                 $_SESSION["num_courses_of_studies"], $_SESSION["duplicated"], $_SESSION["orderBy"],
                 $_SESSION["distinct_users"], $_SESSION["evaluated_teachers"], $_SESSION["evaluated_courses"], $_SESSION["privileged_global_users"],
                 $_SESSION["privileged_global_users_wm"], $_SESSION["course_of_studies_wm"], $_SESSION['ev_global_cfgfile'],
-                $_SESSION['set_results_'.$evaluation->id],
+
         );
+        // $_SESSION['set_results_'.$evaluation->id];
     }
-    $_SESSION["EvaluationsName"] = $evaluation->name;
+    $_SESSION["EvaluationsID"] = $evaluation->id;
 }
 
 // Print Button
@@ -4455,7 +4456,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         /*
         $allTeachers  = $_SESSION["allteachers"];
-        unset($_SESSION["EvaluationsName"]);
+        unset($_SESSION["EvaluationsID"]);
         validate_evaluation_sessions($evaluation);
         $_SESSION["allteachers"] = $allTeachers;
         unset($allTeachers);
@@ -4903,7 +4904,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
         if (!$reminders_sent){
             // mtrace("Evaluation '$evaluation->name': No reminders due gor sending");
         }
-        unset($_SESSION["EvaluationsName"]);
+        unset($_SESSION["EvaluationsID"]);
         validate_evaluation_sessions($evaluation);
     }
     mtrace('mod_evaluation: Completed processing send_reminders');

@@ -784,7 +784,7 @@ if (is_siteadmin()) {
        }
        ev_send_reminders($evaluation, "teacher", $noreplies, $test);
        ev_send_reminders($evaluation, "student", $noreplies, $test);
-       unset($_SESSION["EvaluationsName"]);
+       unset($_SESSION["EvaluationsID"]);
        validate_evaluation_sessions($evaluation);
     }
 

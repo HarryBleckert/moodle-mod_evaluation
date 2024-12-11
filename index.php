@@ -112,8 +112,8 @@ if (count($evaluations) > 1) {
     */
 }
 
-// unset $_SESSION["EvaluationsName"] to reset stored evaluation data
-unset($_SESSION["EvaluationsName"]);
+// unset $_SESSION["EvaluationsID"] to reset stored evaluation data
+unset($_SESSION["EvaluationsID"]);
 
 $current_tag = "XX@XX";
 foreach ($evaluations as $evaluation) {

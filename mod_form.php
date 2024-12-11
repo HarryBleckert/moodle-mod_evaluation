@@ -257,8 +257,8 @@ class mod_evaluation_mod_form extends moodleform_mod {
      */
     public function data_postprocessing($data) {
         parent::data_postprocessing($data);
-        /* unset $_SESSION["EvaluationsName"] to reset stored evaluation data */
-        unset($_SESSION["EvaluationsName"]);
+        /* unset $_SESSION["EvaluationsID"] to reset stored evaluation data */
+        unset($_SESSION["EvaluationsID"]);
 
         if (isset($data->page_after_submit_editor)) {
             $data->page_after_submitformat = $data->page_after_submit_editor['format'];
