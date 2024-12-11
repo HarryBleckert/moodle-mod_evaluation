@@ -519,11 +519,13 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
             }
         }
     }
-    $recObj = new stdClass();
-    //$DB->get_record_sql("SELECT * FROM {evaluation} WHERE id=$evaluation->id");
-    $recObj->id = $evaluation->id;
-    $recObj->anonymized = 1;
-    $DB->update_record('evaluation', $recObj);
+    if ($courses) {
+        $recObj = new stdClass();
+        //$DB->get_record_sql("SELECT * FROM {evaluation} WHERE id=$evaluation->id");
+        $recObj->id = $evaluation->id;
+        $recObj->anonymized = 1;
+        $DB->update_record('evaluation', $recObj);
+    }
 }
 
 // identify course roles and set permissions
