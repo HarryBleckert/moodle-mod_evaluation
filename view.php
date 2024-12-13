@@ -317,14 +317,12 @@ $msg_student_all_courses = "Guten Tag $fullname<br>Bitte beteiligen " . ($evalua
                         und füllen Sie dann jeweils den Fragebogen aus.<br>\n$teamteachingTxt
                         Ihre Evaluation ist uns eine große Hilfe!<br>"
         )
-        . "Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald $minResults Abgaben vorliegen.<br>
-                        Herzliche Grüße<br>$evaluation->signature<br>\n";
+        . "Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald $minResults Abgaben vorliegen.<br>\n";
 $msg_teachers = "Guten Tag $fullname<br>
                         Sie haben Kurse, die an dieser Evaluation teil" . ($is_open
                 ? "nehmen. Bitte motivieren Sie die Studierenden zur Teilnahme" : "genommen haben") . ".<br>
                         Für Ihre eigenen Kurse können Sie die statistische Auswertung einsehen, sobald $minResults Abgaben vorliegen. 
-                        Ab $minResultsText Abgaben können Sie auch die Textantworten einsehen.<br>\n
-                        Herzliche Grüße<br>$evaluation->signature<br>\n";
+                        Ab $minResultsText Abgaben können Sie auch die Textantworten einsehen.<br>\n";
 if ($is_open) {
     $days = remaining_evaluation_days($evaluation);
     $alert = "";
