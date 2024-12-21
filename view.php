@@ -322,7 +322,11 @@ $msg_teachers = "Guten Tag $fullname<br>
                         Sie haben Kurse, die an dieser Evaluation teil" . ($is_open
                 ? "nehmen. Bitte motivieren Sie die Studierenden zur Teilnahme" : "genommen haben") . ".<br>
                         Für Ihre eigenen Kurse können Sie die statistische Auswertung einsehen, sobald $minResults Abgaben vorliegen. 
-                        Ab $minResultsText Abgaben können Sie auch die Textantworten einsehen.<br>\n";
+                        Ab $minResultsText Abgaben können Sie auch die Textantworten einsehen.<br>
+                        <a title=\"Hier finden Sie eine englische Übersetzung des Fragebogens.\" 
+                        href=\"https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25%20EN.pdf\">
+                        <b>Click here</b> to open an English translation of the questionnaire.</a><br>
+                        \n";
 if ($is_open) {
     $days = remaining_evaluation_days($evaluation);
     $alert = "";
