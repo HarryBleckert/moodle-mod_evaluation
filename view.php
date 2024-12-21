@@ -306,6 +306,9 @@ if ($courseid) {
 
 $fullname = ($USER->alternatename ? $USER->alternatename : $USER->firstname) . " " . $USER->lastname;
 // make get_string!
+q_translink = '<a title="Hier finden Sie eine englische Übersetzung des Fragebogens." 
+                        href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25%20EN.pdf">
+                        <b>Click here</b> to open an English translation of the questionnaire.</a><br>';
 $msg_student_all_courses = "Guten Tag $fullname<br>Bitte beteiligen " . ($evaluation_has_user_participated ? "" : "auch ")
         . "Sie sich " .
         ($evaluation_has_user_participated ? "für jeden Ihrer Kurse " : "")
@@ -315,17 +318,14 @@ $msg_student_all_courses = "Guten Tag $fullname<br>Bitte beteiligen " . ($evalua
                         Klicken Sie unten für jeden Ihrer noch nicht evaluierten Kurse auf '<b>"
                 . get_string("evaluate_now", "evaluation") . "</b>
                         und füllen Sie dann jeweils den Fragebogen aus.<br>\n$teamteachingTxt
-                        Ihre Evaluation ist uns eine große Hilfe!<br>"
+                        Ihre Evaluation ist uns eine große Hilfe!<br>$q_translink"
         )
         . "Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald $minResults Abgaben vorliegen.<br>\n";
 $msg_teachers = "Guten Tag $fullname<br>
                         Sie haben Kurse, die an dieser Evaluation teil" . ($is_open
                 ? "nehmen. Bitte motivieren Sie die Studierenden zur Teilnahme" : "genommen haben") . ".<br>
                         Für Ihre eigenen Kurse können Sie die statistische Auswertung einsehen, sobald $minResults Abgaben vorliegen. 
-                        Ab $minResultsText Abgaben können Sie auch die Textantworten einsehen.<br>
-                        <a title=\"Hier finden Sie eine englische Übersetzung des Fragebogens.\" 
-                        href=\"https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25%20EN.pdf\">
-                        <b>Click here</b> to open an English translation of the questionnaire.</a><br>
+                        Ab $minResultsText Abgaben können Sie auch die Textantworten einsehen.<br>$q_translink
                         \n";
 if ($is_open) {
     $days = remaining_evaluation_days($evaluation);
