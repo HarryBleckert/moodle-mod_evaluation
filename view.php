@@ -307,7 +307,7 @@ if ($courseid) {
 $fullname = ($USER->alternatename ? $USER->alternatename : $USER->firstname) . " " . $USER->lastname;
 // make get_string!
 $q_translink = '<a title="Hier finden Sie eine englische Übersetzung des Fragebogens." target="translation"
-                        href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25%20EN.pdf">
+                        href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25-Fragebogen-EN.pdf">
                         <b>Click here</b> to open an English translation of the questionnaire.</a><br>';
 $msg_student_all_courses = "Guten Tag $fullname<br>Bitte beteiligen " . ($evaluation_has_user_participated ? "" : "auch ")
         . "Sie sich " .
