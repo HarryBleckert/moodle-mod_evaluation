@@ -474,6 +474,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
 
             $cos_completed_responses = $evaluationstructure->count_completed_responses();
             $cos_get_completed_teachers = safeCount($evaluationstructure->get_completed_teachers());
+            $cos_get_completed_courses = safeCount($evaluationstructure->get_completed_courses());
             echo '<div style="text-align:center;font-weight:bold;">' . get_string('your') . ' '
                     . ev_get_string('courses_of_studies'). "</div>\n";
 
@@ -502,8 +503,16 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                     . "</b>"
                     . "<br>\n";
 
+            $cos_participating_active_courses = $_SESSION["participating_courses"] - $_SESSION["participating_empty_courses"];
             echo "<b>" . get_string('evaluated_courses', "evaluation") . "</b>: "
-                    . evaluation_number_format(safeCount($evaluationstructure->get_completed_courses())) . "<br>\n";
+                    . evaluation_number_format($cos_get_completed_courses)
+                    . "/" . evaluation_number_format($_SESSION["cos_participating_courses"])
+                    . evaluation_calc_perc($cos_get_completed_courses, $_SESSION["cos_participating_courses"])
+                    . " <b " . 'title="Bereinigt: Nur Kurse, die während der Laufzeit der Evaluation Inhalte hatten"'
+                    . ">Nur genutzte Kurse</b>: " . evaluation_number_format($cos_participating_active_courses)
+                    . "<b>" . evaluation_calc_perc($cos_get_completed_courses, $cos_participating_active_courses)
+                    . "</b>"
+                    . "<br>\n";
 
             echo "<b>Evaluierte Studiengänge</b>: "
                     . evaluation_number_format($cosStudies) . "<br>\n";
