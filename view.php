@@ -721,7 +721,7 @@ if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
 }
 
 if (is_siteadmin()) {
-    print "<br>Evaluation->id: $evaluation->id - Lang: $CFG->lang";
+    print "<br>Evaluation->id: $evaluation->id - Lang: $USER->lang";
 
     $pluginfo = ev_get_plugin_version();
     $info = "\n<hr>\nPlugin: ".$pluginfo->component.". Version: "
