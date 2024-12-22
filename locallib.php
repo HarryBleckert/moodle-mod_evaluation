@@ -1394,6 +1394,8 @@ function validate_evaluation_sessions($evaluation) {
                 $_SESSION["participating_courses"], $_SESSION["participating_empty_courses"],
                 $_SESSION["distinct_s"], $_SESSION["distinct_s_active"], $_SESSION["students"], $_SESSION["students_active"], $_SESSION["active_student"],
                 $_SESSION["distinct_t"], $_SESSION["distinct_t_active"], $_SESSION["Teachers"], $_SESSION["Teachers_active"], $_SESSION["active_teacher"],
+                $_SESSION["cos_distinct_s"], $_SESSION["cos_distinct_s_active"], $_SESSION["cos_students"], $_SESSION["cos_students_active"], $_SESSION["cos_active_student"],
+                $_SESSION["cos_distinct_t"], $_SESSION["cos_distinct_t_active"], $_SESSION["cos_Teachers"], $_SESSION["cos_Teachers_active"], $_SESSION["cos_active_teacher"],
                 $_SESSION["teamteaching_courses"], $_SESSION["teamteaching_courseids"], $_SESSION["questions"],
                 $_SESSION["participating_courses_of_studies"], $_SESSION['EVALUATION_OWNER'],
                 $_SESSION['filter_course_of_studies'], $_SESSION['course_of_studies'], $_SESSION["notevaluated"], $_SESSION['CoS_department'],
