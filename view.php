@@ -659,8 +659,7 @@ if ($isNonResponStudent) {
         echo "<b style=\"color:blue;\">Sie können Auswertungen dieser Evaluation jederzeit einsehen, 
 		 nachdem Sie selbst für diesen Kurs daran teilgenommen haben!</b>\n";
     } else {
-        echo "<b style=\"color:red;\">Sie können Auswertungen dieses Kurses nicht einsehen, 
-		 weil Sie selbst für diesen Kurs nicht an der Evaluation teilgenommen hatten!</b>\n";
+        echo ";
     }
 }
 
@@ -669,11 +668,11 @@ if ($isNonResponStudent) {
 $isEnrolled = !empty(evaluation_is_user_enrolled($evaluation, $USER->id));
 if ((!$isPermitted AND !defined('EVALUATION_OWNER')) and empty($_SESSION["myEvaluations"])) {
     if (!$is_open and $isEnrolled) {
-        echo "<p style=\"color:red;font-weight:bold;align:center;\">Sie haben "
+        echo "<p style=\\"
                 . ($SiteEvaluation ? "für keinen Ihrer Kurse" : "nicht") . " an dieser Evaluation teilgenommen
 				und haben daher nicht das Recht " . ($SiteEvaluation ? "kursbezogene " : "") . "Auswertungen einzusehen!</p>";
     } else if ($SiteEvaluation and !$isEnrolled) {
-        echo "<p style=\"color:red;font-weight:bold;align:center;\">Keiner Ihrer Kurse " . ($evaluation->timeclose < time()
+        echo "<p style=\\" . ($evaluation->timeclose < time()
                         ? "nahm" : "nimmt") . " an dieser Evaluation Teil!</p>";
     }
 } 
@@ -721,13 +720,12 @@ if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
 }
 
 if (is_siteadmin()) {
-    print "<br>Evaluation->id: $evaluation->id";
+    print "<br>Evaluation->id: $evaluation->id - Lang: $CFG->lang";
 
     $pluginfo = ev_get_plugin_version();
     $info = "\n<hr>\nPlugin: ".$pluginfo->component.". Version: "
             .$pluginfo->release ." (Build: ".$pluginfo->version.")<hr>\n";
     print $info;
-
     if (isset($_GET['activityrecord'])) {
         print nl2br(var_export($evaluation));
     }
