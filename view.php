@@ -745,7 +745,6 @@ if (is_siteadmin()) {
     $info = "\n<hr>\nPlugin: ".$pluginfo->component.". Version: "
             .$pluginfo->release ." (Build: ".$pluginfo->version.")"
             . " CoS_privileged: "
-            . nl2br(var_export($_SESSION['CoS_privileged'][$USER->username],true))
             . "<hr>\n";
     print $info;
 
