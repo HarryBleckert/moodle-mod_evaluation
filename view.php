@@ -476,11 +476,21 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             $cos_possible_evaluations = 0;
             echo '<div style="text-align:center;font-weight:bold;">' . get_string('your') . ' '
                     . ev_get_string('courses_of_studies'). "</div>\n";
+
             echo "<b>" . get_string('completed_evaluations', "evaluation") . "</b>: "
                     . evaluation_number_format($cos_completed_responses)
                     . "/" . evaluation_number_format($_SESSION["cos_students"])
-                    . evaluation_calc_perc($cos_completed_responses, $_SESSION["cos_students"])
-                    . "<br>\n";
+                    . evaluation_calc_perc($cos_completed_responses, $_SESSION["cos_students"]);
+            echo ' <b title="Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten">'
+                    . "Nur Aktive</b>: " . evaluation_number_format($_SESSION["cos_students_active"])
+                    . "<b>" . evaluation_calc_perc($cos_completed_responses, $_SESSION["cos_students_active"]) . "</b> ";
+            echo '<span style="font-size:20px;"> &#248;</span>: '
+                    . ($days ? round($cos_completed_responses / $days) : 0) . "/" . get_string("day");
+            if ($is_open) {
+                echo " - " . get_string("today") . ": " . $evaluationstructure->count_completed_responses($groupid = 0, $today = true);
+            }
+            echo "<br>\n";
+
             echo "<b>Evaluierte Dozent_innen</b>: "
                     . evaluation_number_format(safeCount($evaluationstructure->get_completed_teachers())) . "<br>\n";
             echo "<b>Evaluierte Kurse</b>: "
