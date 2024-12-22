@@ -45,7 +45,7 @@ $string['course_of_studies_list'] = 'All courses of studies of Evaluation semest
 $string['courses_of_studies'] = 'Courses of studies';
 $string['daily_progress'] = 'Daily Evaluation statistics and Evaluation overview';
 $string['department'] = 'Department';
-$string['departments'] = 'Departments';
+$string['docu_download'] = 'Open/Download documentation';
 $string['evaluate_now'] = 'Evaluate now';
 $string['evaluate_teacher'] = 'Your are now evaluating: <span style="color:darkgreen;font-weight:bolder;">{$a}</span>';
 $string['evaluated_courses'] = 'Evaluated courses';
@@ -88,6 +88,7 @@ $string['participant_roles'] = 'Default role(s) of participants';
 $string['participant_roles_help'] = 'Enter the default role(s) of evaluation participants. Default role is student. Default settings can be overwritten per evaluation setting.';
 $string['privileged_users'] = 'Privileged users';
 $string['privileged_users_desc'] = 'Privileged users for this evaluation (1 username/line)';
+$string['privileged_users_overview'] = 'Overview of persons privileged to access results of this evaluation';
 $string['select_teacher'] = '<b>Please select a teacher for this evaluation!</b><br>Note: 
 		You can give a separate evaluation of each teacher<b>';
 $string['semesters'] = 'Semesters';

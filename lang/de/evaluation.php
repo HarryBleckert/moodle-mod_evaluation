@@ -48,7 +48,7 @@ $string['course_of_studies_list'] = 'Alle Studiengänge des Semesters';
 $string['course_of_studies_selected'] = 'Liste der zu evaluierenden Studiengänge';
 $string['daily_progress'] = 'Abgabestatistik -pro Tag und über den gesamten Zeitraum';
 $string['department'] = 'Fachbereich';
-$string['departments'] = 'Fachbereiche';
+$string['docu_download'] = 'Dokumentation öffnen/herunterladen';
 $string['evaluate_now'] = 'Jetzt evaluieren';
 $string['evaluate_teacher'] = 'Sie evaluieren jetzt: <span style="color:darkgreen;font-weight:bolder;">{$a}</span>';
 $string['evaluated_courses'] = 'Evaluierte Kurse';
@@ -80,10 +80,9 @@ $string['no_course_selected'] = "Es wurde kein zu evalierender Kurs gesetzt!";
 $string['no_data'] = "Es gibt keine Daten für diese Ansicht!";
 $string['no_permission_analysis'] = 'Sie haben nicht die für diese Auswertung notwendigen Rechte!';
 $string['no_permission'] = $string['you_have_no_permission'] = 'Sie haben nicht die für diese Seite notwendigen Rechte!';
-$string['no_respnses_yet'] = "Es gibt keine Abgaben!";
+$string['no_responses_yet'] = "Es gibt keine Abgaben!";
 $string['not_participated'] = 'Sie haben bisher <b>für keinen Kurs</b> teilgenommen.';
 $string['not_participated_course'] = 'Sie haben für diesen Kurs noch nicht teilgenommen.';
-
 $string['open_evaluation'] = 'Evaluation öffnen';
 $string['pageviews'] = 'Ansichten';
 $string['participant'] = 'Teilnehmer';
@@ -95,6 +94,7 @@ $string['participant_roles'] = 'Standardrolle(n) der Teilnehmer_innen';
 $string['participant_roles_help'] = 'Geben Sie die Standardrolle(n) für Teilnehmer_innen ein. Die Standardrolle ist Student. Standardeinstellungen können für jede Evaluation in den Einstellungen überschrieben werden.';
 $string['privileged_users'] = 'Privilegierte Anwender_innen';
 $string['privileged_users_desc'] = 'Privilegierte Personen für diese Evaluation (je 1 Anmeldename/Zeile)';
+$string['privileged_users_overview'] = 'Übersicht der für diese Evaluation zur Auswertung privilegierten Personen';
 $string['select_teacher'] = '<b>Bitte wählen Sie die Dozentin/den Dozenten für diese Evaluation!</b><br>Hinweis: 
 		Sie können einen Fragebogen pro Dozent_in ausfüllen<b>';
 $string['semesters'] = 'Semester';

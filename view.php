@@ -205,9 +205,9 @@ if (!$isNonResponStudent) {    // Print the tabs.
     print "<br>\n";
 }
 $showPrivDocu = '<a href="print.php?id='.$id.'&showPrivUsers=1">'
-. "<b>Übersicht der für diese Evaluation zur Auswertung privilegierten Personen</b></a> - "
+. "<b>" . ev_get_string('privileged_users_overview') . "</b></a> - "
 . '<a href="/downloads/Evaluationen mit ASH Moodle -Dokumentation.pdf" target="doku">'
-. "<b>Dokumentation öffnen/herunterladen</b></a><br>\n";
+. "<b>" . ev_get_string('docu_download') . "</b></a><br>\n";
 
 if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
     $evaluation_is_WM_disabled =
