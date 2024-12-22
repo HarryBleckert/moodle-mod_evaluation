@@ -2160,9 +2160,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                         $numStudentsCourse++;
                         $distinct_s[$roleC->id] = $fullname; //=$cnt_students;
                         // get inactive students
-                        /  $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid);
-                        //if ( $roleC->lastaccess > ( $evaluation_is_open ?(time()-(24*3600*$total_evaluation_days) ) :$timeopen ) )
-                        if ($roleC->lastaccess > $timeopen) // ( $evaluation_is_open ?$timeopen :$timeclose ) ){
+                        if ($roleC->lastaccess > $timeopen) {
                             $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid);
                             $cnt_students_active++;
                             $numStudentsActiveCourse++;
