@@ -473,8 +473,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             }
 
             $cos_completed_responses = $evaluationstructure->count_completed_responses();
-            $cos_get_completed_teachers = $evaluationstructure->get_completed_teachers();
-            $cos_possible_evaluations = 0;
+            $cos_get_completed_teachers = safeCount($evaluationstructure->get_completed_teachers());
             echo '<div style="text-align:center;font-weight:bold;">' . get_string('your') . ' '
                     . ev_get_string('courses_of_studies'). "</div>\n";
 
