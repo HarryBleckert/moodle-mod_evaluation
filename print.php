@@ -371,7 +371,7 @@ else if (false and $showEvaluations) {
             "</h1><br>\n";
     $completed_responses = evaluation_countCourseEvaluations($evaluation); //$evaluationstructure->count_completed_responses();
     if (!$completed_responses) {
-        echo $OUTPUT->notification(get_string('no_respnses_yet', 'mod_evaluation'));
+        echo $OUTPUT->notification(get_string('no_responses_yet', 'mod_evaluation'));
         echo $OUTPUT->footer();
         flush();
         exit;

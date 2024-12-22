@@ -72,7 +72,7 @@ function safeCount($value) {
 }
 
 // get_string for get_string('show_user', 'mod_evaluarion');
-function ev_get_string($string, $param = "") {
+function ev_get_string($string, $param = new stdclass()) {
     $plugin = 'evaluation';
     $trstring = get_string($string, $plugin, $param);
     /*if ( !empty($param) )
@@ -3703,19 +3703,38 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
                 $has_user_participated = evaluation_has_user_participated($evaluation, $user->id);
                 $fullname = ($user->alternatename ? $user->alternatename : $user->firstname) . " " . $user->lastname;
                 $days = remaining_evaluation_days($evaluation);
-                $style = '<b style="color:#000000;">';
-
+                $style_b = '<b style="color:#000000;">';
+                $a = new stdclass();
                 if ($days < 7) {
-                    $style = '<b style="color:#000000;">Die Abgabefrist endet ' . ($days > 0 ? "in " . $days . ' Tagen' : "heute") .
-                            '</b><br><b style="color:#000000;"> ';
+                    // $a->ev_end_msg = ($days > 0 ? "in " . $days . ' Tagen' : "heute")
+                    $a->ev_end_msg = ($days > 0 ? get_string("in") . ' ' . $days . ' '
+                            .get_string('days'): get_string('today'));
+                    $style_b = '<b style="color:#000000;">'.
+                            ev_get_string('ev_end_msg',$a)
+                            . '</b><br><b style="color:#000000;"> ';
                 }
+                $a->fullname = $fullname;
+                $a->has_participated = $has_user_participated;
+                /*
                 $reminder = 'Guten Tag ' . $fullname
                         . '<br>Sie haben '
                         . ($has_user_participated
                                 ? 'für diesen Kurs noch nicht'
                                 : "bisher <b>für keinen Kurs</b>")
-                        . '  an der Evaluation teilgenommen.
-							<br>' . $style . 'Bitte machen ' . ($has_user_participated ? '' : "auch ") . 'Sie mit!</b><br>';
+                        . '  an der Evaluation teilgenommen.<br>'
+                        . $style_b
+                        . 'Bitte machen ' . ($has_user_participated ? '' : "auch ")
+                        . 'Sie mit!</b><br>';
+                */
+                $reminder = ev_get_string('good_day',$a)
+                        . '<br>'
+                        . ($has_user_participated
+                                ? ev_get_string('not_participated',$a)
+                                : ev_get_string('not_participated_course',$a)
+                        . '<br>'
+                        . $style_b
+                        . ev_get_string('please_participate',$a)
+                        .'</b><br>');
             }
         } else if (!evaluation_has_user_participated($evaluation, $user->id, $courseid)) {
             $reminder = "";

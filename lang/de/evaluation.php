@@ -64,6 +64,7 @@ $string['filter_course_of_studies_desc'] =
 $string['fulllistofstudies'] = 'Alle Studiengänge';
 $string['fulllistofteachers'] = 'Alle Dozent_innen';
 $string['fulllistofdepartments'] = 'Alle Fachbereiche';
+$string['good_day'] = 'Guten Tag {$a->fullname}';
 $string['global_evaluations'] = 'Globale Evaluationen';
 $string['min_results'] =
         'Bisher gibt es leider weniger als {$a} Abgaben. Aus datenschutzrechtlichen Gründen dürfen keine Ergebnisse gezeigt werden.';
@@ -80,10 +81,14 @@ $string['no_data'] = "Es gibt keine Daten für diese Ansicht!";
 $string['no_permission_analysis'] = 'Sie haben nicht die für diese Auswertung notwendigen Rechte!';
 $string['no_permission'] = $string['you_have_no_permission'] = 'Sie haben nicht die für diese Seite notwendigen Rechte!';
 $string['no_respnses_yet'] = "Es gibt keine Abgaben!";
+$string['not_participated'] = 'Sie haben bisher <b>für keinen Kurs</b> teilgenommen.';
+$string['not_participated_course'] = 'Sie haben für diesen Kurs noch nicht teilgenommen.';
+
 $string['open_evaluation'] = 'Evaluation öffnen';
 $string['pageviews'] = 'Ansichten';
 $string['participant'] = 'Teilnehmer';
 $string['participants'] = 'Teilnehmer_innen';
+$string['please_participate'] = 'Bitte machen Sie mit!';
 $string['participating_courses'] = 'Teilnehmende Kurse';
 $string['participating_courses_of_studies'] = 'Teilnehmende Studiengänge';
 $string['participant_roles'] = 'Standardrolle(n) der Teilnehmer_innen';
@@ -222,6 +227,7 @@ $string['eventresponsedeleted'] = 'Antwort gelöscht';
 $string['eventresponsesubmitted'] = 'Antwort abgegeben';
 $string['export_questions'] = 'Fragen exportieren';
 $string['export_to_excel'] = 'Nach Excel exportieren';
+$string['ev_end_msg'] = 'Die Abgabefrist endet {$a->ev_end_msg}';
 $string['evaluation:addinstance'] = 'Neues Evaluation hinzufügen';
 $string['evaluation:complete'] = 'Evaluation abschließen';
 $string['evaluation:createprivatetemplate'] = 'Kursinternen Template erstellen';
