@@ -2160,10 +2160,10 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                         $numStudentsCourse++;
                         $distinct_s[$roleC->id] = $fullname; //=$cnt_students;
                         // get inactive students
-                        $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid);
+                        /  $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid);
                         //if ( $roleC->lastaccess > ( $evaluation_is_open ?(time()-(24*3600*$total_evaluation_days) ) :$timeopen ) )
-                        if ($roleC->lastaccess > $timeopen) // ( $evaluation_is_open ?$timeopen :$timeclose ) )
-                        {
+                        if ($roleC->lastaccess > $timeopen) // ( $evaluation_is_open ?$timeopen :$timeclose ) ){
+                            $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid);
                             $cnt_students_active++;
                             $numStudentsActiveCourse++;
                             $distinct_s_active[$roleC->id] = $fullname;
@@ -2184,16 +2184,15 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                                             "role" => "student", "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                         }
 
-                    } else {
+                }
+                else {
                         $cnt_teachers++;
                         $numTeachersCourse++;
                         $distinct_t[$roleC->id] = $fullname; //=$cnt_teac
-                        $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid);
+                        // $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid);
                         // get inactive teachers
-                        //if ( $roleC->lastaccess > ( $evaluation_is_open ?(time()-(24*3600*$total_evaluation_days) ) :$timeopen ) )
-                        if ($roleC->lastaccess > $timeopen) // ( $evaluation_is_open ?$timeopen :$timeclose ) )
-                            //if ( $roleC->lastaccess > $timeopen )
-                        {
+                        if ($roleC->lastaccess > $timeopen) {
+                            $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid);
                             $cnt_teachers_active++;
                             $numTeachersActiveCourse++;
                             $distinct_t_active[$roleC->id] = $fullname;
@@ -2246,9 +2245,8 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                 }
                 $distinct_s[$roleC->id] = $fullname; //=$cnt_students;
                 // get inactive students
-                //$userdata = core_user::get_user($roleC->id);
-                $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid);
                 if ($roleC->lastaccess > $timeopen and !isset($distinct_s_active[$roleC->id])) {
+                    $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid);
                     $cnt_students_active++;
                     $numStudentsActiveCourse++;
                     $distinct_s_active[$roleC->id] = $_SESSION["active_student"][$roleC->id] = $fullname;
@@ -2290,9 +2288,8 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                 }
                 $distinct_t[$roleC->id] = $fullname; //=$cnt_teac
                 // get inactive teachers
-                //$userdata = core_user::get_user($roleC->id);
-                $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid);
                 if ($roleC->lastaccess > $timeopen and !isset($distinct_t_active[$roleC->id])) {
+                    $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid);
                     $cnt_teachers_active++;
                     $numTeachersActiveCourse++;
                     $distinct_t_active[$roleC->id] = $_SESSION["active_teacher"][$roleC->id] = $fullname;
