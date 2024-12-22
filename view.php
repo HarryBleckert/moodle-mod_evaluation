@@ -474,7 +474,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
 
             $cos_completed_responses = $evaluationstructure->count_completed_responses();
             $cos_possible_evaluations = 0;
-            echo '<div style="text-align:center;font-weight:bold;">' . get_string('Ihre') . ' '
+            echo '<div style="text-align:center;font-weight:bold;">' . get_string('your') . ' '
                     . ev_get_string('courses_of_studies'). "</div>\n";
             echo "<b>" . get_string('completed_evaluations', "evaluation") . "</b>: "
                     . evaluation_number_format($cos_completed_responses)
@@ -743,7 +743,10 @@ if (is_siteadmin()) {
 
     $pluginfo = ev_get_plugin_version();
     $info = "\n<hr>\nPlugin: ".$pluginfo->component.". Version: "
-            .$pluginfo->release ." (Build: ".$pluginfo->version.")<hr>\n";
+            .$pluginfo->release ." (Build: ".$pluginfo->version.")"
+            . " CoS_privileged: "
+            . nl2br(var_export($_SESSION['CoS_privileged'][$USER->username],true))
+            . "<hr>\n";
     print $info;
 
     if (isset($_GET['activityrecord'])) {
