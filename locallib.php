@@ -2136,7 +2136,7 @@ function array_merge_recursive_new() {
 
         if ($CoSfilter ){
             // AND } !ev_is_course_in_CoS($evaluation, $courseid)){
-            $cos = evaluation_get_course_studies($evaluation, $course);
+            $cos = evaluation_get_course_of_studies($courseid);
             if (!in_array($cos,$_SESSION['CoS_privileged'][$USER->username]));
             {
                 continue;
