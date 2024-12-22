@@ -2119,6 +2119,20 @@ function array_merge_recursive_new() {
 
     foreach ($courses as $course) {
         $numTeachersCourse = $numStudentsCourse = $numTeachersActiveCourse = $numStudentsActiveCourse = 0;
+        if ($CoSfilter ){
+            // AND } !ev_is_course_in_CoS($evaluation, $courseid)){
+            $cos = evaluation_get_course_of_studies($courseid);
+            if (!isset($_SESSION['CoS_privileged'])) {
+                ev_set_privileged_users();
+                get_evaluation_filters($evaluation);
+            }
+            if (isset($_SESSION['CoS_privileged'][$user->username])
+                    AND !in_array($cos,$_SESSION['CoS_privileged'][$user->username])){
+                // print "<hr>in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
+                continue;
+            }
+        }
+
         if (isset($course->idnumber) and !empty($course->idnumber)) //$from_course )
         {    //if ( $evaluation->course == SITEID AND substr( $course->idnumber, -5) !== $evaluation_semester )
             //{	continue; }
@@ -2134,14 +2148,6 @@ function array_merge_recursive_new() {
             continue;
         }
 
-        if ($CoSfilter ){
-            // AND } !ev_is_course_in_CoS($evaluation, $courseid)){
-            $cos = evaluation_get_course_of_studies($courseid);
-            if (!in_array($cos,$_SESSION['CoS_privileged'][$user->username])){
-                print "<hr>in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
-                continue;
-            }
-        }
         $cnt_courses++;
 
         if (evaluation_is_empty_course($course->id)) {
