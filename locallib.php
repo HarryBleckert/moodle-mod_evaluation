@@ -1877,10 +1877,10 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
     $is_open = evaluation_is_open($evaluation);
     $update = false;
 
-    if (isset($userlast->lastaccess) and !$is_open) {
+    if (!empty($userlast->lastaccess) and !$is_open) {
         $lastaccess = $userlast->lastaccess ?: 0;
     } else if ($is_open) {
-        if (!isset($userlast->lastaccess)) {
+        if (empty($userlast->lastaccess)) {
             $fields = array("evaluation", "userid", "role", "courseids", "lastaccess", "timemodified");
             $values = array($evaluation->id, $userid, $role, $courseid, $lastaccess, time());
             $recObj = new stdClass();
