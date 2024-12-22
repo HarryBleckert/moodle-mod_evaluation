@@ -461,7 +461,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
 
         $cosStudies = safeCount($evaluationstructure->get_completed_course_of_studies());
         if ($cosPrivileged and $_SESSION["participating_courses_of_studies"] > 1
-                and $cosStudies < $_SESSION["participating_courses_of_studies"]) {
+                and $cosStudies < $_SESSION["participating_courses_of_studies"]){
             if (!isset($_SESSION['cos_distinct_t']) or empty($_SESSION['cos_distinct_s'])) {
                 list($_SESSION["cos_participating_courses"], $_SESSION["cos_participating_empty_courses"],
                         $_SESSION["cos_distinct_s"], $_SESSION["cos_distinct_s_active"], $_SESSION["cos_students"],
@@ -473,6 +473,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             }
 
             $cos_completed_responses = $evaluationstructure->count_completed_responses();
+            $cos_get_completed_teachers = $evaluationstructure->get_completed_teachers();
             $cos_possible_evaluations = 0;
             echo '<div style="text-align:center;font-weight:bold;">' . get_string('your') . ' '
                     . ev_get_string('courses_of_studies'). "</div>\n";
@@ -491,10 +492,20 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             }
             echo "<br>\n";
 
-            echo "<b>Evaluierte Dozent_innen</b>: "
-                    . evaluation_number_format(safeCount($evaluationstructure->get_completed_teachers())) . "<br>\n";
-            echo "<b>Evaluierte Kurse</b>: "
+
+            echo "<b>". get_string('evaluated_teachers', "evaluation") . "</b>: "
+                    . evaluation_number_format(safeCount($cos_get_completed_teachers))
+                    . "/" . $_SESSION["cos_distinct_t"]
+                    . evaluation_calc_perc($cos_get_completed_teachers, $_SESSION["cos_distinct_t"]);
+            echo " <b " . 'title="Bereinigt: Nur Lehrende, die während der Laufzeit der Evaluation Moodle nutzten"'
+                    . ">Nur Aktive</b>: " . evaluation_number_format($_SESSION["cos_distinct_t_active"])
+                    . "<b>" . evaluation_calc_perc($_SESSION["cos_distinct_t"], $_SESSION["cos_distinct_t_active"])
+                    . "</b>"
+                    . "<br>\n";
+
+            echo "<b>" . get_string('evaluated_courses', "evaluation") . "</b>: "
                     . evaluation_number_format(safeCount($evaluationstructure->get_completed_courses())) . "<br>\n";
+
             echo "<b>Evaluierte Studiengänge</b>: "
                     . evaluation_number_format($cosStudies) . "<br>\n";
 
