@@ -700,7 +700,6 @@ function evaluation_cosPrivileged($evaluation) {
 
 
 function evaluation_is_cosPrivileged_filter($needles, $haystack) {
-    global $evaluation;
     if (empty($needles) OR empty($haystack)){
         return false;
     }
@@ -708,7 +707,7 @@ function evaluation_is_cosPrivileged_filter($needles, $haystack) {
 }
 // is user CoS privileged users
 function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
-    global $USER, $evaluation;
+    global $USER;
     $filter = "";
     $setfilter = false;
     // get CoS privileged users
@@ -1174,8 +1173,7 @@ function evaluation_count_active_students($evaluation, $courseid) {
 												WHERE evaluation = $evaluation->id $filter")->active_students;
 }
 
-function possible_evaluations($evaluation, $courseid = false, $active = false) // teacherid=false, $course_of_studies=false)
-{
+function possible_evaluations($evaluation, $courseid = false, $active = false){
     global $DB;
     $possible_evaluations = $possible_active_evaluations = 0;
     $is_open = evaluation_is_open($evaluation);
@@ -2062,7 +2060,8 @@ function array_merge_recursive_new() {
 }
 
 // get all participants of evaluation by various filters. Count teachers and students in all participating courses of given evaluation
-function get_evaluation_participants($evaluation, $userid = false, $courseid = false, $getTeachers = false, $getStudents = false) {
+ function get_evaluation_participants($evaluation, $userid = false, $courseid = false, $getTeachers = false,
+         $getStudents = false, $CoSfilter = false) {
     global $DB, $USER;
     if ($userid > 0) {
         // $user = core_user::get_user($userid);
@@ -2132,6 +2131,15 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
         if (!$show) {
             continue;
         }
+
+        if ($CoSfilter ){
+            // AND } !ev_is_course_in_CoS($evaluation, $courseid)){
+            $cos = evaluation_get_course_studies($evaluation, $course);
+            if (!in_array($cos,$_SESSION['CoS_privileged'][$USER->username]));
+            {
+                continue;
+            }
+        }
         $cnt_courses++;
 
         if (evaluation_is_empty_course($course->id)) {
@@ -2159,7 +2167,7 @@ function get_evaluation_participants($evaluation, $userid = false, $courseid = f
                         $cnt_students++;
                         $numStudentsCourse++;
                         $distinct_s[$roleC->id] = $fullname; //=$cnt_students;
-                        // get inactive students
+                        // get active students
                         if ($roleC->lastaccess > $timeopen) {
                             $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid);
                             $cnt_students_active++;

@@ -438,7 +438,6 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                 $possible_active_evaluations = possible_active_evaluations($evaluation);
                 //$possible_active_evaluations = 	round($_SESSION["students_active"] 	* ($_SESSION["Teachers_active"]/$participating_active_courses), 0);
             }
-
         }
 
         // $teamteaching_courses = $_SESSION["teamteaching_courses"];
@@ -461,11 +460,27 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
         $view_daily_link = html_writer::link($previewlnk, "<b>" . get_string('completed_evaluations', "evaluation") . "</b>: ");
 
         $cosStudies = safeCount($evaluationstructure->get_completed_course_of_studies());
-        if ($cosPrivileged and
-                $_SESSION["participating_courses_of_studies"] > 1 and $cosStudies < $_SESSION["participating_courses_of_studies"]) {
-            echo '<div style="text-align:center;font-weight:bold;">Ihre Studiengänge</div>';
+        if ($cosPrivileged and $_SESSION["participating_courses_of_studies"] > 1
+                and $cosStudies < $_SESSION["participating_courses_of_studies"]) {
+            if (!isset($_SESSION['cos_distinct_t']) or empty($_SESSION['cos_distinct_s'])) {
+                list($_SESSION["cos_participating_courses"], $_SESSION["cos_participating_empty_courses"],
+                        $_SESSION["cos_distinct_s"], $_SESSION["cos_distinct_s_active"], $_SESSION["cos_students"],
+                        $_SESSION["cos_students_active"],
+                        $_SESSION["cos_distinct_t"], $_SESSION["cos_distinct_t_active"], $_SESSION["cos_Teachers"],
+                        $_SESSION["cos_Teachers_active"]
+                        )
+                        = get_evaluation_participants($evaluation,false,false,false,false, true);
+            }
+
+            $cos_completed_responses = $evaluationstructure->count_completed_responses();
+            $cos_possible_evaluations = 0;
+            echo '<div style="text-align:center;font-weight:bold;">' . get_string('Ihre') . ' '
+                    . ev_get_string('courses_of_studies'). "</div>\n";
             echo "<b>" . get_string('completed_evaluations', "evaluation") . "</b>: "
-                    . evaluation_number_format($evaluationstructure->count_completed_responses()) . "<br>\n";
+                    . evaluation_number_format($cos_completed_responses)
+                    . "/" . evaluation_number_format($_SESSION["cos_students"])
+                    . evaluation_calc_perc($cos_completed_responses, $_SESSION["cos_students"])
+                    . "<br>\n";
             echo "<b>Evaluierte Dozent_innen</b>: "
                     . evaluation_number_format(safeCount($evaluationstructure->get_completed_teachers())) . "<br>\n";
             echo "<b>Evaluierte Kurse</b>: "
