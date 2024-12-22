@@ -738,13 +738,14 @@ if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
 
 }
 
+print "<hr>CoS_privileged: "
+        . nl2br(var_export($_SESSION['CoS_privileged'][$USER->username],true)) ."<hr>\n";
 if (is_siteadmin()) {
     print "<br>Evaluation->id: $evaluation->id - Lang: $USER->lang";
 
     $pluginfo = ev_get_plugin_version();
     $info = "\n<hr>\nPlugin: ".$pluginfo->component.". Version: "
             .$pluginfo->release ." (Build: ".$pluginfo->version.")"
-            . " CoS_privileged: "
             . "<hr>\n";
     print $info;
 
