@@ -2119,12 +2119,13 @@ function array_merge_recursive_new() {
 
     foreach ($courses as $course) {
         $numTeachersCourse = $numStudentsCourse = $numTeachersActiveCourse = $numStudentsActiveCourse = 0;
+        $courseid = $course->id;
         if ($CoSfilter ){
             if (!isset($_SESSION['CoS_privileged'])) {
                 ev_set_privileged_users();
                 get_evaluation_filters($evaluation);
             }
-            if (isset($_SESSION['CoS_privileged'][$user->username])
+            if (is_array($_SESSION['CoS_privileged'][$user->username])
                     AND !in_array(evaluation_get_course_of_studies($courseid),
                     $_SESSION['CoS_privileged'][$user->username])){
                 print "<hr>Course: $courseid - in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
@@ -2139,7 +2140,7 @@ function array_merge_recursive_new() {
                 continue;
             }
         }
-        $courseid = $course->id;
+
         // full filtering
         list($show, $reminder) =
                 evaluation_filter_Evaluation($course->id, $evaluation, $user); //($userid AND $userid > 0 ?$user :false) );
