@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // $string[''] = '';
 $string['language'] = 'de';
+$string['active_only'] = 'Nur Aktive';
 $string['AllActivities'] = 'Alle Aktivitäten dieser Evaluation';
 $string['all_courses'] = 'Alle Kurse';
 $string['all_course_of_studies'] = 'Alle Studiengänge';
@@ -46,6 +47,7 @@ $string['course_of_studies'] = 'Studiengang';
 $string['courses_of_studies'] = 'Studiengänge';
 $string['course_of_studies_list'] = 'Alle Studiengänge des Semesters';
 $string['course_of_studies_selected'] = 'Liste der zu evaluierenden Studiengänge';
+$string['courses_with_content_only'] = "Nur genutzte Kurse";
 $string['daily_progress'] = 'Abgabestatistik -pro Tag und über den gesamten Zeitraum';
 $string['department'] = 'Fachbereich';
 $string['docu_download'] = 'Dokumentation öffnen/herunterladen';

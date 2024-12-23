@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // $string[''] = '';
 $string['language'] = 'en';
+$string['active_only'] = 'Active only';
 $string['AllActivities'] = 'All activities of this Evaluation';
 $string['all_courses'] = 'All courses';
 $string['all_course_of_studies'] = 'All courses of studiese';
@@ -43,6 +44,7 @@ $string['course_of_studies'] = 'Course of studies';
 $string['course_of_studies_selected'] = 'List of courses of studies to evaluate';
 $string['course_of_studies_list'] = 'All courses of studies of Evaluation semester';
 $string['courses_of_studies'] = 'Courses of studies';
+$string['courses_with_content_only'] = "Courses with content";
 $string['daily_progress'] = 'Daily Evaluation statistics and Evaluation overview';
 $string['department'] = 'Department';
 $string['docu_download'] = 'Open/Download documentation';
