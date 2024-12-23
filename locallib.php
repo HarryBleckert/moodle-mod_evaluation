@@ -2127,7 +2127,7 @@ function array_merge_recursive_new() {
             if (isset($_SESSION['CoS_privileged'][$user->username])
                     AND !in_array(evaluation_get_course_of_studies($courseid),
                     $_SESSION['CoS_privileged'][$user->username])){
-                // print "<hr>in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
+                print "<hr>Course: $courseid - in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
                 continue;
             }
         }
