@@ -480,7 +480,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             if ($teamteaching and !empty($_SESSION["cos_participating_courses"])) {
                 $cos_possible_evaluations = possible_evaluations($evaluation,false,false,true);
                 // WHEN Open: MUST divide by all  teachers and all courses because teachers of empty courses and empty courses may get evaluated!
-                $cos_possible_active_evaluations = possible_active_evaluations($evaluation,false, true, true);
+                $cos_possible_active_evaluations = possible_active_evaluations($evaluation,true);
                 //$possible_active_evaluations = 	round($_SESSION["students_active"] 	* ($_SESSION["Teachers_active"]/$participating_active_courses), 0);
             }
             echo '<div style="text-align:center;font-weight:bold;">' . ev_get_string('your') . ' '
