@@ -1173,8 +1173,8 @@ function evaluation_count_active_students($evaluation, $courseid) {
 												WHERE evaluation = $evaluation->id $filter")->active_students;
 }
 
-function possible_evaluations($evaluation, $courseid = false, $active = false){
-    global $DB;
+function possible_evaluations($evaluation, $courseid = false, $active = false,$cosFilter = false){
+    global $DB, $USER;
     $possible_evaluations = $possible_active_evaluations = 0;
     $is_open = evaluation_is_open($evaluation);
     if ($is_open OR empty($evaluation->possible_evaluations)) {
@@ -1189,6 +1189,18 @@ function possible_evaluations($evaluation, $courseid = false, $active = false){
             foreach ($_SESSION["possible_active_evaluations"] as $key => $maxEvaluations) {
                 if ($courseid and $courseid != $key) {
                     continue;
+                }
+                if ($cosFilter){
+                    if (!isset($_SESSION['CoS_privileged'])) {
+                        ev_set_privileged_users();
+                        get_evaluation_filters($evaluation);
+                    }
+                    if (is_array($_SESSION['CoS_privileged'][$USER->username])
+                            AND !in_array(evaluation_get_course_of_studies($key),
+                                    $_SESSION['CoS_privileged'][$USER->username])){
+                        // print "<hr>Course: $courseid - in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
+                        continue;
+                    }
                 }
                 $possible_active_evaluations += $maxEvaluations;
             }
@@ -1234,8 +1246,8 @@ function possible_evaluations($evaluation, $courseid = false, $active = false){
 	}*/
 }
 
-function possible_active_evaluations($evaluation) {
-    return possible_evaluations($evaluation, false, true);
+function possible_active_evaluations($evaluation,$cosFilter = false) {
+    return possible_evaluations($evaluation, false, true, $cosFilter);
     $possible_evaluations = 0;
     if (empty($_SESSION["allteachers"])) {
         evaluation_get_all_teachers($evaluation);
@@ -2333,7 +2345,8 @@ function array_merge_recursive_new() {
         }
         if ($numTeachersActiveCourse) {
             $_SESSION["possible_active_evaluations"][$courseid]
-                    = ($numStudentsActiveCourse * ($evaluation->teamteaching ? $numTeachersActiveCourse : 1));
+                    = ($numStudentsActiveCourse *
+                    ($evaluation->teamteaching ? $numTeachersActiveCourse : 1));
         }
         //}
     }
