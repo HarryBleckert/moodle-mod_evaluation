@@ -117,6 +117,7 @@ $string['teamteaching_help'] = 'Team Teaching erlaubt einen Fragebogen für jede
 $string['usageReport'] = 'Übersicht zur Nutzung der Evaluation';
 $string['viewsglobalEvaluationInstances'] = 'Übersicht semesterbezogener Evaluationen';
 $string['welcome_text'] = 'Begrüßungstext';
+$string['your'] = 'Ihre';
 $string['no_responses_yet'] = 'Es gibt noch keine Antworten';
 
 // settings for plugin configuration

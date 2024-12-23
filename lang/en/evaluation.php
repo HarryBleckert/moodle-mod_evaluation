@@ -111,6 +111,7 @@ $string['teamteaching_help'] = 'Team Teaching allows one evaluation for each cou
 $string['usageReport'] = 'Evaluation Usage Reports';
 $string['viewsglobalEvaluationInstances'] = 'overview of semester wide Evaluations';
 $string['welcome_text'] = 'Welcome text';
+$string['your'] = 'Your';
 $string['no_responses_yet'] = 'No responses yet';
 
 // settings for plugin configuration

@@ -483,7 +483,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                 $cos_possible_active_evaluations = possible_active_evaluations($evaluation,false, true, true);
                 //$possible_active_evaluations = 	round($_SESSION["students_active"] 	* ($_SESSION["Teachers_active"]/$participating_active_courses), 0);
             }
-            echo '<div style="text-align:center;font-weight:bold;">' . get_string('your') . ' '
+            echo '<div style="text-align:center;font-weight:bold;">' . ev_get_string('your') . ' '
                     . ev_get_string('courses_of_studies'). "</div>\n";
 
             echo "<b>" . get_string('completed_evaluations', "evaluation") . "</b>: "
