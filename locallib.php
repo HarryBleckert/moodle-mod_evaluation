@@ -1229,6 +1229,13 @@ function possible_evaluations($evaluation, $courseid = false, $active = false,$c
             if ($courseid AND $enrolment->courseid == $courseid){
                 continue;
             }
+            if ($cosFilter){
+                if (!in_array(evaluation_get_course_of_studies($enrolment->courseid),
+                        $_SESSION['CoS_privileged'][$USER->username])){
+                    // print "<hr>Course: $courseid - in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
+                    continue;
+                }
+            }
             if ($enrolment->students and !empty($enrolment->teacherids)) {
                 $teachers = safeCount(explode(",", $enrolment->teacherids));
                 $_SESSION["possible_evaluations"][$enrolment->courseid]
