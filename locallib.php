@@ -2125,10 +2125,10 @@ function array_merge_recursive_new() {
                 ev_set_privileged_users();
                 get_evaluation_filters($evaluation);
             }
-            if (is_array($_SESSION['CoS_privileged'][$user->username])
+            if (is_array($_SESSION['CoS_privileged'][$USER->username])
                     AND !in_array(evaluation_get_course_of_studies($courseid),
-                    $_SESSION['CoS_privileged'][$user->username])){
-                print "<hr>Course: $courseid - in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
+                    $_SESSION['CoS_privileged'][$USER->username])){
+                // print "<hr>Course: $courseid - in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
                 continue;
             }
         }
