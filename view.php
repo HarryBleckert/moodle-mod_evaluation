@@ -473,6 +473,10 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             }
 
             $cos_completed_responses = $evaluationstructure->count_completed_responses();
+            $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
+            }
+            $_SESSION["cos_distinct_users"] =
+                    $DB->get_record_sql("select count( distinct userid) from mdl_evaluation_completed where evaluation=$evaluation->id $CoS_Filter")->count;
             $cos_get_completed_teachers = safeCount($evaluationstructure->get_completed_teachers());
             $cos_get_completed_courses = safeCount($evaluationstructure->get_completed_courses());
             $cos_possible_evaluations = $_SESSION["cos_students"];
@@ -499,6 +503,16 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                 echo " - " . get_string("today") . ": " . $evaluationstructure->count_completed_responses($groupid = 0, $today = true);
             }
             echo "<br>\n";
+
+
+            echo "<b>" . get_string('participants', "evaluation") . "</b>: " .
+                    evaluation_number_format($_SESSION["distinct_users"]) . "/" .
+                    evaluation_number_format($_SESSION["cos_distinct_s"]) .
+                    evaluation_calc_perc($_SESSION["distinct_users"], $_SESSION["cos_distinct_s"])
+                    . " <b " . 'title="Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten"'
+                    . ">"  . ev_get_string('active_only') . "</b>: " . evaluation_number_format($_SESSION["cos_distinct_s_active"])
+                    . "<b>" . evaluation_calc_perc($_SESSION["distinct_users"], $_SESSION["cos_distinct_s_active"]) . "</b>"
+                    . "<br>\n";
 
 
             echo "<b>". get_string('evaluated_teachers', "evaluation") . "</b>: "
