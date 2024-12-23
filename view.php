@@ -473,8 +473,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             }
 
             $cos_completed_responses = $evaluationstructure->count_completed_responses();
-            $CoS_Filter = evaluation_get_cosPrivileged_filter($this->get_evaluation(), "completed");
-            }
+            $CoS_Filter = evaluation_get_cosPrivileged_filter($evaluation, "completed");
             $_SESSION["cos_distinct_users"] =
                     $DB->get_record_sql("select count( distinct userid) from mdl_evaluation_completed where evaluation=$evaluation->id $CoS_Filter")->count;
             $cos_get_completed_teachers = safeCount($evaluationstructure->get_completed_teachers());
