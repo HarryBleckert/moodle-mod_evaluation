@@ -1185,16 +1185,19 @@ function possible_evaluations($evaluation, $courseid = false, $active = false,$c
         if ( !safeCount($_SESSION["participating_courses"])) {
             get_evaluation_participants($evaluation);
         }
+        if ($cosFilter AND !is_array($_SESSION['CoS_privileged'][$USER->username])){
+            $cosFilter = false;
+        }
+        if ($cosFilter AND !isset($_SESSION['CoS_privileged'])) {
+            ev_set_privileged_users();
+            get_evaluation_filters($evaluation);
+        }
         if ($active) {
             foreach ($_SESSION["possible_active_evaluations"] as $key => $maxEvaluations) {
                 if ($courseid and $courseid != $key) {
                     continue;
                 }
                 if ($cosFilter){
-                    if (!isset($_SESSION['CoS_privileged'])) {
-                        ev_set_privileged_users();
-                        get_evaluation_filters($evaluation);
-                    }
                     if (is_array($_SESSION['CoS_privileged'][$USER->username])
                             AND !in_array(evaluation_get_course_of_studies($key),
                                     $_SESSION['CoS_privileged'][$USER->username])){
@@ -1208,6 +1211,14 @@ function possible_evaluations($evaluation, $courseid = false, $active = false,$c
             foreach ($_SESSION["possible_evaluations"] as $key => $maxEvaluations) {
                 if ($courseid and $courseid != $key) {
                     continue;
+                }
+                if ($cosFilter){
+                    if (is_array($_SESSION['CoS_privileged'][$USER->username])
+                            AND !in_array(evaluation_get_course_of_studies($key),
+                                    $_SESSION['CoS_privileged'][$USER->username])){
+                        // print "<hr>Course: $courseid - in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
+                        continue;
+                    }
                 }
                 $possible_evaluations += $maxEvaluations;
             }
