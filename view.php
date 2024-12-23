@@ -475,16 +475,24 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             $cos_completed_responses = $evaluationstructure->count_completed_responses();
             $cos_get_completed_teachers = safeCount($evaluationstructure->get_completed_teachers());
             $cos_get_completed_courses = safeCount($evaluationstructure->get_completed_courses());
+            $cos_possible_evaluations = $_SESSION["cos_students"];
+            $cos_possible_active_evaluations = $_SESSION["cos_students_active"];
+            if ($teamteaching and !empty($_SESSION["cos_participating_courses"])) {
+                $cos_possible_evaluations = possible_evaluations($evaluation,false,false,true);
+                // WHEN Open: MUST divide by all  teachers and all courses because teachers of empty courses and empty courses may get evaluated!
+                $cos_possible_active_evaluations = possible_active_evaluations($evaluation,false, true, true);
+                //$possible_active_evaluations = 	round($_SESSION["students_active"] 	* ($_SESSION["Teachers_active"]/$participating_active_courses), 0);
+            }
             echo '<div style="text-align:center;font-weight:bold;">' . get_string('your') . ' '
                     . ev_get_string('courses_of_studies'). "</div>\n";
 
             echo "<b>" . get_string('completed_evaluations', "evaluation") . "</b>: "
                     . evaluation_number_format($cos_completed_responses)
-                    . "/" . evaluation_number_format($_SESSION["cos_students"])
-                    . evaluation_calc_perc($cos_completed_responses, $_SESSION["cos_students"]);
+                    . "/" . evaluation_number_format($cos_possible_evaluations)
+                    . evaluation_calc_perc($cos_completed_responses, $cos_possible_evaluations);
             echo ' <b title="Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten">'
-                    . "Nur Aktive</b>: " . evaluation_number_format($_SESSION["cos_students_active"])
-                    . "<b>" . evaluation_calc_perc($cos_completed_responses, $_SESSION["cos_students_active"]) . "</b> ";
+                    . "Nur Aktive</b>: " . evaluation_number_format($cos_possible_active_evaluations)
+                    . "<b>" . evaluation_calc_perc($cos_completed_responses, $cos_possible_active_evaluations) . "</b> ";
             echo '<span style="font-size:20px;"> &#248;</span>: '
                     . ($days ? round($cos_completed_responses / $days) : 0) . "/" . get_string("day");
             if ($is_open) {

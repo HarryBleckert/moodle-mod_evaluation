@@ -1198,8 +1198,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false,$c
                     continue;
                 }
                 if ($cosFilter){
-                    if (is_array($_SESSION['CoS_privileged'][$USER->username])
-                            AND !in_array(evaluation_get_course_of_studies($key),
+                    if (!in_array(evaluation_get_course_of_studies($key),
                                     $_SESSION['CoS_privileged'][$USER->username])){
                         // print "<hr>Course: $courseid - in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
                         continue;
@@ -1213,8 +1212,7 @@ function possible_evaluations($evaluation, $courseid = false, $active = false,$c
                     continue;
                 }
                 if ($cosFilter){
-                    if (is_array($_SESSION['CoS_privileged'][$USER->username])
-                            AND !in_array(evaluation_get_course_of_studies($key),
+                    if (!in_array(evaluation_get_course_of_studies($key),
                                     $_SESSION['CoS_privileged'][$USER->username])){
                         // print "<hr>Course: $courseid - in_array($cos,.".$_SESSION['CoS_privileged'][$user->username].")<hr>";
                         continue;
