@@ -506,12 +506,12 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
 
 
             echo "<b>" . get_string('participants', "evaluation") . "</b>: " .
-                    evaluation_number_format($_SESSION["distinct_users"]) . "/" .
+                    evaluation_number_format($_SESSION["cos_distinct_users"]) . "/" .
                     evaluation_number_format($_SESSION["cos_distinct_s"]) .
-                    evaluation_calc_perc($_SESSION["distinct_users"], $_SESSION["cos_distinct_s"])
+                    evaluation_calc_perc($_SESSION["cos_distinct_users"], $_SESSION["cos_distinct_s"])
                     . " <b " . 'title="Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten"'
                     . ">"  . ev_get_string('active_only') . "</b>: " . evaluation_number_format($_SESSION["cos_distinct_s_active"])
-                    . "<b>" . evaluation_calc_perc($_SESSION["distinct_users"], $_SESSION["cos_distinct_s_active"]) . "</b>"
+                    . "<b>" . evaluation_calc_perc($_SESSION["cos_distinct_users"], $_SESSION["cos_distinct_s_active"]) . "</b>"
                     . "<br>\n";
 
 
