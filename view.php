@@ -525,7 +525,8 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             echo "<b>Evaluierte Studiengänge</b>: "
                     . evaluation_number_format($cosStudies) . "<br>\n";
 
-            echo '<div style="text-align:center;font-weight:bold;">Diese Evaluation</div>';
+            echo '<div style="text-align:center;font-weight:bold;">'
+            .ev_get_string('this_evaluation') . '</div>';
         }
 
         // show overview to privileged persons

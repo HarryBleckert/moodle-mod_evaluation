@@ -114,6 +114,7 @@ $string['teachers'] = 'Dozent_innen';
 $string['teachers_in_courses'] = 'Dozent_innen in teilnehmenden Kursen';
 $string['teamteaching'] = 'Team Teaching';
 $string['teamteaching_help'] = 'Team Teaching erlaubt einen Fragebogen für jeden Lehrenden im Kurs';
+$string['this_evaluation'] = 'Diese Evaluation';
 $string['usageReport'] = 'Übersicht zur Nutzung der Evaluation';
 $string['viewsglobalEvaluationInstances'] = 'Übersicht semesterbezogener Evaluationen';
 $string['welcome_text'] = 'Begrüßungstext';

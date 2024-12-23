@@ -108,6 +108,7 @@ $string['teachers'] = 'Teachers';
 $string['teachers_in_courses'] = 'Teachers in participating courses';
 $string['teamteaching'] = 'Team Teaching';
 $string['teamteaching_help'] = 'Team Teaching allows one evaluation for each course teachers';
+$string['this_evaluation'] = 'This evaluation';
 $string['usageReport'] = 'Evaluation Usage Reports';
 $string['viewsglobalEvaluationInstances'] = 'overview of semester wide Evaluations';
 $string['welcome_text'] = 'Welcome text';
