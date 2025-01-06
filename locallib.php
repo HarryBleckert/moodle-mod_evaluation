@@ -3766,7 +3766,7 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
                         . 'Bitte machen ' . ($has_user_participated ? '' : "auch ")
                         . 'Sie mit!</b><br>';
                 */
-                $reminder = ev_get_string('good_day',$a)
+                $reminder = ev_get_string('good_day') ." " . $fullname
                         . '<br>'
                         . ($has_user_participated
                                 ? ev_get_string('not_participated',$a)

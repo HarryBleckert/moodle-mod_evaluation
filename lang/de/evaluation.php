@@ -66,7 +66,7 @@ $string['filter_course_of_studies_desc'] =
 $string['fulllistofstudies'] = 'Alle Studiengänge';
 $string['fulllistofteachers'] = 'Alle Dozent_innen';
 $string['fulllistofdepartments'] = 'Alle Fachbereiche';
-$string['good_day'] = 'Guten Tag {$a->fullname}';
+$string['good_day'] = 'Guten Tag';
 $string['global_evaluations'] = 'Globale Evaluationen';
 $string['min_results'] =
         'Bisher gibt es leider weniger als {$a} Abgaben. Aus datenschutzrechtlichen Gründen dürfen keine Ergebnisse gezeigt werden.';
