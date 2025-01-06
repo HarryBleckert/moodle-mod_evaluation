@@ -135,6 +135,13 @@ if (true) //defined( "SiteEvaluation") )
 
 }
 
+$analysis =  ev_get_string('analysis'); // Auswertung
+$analysis_course =  ev_get_string('analysis_course'); // Auswertung Kurs
+$analysis_own_courses =  ev_get_string('analysis_own_courses'); // Auswertung eigene Kurse
+$analysis_all_courses =  ev_get_string('analysis_all_courses'); // Auswertung aller Kurse
+$analysis_own_cos =  ev_get_string('analysis_own_cos'); // Auswertung eigene Studiengänge
+$statistic=ev_get_string('statistic'); //Statistik
+
 if ($evaluation->course == SITEID) {
     if (defined('EVALUATION_OWNER') || $can_view
             || (((defined("isStudent") and $completed) || ($isPermitted and $courseid))
@@ -146,10 +153,9 @@ if ($evaluation->course == SITEID) {
                 $analysisurl = new moodle_url('/mod/evaluation/analysis.php', $urlparams);
             }
 
-            if ((defined("SiteEvaluation")) and ($isTeacher or !$is_open))  // AND !defined('EVALUATION_OWNER')
-            {
+            if ((defined("SiteEvaluation")) and ($isTeacher or !$is_open)){
                 if ($courseid) {
-                    $row[] = new tabobject('analysis', $analysisurl->out(), "Auswertung Kurs");
+                    $row[] = new tabobject('analysis', $analysisurl->out(), $analysis_course);
                 }
 
                 // show all own evaluations to teacher
@@ -158,10 +164,10 @@ if ($evaluation->course == SITEID) {
                     $urlparamsIDT['teacherid'] = $USER->id;
                     unset($urlparamsIDT['courseid']);
                     $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparamsIDT);
-                    $row[] = new tabobject('analysisTeacher', $analysisurl->out(), "Auswertung eigene Kurse");
+                    $row[] = new tabobject('analysisTeacher', $analysisurl->out(),$analysis_own_courses);
                     if (!$is_open) {
                         $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparamsID);
-                        $row[] = new tabobject('analysisASH', $analysisurl->out(), "Auswertung aller Kurse");
+                        $row[] = new tabobject('analysisASH', $analysisurl->out(), $analysis_all_courses);
                     }
                 } else {
                     if (defined('EVALUATION_OWNER')) {
@@ -169,22 +175,22 @@ if ($evaluation->course == SITEID) {
                     } else {
                         $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparamsID);
                     }
-                    $row[] = new tabobject('analysisASH', $analysisurl->out(), "Auswertung aller Kurse");
+                    $row[] = new tabobject('analysisASH', $analysisurl->out(), $analysis_all_courses);
                 }
             } else {
-                $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'evaluation'));
+                $row[] = new tabobject('analysis', $analysisurl->out(), $analysis);
             }
             // Show all results for $cosPrivileged
             if ($cosPrivileged){
                 $urlparams['analysisCoS'] = 1;
                 $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparams);
-                $row[] = new tabobject('analysisCoS', $analysisurl->out(), "Auswertung eigene Studiengänge");
+                $row[] = new tabobject('analysisCoS', $analysisurl->out(), $analysis_own_cos);
             }
             //$txt = ($courseid||$teacherid) ?" mit Vergleich" :"";
             // if (!$is_open or $isTeacher OR defined('EVALUATION_OWNER')) {
                 $urlparamsIDT['showCompare'] = 1;
                 $statsurl = new moodle_url('/mod/evaluation/print.php', $urlparamsIDT);
-                $row[] = new tabobject('statistics', $statsurl->out(), "Statistik");
+                $row[] = new tabobject('statistics', $statsurl->out(), $statistic);
             // }
 
             //if ( is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]) )
@@ -207,7 +213,7 @@ if ($evaluation->course == SITEID) {
     if ($completed_responses) {
         if (has_capability('mod/evaluation:viewreports', $context) || $evaluation->publish_stats) {
             $analysisurl = new moodle_url('/mod/evaluation/analysis.php', $urlparams);
-            $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'evaluation'));
+            $row[] = new tabobject('analysis', $analysisurl->out(), $analysis);
             if (has_capability('mod/evaluation:edititems', $context)) {
                 $reporturl = new moodle_url('/mod/evaluation/show_entries.php', $urlparams);
                 $row[] = new tabobject('showentries',
@@ -216,7 +222,7 @@ if ($evaluation->course == SITEID) {
             }
             if (!$is_open) {
                 $statsurl = new moodle_url('/mod/evaluation/print.php', $urlparamsIDT);
-                $row[] = new tabobject('statistics', $statsurl->out(), "Statistik");
+                $row[] = new tabobject('statistics', $statsurl->out(), $statistic);
             }
         }
     }

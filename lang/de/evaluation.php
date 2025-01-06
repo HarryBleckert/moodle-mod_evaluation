@@ -97,8 +97,8 @@ $string['participant_roles_help'] = 'Geben Sie die Standardrolle(n) für Teilneh
 $string['privileged_users'] = 'Privilegierte Anwender_innen';
 $string['privileged_users_desc'] = 'Privilegierte Personen für diese Evaluation (je 1 Anmeldename/Zeile)';
 $string['privileged_users_overview'] = 'Übersicht der für diese Evaluation zur Auswertung privilegierten Personen';
-$string['select_teacher'] = '<b>Bitte wählen Sie die Dozentin/den Dozenten für diese Evaluation!</b><br>Hinweis: 
-		Sie können einen Fragebogen pro Dozent_in ausfüllen<b>';
+$string['reminders_title'] = 'Hinweismails können nur von Admins oder als geplanter Server Task versandt werden. Der Vermerk "NR" weist darauf hin, dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben (Non-Responders) angeschrieben wurden.';
+$string['select_teacher'] = '<b>Bitte wählen Sie die Dozentin/den Dozenten für diese Evaluation!</b><br>Hinweis: Sie können einen Fragebogen pro Dozent_in ausfüllen<b>';
 $string['semesters'] = 'Semester';
 $string['sendername'] = 'Hinweismails: Absender Name';
 $string['sendermail'] = 'Hinweismails: Absender Mailadresse';
@@ -106,6 +106,7 @@ $string['sexes'] = 'Geschlechter';
 $string['signature'] = 'Hinweismails: Signatur';
 $string['show_on_index'] = 'Evaluation auf der Evaluationsübersicht anzeigen';
 $string['sort_tag'] = 'Tag zur Sortierung der Evaluationen in der Übersicht';
+$string['statistic'] = 'Statistik';
 $string['statistics'] = 'Statistik';
 $string['student'] = 'Student_in';
 $string['students'] = 'Student_innen';
@@ -134,7 +135,7 @@ $string[''] = '';
 get_string('','evaluation')
 */
 
-// from Moodle 3.10 evaluation
+// partly from Moodle 3.10 evaluation
 
 $string['add_item'] = 'Frage hinzufügen';
 $string['add_pagebreak'] = 'Seitenumbruch hinzufügen';
@@ -142,6 +143,10 @@ $string['adjustment'] = 'Ausrichtung';
 $string['after_submit'] = 'Nach der Abgabe';
 $string['allowfullanonymous'] = 'Völlige Anonymität erlauben';
 $string['analysis'] = 'Auswertung';
+$string['analysis_course'] = 'Auswertung Kurs';
+$string['analysis_own_courses'] = 'Auswertung eigene Kurse';
+$string['analysis_all_courses'] = 'Auswertung aller Kurse';
+$string['analysis_own_cos'] =  'Auswertung eigene Studiengänge';
 $string['anonymous'] = 'Anonym';
 $string['anonymous_edit'] = 'Anonym ausfüllen';
 $string['anonymous_entries'] = 'Anonyme Einträge ({$a})';

@@ -4466,7 +4466,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     setlocale(LC_ALL, 'de_DE');
 
     ev_show_reminders_log("\n" . date("Ymd H:i:s") .
-            "\nSending reminders to all participants with role $role in evaluation "
+            "\nSending reminders to all participants with role $role in evaluation  ($CFG->dbname)"
             ."'$evaluation->name' (ID: $evaluation->id)", $cronjob);
 
     $norpliestxt = "";
@@ -4588,16 +4588,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 break;
             }
         }
-        /*
-    wir möchten Sie daran erinnern,
-        dass noch die Möglichkeit besteht, sich an der <a href="https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=270154">laufenden
-          Lehrveranstaltungsevaluation</a> zu beteiligen!<br>
-        Mit Ihren Antworten helfen Sie uns, die Lehre zu verbessern und Sie können ggf. noch im
-        laufenden Semester in einen Austausch mit den Lehrenden treten.</p>
-=if(D9>3000000;(D9-3000000)*if(D9<6000000;0,25;0,35);0)
-=if(D9>6000000;ROI_month2024;(D9-3000000)*0,35)
-=if(D9>9000000;ROI_month2024;if(d9>3000000;(D9-3000000)*0,35;0))
-    */
         $reminder = ($remaining_evaluation_days <= 9 ?
                 "<b>nur noch $remaining_evaluation_days Tage bis zum $lastEvaluationDay laufenden</b> " : "laufenden ");
         if ($role == "student" || $role == "participants") {
@@ -4771,7 +4761,8 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
 function ev_get_reminders($evaluation, $id) {
     global $DB;
     $nonresponding = " (NR)";
-    $remindertxt = "Hinweismails wurden versandt am";
+    $remindertxt = ev_get_string('reminders_sent_at'); // Hinweismails wurden versandt am:
+    $send_reminders_to = ev_get_string('send_reminders_to'); // Hinweismails versenden an:
     $is_open = evaluation_is_open($evaluation);
     /*
      20240102:teachers,students
@@ -4784,10 +4775,13 @@ function ev_get_reminders($evaluation, $id) {
         $noreplies = optional_param('noreplies', false, PARAM_INT);
         $test = optional_param('test', false, PARAM_TEXT);
         $remindertxt = '<a href="?id='.$id.'&send_reminders=1">' . $remindertxt . "</a>";
+        $mon_responders_only = ev_get_string('mon_responders_only'); // Nur Non Responders
+        $reminders_title =  ev_get_string('reminders_title');
+
         if ( $send_reminders ){
             ?>
                 <form method="POST" action="view.php">
-                    <p><b>Hinweismails versenden an:</b><br>
+                    <p><b><?php echo $send_reminders_to;?></b><br>
                         <input type="hidden" name="id" value="<?php echo $id;?>">
                        <select name="role">
                            <option value="teacher">Teachers</option>
@@ -4817,9 +4811,7 @@ function ev_get_reminders($evaluation, $id) {
     }
     $remindersA = explode("\n",$reminders);
     $retval = "";
-    $retval .=  '<b title="Hinweismails können nur von Admins versandt werden. Der Vermerk NR weist darauf hin,'
-            . ' dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben'
-            . ' angeschrieben wurden.">' . $remindertxt . '</b>: ';
+    $retval .=  '<b title="'.$reminders_title.'">' . $remindertxt . '</b>: ';
     foreach ( $remindersA AS $line){
         if (!strpos($line,":")){
             continue;
@@ -4879,6 +4871,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     // $test = (true AND $CFG->dbname != 'moodle_staging');
     // $verbose = false;
     $noreplies = false;
+
     foreach ($evaluations AS $evaluation){
         if (!$evaluation->autoreminders){
             continue;
@@ -4887,7 +4880,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
         if ( $is_open ) {
             $reminders = $evaluation->reminders;
             if (empty($reminders)){
-                mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students");
+                mtrace("Evaluation '$evaluation->name': Sending reminders to teachers and students ($CFG->dbname)");
                 ev_send_reminders($evaluation, "teacher", $noreplies, $test, $verbose, $cli, $cronjob);
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
                 ev_send_reminders($evaluation, "student", $noreplies, $test, $verbose, $cli, $cronjob);
@@ -4929,33 +4922,34 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                 mtrace("Evaluation '$evaluation->name': Checking for due reminders to teachers and students");
                 if ($tsent AND ($tsent+(2*$week) < time())){
                     $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending reminders to teachers");
+                    mtrace("Evaluation '$evaluation->name': Sending reminders to teachers ($CFG->dbname)");
                     ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
                 }
                 else if (($tsent+(1*$week)) < time()){
                     $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding teachers");
+                    mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding teachers ($CFG->dbname)");
                     ev_send_reminders($evaluation, "teacher", true, $test, $verbose, $cli, $cronjob);
                 }
                 else if ($days<4 and ($tsent+(3*86400))< time()){
                     $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending final reminders to teachers");
+                    mtrace("Evaluation '$evaluation->name': Sending final reminders to teachers ($CFG->dbname)");
                     ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
                 }
+
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
                 if (($ssent+(2*$week)) < time()){
                     $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending reminders to students");
+                    mtrace("Evaluation '$evaluation->name': Sending reminders to students ($CFG->dbname)");
                     ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
                 }
                 else if (($ssent+(1*$week)) < time()){
                     $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding students");
+                    mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding students ($CFG->dbname)");
                     ev_send_reminders($evaluation, "student", true, $test, $verbose, $cli, $cronjob);
                 }
                 else if ($days<4 and ($ssent+(3*86400)) < time()){
                     $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending final reminders to students");
+                    mtrace("Evaluation '$evaluation->name': Sending final reminders to students ($CFG->dbname)");
                     ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
                 }
             }
