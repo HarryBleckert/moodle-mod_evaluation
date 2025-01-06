@@ -4466,7 +4466,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     setlocale(LC_ALL, 'de_DE');
 
     ev_show_reminders_log("\n" . date("Ymd H:i:s") .
-            "\nSending reminders to all participants with role $role in evaluation  ($CFG->dbname)"
+            "\nSending reminders to all participants with role $role in evaluation ($CFG->dbname)"
             ."'$evaluation->name' (ID: $evaluation->id)", $cronjob);
 
     $norpliestxt = "";
@@ -4510,34 +4510,34 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     }*/
     ini_set("output_buffering", 600);
     $testinfo = ($test ?" Test: " :"");
-    foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
-        @ob_flush();@ob_end_flush();@flush();@ob_start();
 
-        /*
-        $allTeachers  = $_SESSION["allteachers"];
-        unset($_SESSION["EvaluationsID"]);
-        validate_evaluation_sessions($evaluation);
-        $_SESSION["allteachers"] = $allTeachers;
-        unset($allTeachers);
-        */
-        //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
+    if ($role == "student" || $role == "participants") {
+        $testMsg =
+                "<p>Dies ist ein Beispiel für die Mail an die Studierenden, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
+    } else {
+        $testMsg =
+                "<p>Dies ist ein Beispiel für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
+    }
+
+    foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
+       if(!$cronjob) {
+           @ob_flush();
+           @ob_end_flush();
+           @flush();
+           @ob_start();
+       }
+       //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
 
         $username = $evaluation_user["username"];
         $firstname = $evaluation_user["firstname"];
         $lastname = $evaluation_user["lastname"];
         $fullname = $evaluation_user["fullname"];
-        //$fullname = $evaluation_user["firstname"] . " " . $evaluation_user["lastname"];
         $email = $evaluation_user["email"];
         $userid = $evaluation_user["id"];
-        // $role = $evaluation_user["role"];
         $to = '=?UTF-8?B?' . base64_encode($firstname . " " . $lastname )
                 . '?=' . " <$email>";
         $headers = array("From" => $sender, "Return-Path" => $senderMail, "Reply-To" => $sender, "MIME-Version" => "1.0",
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
-        // $start2 = time();
-        // get student courses to evaluate
-        // $USER = core_user::get_user($userid);
-        // $USER = $DB->get_record("user", array('id' => 30421), '*');
         if( empty($username) || empty($firstname)){
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user", $cronjob);
             continue;
@@ -4561,16 +4561,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         } else {
             $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, true, true);
         }
-        $testMsg = "";
 
         if ($test OR ($cnt<2 AND $CFG->noemailever)) {
-            if ($role == "student" || $role == "participants") {
-                $testMsg =
-                        "<p>Dies ist ein Entwurf für die Mail an die Studierenden, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
-            } else {
-                $testMsg =
-                        "<p>Dies ist ein Entwurf für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
-            }
 
             $to = "Harry <Harry@Bleckert.com>";
             // $to = $sender;
@@ -4685,6 +4677,7 @@ Alice-Salomon-Platz 5, 12627 Berlin
 HEREDOC;
         }
         if ( !$CFG->noemailever || $test || $cnt<2) {
+            // if (Berthe Khayat <khayat@ash-berlin.eu>)
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
             ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
@@ -4775,7 +4768,7 @@ function ev_get_reminders($evaluation, $id) {
         $noreplies = optional_param('noreplies', false, PARAM_INT);
         $test = optional_param('test', false, PARAM_TEXT);
         $remindertxt = '<a href="?id='.$id.'&send_reminders=1">' . $remindertxt . "</a>";
-        $mon_responders_only = ev_get_string('mon_responders_only'); // Nur Non Responders
+        $non_responders_only = ev_get_string('non_responders_only'); // Nur Non Responders
         $reminders_title =  ev_get_string('reminders_title');
 
         if ( $send_reminders ){
@@ -4788,7 +4781,7 @@ function ev_get_reminders($evaluation, $id) {
                            <option value="student">Students</option>
                        </select>
                         - <input type="text" name="test" value="Berthe Khayat <khayat@ash-berlin.eu>"></input>
-                        - Nur Non Responders?
+                        - <?php echo $non_responders_only;?>?
                         <input type="radio" name="noreplies" value="0" checked>Nein</input>
                         <input type="radio" name="noreplies" value="1">Ja</input>&nbsp;
                         <button type="submit">Go</button>

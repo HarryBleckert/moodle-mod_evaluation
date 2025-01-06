@@ -77,6 +77,7 @@ $string['no_data'] = "No data found for this view!";
 $string['no_permission'] = $string['you_have_no_permission'] = 'You do not have the permisssions required to view this page!';
 $string['no_permission_analysis'] = 'You do not have the permissions required to view this analysis!';
 $string['no_responses_yet'] = "No evaluations received!";
+$string['non_responders_only'] = 'Non responders only';
 $string['not_participated'] = 'You haven\'t yet participated for any of your courses.';
 $string['not_participated_course'] = 'You haven\'t yet participated for this course.';
 $string['open_evaluation'] = 'open Evaluation';
@@ -91,7 +92,9 @@ $string['participant_roles_help'] = 'Enter the default role(s) of evaluation par
 $string['privileged_users'] = 'Privileged users';
 $string['privileged_users_desc'] = 'Privileged users for this evaluation (1 username/line)';
 $string['privileged_users_overview'] = 'Overview of persons privileged to access results of this evaluation';
-$string['reminders_title'] = 'Reminder mails can be sent by admins or as a scheduled server task only. The note "NR" indicates that only students without submissions or lecturers with fewer than three submissions (non-responders) were contacted.';
+$string['reminders_sent_at'] = 'Reminders were mailed at:';
+$string['send_reminders_to'] = 'Mail reminders to:';
+$string['reminders_title'] = 'Reminder mails can be sent by admins or as a scheduled server task only. The note \'NR\' indicates that only students without submissions or lecturers with fewer than three submissions (non-responders) were contacted.';
 $string['select_teacher'] = '<b>Please select a teacher for this evaluation!</b><br>Note: 
 		You can give a separate evaluation of each teacher<b>';
 $string['semesters'] = 'Semesters';
