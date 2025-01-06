@@ -208,11 +208,11 @@ $showPrivDocu = '<a href="print.php?id='.$id.'&showPrivUsers=1">'
 . "<b>" . ev_get_string('privileged_users_overview') . "</b></a> - "
 . '<a href="/downloads/Evaluationen mit ASH Moodle -Dokumentation.pdf" target="doku">'
 . "<b>" . ev_get_string('docu_download') . "</b></a><br>\n";
-
+$good_day = ev_get_string('good_day');
 if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
     $evaluation_is_WM_disabled =
             (evaluation_is_WM_disabled($evaluation) ? " Ausgenommen sind Weiterbildende Master Studiengänge." : "");
-    $msg_privPersons = "Guten Tag " . trim($USER->firstname) . " " . trim($USER->lastname) . "<br>\n"
+    $msg_privPersons = $good_day . " " . trim($USER->firstname) . " " . trim($USER->lastname) . "<br>\n"
             . "Als " . (is_siteadmin() ? "Administrator und daher " : "") . "für diese Evaluation privilegierte Person"
             . " können Sie alle Auswertungen " . ($cosPrivileged ? "" : "und Rohdaten ")
             . (!empty($_SESSION['CoS_privileged'][$USER->username])
@@ -312,7 +312,7 @@ if ($USER->lang != 'de') {
                         href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25-Fragebogen-EN.pdf">
                         <b>Click here</b> to open an English translation of the questionnaire.</a><br>';
 }
-$msg_student_all_courses = "Guten Tag $fullname<br>Bitte beteiligen " . ($evaluation_has_user_participated ? "" : "auch ")
+$msg_student_all_courses = $good_day . " $fullname<br>Bitte beteiligen " . ($evaluation_has_user_participated ? "" : "auch ")
         . "Sie sich " .
         ($evaluation_has_user_participated ? "für jeden Ihrer Kurse " : "")
         . "an dieser Lehrveranstaltungsevaluation. "
@@ -325,7 +325,7 @@ $msg_student_all_courses = "Guten Tag $fullname<br>Bitte beteiligen " . ($evalua
         )
         . "Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald $minResults Abgaben vorliegen."
         ."<br>$q_translink\n";
-$msg_teachers = "Guten Tag $fullname<br>
+$msg_teachers = $good_day . " $fullname<br>
                         Sie haben Kurse, die an dieser Evaluation teil" . ($is_open
                 ? "nehmen. Bitte motivieren Sie die Studierenden zur Teilnahme" : "genommen haben") . ".<br>
                         Für Ihre eigenen Kurse können Sie die statistische Auswertung einsehen, sobald $minResults Abgaben vorliegen. 
@@ -339,7 +339,7 @@ if ($is_open) {
 
     if ($isStudent and $is_open and !$completed_all) {
         if ($courseid and !$course_has_user_participated) {    // Show description.
-            print "<br>\nGuten Tag $fullname<br>\n" . $evaluation->intro . "<br>\n";
+            print "<br>\n$good_day $fullname<br>\n" . $evaluation->intro . "<br>\n";
             echo $alert;
         } else //if  ( $all_courses )
         {
@@ -703,12 +703,12 @@ if ($evaluationcompletion->can_complete()) {
         // Evaluation was already submitted.
         if ($SiteEvaluation) {
             if ($isStudent) {
-                if ($completed_all) //"Guten Tag $fullname<br>" .
+                if ($completed_all) //"$good_day . "  $fullname<br>" .
                 {
                     echo '<b style="color:darkgreen;">Vielen Dank. '
                             . 'Sie haben für jeden Ihrer teilnehmenden Kurse an dieser Lehrevaluation teilgenommen!</b><br>';
                 } else if ($courseid and evaluation_has_user_participated($evaluation, $USER->id, $courseid)) {
-                    echo "Guten Tag $fullname<br>" .
+                    echo "$good_day $fullname<br>" .
                             '<b style="color:darkgreen;">Sie haben für diesen Kurs bereits an der Lehrevaluation teilgenommen!</b><br>';
                 }
             }
@@ -777,7 +777,7 @@ if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
         print $msg_student_all_courses;
     }
     else{
-        print "Guten Tag $fullname<br>\n";
+        print "$good_day $fullname<br>\n";
         print $evaluation->intro;
     }
     echo $OUTPUT->heading(get_string('page_after_submit', 'evaluation'), 3);
