@@ -805,7 +805,7 @@ if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
     print $evaluation->page_after_submit;
     if (!empty($msg_teachers) AND defined('EVALUATION_OWNER')){
         echo $OUTPUT->heading(get_string('welcome_text', 'evaluation') ." "
-                . ev_get_string('for_participants'), 3);
+                . ev_get_string('for_teachers'), 3);
         print $msg_teachers;
     }
 
