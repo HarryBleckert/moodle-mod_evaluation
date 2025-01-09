@@ -47,7 +47,7 @@ $string['questionaireenglish'] = 'Hier ist eine englische Übersetzung des Frage
 $string['clickquestionaireenglish'] = '<b>Click here</b> to open an English translation of the questionnaire';
 $string['also'] = 'auch';
 $string['foryourcourses'] = 'für jeden Ihrer Kurse';
-$string['msg_student_all_courses'] = 'Bitte beteiligen ${a->also} Sie sich {$a->foryourcourses} an dieser Evaluation. 
+$string['msg_student_all_courses'] = 'Bitte beteiligen {$a->also} Sie sich {$a->foryourcourses} an dieser Evaluation. 
                 Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs.<br>Klicken Sie unten für jeden Ihrer noch nicht evaluierten Kurse auf \'<b>Jetzt evaluieren</b>\' 
                 und füllen Sie dann jeweils den Fragebogen aus.';
 $string['yourevaluationhelps'] = 'Ihre Evaluation ist uns eine große Hilfe!';

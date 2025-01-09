@@ -337,7 +337,8 @@ if ($evaluation_has_user_participated) {
 $msg_student_all_courses = $good_day . " " . $fullname . "<br>\n"
         . ev_get_string('msg_student_all_courses',$a)
         . "<br>" . $teamteachingTxt
-        . ev_get_string('yourevaluationhelps') . "<br>\n" . ev_get_string('resultconditions',$a). "<br>\n"
+        . ev_get_string('yourevaluationhelps') . "<br>\n"
+        . ev_get_string('resultconditions',$a). "<br>\n"
         . $q_translink . "\n";
 if ($is_open){
     $yourpartcourses = ev_get_string('yourpartcourses');
