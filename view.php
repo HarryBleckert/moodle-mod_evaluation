@@ -232,7 +232,7 @@ if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
                     : ""
                 )
             . " " . $a->viewanddownload . $a->is_WM_disabled
-            . $showPrivDocu;
+            . "<br>\n" . $showPrivDocu;
     echo $msg_privPersons;
 }
 

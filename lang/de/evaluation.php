@@ -37,7 +37,6 @@ $string['andrawdata'] =  'und Rohdaten';
 $string['yourcos'] = 'Ihrer Studiengänge';
 $string['viewanddownload'] = 'einsehen und herunterladen.';
 $string['privilegestxt'] = 'Als {$a->siteadmintxt} für diese Evaluation privilegierte Person können Sie alle Auswertungen {$a->andrawdata}';
-
 $string['courseparticipants'] = 'Dieser Kurs hat {$a->numteachers} Dozent_in und {$a->numstudents} studentische Teilnehmer_innen.';
 $string['participantsandquota'] = 'Teilnehmer_innen haben sich an dieser Evaluation beteiligt. Das entspricht einer Beteiligung von {$a->evaluated}.';
 $string['quotaevaluatedall'] = 'der Teilnehmer_innen haben alle Dozent_innen bewertet.';
