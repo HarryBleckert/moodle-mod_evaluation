@@ -42,7 +42,6 @@ $string['coursequota'] = '{$a->completed_responses} of a maximum of {$a->numToDo
 $string['nostudentsincourse'] = 'This course has no student participants.';
 $string['questionaireenglish'] = 'Here is an English translation of the questionnaire.';
 $string['clickquestionaireenglish'] = '<b>Click here</b> to open an English translation of the questionnaire';
-$string['msg_student_all_courses'] = '';
 $string['also'] = 'also';
 $string['foryourcourses'] = 'for each of your courses';
 $string['msg_student_all_courses'] = 'Please take part in this evaluation.
@@ -60,8 +59,17 @@ $string['teamteachingcourses'] = 'Courses with team teaching';
 $string['duplicatedfeedbacks'] = 'Duplicate submissions';
 $string['logananalysis'] = 'Evaluation of the Moodle log. Log data is kept for {$a->loglifetime} days.';
 $string['onefeedbackperteacher'] = 'Today is <b>day {$a->currentday} {$a->currentday_percent}';
-// $string[''] = '';
-
+$string['not_anonymous'] = 'not anonymous';
+$string['evaluationperiod'] = 'Participation in the evaluation is/was possible from {$a->timeopen} to {$a->timeclose}.';
+$string['thxforcompletingall'] = 'Thank you. You have participated in this evaluation for each of your participating courses!';
+$string['thxforcompletingcourse'] = 'You have already participated in the evaluation for this course!';
+$string['view_after_participating'] = 'You can view results of this evaluation at any time after you have participated for this course!';
+$string['no_participation_no_view'] = 'You cannot view results of this course because you have not participated for this course!';
+$string['no_part_no_results_site'] = 'You have not participated in this evaluation for any of your courses and therefore do not have the right to view course related results!';
+$string['no_part_no_results'] = 'You have not participated in this evaluation and therefore do not have the right to view results!';
+$string['no_course_participated'] = 'None of your courses was part of this evaluation';
+$string['no_course_participing'] = 'None of your courses is part of this evaluation!';
+$string['results_all_evaluated_teachers'] = 'Results for all evaluated teachers';
 // end view.php
 
 $string['active_only'] = 'Active only';

@@ -46,7 +46,6 @@ $string['coursequota'] = 'Es wurden {$a->completed_responses} von maximal {$a->n
 $string['nostudentsincourse'] = 'Dieser Kurs hat keine studentischen Teilnehmer_innen.';
 $string['questionaireenglish'] = 'Hier ist eine englische Übersetzung des Fragebogens.';
 $string['clickquestionaireenglish'] = '<b>Click here</b> to open an English translation of the questionnaire';
-$string['msg_student_all_courses'] = '';
 $string['also'] = 'auch';
 $string['foryourcourses'] = 'für jeden Ihrer Kurse';
 $string['msg_student_all_courses'] = 'Bitte beteiligen ${a->also} Sie sich {$a->foryourcourses} an dieser Evaluation. 
@@ -65,6 +64,17 @@ $string['teamteachingcourses'] = 'Kurse mit Team Teaching';
 $string['duplicatedfeedbacks'] = 'Duplizierte Abgaben';
 $string['logananalysis'] = 'Auswertung des Moodle Logs. Log Daten werden {$a->loglifetime} Tage aufbewahrt.';
 $string['onefeedbackperteacher'] = 'Heute ist <b>Tag {$a->currentday} {$a->currentday_percent}';
+$string['not_anonymous'] = 'Nicht Anonym';
+$string['evaluationperiod'] = 'Die Teilnahme an der Evaluation ist/war vom {$a->timeopen} bis zum {$a->timeclose} möglich.';
+$string['thxforcompletingall'] = 'Vielen Dank. Sie haben für jeden Ihrer teilnehmenden Kurse an dieser Evaluation teilgenommen!';
+$string['thxforcompletingcourse'] = 'Sie haben für diesen Kurs bereits an der Evaluation teilgenommen!';
+$string['view_after_participating'] = 'Sie können Auswertungen dieser Evaluation jederzeit einsehen, nachdem Sie selbst für diesen Kurs daran teilgenommen haben!';
+$string['no_participation_no_view'] = 'Sie können Auswertungen dieses Kurses nicht einsehen, weil Sie selbst für diesen Kurs nicht an der Evaluation teilgenommen habern!';
+$string['no_part_no_results_site'] = 'Sie haben für keinen Ihrer Kurse an dieser Evaluation teilgenommen und haben daher nicht das Recht kursbezogene Auswertungen einzusehen!';
+$string['no_part_no_results'] = 'Sie haben nicht an dieser Evaluation teilgenommen und haben daher nicht das Recht Auswertungen einzusehen!';
+$string['no_course_participated'] = 'Keiner Ihrer Kurse war Teil dieser Evaluation';
+$string['no_course_participing'] = 'Keiner Ihrer Kurse ist Teil dieser Evaluation!';
+$string['results_all_evaluated_teachers'] = 'Ergebnisse für alle evaluierten Dozent_innen';
 // $string[''] = '';
 
 // end view.php

@@ -337,7 +337,7 @@ if ($evaluation_has_user_participated) {
 $msg_student_all_courses = $good_day . " " . $fullname . "<br>\n"
         . ev_get_string('msg_student_all_courses',$a)
         . "<br>" . $teamteachingTxt
-        . ev_get_string('yourevaluationhelps') .  ev_get_string('resultconditions')
+        . ev_get_string('yourevaluationhelps') . "<br>\n" . ev_get_string('resultconditions'). "<br>\n"
         . $q_translink . "\n";
 if ($is_open){
     $yourpartcourses = ev_get_string('yourpartcourses');
@@ -669,28 +669,25 @@ if ($evaluation->timeopen and $evaluation->timeclose) {
         $a->currentday =  str_replace(".", ",", $dayC);
         $a->currentday_percent =  evaluation_calc_perc($dayC - 0.1, $total);
         echo ". ";
-        echo ev_get_string('onefeedbackperteacher') . "</b>";
+        echo ev_get_string('onefeedbackperteacher',$a) . "</b>";
     }
     echo "<br>\n";
 }
 echo "<b>Semester:</b> " . $evaluation_semester . " - <b>" . get_string('mode', 'evaluation') . "</b>: "
-        . ($evaluation->anonymous ? "Anonym" : "Personalisiert")
+        . ($evaluation->anonymous ? ev_get_string('anonymous') : ev_get_string('not_anonymous'))
         . " - " . "<b>" . get_string("questions", "evaluation") . "</b>: " . $_SESSION["questions"] . " " . $previewQ . "<br>\n";
 
 if (!$courseid AND ($privGlobalUser OR !$is_open)) {
     print ev_get_reminders($evaluation,$id);
-    // show kiat of privileged persons and link to docu
-    /*if ($isTeacher AND !$is_open AND !(defined('EVALUATION_OWNER') and $evaluation->course == SITEID)) {
-        print $showPrivDocu;
-    }*/
 }
 
 if ($evaluationcompletion->can_complete()) {
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     if (!$evaluationcompletion->is_open() and !($isPermitted or defined('EVALUATION_OWNER'))) {
         // Evaluation is not yet open or is already closed.
-        echo "<b>Die Teilnahme an der Evaluation " . ($evaluation->timeclose < time() ? "war" : "ist") . " vom " .
-                date("d.m.Y", $evaluation->timeopen) . " bis zum " . date("d.m.Y", $evaluation->timeclose) . " möglich.</b><br>\n";
+        $a->timeopen = date("d.m.Y", $evaluation->timeopen);
+        $a->timeclose = date("d.m.Y", $evaluation->timeclose);
+        echo "<b>" . ev_get_string('evaluationperiod',$a) . "</b><br>\n";
         if ($is_open) {
             echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
         }
@@ -720,13 +717,10 @@ if ($evaluationcompletion->can_complete()) {
         // Evaluation was already submitted.
         if ($SiteEvaluation) {
             if ($isStudent) {
-                if ($completed_all) //"$good_day . "  $fullname<br>" .
-                {
-                    echo '<b style="color:darkgreen;">Vielen Dank. '
-                            . 'Sie haben für jeden Ihrer teilnehmenden Kurse an dieser Lehrevaluation teilgenommen!</b><br>';
+                if ($completed_all){
+                    echo "$good_day $fullname<br>" . '<b style="color:darkgreen;">' . ev_get_string('thxforcompletingall') . "</b><br>";
                 } else if ($courseid and evaluation_has_user_participated($evaluation, $USER->id, $courseid)) {
-                    echo "$good_day $fullname<br>" .
-                            '<b style="color:darkgreen;">Sie haben für diesen Kurs bereits an der Lehrevaluation teilgenommen!</b><br>';
+                    echo "$good_day $fullname<br>" . '<b style="color:darkgreen;">' . ev_get_string('thxforcompletingcourse') . "</b><br>";
                 }
             }
         } else {
@@ -742,11 +736,9 @@ if ($evaluationcompletion->can_complete()) {
 // if student who did not participate yet
 if ($isNonResponStudent) {
     if ($evaluationcompletion->is_open()) {
-        echo "<b style=\"color:blue;\">Sie können Auswertungen dieser Evaluation jederzeit einsehen, 
-		 nachdem Sie selbst für diesen Kurs daran teilgenommen haben!</b>\n";
+        echo "<b style=\"color:blue;\">" . ev_get_string('view_after_participating') . "</b>\n";
     } else {
-        echo "<b style=\"color:red;\">Sie können Auswertungen dieses Kurses nicht einsehen, 
-		 weil Sie selbst für diesen Kurs nicht an der Evaluation teilgenommen hatten!</b>\n";
+        echo "<b style=\"color:red;\">" . ev_get_string('no_participation_no_view') . "</b>\n";
     }
 }
 
@@ -755,12 +747,22 @@ if ($isNonResponStudent) {
 $isEnrolled = !empty(evaluation_is_user_enrolled($evaluation, $USER->id));
 if ((!$isPermitted AND !defined('EVALUATION_OWNER')) and empty($_SESSION["myEvaluations"])) {
     if (!$is_open and $isEnrolled) {
-        echo "<p style=\"color:red;font-weight:bold;align:center;\">Sie haben "
-                . ($SiteEvaluation ? "für keinen Ihrer Kurse" : "nicht") . " an dieser Evaluation teilgenommen
-				und haben daher nicht das Recht " . ($SiteEvaluation ? "kursbezogene " : "") . "Auswertungen einzusehen!</p>";
+        echo "<p style=\"color:red;font-weight:bold;align:center;\">";
+        if ($SiteEvaluation){
+            echo ev_get_string('no_part_no_results_site');
+        }
+        else{
+            echo ev_get_string('no_part_no_results');
+        }
+        echo "</p>\n";
     } else if ($SiteEvaluation and !$isEnrolled) {
-        echo "<p style=\"color:red;font-weight:bold;align:center;\">Keiner Ihrer Kurse " . ($evaluation->timeclose < time()
-                        ? "nahm" : "nimmt") . " an dieser Evaluation Teil!</p>";
+        echo "<p style=\"color:red;font-weight:bold;align:center;\">";
+        if ($evaluation->timeclose < time()){
+            echo ev_get_string('no_course_participated');
+        } else {
+            echo ev_get_string('no_course_participing');
+        }
+        echo "</p>\n";
     }
 } 
 elseif ($SiteEvaluation) {
@@ -777,7 +779,7 @@ elseif ($SiteEvaluation) {
             $teacherEvaluations = evaluation_countCourseEvaluations($evaluation, $tEvaluations, "teacher", $showTeacher);
             $courseEvaluations = evaluation_countCourseEvaluations($evaluation, $tEvaluations, false, false);
             if ($teacherEvaluations < $courseEvaluations and safeCount($tEvaluations)) {
-                print "<h3>Ergebnisse für alle evaluierten Dozent_innen</h3>\n";
+                print "<h3>" . ev_get_string('results_all_evaluated_teachers') . "</h3>\n";
                 print show_user_evaluation_courses($evaluation, $tEvaluations, $id, true, false, false);
             }
         }
