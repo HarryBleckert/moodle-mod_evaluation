@@ -70,6 +70,17 @@ $string['no_part_no_results'] = 'You have not participated in this evaluation an
 $string['no_course_participated'] = 'None of your courses was part of this evaluation';
 $string['no_course_participing'] = 'None of your courses is part of this evaluation!';
 $string['results_all_evaluated_teachers'] = 'Results for all evaluated teachers';
+$string['courses_of'] = 'Courses of';
+$string['note'] = 'Note';
+$string['show_evaluated_courses_student'] = 'You will only see courses for which you have participated in the evaluation.';
+$string['show_evaluated_courses_teacher'] = 'You will only see courses for which submissions have been made';
+$string['num_courses_in_ev'] = '{$a->num_courses} of your courses were part of this evaluation.';
+$string['evaluated_for'] = 'Submitted for';
+$string['evaluated'] = 'Submitted';
+$string['to_evaluate'] = 'To be submitted';
+$string['non_of_your_courses_participated'] = 'None of your courses participated in this evaluation!';
+$string['for_you'] = 'for you';
+$string['in_your_courses'] = 'in your participating courses';
 // end view.php
 
 $string['active_only'] = 'Active only';

@@ -75,6 +75,17 @@ $string['no_part_no_results'] = 'Sie haben nicht an dieser Evaluation teilgenomm
 $string['no_course_participated'] = 'Keiner Ihrer Kurse war Teil dieser Evaluation';
 $string['no_course_participing'] = 'Keiner Ihrer Kurse ist Teil dieser Evaluation!';
 $string['results_all_evaluated_teachers'] = 'Ergebnisse für alle evaluierten Dozent_innen';
+$string['courses_of'] = 'Kurse der';
+$string['note'] = 'Hinweis';
+$string['show_evaluated_courses_student'] = 'Ihnen werden nur Kurse angezeigt, für die Sie an der Evaluation teilgenommen haben.';
+$string['show_evaluated_courses_teacher'] = 'Ihnen werden nur Kurse angezeigt, für die Abgaben erfolgt sind';
+$string['num_courses_in_ev'] = '{$a->num_courses} Ihrer Kurse waren Teil dieser Evaluation.';
+$string['evaluated_for'] = 'Abgegeben für';
+$string['evaluated'] = 'Abgegeben';
+$string['to_evaluate'] = 'Abzugeben';
+$string['non_of_your_courses_participated'] = 'Keiner Ihrer Kurse nahm an dieser Evaluation teil!';
+$string['for_you'] = 'für Sie';
+$string['in_your_courses'] = 'in Ihren teilnehmenden Kursen';
 // $string[''] = '';
 
 // end view.php

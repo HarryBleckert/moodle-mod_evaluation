@@ -2443,20 +2443,22 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
         }
         $str .= "\n<style>th, td { padding-right: 5px;vertical-align:top;}</style>\n";
         foreach ($myEvaluations as $myEvaluation) {
-            $str .= "<h2>" . ($showName ? "<b>" . $myEvaluation["fullname"] . "</b>:" . ($userResults ? " Ihre" : "") : "")
-                    . " Kurse für die " . $evaluation->name . "</h2>\n";
+            $str .= "<h2>" . ($showName ? "<b>" . $myEvaluation["fullname"] . "</b>:" . ($userResults ? " " .ev_get_string('your') : "") : "")
+                    . " " .ev_get_string('courses_of'). $evaluation->name . "</h2>\n";
             if ($myEvaluation["role"] != "teacher") {
                 $num_courses = safeCount(ev_courses_of_id($evaluation, $myEvaluation["id"]));
                 if (!$evaluation_is_open and $num_courses > safeCount($myEvaluations)) {
                     // $ismycourses = ($myEvaluation["id"]==$USER->id);
                     $isstudent = ($myEvaluation["role"] == 'student' and $myEvaluation["id"] == $USER->id);
-                    $str .= "\n<b>Hinweis</b>: Ihnen " . (safeCount($myEvaluations) > 1
-                                    ? "werden nur die " . safeCount($myEvaluations) . " Kurse angezeigt, " .
-                                    ($isstudent ? "für die Sie" : "für die")
-                                    : "wird nur der Kurs angezeigt, " . ($isstudent ? "für den Sie" : "für den")
-                            )
-                            . ($isstudent ? " an der Evaluation teilgenommen haben" : " Abgaben erfolgt sind")
-                            . ". Es nahmen $num_courses Ihrer Kurse an dieser Evaluation teil.<br>\n";
+                    $a = new stdClass();
+                    $a->num_courses = $num_courses
+                    $str .= "\n<b>" . ev_get_string('note') . "</b>: ";
+                    if ($isstudent){
+                        $str .= ev_get_string('show_evaluated_courses_student');
+                    } else{
+                        $str .= ev_get_string('show_evaluated_courses_teacher');
+                    }
+                    $str .= ev_get_string('num_courses_in_ev') . "<br>\n";
                 }
 
             }
@@ -2550,12 +2552,13 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                         //$str .= "$actionTxt";
                         if ($completed and isset($completed->teacherid) and $completed->teacherid == $teacher['id']) {
                             $color = "green";
-                            $Txt = '<span style="font-weight:normal;color:$color;">Abgegeben für<br>Dozent_in '
+                            $Txt = '<span style="font-weight:normal;color:$color;">'
+                                    . ev_get_string('evaluated_for') . "<br>" . ev_get_string('teacher')
                                     . $teacher['fullname'] . '</span>';
                             $str .= "<td><b style=\"color:$color;\">$Txt</b></td>";
                         } else {
                             $color = "darkred";
-                            $Txt .= '<span style="font-weight:normal;color:black;"><br>Dozent_in ' . $teacher['fullname'] .
+                            $Txt .= '<span style="font-weight:normal;color:black;"><br>' . ev_get_string('teacher') .' ' . $teacher['fullname'] .
                                     '</span>';
                             $url = "<a href=\"$wwwroot/mod/evaluation/complete.php?id=$cmid&courseid=" . $myEvaluation["courseid"] .
                                     "&teacherid=" . $teacher['id'] . '">';
@@ -2586,10 +2589,10 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                             . " AND courseid=" . $myEvaluation['courseid']);
                     if (isset($completed->teacherid) and safeCount($completed)) {
                         $color = "green";
-                        $Txt = '<span style="font-weight:normal;color:' . $color . ';">Abgegeben</span>';
+                        $Txt = '<span style="font-weight:normal;color:' . $color . ';">' .ev_get_string('evaluated'). 'Abgegeben</span>';
                         $str .= "<td><b style=\"color:$color;\">$Txt</b></td>";
                     } else {
-                        $Txt .= '<span style="font-weight:normal;color:black;">Abzugeben</span>';
+                        $Txt .= '<span style="font-weight:normal;color:black;">' .ev_get_string('to_evaluate') .'</span>';
                         $url = "<a href=\"$wwwroot/mod/evaluation/complete.php?id=$cmid&courseid=" . $myEvaluation["courseid"] .
                                 '">';
                         $str .= "<td>$url<b style=\"color:$color;\">$Txt</b></a></td>";
@@ -2620,17 +2623,15 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
             }
         }
         if ($myCourseReplies > 0 and $showCounter) {
-            $str .= "<b style=\"color:darkgreen;\">" . get_string('completed_evaluations', "evaluation")
-                    . (($isTeacher and $userResults) ? " für Sie" : "")
-                    . ($userResults ? " in " . (safeCount($numCourses) > 1
-                                    ? "Ihren " . safeCount($numCourses) . " teilnehmenden Kursen" : "Ihrem teilnehmenden Kurs") :
-                            "")
+            $str .= "<b style=\"color:darkgreen;\">" . ev_get_string('completed_evaluations')
+                    . (($isTeacher and $userResults) ? " " .ev_get_string('for_you') : "")
+                    . ($userResults ? " " . ev_get_string('in_your_courses') :"")
                     . ": $myCourseReplies$possible_evaluations_txt</b>";
         }
         $str .= "<p> </p>";
-    } else if (!defined('EVALUATION_OWNER') and $evaluation->timeclose < time()) // ".get_string('students_only', 'evaluation')."
+    } else if (!defined('EVALUATION_OWNER') and $evaluation->timeclose < time())
     {
-        $str .= "<p style=\"color:red;font-weight:bold;align:center;\">Keiner Ihrer Moodle Kurse nahm an dieser Evaluation teil!</p>";
+        $str .= "<p style=\"color:red;font-weight:bold;align:center;\">" .ev_get_string('non_of_your_courses_participated') ."</p>\n";
     }
     return $str;
 }
