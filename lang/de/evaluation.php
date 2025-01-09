@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['language'] = 'de';
 
 // view.php
-
+$string['teamteachingtxt'] = 'In Seminaren mit Team Teaching werden die Dozent_innen jeweils einzeln evaluiert.';
 $string['is_WM_disabled'] = 'Ausgenommen sind Weiterbildende Master Studiengänge.';
 $string['siteadmintxt'] = 'Administrator und daher';
 $string['andrawdata'] =  'und Rohdaten';
@@ -62,7 +62,7 @@ $string['onefeedbackperteacher'] = 'Je eine Abgabe pro Dozent_in ist aktiviert?'
 $string['teamteachingcourses'] = 'Kurse mit Team Teaching';
 $string['duplicatedfeedbacks'] = 'Duplizierte Abgaben';
 $string['logananalysis'] = 'Auswertung des Moodle Logs. Log Daten werden {$a->loglifetime} Tage aufbewahrt.';
-$string['onefeedbackperteacher'] = 'Heute ist <b>Tag {$a->currentday} {$a->currentday_percent}';
+$string['currentday'] = 'Heute ist <b>Tag {$a->currentday} {$a->currentday_percent}';
 $string['not_anonymous'] = 'Nicht Anonym';
 $string['evaluationperiod'] = 'Die Teilnahme an der Evaluation ist/war vom {$a->timeopen} bis zum {$a->timeclose} möglich.';
 $string['thxforcompletingall'] = 'Vielen Dank. Sie haben für jeden Ihrer teilnehmenden Kurse an dieser Evaluation teilgenommen!';
@@ -74,6 +74,8 @@ $string['no_part_no_results'] = 'Sie haben nicht an dieser Evaluation teilgenomm
 $string['no_course_participated'] = 'Keiner Ihrer Kurse war Teil dieser Evaluation';
 $string['no_course_participing'] = 'Keiner Ihrer Kurse ist Teil dieser Evaluation!';
 $string['results_all_evaluated_teachers'] = 'Ergebnisse für alle evaluierten Dozent_innen';
+$string['for_participants'] = 'für Teilnehmer_innen';
+$string['for_teachers'] = 'für Dozent_innen';
 $string['courses_of'] = 'Kurse der';
 $string['note'] = 'Hinweis';
 $string['show_evaluated_courses_student'] = 'Ihnen werden nur Kurse angezeigt, für die Sie an der Evaluation teilgenommen haben.';

@@ -176,8 +176,8 @@ $course_has_user_participated = evaluation_has_user_participated($evaluation, $U
 $completed_all = hasUserEvaluationCompleted($evaluation, $USER->id);
 $isEvaluationCompleted = isEvaluationCompleted($evaluation, $courseid, $USER->id);
 $teamteaching = $evaluation->teamteaching;
-
-$teamteachingTxt = ($teamteaching ? ev_get_string('In Seminaren mit Team Teaching werden die Dozent_innen jeweils einzeln evaluiert.') . "<br>\n" : "");
+$teamteachingTxt = ($teamteaching ? ev_get_string('teamteachingtxt')
+        . "<br>\n" : "");
 $isTeacher = defined('isTeacher');
 $isStudent = defined('isStudent');
 if (!empty($_SESSION["myEvaluations"])) {
@@ -650,7 +650,8 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
         echo "<b>" . get_string('completed_evaluations', "evaluation") . "</b>: " . evaluation_number_format($completed_responses) .
                 "<br>\n";
         if (!$courseid) {
-            echo "<b title=\"" . ev_get_string('onefeedbackperteacher',$a) ."\">" . get_string("teamteaching", "evaluation") . "</b>: "
+            echo "<b title=\"" . ev_get_string('onefeedbackperteacher',$a) ."\">"
+                    . get_string("teamteaching", "evaluation") . "</b>: "
                     . get_string(($teamteaching ? "yes" : "no")) . "<br>\n";
             //echo "<b>".get_string("questions","evaluation")."</b>: " .$_SESSION["questions"]. " " .$previewQ ."<br>\n";
         }
@@ -669,7 +670,7 @@ if ($evaluation->timeopen and $evaluation->timeclose) {
         $a->currentday =  str_replace(".", ",", $dayC);
         $a->currentday_percent =  evaluation_calc_perc($dayC - 0.1, $total);
         echo ". ";
-        echo ev_get_string('onefeedbackperteacher',$a) . "</b>";
+        echo ev_get_string('currentday',$a) . "</b>";
     }
     echo "<br>\n";
 }
@@ -791,7 +792,8 @@ elseif ($SiteEvaluation) {
 
 if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
 {    // Show intro and page_after_submit.
-    echo $OUTPUT->heading(get_string('welcome_text', 'evaluation') ." für Teilnehmer_innen", 3);
+    echo $OUTPUT->heading(get_string('welcome_text', 'evaluation') ." "
+    . ev_get_string('for_participants'), 3);
     if ( !empty($msg_student_all_courses)){
         print $msg_student_all_courses;
     }
@@ -802,7 +804,8 @@ if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
     echo $OUTPUT->heading(get_string('page_after_submit', 'evaluation'), 3);
     print $evaluation->page_after_submit;
     if (!empty($msg_teachers) AND defined('EVALUATION_OWNER')){
-        echo $OUTPUT->heading("Begrüßungstext für Dozent_innen", 3);
+        echo $OUTPUT->heading(get_string('welcome_text', 'evaluation') ." "
+                . ev_get_string('for_participants'), 3);
         print $msg_teachers;
     }
 
