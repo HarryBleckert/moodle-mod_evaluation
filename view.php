@@ -177,7 +177,7 @@ $completed_all = hasUserEvaluationCompleted($evaluation, $USER->id);
 $isEvaluationCompleted = isEvaluationCompleted($evaluation, $courseid, $USER->id);
 $teamteaching = $evaluation->teamteaching;
 
-$teamteachingTxt = ($teamteaching ? "In Seminaren mit Team Teaching werden die Dozent_innen jeweils einzeln evaluiert.<br>\n" : "");
+$teamteachingTxt = ($teamteaching ? ev_get_string('In Seminaren mit Team Teaching werden die Dozent_innen jeweils einzeln evaluiert.') . "<br>\n" : "");
 $isTeacher = defined('isTeacher');
 $isStudent = defined('isStudent');
 if (!empty($_SESSION["myEvaluations"])) {
@@ -209,18 +209,29 @@ $showPrivDocu = '<a href="print.php?id='.$id.'&showPrivUsers=1">'
 . '<a href="/downloads/Evaluationen mit ASH Moodle -Dokumentation.pdf" target="doku">'
 . "<b>" . ev_get_string('docu_download') . "</b></a><br>\n";
 $good_day = ev_get_string('good_day');
+$a = new stdClass(); // for translations
+
 if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
-    $evaluation_is_WM_disabled =
-            (evaluation_is_WM_disabled($evaluation) ? " Ausgenommen sind Weiterbildende Master Studiengänge." : "");
+    $a->siteadmintxt = $a->andrawdata = $a->yourcos = $a->viewanddownload = $a->is_WM_disabled = $a->privilegestxt = "";
+    IF (evaluation_is_WM_disabled($evaluation)){
+        $a->is_WM_disabled = ev_get_string('is_WM_disabled'); // 'Ausgenommen sind Weiterbildende Master Studiengänge.';
+    }
+    if (is_siteadmin()) {
+        $a->siteadmintxt = ev_get_string('siteadmintxt'); // 'Administrator und daher'
+    }
+    $a->andrawdata  = ev_get_string('andrawdata'); // und Rohdaten
+    $a->yourcos = ev_get_string('yourcos'); // Ihrer Studiengänge
+    $a->viewanddownload = ev_get_string('viewanddownload'); // einsehen und herunterladen.
+    $a->privilegestxt = ev_get_string('privilegestxt',$a); // Als {$a->siteadmintxt für diese Evaluation privilegierte Person können Sie alle Auswertungen {$a->andrawdata}
     $msg_privPersons = $good_day . " " . trim($USER->firstname) . " " . trim($USER->lastname) . "<br>\n"
-            . "Als " . (is_siteadmin() ? "Administrator und daher " : "") . "für diese Evaluation privilegierte Person"
-            . " können Sie alle Auswertungen " . ($cosPrivileged ? "" : "und Rohdaten ")
+            . $a->privilegestxt
             . (!empty($_SESSION['CoS_privileged'][$USER->username])
                     ? '<span style="font-weight:600;white-space:pre-line;text-decoration:underline;" title="'
                     . implode("\n", $_SESSION['CoS_privileged'][$USER->username])
-                    . "\">Ihrer Studiengänge einsehen und herunterladen.</span><br>\n"
-                    : " einsehen und herunterladen.$evaluation_is_WM_disabled<br>\n"
+                    . "\">" .$a->yourcos. "</span><br>\n"
+                    : ""
                 )
+            . " " . $a->viewanddownload . $a->is_WM_disabled
             . $showPrivDocu;
     echo $msg_privPersons;
 }
@@ -270,32 +281,35 @@ if ($courseid) {
             }
         }
         $numStudents = safeCount($students );
-        //$numStudents = evaluation_count_students($evaluation, $courseid);
+        // $numStudents = evaluation_count_students($evaluation, $courseid);
         print '<br><span style="font-size:12pt;font-weight:normal;">';
         if ($numStudents) {
             $numToDo = $numStudents * $divisor;
             $evaluated = round(($participated / $numStudents) * 100, 1) . "%";
-            print "Dieser Kurs hat $numTeachers Dozent_in" . ($numTeachers > 1 ? "nen" : "")
-                    . " und $numStudents studentische Teilnehmer_innen.<br>\n";
-            print "$participated Teilnehmer_innen haben sich an dieser Evaluation beteiligt. 
-					Das entspricht einer Beteiligung von $evaluated.<br>\n"; // und insgesamt $completed_responses Abgaben gemacht
+            $a->numteachers = $numTeachers;
+            $a->numstudents = $numStudents;
+            $a->$evaluated = $evaluated;
+            // Dieser Kurs hat {$a->numteachers} Dozent_in und {$a->numstudents} studentische Teilnehmer_innen.
+            print ev_get_string('courseparticipants',$a) . "<br>\n";
+            // Teilnehmer_innen haben sich an dieser Evaluation beteiligt. Das entspricht einer Beteiligung von {$a->evaluated}.
+            print $participated . ev_get_string('participantsandquota',$a);
             if ($evaluation->teamteaching) {
                 if ($numTeachers > 1) {
                     $completed = round(($completed / $numStudents) * 100, 1) . "%";
-                    print "$completed der Teilnehmer_innen haben alle Dozent_innen bewertet. ";
+                    print $completed . ev_get_string('quotaevaluatedall'); // der Teilnehmer_innen haben alle Dozent_innen bewertet.
                     if (!empty($teacheridSaved)) {
                         $completed = round(($completed_responses / $numStudents) * 100, 1) . "%";
-                        print "<br>$completed der Teilnehmer_innen haben diese Dozent_in bewertet.";
+                        print "<br>" . $completed . ev_get_string('quotaevaluatedteacher'); // der Teilnehmer_innen haben diese Dozent_in bewertet.
                     }
-                    $quote = round(($completed_responses / $numToDo) * 100, 1) . "%";
-                    //print evaluation_number_format($numToDo) . " Abgaben waren möglich. Die Abgabequote beträgt $quote. ";
-                    print "Es wurden " . evaluation_number_format($completed_responses) . " von maximal " .
-                            evaluation_number_format($numToDo)
-                            . " Abgaben gemacht. Die Abgabequote beträgt $quote. ";
+                    $a->quote = round(($completed_responses / $numToDo) * 100, 1) . "%";
+                    $a->completed_responses = evaluation_number_format($completed_responses);
+                    $a->numtodo = $numToDo;
+                    // Es wurden {$a->completed_responses} von maximal {$a->numToDo} Abgaben gemacht. Die Abgabequote beträgt {$a->quote}.
+                    print ev_get_string('coursequota');
                 }
             }
         } else {
-            print "Dieser Kurs hat keine studentischen Teilnehmer_innen.";
+            print ev_get_string('nostudentsincourse');
         }
         echo "</span><br>\n";
     } else {
@@ -308,43 +322,42 @@ $fullname = ($USER->alternatename ? $USER->alternatename : $USER->firstname) . "
 // make get_string!
 $q_translink = '';
 if ($USER->lang != 'de') {
-    $q_translink = '<a title="Hier finden Sie eine englische Übersetzung des Fragebogens." target="translation"
-                        href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25-Fragebogen-EN.pdf">
-                        <b>Click here</b> to open an English translation of the questionnaire.</a><br>';
+    // Hier ist eine englische Übersetzung des Fragebogens.
+    $q_translink = '<a title="' . ev_get_string('questionaireenglish') . '" target="translation"
+                        href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25-Fragebogen-EN.pdf">'
+                        .ev_get_string('clickquestionaireenglish'). "</a><br>\n"; // <b>Click here</b> to open an English translation of the questionnaire
 }
-$msg_student_all_courses = $good_day . " $fullname<br>Bitte beteiligen " . ($evaluation_has_user_participated ? "" : "auch ")
-        . "Sie sich " .
-        ($evaluation_has_user_participated ? "für jeden Ihrer Kurse " : "")
-        . "an dieser Lehrveranstaltungsevaluation. "
-        . ($evaluation_has_user_participated ? ""
-                : "Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs.<br>
-                        Klicken Sie unten für jeden Ihrer noch nicht evaluierten Kurse auf '<b>"
-                . get_string("evaluate_now", "evaluation") . "</b>
-                        und füllen Sie dann jeweils den Fragebogen aus.<br>\n$teamteachingTxt
-                        Ihre Evaluation ist uns eine große Hilfe!<br>"
-        )
-        . "Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald $minResults Abgaben vorliegen."
-        ."<br>$q_translink\n";
-$msg_teachers = $good_day . " $fullname<br>
-                        Sie haben Kurse, die an dieser Evaluation teil" . ($is_open
-                ? "nehmen. Bitte motivieren Sie die Studierenden zur Teilnahme" : "genommen haben") . ".<br>
-                        Für Ihre eigenen Kurse können Sie die statistische Auswertung einsehen, sobald $minResults Abgaben vorliegen. 
-                        Ab $minResultsText Abgaben können Sie auch die Textantworten einsehen.<br>$q_translink\n";
+$a->also = $a->foryourcourses = "";
+$a->minresults = $minResults;
+$a->minresultstxt = $minresultsTxt;
+if ($evaluation_has_user_participated) {
+    $a->also = ev_get_string('also');
+    $a->foryourcourses = ev_get_string('foryourcourses');
+}
+$msg_student_all_courses = $good_day . " " . $fullname . "<br>\n"
+        . ev_get_string('msg_student_all_courses',$a)
+        . "<br>" . $teamteachingTxt
+        . ev_get_string('yourevaluationhelps') .  ev_get_string('resultconditions')
+        . $q_translink . "\n";
+if ($is_open){
+    $yourpartcourses = ev_get_string('yourpartcourses');
+}
+else{
+    $yourpartcourses = ev_get_string('yourpastpartcourses'); // Sie haben Kurse, die an dieser Evaluation teilgenommen haben
+}
+$msg_teachers = $good_day . " " . $fullname . "<br>" . $yourpartcourses
+        . ev_get_string('teachersviewconditions',$a);
+        . "<br>" . $q_translink ."\n";
 if ($is_open) {
     $days = remaining_evaluation_days($evaluation);
     $alert = "";
     if ($days < 7 and $days >= 0) {
-        $alert = '<b style="color:red;">Nur noch ' . $days . ' Tage bis zum Ende der Abgabefrist!</b><br>';
+        $a->daysleft = $days;
+        $alert = '<b style="color:red;">' . ev_get_string('evaluationalert',$a) . "</b>\n<br>\n";
     }
 
     if ($isStudent and $is_open and !$completed_all) {
-        if ($courseid and !$course_has_user_participated) {    // Show description.
-            print "<br>\n$good_day $fullname<br>\n" . $evaluation->intro . "<br>\n";
-            echo $alert;
-        } else //if  ( $all_courses )
-        {
-            echo $msg_student_all_courses . $alert;
-        }
+        echo $msg_student_all_courses . $alert;
     } else if (!$isStudent and $isTeacher and $SiteEvaluation) {
         echo $msg_teachers . $alert;
     }
@@ -493,7 +506,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                     . evaluation_number_format($cos_completed_responses)
                     . "/" . evaluation_number_format($cos_possible_evaluations)
                     . evaluation_calc_perc($cos_completed_responses, $cos_possible_evaluations);
-            echo ' <b title="Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten">'
+            echo ' <b title="' . ev_get_string('show_active_only') . '">'
                     . ev_get_string('active_only') . "</b>: " . evaluation_number_format($cos_possible_active_evaluations)
                     . "<b>" . evaluation_calc_perc($cos_completed_responses, $cos_possible_active_evaluations) . "</b> ";
             echo '<span style="font-size:20px;"> &#248;</span>: '
@@ -508,8 +521,8 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                     evaluation_number_format($_SESSION["cos_distinct_users"]) . "/" .
                     evaluation_number_format($_SESSION["cos_distinct_s"]) .
                     evaluation_calc_perc($_SESSION["cos_distinct_users"], $_SESSION["cos_distinct_s"])
-                    . " <b " . 'title="Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten"'
-                    . ">"  . ev_get_string('active_only') . "</b>: " . evaluation_number_format($_SESSION["cos_distinct_s_active"])
+                    . " <b " . 'title="' . ev_get_string('show_active_only') .'">'
+                    . ev_get_string('active_only') . "</b>: " . evaluation_number_format($_SESSION["cos_distinct_s_active"])
                     . "<b>" . evaluation_calc_perc($_SESSION["cos_distinct_users"], $_SESSION["cos_distinct_s_active"]) . "</b>"
                     . "<br>\n";
 
@@ -518,8 +531,8 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                     . evaluation_number_format(safeCount($cos_get_completed_teachers))
                     . "/" . $_SESSION["cos_distinct_t"]
                     . evaluation_calc_perc($cos_get_completed_teachers, $_SESSION["cos_distinct_t"]);
-            echo " <b " . 'title="Bereinigt: Nur Lehrende, die während der Laufzeit der Evaluation Moodle nutzten"'
-                    . ">"  . ev_get_string('active_only') . "</b>: " . evaluation_number_format($_SESSION["cos_distinct_t_active"])
+            echo " <b " . 'title="' . ev_get_string('show_active_only') .'">'
+                    . ev_get_string('active_only') . "</b>: " . evaluation_number_format($_SESSION["cos_distinct_t_active"])
                     . "<b>" . evaluation_calc_perc($_SESSION["cos_distinct_t"], $_SESSION["cos_distinct_t_active"])
                     . "</b>"
                     . "<br>\n";
@@ -529,8 +542,8 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                     . evaluation_number_format($cos_get_completed_courses)
                     . "/" . evaluation_number_format($_SESSION["cos_participating_courses"])
                     . evaluation_calc_perc($cos_get_completed_courses, $_SESSION["cos_participating_courses"])
-                    . " <b " . 'title="Bereinigt: Nur Kurse, die während der Laufzeit der Evaluation Inhalte hatten"'
-                    . ">" . ev_get_string('courses_with_content_only') . "</b>: " . evaluation_number_format($cos_participating_active_courses)
+                    . " <b " . 'title="' . ev_get_string('show_active_only') .'">'
+                    . ev_get_string('courses_with_content_only') . "</b>: " . evaluation_number_format($cos_participating_active_courses)
                     . "<b>" . evaluation_calc_perc($cos_get_completed_courses, $cos_participating_active_courses)
                     . "</b>"
                     . "<br>\n";
@@ -546,7 +559,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
         echo $view_daily_link . evaluation_number_format($completed_responses) . "/" .
                 evaluation_number_format($possible_evaluations)
                 . evaluation_calc_perc($completed_responses, $possible_evaluations);
-        echo ' <b title="Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten">'
+        echo ' <b title="' . ev_get_string('show_active_only') . '">'
                 . ev_get_string('active_only') . "</b>: " . evaluation_number_format($possible_active_evaluations)
                 . "<b>" . evaluation_calc_perc($completed_responses, $possible_active_evaluations) . "</b> ";
         echo '<span style="font-size:20px;"> &#248;</span>: '
@@ -563,8 +576,8 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                     evaluation_number_format($_SESSION["distinct_users"]) . "/" .
                     evaluation_number_format($participating_students) .
                     evaluation_calc_perc($_SESSION["distinct_users"], $participating_students)
-                    . " <b " . 'title="Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten"'
-                    . ">"  . ev_get_string('active_only') . "</b>: " . evaluation_number_format($participating_active_students)
+                    . " <b " . 'title="' . ev_get_string('show_active_only') .'">'
+                    . ev_get_string('active_only') . "</b>: " . evaluation_number_format($participating_active_students)
                     . "<b>" . evaluation_calc_perc($_SESSION["distinct_users"], $participating_active_students) . "</b>"
                     . "<br>\n";
 
@@ -579,8 +592,8 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                         . evaluation_calc_perc($_SESSION["evaluated_teachers"], $participating_teachers);
                 if (true) //$is_open )
                 {
-                    echo " <b " . 'title="Bereinigt: Nur Lehrende, die während der Laufzeit der Evaluation Moodle nutzten"'
-                            . ">" . ev_get_string('active_only') . "</b>: " . evaluation_number_format($participating_active_teachers)
+                    echo " <b " . 'title="' . ev_get_string('show_active_only') .'">'
+                            . ev_get_string('active_only') . "</b>: " . evaluation_number_format($participating_active_teachers)
                             . "<b>" . evaluation_calc_perc($_SESSION["evaluated_teachers"], $participating_active_teachers) .
                             "</b>";
                 }
@@ -595,22 +608,22 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             echo $evaluated_courses;
             echo evaluation_number_format($_SESSION["evaluated_courses"]) . "/" . evaluation_number_format($participating_courses)
                     . evaluation_calc_perc($_SESSION["evaluated_courses"], $participating_courses)
-                    . " <b " . 'title="Bereinigt: Nur Kurse, die während der Laufzeit der Evaluation Inhalte hatten"'
-                    . ">" . ev_get_string('courses_with_content_only') . "</b>: " . evaluation_number_format($participating_active_courses)
+                    . " <b " . 'title="' . ev_get_string('show_active_only') .'">'
+                    . ev_get_string('courses_with_content_only') . "</b>: " . evaluation_number_format($participating_active_courses)
                     . "<b>" . evaluation_calc_perc($_SESSION["evaluated_courses"], $participating_active_courses)
                     . "</b>";
             echo " " . $view_course_results . "<br>\n";
 
             if (true) //!$is_open )
             {
-                echo "<b title=\"Je eine Abgabe pro Dozent_in ist aktiviert?\">" . get_string("teamteaching", "evaluation") .
+                echo "<b title=\"" . ev_get_string('onefeedbackperteacher') ."\">" . get_string("teamteaching", "evaluation") .
                         "</b>: "
                         . get_string(($teamteaching ? "yes" : "no"))
                         . ". "; //"<br>\n";
-                echo "Kurse mit Team Teaching: " . evaluation_number_format($teamteaching_courses)
+                echo ev_get_string('teamteachingcourses') . ": " . evaluation_number_format($teamteaching_courses)
                         . evaluation_calc_perc($teamteaching_courses, $participating_courses)
                         . ((!$teamteaching and $duplicated_replies) ?
-                                " - Duplizierte Abgaben: " . evaluation_number_format($duplicated_replies) : "")
+                                " - " . ev_get_string('duplicatedfeedbacks') . ": " . evaluation_number_format($duplicated_replies) : "")
                         . "<br>\n";
             }
 
@@ -626,8 +639,9 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             }
             echo $view_courses_of_studies . "<br>\n";
 
-            $logtitle = "Auswertung des Moodle Logs. Log Daten werden " . get_config('logstore_standard')->loglifetime .
-                    " Tage aufbewahrt.";
+            $logtitle = ev_get_string('duplicatedfeedbacks');
+            $a->loglifetime = get_config('logstore_standard')->loglifetime;
+            print ev_get_string('logananalysis',$a);
             echo html_writer::link($usagelink, "<b>" . get_string('usageReport', "evaluation") . "</b> ",
                             array('title' => $logtitle))
                     . " " . $view_usageReport . "<br>\n";
@@ -636,7 +650,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
         echo "<b>" . get_string('completed_evaluations', "evaluation") . "</b>: " . evaluation_number_format($completed_responses) .
                 "<br>\n";
         if (!$courseid) {
-            echo "<b title=\"Je eine Abgabe pro Dozent_in ist aktiviert?\">" . get_string("teamteaching", "evaluation") . "</b>: "
+            echo "<b title=\"" . ev_get_string('onefeedbackperteacher',$a) ."\">" . get_string("teamteaching", "evaluation") . "</b>: "
                     . get_string(($teamteaching ? "yes" : "no")) . "<br>\n";
             //echo "<b>".get_string("questions","evaluation")."</b>: " .$_SESSION["questions"]. " " .$previewQ ."<br>\n";
         }
@@ -652,7 +666,10 @@ if ($evaluation->timeopen and $evaluation->timeclose) {
             date("d.m.Y", $evaluation->timeclose) .
             " (" . $total . " " . get_string("days") . ")";
     if ($is_open) {
-        echo ". Heute ist <b>Tag " . str_replace(".", ",", $dayC) . " " . evaluation_calc_perc($dayC - 0.1, $total) . "</b>";
+        $a->currentday =  str_replace(".", ",", $dayC);
+        $a->currentday_percent =  evaluation_calc_perc($dayC - 0.1, $total);
+        echo ". ";
+        echo ev_get_string('onefeedbackperteacher') . "</b>";
     }
     echo "<br>\n";
 }

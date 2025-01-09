@@ -26,6 +26,44 @@ defined('MOODLE_INTERNAL') || die();
 
 // $string[''] = '';
 $string['language'] = 'en';
+// view.php
+
+$string['is_WM_disabled'] = 'Continuing education master\'s degree programs are excluded.';
+$string['siteadmintxt'] = 'Administrator and thus';
+$string['andrawdata'] = 'and raw data';
+$string['yourcos'] = 'your degree programs';
+$string['viewanddownload'] = 'view and download.';
+$string['privilegestxt'] = 'As a {$a->siteadmintxt privileged person for this evaluation, you can view all evaluations {$a->andrawdata}';
+$string['courseparticipants'] = 'This course has {$a->numteachers} lecturers and {$a->numstudents} student participants.';
+$string['participantsandquota'] = 'Participants have participated in this evaluation. This corresponds to a participation of {$a->evaluated}.';
+$string['quotaevaluatedall'] = 'of participants have evaluated all lecturers.';
+$string['quotaevaluatedteacher'] = 'of participants have evaluated this lecturer.';
+$string['coursequota'] = '{$a->completed_responses} of a maximum of {$a->numToDo} submissions have been made. The submission quota is {$a->quote}.';
+$string['nostudentsincourse'] = 'This course has no student participants.';
+$string['questionaireenglish'] = 'Here is an English translation of the questionnaire.';
+$string['clickquestionaireenglish'] = '<b>Click here</b> to open an English translation of the questionnaire';
+$string['msg_student_all_courses'] = '';
+$string['also'] = 'also';
+$string['foryourcourses'] = 'for each of your courses';
+$string['msg_student_all_courses'] = 'Please take part in this evaluation.
+The survey is anonymous and only takes a few minutes per course.<br>Click \'<b>Evaluate now.</b>\' below for each of your courses that have not yet been evaluated and then fill out the questionnaire.';
+$string['yourevaluationhelps'] = 'Your evaluation is a great help to us!';
+$string['resultconditions'] = 'For each course you have already evaluated, you can view the evaluation as soon as {$a->minresults} submissions are received.';
+$string['yourpartcourses'] = 'You have courses that are participating in this evaluation. Please encourage students to participate';
+$string['yourpastpartcourses'] = 'You have courses that have participated in this evaluation';
+$string['teachersviewconditions'] = 'For your own courses, you can view the evaluation as soon as {$a->minresults} submissions are received.
+From {$a->minresultstxt} submissions, you can also view the text answers.';
+$string['evaluationalert'] = 'Only {$a->daysleft} days left until the end of the submission deadline!';
+$string['show_active_only'] = 'Adjusted: Only participants who used Moodle during the evaluation period';
+$string['onefeedbackperteacher'] = 'One submission per lecturer is activated?';
+$string['teamteachingcourses'] = 'Courses with team teaching';
+$string['duplicatedfeedbacks'] = 'Duplicate submissions';
+$string['logananalysis'] = 'Evaluation of the Moodle log. Log data is kept for {$a->loglifetime} days.';
+$string['onefeedbackperteacher'] = 'Today is <b>day {$a->currentday} {$a->currentday_percent}';
+// $string[''] = '';
+
+// end view.php
+
 $string['active_only'] = 'Active only';
 $string['AllActivities'] = 'All activities of this Evaluation';
 $string['all_courses'] = 'All courses';

@@ -28,6 +28,47 @@ defined('MOODLE_INTERNAL') || die();
 
 // $string[''] = '';
 $string['language'] = 'de';
+
+// view.php
+
+$string['is_WM_disabled'] = 'Ausgenommen sind Weiterbildende Master Studiengänge.');
+$string['siteadmintxt'] = 'Administrator und daher';
+$string['andrawdata'] =  'und Rohdaten';
+$string['yourcos'] = 'Ihrer Studiengänge';
+$string['viewanddownload'] = 'einsehen und herunterladen.';
+$string['privilegestxt'] = 'Als {$a->siteadmintxt für diese Evaluation privilegierte Person können Sie alle Auswertungen {$a->andrawdata}';
+
+$string['courseparticipants'] = 'Dieser Kurs hat {$a->numteachers} Dozent_in und {$a->numstudents} studentische Teilnehmer_innen.';
+$string['participantsandquota'] = 'Teilnehmer_innen haben sich an dieser Evaluation beteiligt. Das entspricht einer Beteiligung von {$a->evaluated}.';
+$string['quotaevaluatedall'] = 'der Teilnehmer_innen haben alle Dozent_innen bewertet.';
+$string['quotaevaluatedteacher'] = 'der Teilnehmer_innen haben diese Dozent_in bewertet.';
+$string['coursequota'] = 'Es wurden {$a->completed_responses} von maximal {$a->numToDo} Abgaben gemacht. Die Abgabequote beträgt {$a->quote}.';
+$string['nostudentsincourse'] = 'Dieser Kurs hat keine studentischen Teilnehmer_innen.';
+$string['questionaireenglish'] = 'Hier ist eine englische Übersetzung des Fragebogens.';
+$string['clickquestionaireenglish'] = '<b>Click here</b> to open an English translation of the questionnaire';
+$string['msg_student_all_courses'] = '';
+$string['also'] = 'auch';
+$string['foryourcourses'] = 'für jeden Ihrer Kurse';
+$string['msg_student_all_courses'] = 'Bitte beteiligen ${a->also} Sie sich {$a->foryourcourses} an dieser Evaluation. 
+                Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs.<br>Klicken Sie unten für jeden Ihrer noch nicht evaluierten Kurse auf \'<b>Jetzt evaluieren.</b>\' 
+                und füllen Sie dann jeweils den Fragebogen aus.';
+$string['yourevaluationhelps'] = 'Ihre Evaluation ist uns eine große Hilfe!';
+$string['resultconditions'] = 'Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald {$a->minresults} Abgaben vorliegen.';
+$string['yourpartcourses'] = 'Sie haben Kurse, die an dieser Evaluation teilnehmen. Bitte motivieren Sie die Studierenden zur Teilnahme';
+$string['yourpastpartcourses'] = 'Sie haben Kurse, die an dieser Evaluation teilgenommen haben';
+$string['teachersviewconditions'] = 'Für Ihre eigenen Kurse können Sie die Auswertung einsehen, sobald {$a->minresults} Abgaben vorliegen. 
+                            Ab {$a->minresultstxt} Abgaben können Sie auch die Textantworten einsehen.';
+$string['evaluationalert'] = 'Nur noch {$a->daysleft} Tage bis zum Ende der Abgabefrist!';
+$string['show_active_only'] = 'Bereinigt: Nur Teilnehmer_innen, die während der Laufzeit der Evaluation Moodle nutzten';
+$string['onefeedbackperteacher'] = 'Je eine Abgabe pro Dozent_in ist aktiviert?';
+$string['teamteachingcourses'] = 'Kurse mit Team Teaching';
+$string['duplicatedfeedbacks'] = 'Duplizierte Abgaben';
+$string['logananalysis'] = 'Auswertung des Moodle Logs. Log Daten werden {$a->loglifetime} Tage aufbewahrt.';
+$string['onefeedbackperteacher'] = 'Heute ist <b>Tag {$a->currentday} {$a->currentday_percent}';
+// $string[''] = '';
+
+// end view.php
+
 $string['active_only'] = 'Nur Aktive';
 $string['AllActivities'] = 'Alle Aktivitäten dieser Evaluation';
 $string['all_courses'] = 'Alle Kurse';
