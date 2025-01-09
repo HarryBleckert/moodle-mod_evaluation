@@ -329,7 +329,7 @@ if ($USER->lang != 'de') {
 }
 $a->also = $a->foryourcourses = "";
 $a->minresults = $minResults;
-$a->minresultstxt = $minresultsText;
+$a->minresultstxt = $minResultsText;
 if ($evaluation_has_user_participated) {
     $a->also = ev_get_string('also');
     $a->foryourcourses = ev_get_string('foryourcourses');
