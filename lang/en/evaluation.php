@@ -45,7 +45,7 @@ $string['clickquestionaireenglish'] = '<b>Click here</b> to open an English tran
 $string['also'] = 'also';
 $string['foryourcourses'] = 'for each of your courses';
 $string['msg_student_all_courses'] = 'Please take part in this evaluation.
-The survey is anonymous and only takes a few minutes per course.<br>Click \'<b>Evaluate now.</b>\' below for each of your courses that have not yet been evaluated and then fill out the questionnaire.';
+The survey is anonymous and only takes a few minutes per course.<br>Click \'<b>Evaluate now</b>\' below for each of your courses that have not yet been evaluated and then fill out the questionnaire.';
 $string['yourevaluationhelps'] = 'Your evaluation is a great help to us!';
 $string['resultconditions'] = 'For each course you have already evaluated, you can view the evaluation as soon as {$a->minresults} submissions are received.';
 $string['yourpartcourses'] = 'You have courses that are participating in this evaluation. Please encourage students to participate';
