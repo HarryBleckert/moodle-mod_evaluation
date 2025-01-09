@@ -1389,9 +1389,9 @@ function evaluation_showteachers($evaluation, $courseid, $cmid = false, $user = 
     evaluation_get_course_teachers($courseid);
     $teachers = $_SESSION["teachers"] = $_SESSION["allteachers"][$courseid];
     //print '<br>teachers: ';var_dump($teachers); print "<br>\n";
-    $showTeachers = "<br>Dieser Kurs hat keine Dozent_innen";
+    $showTeachers = "<br>" . ev_get_string('coursehasnoteachers');
     if (safeCount($teachers) > 0) {
-        $showTeachers = "<br>Dozent_in" . (safeCount($teachers) > 1 ? "nen" : "") . ": ";
+        $showTeachers = "<br>" . ev_get_string('teacher') . (safeCount($teachers) > 1 ? "nen" : "") . ": ";
         //var_dump($teachers);
         foreach ($teachers as $teacher) {
             if (defined("EVALUATION_OWNER") or $teacher["id"] == $USER->id) {

@@ -90,7 +90,6 @@ $string['in_your_courses'] = 'in Ihren teilnehmenden Kursen';
 // $string[''] = '';
 
 // end view.php
-
 $string['active_only'] = 'Nur Aktive';
 $string['AllActivities'] = 'Alle Aktivitäten dieser Evaluation';
 $string['all_courses'] = 'Alle Kurse';
@@ -104,6 +103,7 @@ $string['cannot_participate'] = 'Sie können an dieser Evaluation nicht selbst t
 $string['crontask'] = "Hintergrundprozess für die Aktivität Evaluation";
 $string['course'] = 'Kurs';
 $string['courses'] = 'Kurse';
+$string['coursehasnoteachers'] = 'Dieser Kurs hat keine Dozent_innen"';
 $string['courses_list'] = 'Alle Kurse dieser Evaluation';
 $string['courses_selected'] = 'Liste der zu evaluierenden Kurse';
 $string['course_of_studies'] = 'Studiengang';

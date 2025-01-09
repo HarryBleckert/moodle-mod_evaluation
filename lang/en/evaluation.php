@@ -98,6 +98,7 @@ $string['cannot_participate'] = 'You are not allowed to participate in this eval
 $string['crontask'] = "Background task for the evaluation activity";
 $string['course'] = 'Course';
 $string['courses'] = 'Courses';
+$string['coursehasnoteachers'] = 'This course has no teachers';
 $string['courses_list'] = 'All courses of this evaluation';
 $string['courses_selected'] = 'List of courses to evaluate';
 $string['course_of_studies'] = 'Course of studies';
