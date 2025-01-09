@@ -51,7 +51,7 @@ $string['resultconditions'] = 'For each course you have already evaluated, you c
 $string['yourpartcourses'] = 'You have courses that are participating in this evaluation. Please encourage students to participate';
 $string['yourpastpartcourses'] = 'You have courses that have participated in this evaluation';
 $string['teachersviewconditions'] = 'For your own courses, you can view the evaluation as soon as {$a->minresults} submissions are received.
-From {$a->minresultstxt} submissions, you can also view the text answers.';
+With {$a->minresultstxt} submissions, you can also see the text answers.';
 $string['evaluationalert'] = 'Only {$a->daysleft} days left until the end of the submission deadline!';
 $string['show_active_only'] = 'Adjusted: Only participants who used Moodle during the evaluation period';
 $string['onefeedbackperteacher'] = 'One submission per lecturer is activated?';
