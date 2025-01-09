@@ -346,7 +346,7 @@ if ($is_open){
 else{
     $yourpartcourses = ev_get_string('yourpastpartcourses'); // Sie haben Kurse, die an dieser Evaluation teilgenommen haben
 }
-$msg_teachers = $good_day . " " . $fullname . "<br>" . $yourpartcourses
+$msg_teachers = $good_day . " " . $fullname . "<br>" . $yourpartcourses . "<br>\n"
         . ev_get_string('teachersviewconditions',$a)
         . "<br>" . $q_translink ."\n";
 if ($is_open) {
