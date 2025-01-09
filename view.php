@@ -791,7 +791,7 @@ elseif ($SiteEvaluation) {
     }
 }
 
-if ($isPermitted OR is_string($_SESSION["LoggedInAs"])) //AND $is_open )
+if ($isPermitted)
 {    // Show intro and page_after_submit.
     echo $OUTPUT->heading(get_string('welcome_text', 'evaluation') ." "
     . ev_get_string('for_participants'), 3);
