@@ -180,6 +180,7 @@ $teamteachingTxt = ($teamteaching ? ev_get_string('teamteachingtxt')
         . "<br>\n" : "");
 $isTeacher = defined('isTeacher');
 $isStudent = defined('isStudent');
+$a = new stdClass(); // for translations
 if (!empty($_SESSION["myEvaluations"])) {
     if (!$isTeacher) {
         $isTeacher = evaluation_is_teacher($evaluation, $_SESSION["myEvaluations"]);
@@ -209,7 +210,7 @@ $showPrivDocu = '<a href="print.php?id='.$id.'&showPrivUsers=1">'
 . '<a href="/downloads/Evaluationen mit ASH Moodle -Dokumentation.pdf" target="doku">'
 . "<b>" . ev_get_string('docu_download') . "</b></a><br>\n";
 $good_day = ev_get_string('good_day');
-$a = new stdClass(); // for translations
+
 
 if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
     $a->siteadmintxt = $a->andrawdata = $a->yourcos = $a->viewanddownload = $a->is_WM_disabled = $a->privilegestxt = "";
@@ -288,15 +289,15 @@ if ($courseid) {
             $evaluated = round(($participated / $numStudents) * 100, 1) . "%";
             $a->numteachers = $numTeachers;
             $a->numstudents = $numStudents;
-            $a->$evaluated = $evaluated;
+            $a->evaluated = $evaluated;
             // Dieser Kurs hat {$a->numteachers} Dozent_in und {$a->numstudents} studentische Teilnehmer_innen.
             print ev_get_string('courseparticipants',$a) . "<br>\n";
             // Teilnehmer_innen haben sich an dieser Evaluation beteiligt. Das entspricht einer Beteiligung von {$a->evaluated}.
-            print $participated . ev_get_string('participantsandquota',$a);
+            print $participated . " " . ev_get_string('participantsandquota',$a);
             if ($evaluation->teamteaching) {
                 if ($numTeachers > 1) {
                     $completed = round(($completed / $numStudents) * 100, 1) . "%";
-                    print $completed . ev_get_string('quotaevaluatedall'); // der Teilnehmer_innen haben alle Dozent_innen bewertet.
+                    print $completed . " " . ev_get_string('quotaevaluatedall'); // der Teilnehmer_innen haben alle Dozent_innen bewertet.
                     if (!empty($teacheridSaved)) {
                         $completed = round(($completed_responses / $numStudents) * 100, 1) . "%";
                         print "<br>" . $completed . ev_get_string('quotaevaluatedteacher'); // der Teilnehmer_innen haben diese Dozent_in bewertet.
@@ -648,7 +649,8 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
                     . " " . $view_usageReport . "<br>\n";
         }
     } else {
-        echo "<b>" . get_string('completed_evaluations', "evaluation") . "</b>: " . evaluation_number_format($completed_responses) .
+        echo "<b>" . ev_get_string('completed_evaluations') . "</b>: "
+                . evaluation_number_format($completed_responses) .
                 "<br>\n";
         if (!$courseid) {
             echo "<b title=\"" . ev_get_string('onefeedbackperteacher',$a) ."\">"
