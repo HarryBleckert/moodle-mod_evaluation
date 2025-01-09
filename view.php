@@ -229,7 +229,7 @@ if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
             . (!empty($_SESSION['CoS_privileged'][$USER->username])
                     ? ' <span style="font-weight:600;white-space:pre-line;text-decoration:underline;" title="'
                     . implode("\n", $_SESSION['CoS_privileged'][$USER->username])
-                    . "\">" .$a->yourcos. "</span><br>\n"
+                    . "\">" .$a->yourcos. "</span>\n"
                     : ""
                 )
             . " " . $a->viewanddownload . $a->is_WM_disabled
