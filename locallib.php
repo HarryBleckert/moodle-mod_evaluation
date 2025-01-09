@@ -2444,7 +2444,8 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
         $str .= "\n<style>th, td { padding-right: 5px;vertical-align:top;}</style>\n";
         foreach ($myEvaluations as $myEvaluation) {
             $str .= "<h2>" . ($showName ? "<b>" . $myEvaluation["fullname"] . "</b>:" . ($userResults ? " " .ev_get_string('your') : "") : "")
-                    . " " .ev_get_string('courses_of'). $evaluation->name . "</h2>\n";
+                    . " " .ev_get_string('courses_of') ." "
+                    . $evaluation->name . "</h2>\n";
             if ($myEvaluation["role"] != "teacher") {
                 $num_courses = safeCount(ev_courses_of_id($evaluation, $myEvaluation["id"]));
                 if (!$evaluation_is_open and $num_courses > safeCount($myEvaluations)) {
