@@ -227,7 +227,7 @@ if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
     $msg_privPersons = $good_day . " " . trim($USER->firstname) . " " . trim($USER->lastname) . "<br>\n"
             . $a->privilegestxt
             . (!empty($_SESSION['CoS_privileged'][$USER->username])
-                    ? '<span style="font-weight:600;white-space:pre-line;text-decoration:underline;" title="'
+                    ? ' <span style="font-weight:600;white-space:pre-line;text-decoration:underline;" title="'
                     . implode("\n", $_SESSION['CoS_privileged'][$USER->username])
                     . "\">" .$a->yourcos. "</span><br>\n"
                     : ""
