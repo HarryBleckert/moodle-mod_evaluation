@@ -2451,14 +2451,14 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     // $ismycourses = ($myEvaluation["id"]==$USER->id);
                     $isstudent = ($myEvaluation["role"] == 'student' and $myEvaluation["id"] == $USER->id);
                     $a = new stdClass();
-                    $a->num_courses = $num_courses
+                    $a->num_courses = $num_courses;
                     $str .= "\n<b>" . ev_get_string('note') . "</b>: ";
                     if ($isstudent){
                         $str .= ev_get_string('show_evaluated_courses_student');
                     } else{
                         $str .= ev_get_string('show_evaluated_courses_teacher');
                     }
-                    $str .= ev_get_string('num_courses_in_ev') . "<br>\n";
+                    $str .= ev_get_string('num_courses_in_ev',$a) . "<br>\n";
                 }
 
             }
