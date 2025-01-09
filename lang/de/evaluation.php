@@ -31,7 +31,7 @@ $string['language'] = 'de';
 
 // view.php
 
-$string['is_WM_disabled'] = 'Ausgenommen sind Weiterbildende Master Studiengänge.');
+$string['is_WM_disabled'] = 'Ausgenommen sind Weiterbildende Master Studiengänge.';
 $string['siteadmintxt'] = 'Administrator und daher';
 $string['andrawdata'] =  'und Rohdaten';
 $string['yourcos'] = 'Ihrer Studiengänge';
