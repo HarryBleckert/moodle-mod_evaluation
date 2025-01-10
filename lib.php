@@ -2177,7 +2177,7 @@ function evaluation_get_group_values($item,
         echo nl2br("<hr>Select: ".var_export($select,true));
         echo nl2br("<hr>Values: ".var_export($values,true));
     }
-    $answers = explode(EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
+    // $answers = explode(EVALUATION_MULTICHOICE_LINE_SEP, $info->presentation);
     $params = array('id' => $item->evaluation);
     if ($DB->get_field('evaluation', 'anonymous', $params) == EVALUATION_ANONYMOUS_YES) {
         if (is_array($values)) {

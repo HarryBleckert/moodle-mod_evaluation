@@ -322,7 +322,7 @@ if ($courseid) {
 $fullname = ($USER->alternatename ? $USER->alternatename : $USER->firstname) . " " . $USER->lastname;
 // make get_string!
 $q_translink = '';
-if ($USER->lang != 'de') {
+if (!stristr($USER->lang, 'de') {
     // Hier ist eine englische Übersetzung des Fragebogens.
     $q_translink = '<a title="' . ev_get_string('questionaireenglish') . '" target="translation"
                         href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25-Fragebogen-EN.pdf">'
