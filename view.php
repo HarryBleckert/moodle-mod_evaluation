@@ -180,7 +180,9 @@ $teamteachingTxt = ($teamteaching ? ev_get_string('teamteachingtxt')
         . "<br>\n" : "");
 $isTeacher = defined('isTeacher');
 $isStudent = defined('isStudent');
+
 $a = new stdClass(); // for translations
+
 if (!empty($_SESSION["myEvaluations"])) {
     if (!$isTeacher) {
         $isTeacher = evaluation_is_teacher($evaluation, $_SESSION["myEvaluations"]);
@@ -210,6 +212,15 @@ $showPrivDocu = '<a href="print.php?id='.$id.'&showPrivUsers=1">'
 . '<a href="/downloads/Evaluationen mit ASH Moodle -Dokumentation.pdf" target="doku">'
 . "<b>" . ev_get_string('docu_download') . "</b></a><br>\n";
 $good_day = ev_get_string('good_day');
+
+$q_translink = '';
+$lang = (!empty($_GET["lang"]) ?$_GET["lang"] :$USER->lang);
+if (!strtolower(substr($lang,0,2)) == 'de') {
+    // Hier ist eine englische Übersetzung des Fragebogens.
+    $q_translink = '<a title="' . ev_get_string('questionaireenglish') . '" target="translation"
+                        href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25-Fragebogen-EN.pdf">'
+            .ev_get_string('clickquestionaireenglish'). "</a><br>\n"; // <b>Click here</b> to open an English translation of the questionnaire
+}
 
 
 if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
@@ -320,15 +331,7 @@ if ($courseid) {
 }
 
 $fullname = ($USER->alternatename ? $USER->alternatename : $USER->firstname) . " " . $USER->lastname;
-// make get_string!
-$q_translink = '';
-$lang = (!empty($_GET["lang"]) ?$_GET["lang"] :$USER->lang);
-if (!strtolower(substr($lang,0,2)) == 'de') {
-    // Hier ist eine englische Übersetzung des Fragebogens.
-    $q_translink = '<a title="' . ev_get_string('questionaireenglish') . '" target="translation"
-                        href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25-Fragebogen-EN.pdf">'
-                        .ev_get_string('clickquestionaireenglish'). "</a><br>\n"; // <b>Click here</b> to open an English translation of the questionnaire
-}
+
 $a->also = $a->foryourcourses = "";
 $a->minresults = $minResults;
 $a->minresultstxt = $minResultsText;
@@ -336,6 +339,7 @@ if ($evaluation_has_user_participated) {
     $a->also = ev_get_string('also');
     $a->foryourcourses = ev_get_string('foryourcourses');
 }
+
 $msg_student_all_courses = $good_day . " " . $fullname . "<br>\n"
         . ev_get_string('msg_student_all_courses',$a)
         . "<br>" . $teamteachingTxt
