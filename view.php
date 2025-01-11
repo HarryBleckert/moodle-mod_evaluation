@@ -641,11 +641,9 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
             }
             echo $view_courses_of_studies . "<br>\n";
 
-            $logtitle = ev_get_string('duplicatedfeedbacks');
             $a->loglifetime = get_config('logstore_standard')->loglifetime;
-            print ev_get_string('logananalysis',$a);
             echo html_writer::link($usagelink, "<b>" . get_string('usageReport', "evaluation") . "</b> ",
-                            array('title' => $logtitle))
+                            array('title' => ev_get_string('logananalysis',$a)))
                     . " " . $view_usageReport . "<br>\n";
         }
     } else {
