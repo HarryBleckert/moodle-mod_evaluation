@@ -2429,10 +2429,11 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
     $min_resTitle = ' title="' . get_string('min_results', 'evaluation', $min_results) . '" ';
     $numCourses = array();
     if (!safeCount($myEvaluations)) {
-        if (!defined('EVALUATION_OWNER') and $evaluation->timeclose < time()){
+        if (!defined('EVALUATION_OWNER') and $evaluation->timeclose < time()) {
             $str .= "<p style=\"color:red;font-weight:bold;align:center;\">"
-                    . ev_get_string('non_of_your_courses_participated') ."</p>\n";
+                    . ev_get_string('non_of_your_courses_participated') . "</p>\n";
             return $str;
+        }
     }
     // sorting by replies not yet working
     if (!isset($_SESSION["orderBy"])) {
