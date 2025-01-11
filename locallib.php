@@ -2428,178 +2428,150 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
 
     $min_resTitle = ' title="' . get_string('min_results', 'evaluation', $min_results) . '" ';
     $numCourses = array();
-    if (safeCount($myEvaluations)) {
-        // sorting by replies not yet working
-        if (!isset($_SESSION["orderBy"])) {
-            $_SESSION["orderBy"] = "ASC";
+    if (!safeCount($myEvaluations)) {
+        if (!defined('EVALUATION_OWNER') and $evaluation->timeclose < time()){
+            $str .= "<p style=\"color:red;font-weight:bold;align:center;\">"
+                    . ev_get_string('non_of_your_courses_participated') ."</p>\n";
+            return $str;
+    }
+    // sorting by replies not yet working
+    if (!isset($_SESSION["orderBy"])) {
+        $_SESSION["orderBy"] = "ASC";
+    } else {
+        $_SESSION["orderBy"] = ($_SESSION["orderBy"] == "ASC" ? "DESC" : "ASC");
+    }
+
+    if ($sortby == "course") {
+        uasort($myEvaluations, function($a, $b) {
+            return strcoll(strtoupper($a["course"]), strtoupper($b["course"]));
+        });
+    } else {
+        uasort($myEvaluations, function($a, $b) {
+            return strcoll(strtoupper($a["course"]), strtoupper($b["course"]));
+        });
+    }
+    $str .= "\n<style>th, td { padding-right: 5px;vertical-align:top;}</style>\n";
+    foreach ($myEvaluations as $myEvaluation) {
+        $str .= "<h2>" . ($showName ? "<b>" . $myEvaluation["fullname"] . "</b>:" . ($userResults ? " " .ev_get_string('your') : "") : "")
+                . " " .ev_get_string('courses_of') ." "
+                . $evaluation->name . "</h2>\n";
+        if ($myEvaluation["role"] != "teacher") {
+            $num_courses = safeCount(ev_courses_of_id($evaluation, $myEvaluation["id"]));
+            if (!$evaluation_is_open and $num_courses > safeCount($myEvaluations)) {
+                // $ismycourses = ($myEvaluation["id"]==$USER->id);
+                $isstudent = ($myEvaluation["role"] == 'student' and $myEvaluation["id"] == $USER->id);
+                $a = new stdClass();
+                $a->num_courses = $num_courses;
+                $str .= "\n<b>" . ev_get_string('note') . "</b>: ";
+                if ($isstudent){
+                    $str .= ev_get_string('show_evaluated_courses_student');
+                } else{
+                    $str .= ev_get_string('show_evaluated_courses_teacher');
+                }
+                $str .= ev_get_string('num_courses_in_ev',$a) . "<br>\n";
+            }
+
+        }
+        break;
+    }
+    $str .= "<table>\n";
+    foreach ($myEvaluations as $myEvaluation) {
+        $evaluation_has_user_participated = true;
+        $numCourses[$myEvaluation["courseid"]] = $myEvaluation["courseid"];
+        evaluation_get_course_teachers($myEvaluation['courseid']);
+        $teachers = $_SESSION["allteachers"][$myEvaluation['courseid']];
+        $ev_get_participantsc = ev_get_participants($evaluation, $myEvaluations, $myEvaluation["courseid"]);
+        if (safeCount($teachers)) {
+            $possible_evaluations_per_teacher += round($ev_get_participantsc / safeCount($teachers), 0);
+        }
+        $possible_evaluations += round($ev_get_participantsc, 0);
+        $actionTxt = get_string("evaluate_now", "evaluation");
+        $color = "darkred";
+        $min_resInfo = $min_resTitle;
+        $isTeacher = ($myEvaluation["role"] == "teacher");
+        $teacherid = false;
+        if ($userResults and $isTeacher) //$evaluation->teamteaching AND
+        {
+            $replies = evaluation_countCourseEvaluations($evaluation, $myEvaluation["courseid"],
+                    $myEvaluation["role"], $myEvaluation["id"]);
+            $teacherid = $myEvaluation["id"]; //$USER->id;
         } else {
-            $_SESSION["orderBy"] = ($_SESSION["orderBy"] == "ASC" ? "DESC" : "ASC");
+            $replies = evaluation_countCourseEvaluations($evaluation, $myEvaluation["courseid"]);
+            ///$userResults = false;
+        }
+        $myCourseReplies += $replies;
+        // complete Evaluation
+        $urlF = "<a href=\"$wwwroot/mod/evaluation/complete.php?id=$cmid&courseid=" . $myEvaluation["courseid"] . "\">";
+        if (!$isTeacher) {
+            $evaluation_has_user_participated =
+                    evaluation_has_user_participated($evaluation, $USER->id, $myEvaluation["courseid"]);
         }
 
-        if ($sortby == "course") {
-            uasort($myEvaluations, function($a, $b) {
-                return strcoll(strtoupper($a["course"]), strtoupper($b["course"]));
-            });
+        if (!$evaluation_is_open or $isTeacher or stristr($myEvaluation["reminder"], get_string("analysis", "evaluation"))) {
+            $color = "grey";
+            $actionTxt = get_string("analysis", "evaluation");
+            $statTxt = get_string("statistics", "evaluation");
+            // link to Evaluation Overview
+            $urlF = "<a href=\"$wwwroot/mod/evaluation/view.php?id=$cmid&courseid=" . $myEvaluation["courseid"] . "\">";
+            if ($replies >= $min_results and $evaluation_has_user_participated) {
+                $color = "darkgreen";
+                $min_resInfo = "";
+                // see graphic results
+                $urlF = "<a href=\"$wwwroot/mod/evaluation/analysis_course.php?id=$cmid&courseid=" . $myEvaluation["courseid"]
+                        . (($isTeacher and $userResults) ? "&teacherid=" . $myEvaluation["id"] : "") . '" target="ev_results">';
+                $urlStats = "<a href=\"$wwwroot/mod/evaluation/print.php?showCompare=1&id=$cmid&courseid=" . $myEvaluation["courseid"]
+                        .  '" target="ev_results">';
+
+            }
+            if (empty($_SESSION["LoggedInAs"])) {
+                $urlC = "<a href=\"$wwwroot/course/view.php?id=" . $myEvaluation["courseid"] . "\">";
+            } else {
+                $urlC = "<a href=\"#\">";
+            }
+            $str .= "<tr>\n";
+            $str .= "<td $min_resInfo>$urlF<b style=\"color:$color;\">$actionTxt</b></a></td>\n";
+            $str .= "<td $min_resInfo>";
+            if (empty($min_resInfo)){
+                $str .= $urlStats."<b style=\"color:$color;\">$statTxt</b></a>";
+            }
+            else{
+                $str .= $urlF."<b style=\"color:$color;\">$statTxt</b></a>";
+            }
+            $str .= "</td>\n<td style=\"text-align:right;\">" . $replies . "</td>\n";
+            if (empty($_SESSION["LoggedInAs"])) {
+                $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></a></td>\n";
+            } else {
+                $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></td>\n";
+            }
+            $str .= "</tr>\n";
         } else {
-            uasort($myEvaluations, function($a, $b) {
-                return strcoll(strtoupper($a["course"]), strtoupper($b["course"]));
-            });
-        }
-        $str .= "\n<style>th, td { padding-right: 5px;vertical-align:top;}</style>\n";
-        foreach ($myEvaluations as $myEvaluation) {
-            $str .= "<h2>" . ($showName ? "<b>" . $myEvaluation["fullname"] . "</b>:" . ($userResults ? " " .ev_get_string('your') : "") : "")
-                    . " " .ev_get_string('courses_of') ." "
-                    . $evaluation->name . "</h2>\n";
-            if ($myEvaluation["role"] != "teacher") {
-                $num_courses = safeCount(ev_courses_of_id($evaluation, $myEvaluation["id"]));
-                if (!$evaluation_is_open and $num_courses > safeCount($myEvaluations)) {
-                    // $ismycourses = ($myEvaluation["id"]==$USER->id);
-                    $isstudent = ($myEvaluation["role"] == 'student' and $myEvaluation["id"] == $USER->id);
-                    $a = new stdClass();
-                    $a->num_courses = $num_courses;
-                    $str .= "\n<b>" . ev_get_string('note') . "</b>: ";
-                    if ($isstudent){
-                        $str .= ev_get_string('show_evaluated_courses_student');
-                    } else{
-                        $str .= ev_get_string('show_evaluated_courses_teacher');
-                    }
-                    $str .= ev_get_string('num_courses_in_ev',$a) . "<br>\n";
-                }
-
-            }
-            break;
-        }
-        $str .= "<table>\n";
-        foreach ($myEvaluations as $myEvaluation) {
-            $evaluation_has_user_participated = true;
-            $numCourses[$myEvaluation["courseid"]] = $myEvaluation["courseid"];
-            evaluation_get_course_teachers($myEvaluation['courseid']);
-            $teachers = $_SESSION["allteachers"][$myEvaluation['courseid']];
-            $ev_get_participantsc = ev_get_participants($evaluation, $myEvaluations, $myEvaluation["courseid"]);
-            if (safeCount($teachers)) {
-                $possible_evaluations_per_teacher += round($ev_get_participantsc / safeCount($teachers), 0);
-            }
-            $possible_evaluations += round($ev_get_participantsc, 0);
-            $actionTxt = get_string("evaluate_now", "evaluation");
-            $color = "darkred";
-            $min_resInfo = $min_resTitle;
-            $isTeacher = ($myEvaluation["role"] == "teacher");
-            $teacherid = false;
-            if ($userResults and $isTeacher) //$evaluation->teamteaching AND
-            {
-                $replies = evaluation_countCourseEvaluations($evaluation, $myEvaluation["courseid"],
-                        $myEvaluation["role"], $myEvaluation["id"]);
-                $teacherid = $myEvaluation["id"]; //$USER->id;
-            } else {
-                $replies = evaluation_countCourseEvaluations($evaluation, $myEvaluation["courseid"]);
-                ///$userResults = false;
-            }
-            $myCourseReplies += $replies;
-            // complete Evaluation
-            $urlF = "<a href=\"$wwwroot/mod/evaluation/complete.php?id=$cmid&courseid=" . $myEvaluation["courseid"] . "\">";
-            if (!$isTeacher) {
-                $evaluation_has_user_participated =
-                        evaluation_has_user_participated($evaluation, $USER->id, $myEvaluation["courseid"]);
-            }
-
-            if (!$evaluation_is_open or $isTeacher or stristr($myEvaluation["reminder"], get_string("analysis", "evaluation"))) {
-                $color = "grey";
-                $actionTxt = get_string("analysis", "evaluation");
-                $statTxt = get_string("statistics", "evaluation");
-                // link to Evaluation Overview
-                $urlF = "<a href=\"$wwwroot/mod/evaluation/view.php?id=$cmid&courseid=" . $myEvaluation["courseid"] . "\">";
-                if ($replies >= $min_results and $evaluation_has_user_participated) {
-                    $color = "darkgreen";
-                    $min_resInfo = "";
-                    // see graphic results
-                    $urlF = "<a href=\"$wwwroot/mod/evaluation/analysis_course.php?id=$cmid&courseid=" . $myEvaluation["courseid"]
-                            . (($isTeacher and $userResults) ? "&teacherid=" . $myEvaluation["id"] : "") . '" target="ev_results">';
-                    $urlStats = "<a href=\"$wwwroot/mod/evaluation/print.php?showCompare=1&id=$cmid&courseid=" . $myEvaluation["courseid"]
-                            .  '" target="ev_results">';
-
-                }
-                if (empty($_SESSION["LoggedInAs"])) {
-                    $urlC = "<a href=\"$wwwroot/course/view.php?id=" . $myEvaluation["courseid"] . "\">";
-                } else {
-                    $urlC = "<a href=\"#\">";
-                }
-                $str .= "<tr>\n";
-                $str .= "<td $min_resInfo>$urlF<b style=\"color:$color;\">$actionTxt</b></a></td>\n";
-                $str .= "<td $min_resInfo>";
-                if (empty($min_resInfo)){
-                    $str .= $urlStats."<b style=\"color:$color;\">$statTxt</b></a>";
-                }
-                else{
-                    $str .= $urlF."<b style=\"color:$color;\">$statTxt</b></a>";
-                }
-                $str .= "</td>\n<td style=\"text-align:right;\">" . $replies . "</td>\n";
-                if (empty($_SESSION["LoggedInAs"])) {
-                    $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></a></td>\n";
-                } else {
-                    $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></td>\n";
-                }
-                $str .= "</tr>\n";
-            } else {
-                $replies = "";
-                $cnt = 0;
-                if ($evaluation->teamteaching) {    // get course teachers
-                    //if ( !isset( $_SESSION["allteachers"][$myEvaluation["courseid"]] ) )
-                    //{	get_course_teachers( $evaluation, $myEvaluation["courseid"], $cmid ); }
-                    //print "<br><hr>SESSION['allteachers'][myEvaluation[courseid]]: ";var_dump($_SESSION['allteachers'][$myEvaluation['courseid']]);print "<hr>\n";
-                    //$missing = isEvaluationCompleted( $evaluation, false, false, true );
-                    foreach ($teachers as $teacher) {
-                        $Txt = $actionTxt;
-                        $url = $urlF;
-                        $str .= "<tr>\n";
-                        $completed = $DB->get_record_sql("select id,evaluation,courseid,userid,teacherid from {evaluation_completed} 
-										WHERE evaluation=" . $evaluation->id . " AND userid=" . $myEvaluation["id"]
-                                . " AND courseid=" . $myEvaluation['courseid'] . " AND teacherid=" . $teacher['id']);
-                        //$str .= "$actionTxt";
-                        if ($completed and isset($completed->teacherid) and $completed->teacherid == $teacher['id']) {
-                            $color = "green";
-                            $Txt = '<span style="font-weight:normal;color:$color;">'
-                                    . ev_get_string('evaluated_for') . "<br>" . ev_get_string('teacher')
-                                    . $teacher['fullname'] . '</span>';
-                            $str .= "<td><b style=\"color:$color;\">$Txt</b></td>";
-                        } else {
-                            $color = "darkred";
-                            $Txt .= '<span style="font-weight:normal;color:black;"><br>' . ev_get_string('teacher') .' ' . $teacher['fullname'] .
-                                    '</span>';
-                            $url = "<a href=\"$wwwroot/mod/evaluation/complete.php?id=$cmid&courseid=" . $myEvaluation["courseid"] .
-                                    "&teacherid=" . $teacher['id'] . '">';
-                            $str .= "<td>$url<b style=\"color:$color;\">$Txt</b></a></td>";
-                        }
-                        if (empty($_SESSION["LoggedInAs"])) {
-                            $urlC = "<a href=\"$wwwroot/course/view.php?id=" . $myEvaluation["courseid"] . "\">";
-                        } else {
-                            $urlC = "<a href=\"#\">";
-                        }
-                        $str .= "<td>&nbsp;</td>";
-                        $str .= "<td style=\"text-align:right;\">" . $replies . "</td>";
-                        if (empty($_SESSION["LoggedInAs"])) {
-                            $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></a></td>\n";
-                        } else {
-                            $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></td>\n";
-                        }
-                        $str .= "</tr>\n";
-                        $cnt++;
-                    }
-                } else {
+            $replies = "";
+            $cnt = 0;
+            if ($evaluation->teamteaching) {    // get course teachers
+                //if ( !isset( $_SESSION["allteachers"][$myEvaluation["courseid"]] ) )
+                //{	get_course_teachers( $evaluation, $myEvaluation["courseid"], $cmid ); }
+                //print "<br><hr>SESSION['allteachers'][myEvaluation[courseid]]: ";var_dump($_SESSION['allteachers'][$myEvaluation['courseid']]);print "<hr>\n";
+                //$missing = isEvaluationCompleted( $evaluation, false, false, true );
+                foreach ($teachers as $teacher) {
                     $Txt = $actionTxt;
                     $url = $urlF;
-                    $completed = array();
                     $str .= "<tr>\n";
                     $completed = $DB->get_record_sql("select id,evaluation,courseid,userid,teacherid from {evaluation_completed} 
-								WHERE evaluation=" . $evaluation->id . " AND userid=" . $myEvaluation["id"]
-                            . " AND courseid=" . $myEvaluation['courseid']);
-                    if (isset($completed->teacherid) and safeCount($completed)) {
+                                    WHERE evaluation=" . $evaluation->id . " AND userid=" . $myEvaluation["id"]
+                            . " AND courseid=" . $myEvaluation['courseid'] . " AND teacherid=" . $teacher['id']);
+                    //$str .= "$actionTxt";
+                    if ($completed and isset($completed->teacherid) and $completed->teacherid == $teacher['id']) {
                         $color = "green";
-                        $Txt = '<span style="font-weight:normal;color:' . $color . ';">' .ev_get_string('evaluated'). 'Abgegeben</span>';
+                        $Txt = '<span style="font-weight:normal;color:$color;">'
+                                . ev_get_string('evaluated_for') . "<br>" . ev_get_string('teacher')
+                                . " " . $teacher['fullname'] . "</span>";
                         $str .= "<td><b style=\"color:$color;\">$Txt</b></td>";
                     } else {
-                        $Txt .= '<span style="font-weight:normal;color:black;">' .ev_get_string('to_evaluate') .'</span>';
+                        $color = "darkred";
+                        $Txt .= '<span style="font-weight:normal;color:black;"><br>' . ev_get_string('teacher')
+                                .' ' . $teacher['fullname'] . "</span>";
                         $url = "<a href=\"$wwwroot/mod/evaluation/complete.php?id=$cmid&courseid=" . $myEvaluation["courseid"] .
-                                '">';
+                                "&teacherid=" . $teacher['id'] . '">';
                         $str .= "<td>$url<b style=\"color:$color;\">$Txt</b></a></td>";
                     }
                     if (empty($_SESSION["LoggedInAs"])) {
@@ -2615,29 +2587,61 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                         $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></td>\n";
                     }
                     $str .= "</tr>\n";
+                    $cnt++;
                 }
+            } else {
+                $Txt = $actionTxt;
+                $url = $urlF;
+                $completed = array();
+                $str .= "<tr>\n";
+                $completed = $DB->get_record_sql("select id,evaluation,courseid,userid,teacherid from {evaluation_completed} 
+                            WHERE evaluation=" . $evaluation->id . " AND userid=" . $myEvaluation["id"]
+                        . " AND courseid=" . $myEvaluation['courseid']);
+                if (isset($completed->teacherid) and safeCount($completed)) {
+                    $color = "green";
+                    $Txt = '<span style="font-weight:normal;color:' . $color . ';">' .ev_get_string('evaluated'). 'Abgegeben</span>';
+                    $str .= "<td><b style=\"color:$color;\">$Txt</b></td>";
+                } else {
+                    $Txt .= '<span style="font-weight:normal;color:black;">' .ev_get_string('to_evaluate')
+                            .'</span>';
+                    $url = "<a href=\"$wwwroot/mod/evaluation/complete.php?id=$cmid&courseid=" . $myEvaluation["courseid"] .
+                            '">';
+                    $str .= "<td>$url<b style=\"color:$color;\">$Txt</b></a></td>";
+                }
+                if (empty($_SESSION["LoggedInAs"])) {
+                    $urlC = "<a href=\"$wwwroot/course/view.php?id=" . $myEvaluation["courseid"] . "\">";
+                } else {
+                    $urlC = "<a href=\"#\">";
+                }
+                $str .= "<td>&nbsp;</td>";
+                $str .= "<td style=\"text-align:right;\">" . $replies . "</td>";
+                if (empty($_SESSION["LoggedInAs"])) {
+                    $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></a></td>\n";
+                } else {
+                    $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></td>\n";
+                }
+                $str .= "</tr>\n";
             }
         }
-        $str .= "</table>\n";
-        $possible_evaluations_txt = "";
-        $maxevaluations = ($userResults ? $possible_evaluations_per_teacher : $possible_evaluations);
-        if ($isTeacher) {
-            $possible_evaluations_txt = "/" . $maxevaluations;
-            if ($maxevaluations && $myCourseReplies){
-                $possible_evaluations_txt .=  evaluation_calc_perc($myCourseReplies, $maxevaluations);
-            }
-        }
-        if ($myCourseReplies > 0 and $showCounter) {
-            $str .= "<b style=\"color:darkgreen;\">" . ev_get_string('completed_evaluations')
-                    . (($isTeacher and $userResults) ? " " .ev_get_string('for_you') : "")
-                    . ($userResults ? " " . ev_get_string('in_your_courses') :"")
-                    . ": $myCourseReplies$possible_evaluations_txt</b>";
-        }
-        $str .= "<p> </p>";
-    } else if (!defined('EVALUATION_OWNER') and $evaluation->timeclose < time())
-    {
-        $str .= "<p style=\"color:red;font-weight:bold;align:center;\">" .ev_get_string('non_of_your_courses_participated') ."</p>\n";
     }
+    $str .= "</table>\n";
+    $possible_evaluations_txt = "";
+    $maxevaluations = ($userResults ? $possible_evaluations_per_teacher : $possible_evaluations);
+    if ($isTeacher) {
+        $possible_evaluations_txt = "/" . $maxevaluations;
+        if ($maxevaluations && $myCourseReplies){
+            $possible_evaluations_txt .=  evaluation_calc_perc($myCourseReplies, $maxevaluations);
+        }
+    }
+    if ($myCourseReplies > 0 and $showCounter) {
+        $str .= "<b style=\"color:darkgreen;\">" . ev_get_string('completed_evaluations')
+                . (($isTeacher and $userResults) ? " " .ev_get_string('for_you') : "")
+                . ($userResults ? " " . ev_get_string('in_your_courses') :"")
+                . ": $myCourseReplies$possible_evaluations_txt</b>";
+    }
+    $str .= "<p> </p>";
+
+
     return $str;
 }
 
