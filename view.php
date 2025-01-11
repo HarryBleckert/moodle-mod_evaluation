@@ -215,7 +215,7 @@ $good_day = ev_get_string('good_day');
 
 $q_translink = '';
 $lang = (!empty($_GET["lang"]) ?$_GET["lang"] :$USER->lang);
-if (!strtolower(substr($lang,0,2)) == 'de') {
+if (strtolower(substr($lang,0,2)) != 'de') {
     // Hier ist eine englische Übersetzung des Fragebogens.
     $q_translink = '<a title="' . ev_get_string('questionaireenglish') . '" target="translation"
                         href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25-Fragebogen-EN.pdf">'
@@ -243,8 +243,8 @@ if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
                     . "\">" .$a->yourcos. "</span>\n"
                     : ""
                 )
-            . " " . $a->viewanddownload . $a->is_WM_disabled
-            . "<br>\n" . $showPrivDocu;
+            . " " . $a->viewanddownload . " " . $a->is_WM_disabled
+            . "<br>\n" . $showPrivDocu . $q_translink;
     echo $msg_privPersons;
 }
 
@@ -354,7 +354,7 @@ else{
 }
 $msg_teachers = $good_day . " " . $fullname . "<br>" . $yourpartcourses . "<br>\n"
         . ev_get_string('teachersviewconditions',$a)
-        . "<br>" . $q_translink ."\n";
+        . "<br>\n" . $q_translink ."\n";
 if ($is_open) {
     $days = remaining_evaluation_days($evaluation);
     $alert = "";
