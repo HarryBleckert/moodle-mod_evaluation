@@ -218,7 +218,7 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
     if (!defined('NO_OUTPUT_BUFFERING')) {
         define('NO_OUTPUT_BUFFERING', true);
     }
-    ini_set("output_buffering", 350);
+    ini_set("output_buffering", 600);
     @ob_flush();@ob_end_flush();@flush();@ob_start();
 
     // only siteadmin should call this
@@ -301,7 +301,7 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
             }
         }
 
-        // store per course evaulation details in tables evaluation_enrolments
+        // store per course evaluation details in tables evaluation_enrolments
         if ($forceCourse or
                 !$DB->count_records_sql("SELECT COUNT(*) from {evaluation_enrolments} WHERE evaluation=$evaluation->id")
         ) {    // set evaluation to Open for allowing set_results
@@ -499,6 +499,9 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
     }
     $cntC = 1;
 
+    $evaluationstructure = new mod_evaluation_structure($evaluation); // , $cm, $courseid, null, 0, $teacherid, null, null, null,1);
+    $evaluationstructure->shuffle_anonym_responses(); // needs to be called to renumber replies
+
     print "<br><hr><b>ev_shuffle_completed_userids(): Courses:</b><hr>\n
         <span id='showCourseRec_".$evaluation->id."'>&nbsp;</span><br>\n";
     ini_set("output_buffering", 350);
@@ -508,6 +511,7 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
                 $cntC . ' courses)";</script>';
         $cntC++;
         @ob_flush();@ob_end_flush();@flush();@ob_start();
+
         $completed = $DB->get_records_sql("SELECT * FROM {evaluation_completed} WHERE evaluation=$evaluation->id AND courseid=$courseid 
 						ORDER BY id");
         $userids = array();

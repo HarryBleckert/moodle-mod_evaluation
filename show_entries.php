@@ -416,8 +416,8 @@ if ($userid || $showcompleted) {
     }
 
     // Show anonymous responses (always retrieve them even if current evaluation is not anonymous).
-    $evaluationstructure->shuffle_anonym_responses(); // needs to be called to renumber replies
     if ($evaluationstructure->is_anonymous() and $totalrowsART) {
+        $evaluationstructure->shuffle_anonym_responses(); // needs to be called to renumber replies
         // echo $OUTPUT->heading(get_string('anonymous_entries', 'evaluation', $totalrowsART), 4);
         $anonresponsestable->display();
     }

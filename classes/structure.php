@@ -327,11 +327,12 @@ class mod_evaluation_structure {
                 'anonymous_response' => EVALUATION_ANONYMOUS_YES);
         if ($DB->count_records('evaluation_completed', $params, 'random_response')) {
             // Get all of the anonymous records, go through them and assign a response id.
-            print "<script>document.getElementById('evaluation_showinfo').innerHTML='<b>Reshuffling anonymous responses</b>...';</script>";
+            /* print "<script>document.getElementById('evaluation_showinfo').innerHTML='<b>Reshuffling anonymous responses</b>...';</script>";
             @ob_flush();
             @ob_end_flush();
             @flush();
             @ob_start();
+            */
             unset($params['random_response']);
             $evaluationcompleteds = $DB->get_records('evaluation_completed', $params, 'id');
             shuffle($evaluationcompleteds);
