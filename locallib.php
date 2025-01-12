@@ -4728,7 +4728,7 @@ HEREDOC;
                         continue;
                     }
                     list($fullname, $emailt) = explode(' <', trim($to, '> '));
-                    $to = '=?UTF-8?B?' . base64_encode($fullname. '?=' . " <$emailt>";
+                    $to = '=?UTF-8?B?' . base64_encode($fullname). '?=' . " <$emailt>";
                     // $to = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
                     $msg = "Guten Tag $fullname<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.$pMsg";
                     $msg = str_ireplace("<body>", "<body>" . $msg, $message);
