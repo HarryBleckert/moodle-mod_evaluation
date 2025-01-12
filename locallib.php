@@ -4706,7 +4706,7 @@ HEREDOC;
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
             date("Ymd H:i:s"), $cronjob);
     // send info mails to privileged
-    if (!$test){
+    if (true || !$test){
         $role = ($role == "teacher" ?$role :"student");
         ev_set_reminders($evaluation,$role."s", $noreplies);
         if (true || !$CFG->noemailever) {
@@ -4727,6 +4727,9 @@ HEREDOC;
                     ev_show_reminders_log("$cnt.$msg $fullname - $username - $to - ID: $userid", $cronjob);
                     $cnt++;
                 }
+            }
+            if (is_sideadmin()){
+                print nl2br("<hr>Emails:\n" . var_export($emails,true)):
             }
         }
     }
