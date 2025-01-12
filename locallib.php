@@ -4534,15 +4534,10 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     ini_set("output_buffering", 600);
     $testinfo = ($test ? " Test: " : "");
     $role = ($role != "participants" ? $role : "student");
-    if ($role == "student") {
-        $testMsg = $pMsg =
-                "<p>Unten einkopiert ein Beispiel für die heute an Studierende, deren Kurse an der Evaluation teilnehmen, gesendeten Mails. $norpliestxt.</p><hr>";
-    } else {
-        $testMsg = $pMsg =
-                "<p>Unten einkopiert ein Beispiel für die heute an Lehrende, deren Kurse an der Evaluation teilnehmen, gesendeten Mails. $norpliestxt.</p><hr>";
-    }
-
-    foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
+    $target = ($role == "teacher" ? "Lehrende" : "Studierende");
+    $testMsg = $pMsg =
+            "<p>Heute wurden Mails mit Hinweisen zur laufenden Evaluation an $target versandt, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
+    foreach ($evaluation_users as $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
        if(!$cronjob) {
            @ob_flush();
            @ob_end_flush();
@@ -4747,8 +4742,7 @@ HEREDOC;
                     ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt - ID: $userid", $cronjob);
                     $cnt++;
                 }
-            }
-            if (false AND is_siteadmin()){
+            } else if ( is_siteadmin()){
                 print nl2br("<hr>Emails:\n" . var_export($emails,true));
             }
         }
