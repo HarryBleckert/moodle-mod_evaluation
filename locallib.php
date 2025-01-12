@@ -4729,7 +4729,7 @@ HEREDOC;
                 }
             }
             if (is_sideadmin()){
-                print nl2br("<hr>Emails:\n" . var_export($emails,true)):
+                print nl2br("<hr>Emails:\n" . var_export($emails,true));
             }
         }
     }
