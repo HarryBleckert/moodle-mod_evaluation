@@ -4722,10 +4722,10 @@ HEREDOC;
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
             date("Ymd H:i:s"), $cronjob);
     // send info mails to privileged
-    if (true || !$test){
+    if (!$test){
         $role = ($role == "teacher" ?$role :"student");
         ev_set_reminders($evaluation,$role."s", $noreplies);
-        if (true || !$CFG->noemailever) {
+        if (!$CFG->noemailever) {
             if ($emails = ev_set_privileged_users(false, true)){
                 //$mails = explode("\n",$emails);
                 $cnt = 1;
@@ -4744,7 +4744,7 @@ HEREDOC;
                     $cnt++;
                 }
             }
-            if (is_siteadmin()){
+            if (false AND is_siteadmin()){
                 print nl2br("<hr>Emails:\n" . var_export($emails,true));
             }
         }
@@ -4828,7 +4828,7 @@ function ev_get_reminders($evaluation, $id) {
                            <option value="teacher">Teachers</option>
                            <option value="student">Students</option>
                        </select>
-                        - <input type="text" name="test" value="Berthe Khayat <khayat@ash-berlin.eu>"></input>
+                        - <input type="text" name="test" value="Harry Bleckert <Harry.Bleckert@ASH-Berlin.eu>"></input>
                         - <?php echo $non_responders_only;?>?
                         <input type="radio" name="noreplies" value="0" checked>Nein</input>
                         <input type="radio" name="noreplies" value="1">Ja</input>&nbsp;
@@ -4945,16 +4945,18 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                     $roles = explode(",", $items[1]);
                     // print "- Role: ";
                     foreach ($roles as $role){
+                        $isnr = false;
                         if (stristr($role," (NR)")){
                             $role = str_ireplace(" (NR)","",$role);
+                            $isnr = true;
                         }
                         // print $role.", ";
                         if ($role == "teachers") {
                             $tsent = $timestamp;
-                            $tsent_nr = true;
+                            $tsent_nr = $isnr;
                         } else if ($role == "students") {
                             $ssent = $timestamp;
-                            $ssent_nr = true;
+                            $ssent_nr = $isnr;
                         }
 
                     }
@@ -4964,33 +4966,36 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                 // print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: "
                 //        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
                 mtrace("Evaluation '$evaluation->name': Checking for due reminders to teachers and students");
-                if (!$tsent_nr AND ($tsent+(1*$week)) < time()){
-                    $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding teachers ($CFG->dbname)");
-                    ev_send_reminders($evaluation, "teacher", true, $test, $verbose, $cli, $cronjob);
-                } else if ($tsent AND ($tsent+(2*$week) < time())){
-                    $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending reminders to teachers ($CFG->dbname)");
-                    ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
-                } else if ($days<4 and ($tsent+(3*86400))< time()){
-                    $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending final reminders to teachers ($CFG->dbname)");
-                    ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
+                if ($tsend) {
+                    if (($tsent_nr and $tsent + (1 * $week) < time()) or ($tsent + (2 * $week) < time())) {
+                        $reminders_sent = true;
+                        mtrace("Evaluation '$evaluation->name': Sending reminders to teachers ($CFG->dbname)");
+                        ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
+                    } else if ($tsent + (1 * $week) < time()) {
+                        $reminders_sent = true;
+                        mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding teachers ($CFG->dbname)");
+                        ev_send_reminders($evaluation, "teacher", true, $test, $verbose, $cli, $cronjob);
+                    } else if ($days < 4 and ($tsent + (3 * 86400)) < time()) {
+                        $reminders_sent = true;
+                        mtrace("Evaluation '$evaluation->name': Sending final reminders to teachers ($CFG->dbname)");
+                        ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
+                    }
                 }
-
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
-                if (!$ssent_nr AND ($ssent+(1*$week)) < time()){
-                    $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding students ($CFG->dbname)");
-                    ev_send_reminders($evaluation, "student", true, $test, $verbose, $cli, $cronjob);
-                } else if (($ssent+(2*$week)) < time()){
-                    $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending reminders to students ($CFG->dbname)");
-                    ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
-                } else if ($days<4 and ($ssent+(3*86400)) < time()){
-                    $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending final reminders to students ($CFG->dbname)");
-                    ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
+                if ($ssent) {
+                    if (($ssent_nr and $ssent + (1 * $week) < time()) OR ($ssent + (2 * $week) < time())) {
+                        $reminders_sent = true;
+                        mtrace("Evaluation '$evaluation->name': Sending reminders to students ($CFG->dbname)");
+                        ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
+                    } else if ($ssent + (1 * $week) < time()) {
+                        $reminders_sent = true;
+                        mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding students ($CFG->dbname)");
+                        ev_send_reminders($evaluation, "student", true, $test, $verbose, $cli, $cronjob);
+                    } else if ($days < 4 and $ssent + (3 * 86400) < time()) {
+                        $reminders_sent = true;
+                        mtrace("Evaluation '$evaluation->name': Sending final reminders to students ($CFG->dbname)");
+                        ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
+                    }
                 }
             }
         }
