@@ -4733,11 +4733,16 @@ HEREDOC;
                         continue;
                     }
                     list($fullname, $emailt) = explode(' <', trim($to, '> '));
-                    // $to = '=?UTF-8?B?' . base64_encode($fullname. '?=' . " <$emailt>";
-                    $to = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
+                    $to = '=?UTF-8?B?' . base64_encode($fullname. '?=' . " <$emailt>";
+                    // $to = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
                     $msg = "Guten Tag $fullname<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.$pMsg";
                     $msg = str_ireplace("<body>", "<body>" . $msg, $message);
-                    mail($to, $subject, quoted_printable_encode($msg), $headers); //,"-r '$sender'");
+                    mail($to, $subject, quoted_printable_encode($msg), $headers);
+                    if ($cnt < 2) {
+                        $msg = "Hey Admin<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.$pMsg";
+                        $msg = str_ireplace("<body>", "<body>" . $msg, $message);
+                        mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
+                    }
                     $msg = "-Info an Privilegierte:";
                     ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt - ID: $userid", $cronjob);
                     $cnt++;
