@@ -108,6 +108,7 @@ $string['courses_of_studies'] = 'Courses of studies';
 $string['courses_with_content_only'] = "Courses with content";
 $string['daily_progress'] = 'Daily Evaluation statistics and Evaluation overview';
 $string['department'] = 'Department';
+$string['departments'] = 'Departments';
 $string['docu_download'] = 'Open/Download documentation';
 $string['evaluate_now'] = 'Evaluate now';
 $string['evaluate_teacher'] = 'Your are now evaluating: <span style="color:darkgreen;font-weight:bolder;">{$a}</span>';

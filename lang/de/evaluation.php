@@ -113,6 +113,7 @@ $string['course_of_studies_selected'] = 'Liste der zu evaluierenden Studiengäng
 $string['courses_with_content_only'] = "Nur genutzte Kurse";
 $string['daily_progress'] = 'Abgabestatistik -pro Tag und über den gesamten Zeitraum';
 $string['department'] = 'Fachbereich';
+$string['departments'] = 'Fachbereiche';
 $string['docu_download'] = 'Dokumentation öffnen/herunterladen';
 $string['evaluate_now'] = 'Jetzt evaluieren';
 $string['evaluate_teacher'] = 'Sie evaluieren jetzt: <span style="color:darkgreen;font-weight:bolder;">{$a}</span>';
