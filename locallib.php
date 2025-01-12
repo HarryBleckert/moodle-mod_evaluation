@@ -3474,12 +3474,14 @@ function pass_evaluation_filters($evaluation, $courseid) {
 
 function ev_set_privileged_users($show = false, $getEmails = false) {
     global $CFG, $DB, $USER, $evaluation;
+    $allemails = array();
     $cfgFile = $CFG->dirroot . "/mod/evaluation/privileged_users.csv";
     if (is_readable($cfgFile)) {
         $cfgA = explode("\n", file_get_contents($cfgFile));
-        $privileged_users = $_SESSION["privileged_global_users"]
+        $privileged_users = $_SESSION["privileged_global_users"] =  $_SESSION["privileged_users"]
                 = $_SESSION["privileged_global_users_wm"] = $_SESSION["course_of_studies_wm"]
                 = $_SESSION['CoS_department'] = $_SESSION['CoS_privileged'] = $_SESSION['CoS_privileged_sgl'] = array();
+
         foreach ($cfgA as $line) {
             $CoS = "";
             $WM = "Nein";
@@ -3534,6 +3536,12 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
             }
             if ($priv_user) {
                 $privileged_users[$username] = $username;
+                $_SESSION["privileged_users"][$username] = $username;
+                if ($eMail = $DB->get_record("user",array("username" => $username))) {
+                    $eMails[$username] = '"' . $eMail->firstname . ' ' . $eMail->lastname
+                            . '" &lt;' . $eMail->email . "&gt;";
+                    $allemails[$username] = $eMail->email;
+                }
             }
             if (!empty($CoS) and substr($CoS, 0, 1) != "#") {
                 $_SESSION["course_of_studies_wm"][$CoS] = $is_WM;
@@ -3553,10 +3561,16 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
     }
     if (!empty($evaluation->privileged_users)) {
         $ev_privileged_users = explode("\n", $evaluation->privileged_users);
-        foreach ($ev_privileged_users AS $privileged_user){
+        foreach ($ev_privileged_users as $privileged_user) {
             $privileged_users[$privileged_user] = $privileged_user;
             $_SESSION["privileged_users"][$privileged_user] = $privileged_user;
             $_SESSION["privileged_global_users"][$privileged_user] = $privileged_user;
+            if ($eMail = $DB->get_record("user",array("username" => $privileged_user))) {
+                $eMails[$privileged_user] = '"' . $eMail->firstname . ' ' . $eMail->lastname . '" <' . $eMail->email . ">";
+                        // . '" &lt;' . $eMail->email . "&gt;";
+
+                $allemails[$username] = $eMail->email;
+            }
         }
     }
 
@@ -3601,11 +3615,17 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                     foreach ($row as $col) {
                         $out .= '<th style="font-weight:bold;">' . htmlspecialchars($col) . "</th>\n";
                     }
+                    // add email
+                    $out .= '<th style="font-weight:bold;">' . "Mail" . "</th>\n";
                     $first = false;
                 } else {
                     foreach ($row as $col) {
                         $out .= "<td>" . htmlspecialchars($col) . "</td>\n";
                     }
+                    // add email
+                    $mail = (isset($allemails[$row[0]]) ?$allemails[$row[0]] :"&nbsp;");
+                    }
+                    $out .= '<td style="font-weight:bold;">' . $mail . "</td>\n";
                 }
                 $out .= "</tr>\n";
             }
@@ -3613,23 +3633,21 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
         if (!empty($ev_privileged_users)) {
             foreach ($ev_privileged_users AS $privileged_user){
                 if ($eMail = $DB->get_record("user",array("username" => $privileged_user))) {
-                    $eMails[$privileged_user] = '"' . $eMail->firstname . ' ' . $eMail->lastname
-                            . '" &lt;' . $eMail->email . "&gt;";
-
                     $out .= "<tr>\n<td>$privileged_user</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>"
-                            . "<td>$eMail->firstname</td><td>$eMail->lastname</td><td>&nbsp;</td>\n</tr>\n";
+                            . "<td>$eMail->firstname</td><td>$eMail->lastname</td><td>&nbsp;</td><td>$eMail->email</td>\n</tr>\n";
                 }
             }
         }
         $out .=  "</table>";
         // print nl2br(var_export($_SESSION['filter_course_of_studies'],true));
         if ($getEmails) {
-            return implode(",", $eMails);
+                return $allemails;
         }
         return $out;
     }
     return $privileged_users;
 }
+
 
 // get filters set for evaluation and set CoS_privileged users
 function get_evaluation_filters($evaluation, $get_course_studies=true) {
