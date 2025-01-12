@@ -4711,7 +4711,7 @@ HEREDOC;
         ev_set_reminders($evaluation,$role."s", $noreplies);
         if (true || !$CFG->noemailever) {
             if ($emails = ev_set_privileged_users(false, true)){
-                $mails = explode(",",$emails):
+                $mails = explode(",",$emails);
                 $cnt = 1;
                 foreach ($mails as $to) {
                     if (!strstr($to,"@") || !strstr($to,"<")){
