@@ -3641,7 +3641,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
         $out .=  "</table>";
         // print nl2br(var_export($_SESSION['filter_course_of_studies'],true));
         if ($getEmails) {
-                return $allemails;
+                return $eMails;
         }
         return $out;
     }
@@ -4729,7 +4729,7 @@ HEREDOC;
         ev_set_reminders($evaluation,$role."s", $noreplies);
         if (true || !$CFG->noemailever) {
             if ($emails = ev_set_privileged_users(false, true)){
-                $mails = explode(",",$emails);
+                $mails = explode("\n",$emails);
                 $cnt = 1;
                 foreach ($mails as $to) {
                     if (!strstr($to,"@") || !strstr($to,"<")){
