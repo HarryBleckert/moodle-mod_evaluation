@@ -4534,15 +4534,12 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     ini_set("output_buffering", 600);
     $testinfo = ($test ? " Test: " : "");
     $role = ($role != "participants" ? $role : "student");
-    $testMsg = "";
-    if ($test) {
-        if ($role == "student") {
-            $testMsg = $pMsg =
-                    "<p>Unten einkopiert ein Beispiel für die heute an Studierende, deren Kurse an der Evaluation teilnehmen, gesendeten Mails. $norpliestxt.</p><hr>";
-        } else {
-            $testMsg = $pMsg =
-                    "<p>Unten einkopiert ein Beispiel für die heute an Lehrende, deren Kurse an der Evaluation teilnehmen, gesendeten Mails. $norpliestxt.</p><hr>";
-        }
+    if ($role == "student") {
+        $testMsg = $pMsg =
+                "<p>Unten einkopiert ein Beispiel für die heute an Studierende, deren Kurse an der Evaluation teilnehmen, gesendeten Mails. $norpliestxt.</p><hr>";
+    } else {
+        $testMsg = $pMsg =
+                "<p>Unten einkopiert ein Beispiel für die heute an Lehrende, deren Kurse an der Evaluation teilnehmen, gesendeten Mails. $norpliestxt.</p><hr>";
     }
 
     foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
@@ -4604,6 +4601,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 list($fullname, $emailt) = explode(' <', trim($to, '> '));
                 $to = '=?UTF-8?B?' . base64_encode($fullname." (Test)") . '?=' . " <$emailt>";
             }
+        } else {
+            $testMsg = "";
         }
 
         $reminder = ($remaining_evaluation_days <= 9 ?
