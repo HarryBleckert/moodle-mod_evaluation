@@ -3474,7 +3474,7 @@ function pass_evaluation_filters($evaluation, $courseid) {
 
 function ev_set_privileged_users($show = false, $getEmails = false) {
     global $CFG, $DB, $USER, $evaluation;
-    $allemails = array();
+    $allemails = $eMails = array();
     $cfgFile = $CFG->dirroot . "/mod/evaluation/privileged_users.csv";
     if (is_readable($cfgFile)) {
         $cfgA = explode("\n", file_get_contents($cfgFile));
@@ -3538,8 +3538,8 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                 $privileged_users[$username] = $username;
                 $_SESSION["privileged_users"][$username] = $username;
                 if ($eMail = $DB->get_record("user",array("username" => $username))) {
-                    $eMails[$username] = '"' . $eMail->firstname . ' ' . $eMail->lastname
-                            . '" &lt;' . $eMail->email . "&gt;";
+                    $eMails[$username] = '"' . $eMail->firstname . ' ' . $eMail->lastname . '" <' . $eMail->email . ">";
+                            // . '" &lt;' . $eMail->email . "&gt;";
                     $allemails[$username] = $eMail->email;
                 }
             }
@@ -3578,7 +3578,6 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
     if ( is_readable($cfgFile) AND ($show OR $getEmails)){
         $cfgData = file_get_contents($cfgFile);
         $pos = strpos($cfgData,"#Anmeldename");
-        $eMails = array();
         $out = "";
         if ( $pos){
             $cfgData = substr($cfgData, $pos+1);
@@ -3624,7 +3623,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
                     }
                     // add email
                     $mail = (isset($allemails[$row[0]]) ?$allemails[$row[0]] :"&nbsp;");
-                    $out .= '<td style="font-weight:bold;">' . $mail . "</td>\n";
+                    $out .= '<td>' . $mail . "</td>\n";
                 }
                 $out .= "</tr>\n";
             }
