@@ -4813,7 +4813,7 @@ function ev_get_reminders($evaluation, $id) {
         $send_reminders = optional_param('send_reminders', false, PARAM_INT);
         $role = optional_param('role', false, PARAM_TEXT);
         $noreplies = optional_param('noreplies', false, PARAM_INT);
-        $test = optional_param('test', false, PARAM_TEXT);
+        $test = optional_param('test', false, PARAM_RAW);
         $remindertxt = '<a href="?id='.$id.'&send_reminders=1">' . $remindertxt . "</a>";
         $non_responders_only = ev_get_string('non_responders_only'); // Nur Non Responders
         $reminders_title =  ev_get_string('reminders_title');
@@ -4827,7 +4827,7 @@ function ev_get_reminders($evaluation, $id) {
                            <option value="teacher">Teachers</option>
                            <option value="student">Students</option>
                        </select>
-                        - <input type="text" name="test" value="Harry Bleckert <Harry.Bleckert@ASH-Berlin.eu>"></input>
+                        - Test: <input type="text" name="test" value="Harry Bleckert <Harry.Bleckert@ASH-Berlin.eu>">
                         - <?php echo $non_responders_only;?>?
                         <input type="radio" name="noreplies" value="0" checked>Nein</input>
                         <input type="radio" name="noreplies" value="1">Ja</input>&nbsp;
