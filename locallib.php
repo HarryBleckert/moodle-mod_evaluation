@@ -4728,7 +4728,7 @@ HEREDOC;
                     $cnt++;
                 }
             }
-            if (is_sideadmin()){
+            if (is_siteadmin()){
                 print nl2br("<hr>Emails:\n" . var_export($emails,true));
             }
         }
