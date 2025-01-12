@@ -3561,57 +3561,54 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
     }
 
     // display list as html table
-    if ( is_readable($cfgFile) AND $show){
+    if ( is_readable($cfgFile) AND ($show OR $getEmails)){
         $cfgData = file_get_contents($cfgFile);
         $pos = strpos($cfgData,"#Anmeldename");
         $eMails = array();
+        $out = "";
         if ( $pos){
             $cfgData = substr($cfgData, $pos+1);
         }
         $rows = explode("\n", $cfgData);
-        print "<style>tr:nth-child(odd) {background-color:lightgrey;}</style>";
-        $out = "<b>Übersicht privilegierte Personen</b> (diese Evaluation)<br><br>\n";
-        $out .= '<table style="">'."\n";
+        $out .= "<style>tr:nth-child(odd) {background-color:lightgrey;}</style>";
+        $out .= "<b>Übersicht privilegierte Personen</b> (diese Evaluation)<br><br>\n";
+        $out .= '<table style="">' . "\n";
+
         $first = true;
         foreach ($rows as $srow) {
             $CoS = "";
             $row = explode(",", $srow);
-            if (isset($row[1]) AND !strstr($row[1], "#")) {
+            if (isset($row[1]) and !strstr($row[1], "#")) {
                 $CoS = trim($row[1]);
             }
-            if ( !$first AND !empty($CoS)) {
-                if ( isset($_SESSION['CoS_privileged'][$USER->username])) {
+            if (strstr($row[0], "#")) {
+                continue;
+            }
+            if (!$first and !empty($CoS)) {
+                if (isset($_SESSION['CoS_privileged'][$USER->username])) {
                     if (!isset($_SESSION['CoS_privileged'][$USER->username][$CoS])) {
                         continue;
                     }
                 }
-                if ( !empty($_SESSION['filter_course_of_studies']) AND !in_arrayi($CoS, $_SESSION['filter_course_of_studies'])){
+                if (!empty($_SESSION['filter_course_of_studies']) and !in_arrayi($CoS, $_SESSION['filter_course_of_studies'])) {
                     continue;
                 }
             }
-            if (strstr( $row[0], "#")){
-                continue;
-            }
-            $username = trim($row[0]);
             //$_SESSION["privileged_global_users_wm"][$username] = $username;
-            $out .= "<tr>\n";
-            if ($first) {
-                foreach ($row as $col) {
-                    $out .=  '<th style="font-weight:bold;">'.htmlspecialchars($col)."</th>\n";
-                }
-                $first = false;
-            } else {
-                foreach ($row as $col) {
-                    $out .=  "<td>".htmlspecialchars($col)."</td>\n";
-                }
-                if ($getEmails){
-                    if ($eMail = $DB->get_record("user",array("username" => $row[0]))){
-                        $eMails[$row[0]] = '"' . $eMail->firstname .' '. $eMail->lastname
-                                .'" &lt;' . $eMail->email . "&gt;";
+            if ( $show) {
+                $out .= "<tr>\n";
+                if ($first) {
+                    foreach ($row as $col) {
+                        $out .= '<th style="font-weight:bold;">' . htmlspecialchars($col) . "</th>\n";
+                    }
+                    $first = false;
+                } else {
+                    foreach ($row as $col) {
+                        $out .= "<td>" . htmlspecialchars($col) . "</td>\n";
                     }
                 }
+                $out .= "</tr>\n";
             }
-            $out .= "</tr>\n";
         }
         if (!empty($ev_privileged_users)) {
             foreach ($ev_privileged_users AS $privileged_user){
@@ -4460,7 +4457,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         ev_show_reminders_log("ERROR: Evaluation with ID $evaluation->id not found!", $cronjob);
         return false;
     }
-    if (!evaluation_is_open($evaluation)){
+    if (!evaluation_is_open($evaluation)) {
         ev_show_reminders_log("ERROR: The evaluation '$evaluation->name' is not open. Reminders can not be mailed!", $cronjob);
         return false;
     }
@@ -4478,15 +4475,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
     ev_show_reminders_log("\n" . date("Ymd H:i:s") .
             "\nSending reminders to all participants with role $role in evaluation ($CFG->dbname)"
-            ."'$evaluation->name' (ID: $evaluation->id)", $cronjob);
+            . "'$evaluation->name' (ID: $evaluation->id)", $cronjob);
 
     $norpliestxt = "";
-    if ($noreplies){
+    if ($noreplies) {
         if ($role == "teacher") {
-            $norpliestxt = "Nur Lehrende für die es bisher weniger als 3 Abgbaen gibt";
-        }
-        else{
-            $norpliestxt = "Nur Studiernde die bisher noch nicht an der Evaluation teilgenommen haben";
+            $norpliestxt = "Nur Lehrende, für die bisher weniger als 3 Abgaben gemacht wurden.";
+        } else {
+            $norpliestxt = "Nur Studiernde, die bisher noch nicht an der Evaluation teilgenommen haben.";
         }
         ev_show_reminders_log($norpliestxt, $cronjob);
     }
@@ -4494,7 +4490,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($test) {
         ev_show_reminders_log("Test Mode $test", $cronjob);
     }
-    if ( $CFG->noemailever ) {
+    if ($CFG->noemailever) {
         ev_show_reminders_log("CFG->noemailever: Only Test mails to be sent for this Moodle instance", $cronjob);
     }
     //get all participating students/teachers
@@ -4512,7 +4508,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
     $senderName = '=?UTF-8?B?' . base64_encode($evaluation->sendername) . '?=';
     $senderMail = $evaluation->sendermail;
-    $sender = $senderName  . " <$senderMail>";
+    $sender = $senderName . " <$senderMail>";
 
     $cntStudents = $cntTeachers = 0;
     $cnt = 1;
@@ -4520,14 +4516,17 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         define('NO_OUTPUT_BUFFERING', true);
     }*/
     ini_set("output_buffering", 600);
-    $testinfo = ($test ?" Test: " :"");
-
-    if ($role == "student" || $role == "participants") {
-        $testMsg =
-                "<p>Dies ist ein Beispiel für die Mail an die Studierenden, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
-    } else {
-        $testMsg =
-                "<p>Dies ist ein Beispiel für die Mail an die Lehrenden, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
+    $testinfo = ($test ? " Test: " : "");
+    $role = ($role != "participants" ? $role : "student");
+    $testMsg = "";
+    if ($test) {
+        if ($role == "student") {
+            $testMsg = $pMsg =
+                    "<p>Unten einkopiert ein Beispiel für die heute an Studierende, deren Kurse an der Evaluation teilnehmen, gesendeten Mails. $norpliestxt.</p><hr>";
+        } else {
+            $testMsg = $pMsg =
+                    "<p>Unten einkopiert ein Beispiel für die heute an Lehrende, deren Kurse an der Evaluation teilnehmen, gesendeten Mails. $norpliestxt.</p><hr>";
+        }
     }
 
     foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
@@ -4567,14 +4566,16 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             continue;
         }
 
-        if ($role == "student" || $role == "participants") {
+        if ($role == "student") {
             $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
         } else {
             $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, true, true);
         }
 
         if ($test OR ($cnt<2 AND $CFG->noemailever)) {
-
+            if ($cnt > 1) {
+                break;
+            }
             $to = "Harry <Harry@Bleckert.com>";
             // $to = $sender;
             // $to = "Anja Voss <voss@ash-berlin.eu>";
@@ -4587,13 +4588,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 list($fullname, $emailt) = explode(' <', trim($to, '> '));
                 $to = '=?UTF-8?B?' . base64_encode($fullname." (Test)") . '?=' . " <$emailt>";
             }
-            if ($cnt > 1) {
-                break;
-            }
         }
+
         $reminder = ($remaining_evaluation_days <= 9 ?
                 "<b>nur noch $remaining_evaluation_days Tage bis zum $lastEvaluationDay laufenden</b> " : "laufenden ");
-        if ($role == "student" || $role == "participants") {
+        if ($role == "student") {
             $hasParticipated = evaluation_has_user_participated($evaluation, $userid);
             if ($noreplies AND $hasParticipated) {
                 continue;
@@ -4604,8 +4603,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 continue;
             }
             $cntStudents++;
-            $also = (($hasParticipated or remaining_evaluation_days($evaluation) > 15) ? "" :
-                    "auch");
+            $also = (($hasParticipated or remaining_evaluation_days($evaluation) > 15) ? ""
+                    :"auch");
             $message = <<<HEREDOC
 <html>
 <head>
@@ -4687,8 +4686,7 @@ Alice-Salomon-Platz 5, 12627 Berlin
 </html>
 HEREDOC;
         }
-        if ( !$CFG->noemailever || $test || $cnt<2) {
-            // if (Berthe Khayat <khayat@ash-berlin.eu>)
+        if (!$CFG->noemailever || $test || $cnt<2) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
             ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
@@ -4707,10 +4705,30 @@ HEREDOC;
     echo "\n";
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
             date("Ymd H:i:s"), $cronjob);
-    // $USER = core_user::get_user($saveduser->id);
+    // send info mails to privileged
     if (!$test){
         $role = ($role == "teacher" ?$role :"student");
         ev_set_reminders($evaluation,$role."s", $noreplies);
+        if (true || !$CFG->noemailever) {
+            if ($emails = ev_set_privileged_users(false, true)){
+                $mails = explode(",",$emails):
+                $cnt = 1;
+                foreach ($mails as $to) {
+                    if (!strstr($to,"@") || !strstr($to,"<")){
+                        continue;
+                    }
+                    list($fullname, $emailt) = explode(' <', trim($to, '> '));
+                    // $to = '=?UTF-8?B?' . base64_encode($fullname. '?=' . " <$emailt>";
+                    $to = '=?UTF-8?B?' . base64_encode($fullname. '?=') . " <Harry.Bleckert@ASH-Berlin.eu>";
+                    $msg = "Guten Tag $fullname<br>Sie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.<br>\n$pMsg";
+                    $message = str_ireplace("<body>", "<body>" . $msg, $message);
+                    mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
+                    $msg = "-Info an Privilegierte:";
+                    ev_show_reminders_log("$cnt.$msg $fullname - $username - $to - ID: $userid", $cronjob);
+                    $cnt++;
+                }
+            }
+        }
     }
     return true;
 }
@@ -4895,13 +4913,14 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                  * format:
                  * 04.06.2024:teachers,students
                  * */
-                $tsent = $ssent = $tsentnr = $ssentnr = 0;
+                $tsent = $ssent = 0;
                 $remindersA = explode("\n", $reminders);
                 foreach ($remindersA AS $reminder ){
                     $items = explode(":",$reminder);
                     if ( empty($reminder) OR empty($items[0])) {
                         continue;
                     }
+                    $tsent_nr = $ssent_nr = false;
                     $timestamp = strtotime($items[0]);
                     // print "<hr>timestamp: $timestamp - Date: ".date("d.m.Y",$timestamp)."<hr>";
                     $roles = explode(",", $items[1]);
@@ -4913,8 +4932,10 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                         // print $role.", ";
                         if ($role == "teachers") {
                             $tsent = $timestamp;
+                            $tsent_nr = true;
                         } else if ($role == "students") {
                             $ssent = $timestamp;
+                            $ssent_nr = true;
                         }
 
                     }
@@ -4924,34 +4945,30 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                 // print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: "
                 //        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
                 mtrace("Evaluation '$evaluation->name': Checking for due reminders to teachers and students");
-                if ($tsent AND ($tsent+(2*$week) < time())){
-                    $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending reminders to teachers ($CFG->dbname)");
-                    ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
-                }
-                else if (($tsent+(1*$week)) < time()){
+                if (!$tsent_nr AND ($tsent+(1*$week)) < time()){
                     $reminders_sent = true;
                     mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding teachers ($CFG->dbname)");
                     ev_send_reminders($evaluation, "teacher", true, $test, $verbose, $cli, $cronjob);
-                }
-                else if ($days<4 and ($tsent+(3*86400))< time()){
+                } else if ($tsent AND ($tsent+(2*$week) < time())){
+                    $reminders_sent = true;
+                    mtrace("Evaluation '$evaluation->name': Sending reminders to teachers ($CFG->dbname)");
+                    ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
+                } else if ($days<4 and ($tsent+(3*86400))< time()){
                     $reminders_sent = true;
                     mtrace("Evaluation '$evaluation->name': Sending final reminders to teachers ($CFG->dbname)");
                     ev_send_reminders($evaluation, "teacher", false, $test, $verbose, $cli, $cronjob);
                 }
 
                 $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=".$evaluation->id);
-                if (($ssent+(2*$week)) < time()){
-                    $reminders_sent = true;
-                    mtrace("Evaluation '$evaluation->name': Sending reminders to students ($CFG->dbname)");
-                    ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
-                }
-                else if (($ssent+(1*$week)) < time()){
+                if (!$ssent_nr AND ($ssent+(1*$week)) < time()){
                     $reminders_sent = true;
                     mtrace("Evaluation '$evaluation->name': Sending reminders to non-responding students ($CFG->dbname)");
                     ev_send_reminders($evaluation, "student", true, $test, $verbose, $cli, $cronjob);
-                }
-                else if ($days<4 and ($ssent+(3*86400)) < time()){
+                } else if (($ssent+(2*$week)) < time()){
+                    $reminders_sent = true;
+                    mtrace("Evaluation '$evaluation->name': Sending reminders to students ($CFG->dbname)");
+                    ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
+                } else if ($days<4 and ($ssent+(3*86400)) < time()){
                     $reminders_sent = true;
                     mtrace("Evaluation '$evaluation->name': Sending final reminders to students ($CFG->dbname)");
                     ev_send_reminders($evaluation, "student", false, $test, $verbose, $cli, $cronjob);
