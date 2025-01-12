@@ -4735,12 +4735,12 @@ HEREDOC;
                     }
                     list($fullname, $emailt) = explode(' <', trim($to, '> '));
                     // $to = '=?UTF-8?B?' . base64_encode($fullname. '?=' . " <$emailt>";
-                    $to = '=?UTF-8?B?' . base64_encode($fullname. '?=') . " <Harry.Bleckert@ASH-Berlin.eu>";
-                    $msg = "Guten Tag $fullname<br>Sie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.<br>\n$pMsg";
-                    $message = str_ireplace("<body>", "<body>" . $msg, $message);
-                    mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
+                    $to = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
+                    $msg = "Guten Tag $fullname<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.$pMsg";
+                    $msg = str_ireplace("<body>", "<body>" . $msg, $message);
+                    mail($to, $subject, quoted_printable_encode($msg), $headers); //,"-r '$sender'");
                     $msg = "-Info an Privilegierte:";
-                    ev_show_reminders_log("$cnt.$msg $fullname - $username - $to - ID: $userid", $cronjob);
+                    ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt - ID: $userid", $cronjob);
                     $cnt++;
                 }
             }
