@@ -4952,7 +4952,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                         if ($role == "teachers") {
                             $tsent = $timestamp;
                             $tsent_nr = $isnr;
-                        } else {
+                        } else if ($role == "students") {
                             $ssent = $timestamp;
                             $ssent_nr = $isnr;
                         }
