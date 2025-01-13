@@ -4910,7 +4910,6 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     // $test = (true AND $CFG->dbname != 'moodle_staging');
     // $verbose = false;
     $noreplies = false;
-
     foreach ($evaluations AS $evaluation){
         if (!$evaluation->autoreminders){
             continue;
@@ -4930,8 +4929,9 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                  * format:
                  * 04.06.2024:teachers,students
                  * */
-                $tsent = $ssent = 0;
                 $remindersA = explode("\n", $reminders);
+                $tsent_nr = $ssent_nr = $isnr = false;
+                $tsent = $ssent = 0;
                 foreach ($remindersA AS $reminder ){
                     $items = explode(":",$reminder);
                     if ( empty($reminder) OR empty($items[0])) {
@@ -4952,11 +4952,10 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                         if ($role == "teachers") {
                             $tsent = $timestamp;
                             $tsent_nr = $isnr;
-                        } else if ($role == "students") {
+                        } else {
                             $ssent = $timestamp;
                             $ssent_nr = $isnr;
                         }
-
                     }
                 }
                 $week = 86400 * 7;
