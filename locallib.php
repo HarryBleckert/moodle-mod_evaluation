@@ -4909,7 +4909,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     $lastruntime = $task->get_last_run_time();
     mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: "
            .date("d.m,Y H:i:s",$lastruntime));
-
+    mtrace("Checking all open evaluations for due reminders to teachers and students");
     $evaluations = $DB->get_records_sql("SELECT * from {evaluation}");
     // only run in test mode
     // $test = (true AND $CFG->dbname != 'moodle_staging');
@@ -4967,7 +4967,6 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                 $days = remaining_evaluation_days($evaluation);
                 // print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: "
                 //        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
-                mtrace("Evaluation '$evaluation->name': Checking for due reminders to teachers and students");
                 if ($tsent) {
                     if (($tsent_nr and $tsent + (1 * $week) < time()) or ($tsent + (2 * $week) < time())) {
                         $reminders_sent = true;
