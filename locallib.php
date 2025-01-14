@@ -4744,10 +4744,10 @@ HEREDOC;
         }
     }
     if (!stripos($to, "bleckert")) {
-        $dataroot = "<br>\n(" . $CFG->dataroot .") ";
+        $dbname = "<br>\n(" . $CFG->dbname .") ";
         $mailsSent = "\$CFG->noemailever: " . ($CFG->noemailever ?"No m" :"M") . "ails sent. \n";
-        $msg = "Hey Admin<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind."
-                . $dataroot . $mailsSent . $pMsg;
+        $msg = "Hey Admin :)<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind."
+                . $dbname . $mailsSent . $pMsg;
         $msg = str_ireplace("<body>", "<body>" . $msg, $message);
         mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
     }
