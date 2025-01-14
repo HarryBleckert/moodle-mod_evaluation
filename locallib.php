@@ -4610,7 +4610,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             }
             if (hasUserEvaluationCompleted($evaluation, $userid)) {
                 ev_show_reminders_log("$cnt. $fullname - $username - $userid - $email - COMPLETED ALL!!", $cronjob);
-                $cnt++;
                 continue;
             }
             $cntStudents++;
@@ -4642,7 +4641,7 @@ Alice-Salomon-Platz 5, 12627 Berlin
 </body>
 </html>
 HEREDOC;
-        } else {
+        } else { // $role == teacher
             if (!safeCount($_SESSION["distinct_s"])) {
                 continue;
             }
