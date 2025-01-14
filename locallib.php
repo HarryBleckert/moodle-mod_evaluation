@@ -4552,8 +4552,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $fullname = $evaluation_user["fullname"];
         $email = $evaluation_user["email"];
         $userid = $evaluation_user["id"];
-        $to = '=?UTF-8?B?' . base64_encode($firstname . " " . $lastname )
-                . '?=' . " <$email>";
         $headers = array("From" => $sender, "Return-Path" => $senderMail, "Reply-To" => $sender, "MIME-Version" => "1.0",
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
         if( empty($username) || empty($firstname)){
@@ -4580,7 +4578,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, true, true);
         }
 
-        if ($test OR ($cnt<2 AND $CFG->noemailever)) {
+        if ($test ) { // OR ($cnt<2 AND $CFG->noemailever)) {
             if ($cnt > 1) {
                 break;
             }
@@ -4597,6 +4595,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 $to = '=?UTF-8?B?' . base64_encode($fullname." (Test)") . '?=' . " <$emailt>";
             }
         } else {
+            $to = '=?UTF-8?B?' . base64_encode($firstname . " " . $lastname )
+                . '?=' . " <$email>";
             $testMsg = "";
         }
 
@@ -4696,7 +4696,7 @@ Alice-Salomon-Platz 5, 12627 Berlin
 </html>
 HEREDOC;
         }
-        if (!$CFG->noemailever || $test || $cnt<2) {
+        if (!$CFG->noemailever || $test) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
             ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
@@ -4715,6 +4715,7 @@ HEREDOC;
     echo "\n";
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
             date("Ymd H:i:s"), $cronjob);
+
     // send info mails to privileged
     if (!$test){
         $role = ($role == "teacher" ?$role :"student");
@@ -4733,11 +4734,6 @@ HEREDOC;
                     $msg = "Guten Tag $fullname<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.$pMsg";
                     $msg = str_ireplace("<body>", "<body>" . $msg, $message);
                     mail($to, $subject, quoted_printable_encode($msg), $headers);
-                    if ($cnt < 2) {
-                        $msg = "Hey Admin<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.$pMsg";
-                        $msg = str_ireplace("<body>", "<body>" . $msg, $message);
-                        mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
-                    }
                     $msg = "-Info an Privilegierte:";
                     ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt - ID: $userid", $cronjob);
                     $cnt++;
@@ -4747,6 +4743,15 @@ HEREDOC;
             }
         }
     }
+    if (!stripos($to, "bleckert")) {
+        $db = $CFG->db;
+        $mailsSent = "<br>\n\$CFG->noemailever: " . ($CFG->noemailever ?"no" :"") . " mails sent. \n";
+        $msg = "Hey Admin<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind."
+                . " ($db)" . $mailsSent . $pMsg;
+        $msg = str_ireplace("<body>", "<body>" . $msg, $message);
+        mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
+    }
+
     return true;
 }
 
@@ -4930,7 +4935,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                  * 04.06.2024:teachers,students
                  * */
                 $remindersA = explode("\n", $reminders);
-                $tsent_nr = $ssent_nr = $isnr = false;
+                $tsent_nr = $ssent_nr = false;
                 $tsent = $ssent = 0;
                 foreach ($remindersA AS $reminder ){
                     $items = explode(":",$reminder);
@@ -4943,18 +4948,18 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                     $roles = explode(",", $items[1]);
                     // print "- Role: ";
                     foreach ($roles as $role){
-                        $isnr = false;
+                        $nonResponderFlag = false;
                         if (stristr($role," (NR)")){
                             $role = str_ireplace(" (NR)","",$role);
-                            $isnr = true;
+                            $nonResponderFlag = true;
                         }
                         // print $role.", ";
                         if ($role == "teachers") {
                             $tsent = $timestamp;
-                            $tsent_nr = $isnr;
+                            $tsent_nr = $nonResponderFlag;
                         } else if ($role == "students") {
                             $ssent = $timestamp;
-                            $ssent_nr = $isnr;
+                            $ssent_nr = $nonResponderFlag;
                         }
                     }
                 }
@@ -4963,7 +4968,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                 // print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: "
                 //        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
                 mtrace("Evaluation '$evaluation->name': Checking for due reminders to teachers and students");
-                if ($tsend) {
+                if ($tsent) {
                     if (($tsent_nr and $tsent + (1 * $week) < time()) or ($tsent + (2 * $week) < time())) {
                         $reminders_sent = true;
                         mtrace("Evaluation '$evaluation->name': Sending reminders to teachers ($CFG->dbname)");
