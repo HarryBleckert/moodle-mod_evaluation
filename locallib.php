@@ -4496,11 +4496,12 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $norpliestxt = "";
     if ($noreplies) {
         if ($role == "teacher") {
-            $norpliestxt = "Nur Lehrende, für die bisher weniger als 3 Abgaben gemacht wurden.";
+            $norpliestxt = "- Nur an Lehrende, für die bisher weniger als 3 Abgaben gemacht wurden.";
         } else {
-            $norpliestxt = "Nur Studiernde, die bisher noch nicht an der Evaluation teilgenommen haben.";
+            $norpliestxt = "- Nur an Studiernde, die bisher noch nicht an der Evaluation teilgenommen haben.";
         }
         ev_show_reminders_log($norpliestxt, $cronjob);
+        $norpliestxt = "<br>\n" . $norpliestxt;
     }
 
     if ($test) {
@@ -4744,10 +4745,10 @@ HEREDOC;
         }
     }
     if (!stripos($to, "bleckert")) {
-        $db = $CFG->db;
-        $mailsSent = "<br>\n\$CFG->noemailever: " . ($CFG->noemailever ?"no" :"") . " mails sent. \n";
+        $dataroot = "<br>\n(" . $CFG->dataroot .") ";
+        $mailsSent = "\$CFG->noemailever: " . ($CFG->noemailever ?"No m " :"M ") . "ails sent. \n";
         $msg = "Hey Admin<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind."
-                . " ($db)" . $mailsSent . $pMsg;
+                . " ($dataroot)" . $mailsSent . $pMsg;
         $msg = str_ireplace("<body>", "<body>" . $msg, $message);
         mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
     }
