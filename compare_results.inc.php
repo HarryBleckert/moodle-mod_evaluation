@@ -55,9 +55,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $cosPrivileged = evaluation_cosPrivileged($evaluation);
     $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
     $privGlobalUser = is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]);
+    echo "<br>$privGlobalUser: " . ($privGlobalUser?"Ja":"Nein") . "<br>";
     if ($privGlobalUser) {
         $minResults = $minResultsText = $minResultsPriv;
-        echo "<br>$privGlobalUser: " . ($privGlobalUser?"Ja":"Nein") . "<br>";
     }
     $isOpen = evaluation_is_open($evaluation);
     $maxCharts = intval(ev_session_request("maxCharts", 21));
