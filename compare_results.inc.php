@@ -31,7 +31,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $_SESSION["duplicated"] = evaluation_count_duplicated_replies($evaluation);
     }
     $id = get_evaluation_cmid_from_id($evaluation);
-    ev_set_privileged_users();
 
     // auto-submit if called by $_GET
     if (!empty($_GET["showCompare"])) {
@@ -54,8 +53,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
     // handle CoS privileged user
     $cosPrivileged = evaluation_cosPrivileged($evaluation);
     $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
+    ev_set_privileged_users();
     $privGlobalUser = is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]);
-    echo "<br>$privGlobalUser: " . ($privGlobalUser?"Ja":"Nein") . "<br>";
+    echo "<br>privGlobalUser: " . ($privGlobalUser?"Ja":"Nein") . "<br>";
     if ($privGlobalUser) {
         $minResults = $minResultsText = $minResultsPriv;
     }
