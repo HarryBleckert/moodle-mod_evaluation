@@ -57,6 +57,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $privGlobalUser = is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]);
     if ($privGlobalUser) {
         $minResults = $minResultsText = $minResultsPriv;
+        echo "<br>$privGlobalUser: " . ($privGlobalUser?"Ja":"Nein") . "<br>";
     }
     $isOpen = evaluation_is_open($evaluation);
     $maxCharts = intval(ev_session_request("maxCharts", 21));
