@@ -53,7 +53,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     // handle CoS privileged user
     $cosPrivileged = evaluation_cosPrivileged($evaluation);
     $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
-    $privGlobalUser = is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username])
+    $privGlobalUser = is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]);
     if ($privGlobalUser) {
         $minResults = $minResultsText = $minResultsPriv;
     }
