@@ -233,7 +233,8 @@ if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
     }
     $a->andrawdata  = ev_get_string('andrawdata'); // und Rohdaten
     $a->yourcos = ev_get_string('yourcos'); // Ihrer Studiengänge
-    $a->viewanddownload = ev_get_string('viewanddownload'); // einsehen und herunterladen.
+    $a->minresultspriv = min_results_priv($evaluation);
+    $a->viewanddownload = ev_get_string('viewanddownload',$a); // einsehen und herunterladen.
     $a->privilegestxt = ev_get_string('privilegestxt',$a); // Als {$a->siteadmintxt für diese Evaluation privilegierte Person können Sie alle Auswertungen {$a->andrawdata}
     $msg_privPersons = $good_day . " " . trim($USER->firstname) . " " . trim($USER->lastname) . "<br>\n"
             . $a->privilegestxt
