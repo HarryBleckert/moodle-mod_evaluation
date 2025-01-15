@@ -55,8 +55,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
     ev_set_privileged_users();
     $privGlobalUser = is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]);
-    echo "<br>privGlobalUser: " . ($privGlobalUser?"Ja":"Nein") . " - username:"
-            $_SESSION["privileged_global_users"][$USER->username] . nl2br("\n" . var_export($_SESSION["privileged_global_users"],true)) ."<br>";
+    echo "<br>privGlobalUser: " . ($privGlobalUser?"Ja":"Nein") . " - username: "
+           . $_SESSION["privileged_global_users"][$USER->username] . nl2br("\n" . var_export($_SESSION["privileged_global_users"],true)) ."<br>";
     if ($privGlobalUser) {
         $minResults = $minResultsText = $minResultsPriv;
     }
