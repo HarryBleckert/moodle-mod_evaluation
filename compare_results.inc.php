@@ -31,6 +31,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $_SESSION["duplicated"] = evaluation_count_duplicated_replies($evaluation);
     }
     $id = get_evaluation_cmid_from_id($evaluation);
+    list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation);
 
     // auto-submit if called by $_GET
     if (!empty($_GET["showCompare"])) {
