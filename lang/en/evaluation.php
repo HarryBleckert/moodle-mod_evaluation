@@ -84,8 +84,20 @@ $string['to_evaluate'] = 'To be submitted';
 $string['non_of_your_courses_participated'] = 'None of your courses participated in this evaluation!';
 $string['for_you'] = 'for you';
 $string['in_your_courses'] = 'in your participating courses';
+// $string[''] = '';
 // end view.php
 
+// compare_results_inc.php
+$string['back'] = 'Back';
+$string['analysis_cos'] = 'Evaluation of the degree programs';
+$string['reset_selection'] = 'Reset selection';
+$string['question_hint'] = 'There are 3 variants of automatically assessed questions: radio and dropdown (single choice) or checkbox (multi choice). For single choice questions, exactly one answer can be selected from several answer options. Multi choice questions allow any selection of answers';
+$string['no_questions_for_analysis'] = 'There are neither multi-choice questions nor numerical questions. A statistical evaluation is not possible for this evaluation!';
+$string['no_answer'] = 'no answer';
+$string['cant_answer'] = 'k.b.';
+$string['i_dont_know'] = 'I can\'t answer';
+
+// end compare_results_inc.php
 $string['active_only'] = 'Active only';
 $string['AllActivities'] = 'All activities of this Evaluation';
 $string['all_courses'] = 'All courses';
@@ -281,9 +293,7 @@ $string['edit_items'] = 'Edit questions';
 $string['email_notification'] = 'Enable notification of submissions';
 $string['email_notification_help'] = 'If enabled, teachers will receive notification of evaluation submissions.';
 $string['emailteachermail'] = '{$a->username} has completed evaluation activity : \'{$a->evaluation}\'
-
-You can view it here:
-
+You can view it here: 
 {$a->url}';
 $string['emailteachermailhtml'] = '<p>{$a->username} has completed evaluation activity : <i>\'{$a->evaluation}\'</i>.</p>
 <p>It is <a href="{$a->url}">available on the site</a>.</p>';

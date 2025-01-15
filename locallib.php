@@ -3564,7 +3564,7 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
         foreach ($ev_privileged_users as $privileged_user) {
             $privileged_users[$privileged_user] = $privileged_user;
             $_SESSION["privileged_users"][$privileged_user] = $privileged_user;
-            $_SESSION["privileged_global_users"][$privileged_user] = $privileged_user;
+            // $_SESSION["privileged_global_users"][$privileged_user] = $privileged_user;
             if ($eMail = $DB->get_record("user",array("username" => $privileged_user))) {
                 $eMails[$privileged_user] = '"' . $eMail->firstname . ' ' . $eMail->lastname . '" <' . $eMail->email . ">";
                         // . '" &lt;' . $eMail->email . "&gt;";

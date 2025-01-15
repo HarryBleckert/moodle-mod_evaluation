@@ -3,6 +3,7 @@
 // this file is part of Moodle mod_evaluation plugin
 
 /*
+ * 
 // question presentation constants
 define('EVALUATION_MULTICHOICE_TYPE_SEP', '>>>>>');
 define('EVALUATION_MULTICHOICE_LINE_SEP', '|');
@@ -12,6 +13,16 @@ define('EVALUATION_MULTICHOICE_HIDENOSELECT', 'h');
 */
 
 // get average results of all answers fore selected items or all course_of_studies, courses and teachers
+/**
+ * Compares and processes the results of an evaluation, applying filters and user roles.
+ *
+ * @param int $evaluation The evaluation ID to be analyzed.
+ * @param int|false $courseid Optional course ID to filter the results by a specific course.
+ * @param int|false $teacherid Optional teacher ID to filter the results by a specific teacher.
+ * @param int|false $course_of_studiesID Optional course of studies ID to filter results to specific studies.
+ * @param int|false $department Optional department ID to filter results by a specific department.
+ * @return void This function does not return a value, but it processes results and prepares data for output.
+ */
 function evaluation_compare_results($evaluation, $courseid = false,
         $teacherid = false, $course_of_studiesID = false, $department =false) {
     global $DB, $OUTPUT, $USER;
@@ -42,8 +53,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     // handle CoS privileged user
     $cosPrivileged = evaluation_cosPrivileged($evaluation);
     $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
-    $privGlobalUser = (is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username])
-            ?!empty($_SESSION["privileged_global_users"][$USER->username]) :false);
+    $privGlobalUser = is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username])
     if ($privGlobalUser) {
         $minResults = $minResultsText = $minResultsPriv;
     }
@@ -90,19 +100,19 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     $boldStyle = "font-size:12pt;font-weight:bold;display:inline;";
     $buttonstyle = 'font-size:125%;color:white;background-color:black;text-align:center;';
-    $goBack = html_writer::tag('button', "Zurück", array('class' => "d-print-none", 'style' => $buttonstyle,
+    $goBack = html_writer::tag('button', ev_get_string('back'), array('class' => "d-print-none", 'style' => $buttonstyle,
             'type' => 'button', 'onclick' => 'window.history.back();'));
-    $goBack .= "&nbsp;&nbsp;" . html_writer::tag('a', "Überblick", array('class' => "d-print-none", 'style' => $buttonstyle,
+    $goBack .= "&nbsp;&nbsp;" . html_writer::tag('a', ev_get_string('overview'), array('class' => "d-print-none", 'style' => $buttonstyle,
                     'type' => 'button', 'href' => 'view.php?id=' . $id . '&courseid=' . $courseid . '&teacherid=' . $teacherid
                             . '&course_of_studiesID=' . $course_of_studiesID));
-    $goBack .= "&nbsp;&nbsp;" . html_writer::tag('a', "Auswertung", array('class' => "d-print-none", 'style' => $buttonstyle,
+    $goBack .= "&nbsp;&nbsp;" . html_writer::tag('a', ev_get_string('analysis'), array('class' => "d-print-none", 'style' => $buttonstyle,
                     'type' => 'button',
                     'href' => 'analysis_course.php?id=' . $id . '&courseid=' . $courseid . '&teacherid=' . $teacherid
                             . '&course_of_studiesID=' . $course_of_studiesID));
 
     // handle CoS priveleged user
     if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
-        print "Auswertungen der Studiengänge: " . '<span style="font-weight:600;white-space:pre-line;">'
+        print  ev_get_string('analysis_cos') . ": " . '<span style="font-weight:600;white-space:pre-line;">'
                 . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span><br>\n";
     }
 
@@ -110,11 +120,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
     echo evPrintButton();
 
     $responses = get_string('completed_evaluations', "evaluation");
-    $filterSubject = "Auswahl zurücksetzen";
-
-    $hint =
-            "Es gibt 3 Varianten von automatisch bewertbaren Fragen: Radio und Dropdown (Single Choice) oder Checkbox (Multi Choice). Bei Single Choice Fragen kann aus mehreren Antwortoptionen genau eine Antwort ausgewählt werden. Multi Choice Fragen erlauben eine beliebige Auswahl von Antworten";
-    echo '<h1 title="' . $hint . '" style="display:inline;color:darkgreen;text-align:left;font-weight:bolder;">Statistik</h1><br>';
+    $filterSubject = ev_get_string('reset_selection');
+    echo '<h1 title="' . ev_get_string('question_hint') . '" style="display:inline;color:darkgreen;text-align:left;font-weight:bolder;">Statistik</h1><br>';
 
     if ($allSelected == "allDepartments") {
         $allSubject = get_string("departments", "evaluation");
@@ -167,8 +174,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $allQuestions = $DB->get_records_sql($query);
     $numAllQuestions = safeCount($allQuestions);
     if (!$numAllQuestions) {
-        echo $OUTPUT->notification("Es gibt weder Multichoice Fragen noch numerische Fragen. 
-				Eine statistische Auswertung ist für diese Evaluation nicht möglich!");
+        echo $OUTPUT->notification(ev_get_string('no_questions_for_analysis'));
         echo $OUTPUT->footer();
         flush();
         exit;
@@ -213,8 +219,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 }
             }
 
-            if (in_arrayi("k.b.", $presentation) or in_arrayi("keine Angabe", $presentation) or
-                    in_arrayi("Kann ich nicht beantworten", $presentation)) {
+            if (in_arrayi(ev_get_string('cant_answer'), $presentation) or in_arrayi(ev_get_string('no_answer'), $presentation) or
+                    in_arrayi(ev_get_string('i_dont_know'), $presentation)) {
                 array_pop($presentation);
             }
             // $presentationraw = $presentation; // used for subqueries
@@ -245,8 +251,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                             str_replace(array("\t", "\r", "\n", "<<<<<1", "r>>>>>", "c>>>>>", "d>>>>>"),
                             "",
                             $question->presentation));
-            if (in_arrayi("k.b.", $presentation) or in_arrayi("keine Angabe", $presentation) or
-                    in_arrayi("Kann ich nicht beantworten", $presentation)) {
+            if (in_arrayi(ev_get_string('cant_answer'), $presentation) or in_arrayi(ev_get_string('no_answer'), $presentation) or
+                    in_arrayi(ev_get_string('i_dont_know'), $presentation)) {
                 array_pop($presentation);
             }
             $scheme = implode(", ", $presentation) . " <=> $qfValues";

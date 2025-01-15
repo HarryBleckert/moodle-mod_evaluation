@@ -88,8 +88,20 @@ $string['non_of_your_courses_participated'] = 'Keiner Ihrer Kurse nahm an dieser
 $string['for_you'] = 'für Sie';
 $string['in_your_courses'] = 'in Ihren teilnehmenden Kursen';
 // $string[''] = '';
-
 // end view.php
+
+// compare_results_inc.php
+$string['back'] = 'Zurück';
+$string['analysis_cos'] = 'Auswertungen der Studiengänge';
+$string['reset_selection'] = 'Auswahl zurücksetzen';
+$string['question_hint'] = 'Es gibt 3 Varianten von automatisch bewertbaren Fragen: Radio und Dropdown (Single Choice) oder Checkbox (Multi Choice). Bei Single Choice Fragen kann aus mehreren Antwortoptionen genau eine Antwort ausgewählt werden. Multi Choice Fragen erlauben eine beliebige Auswahl von Antworten';
+$string['no_questions_for_analysis'] = 'Es gibt weder Multichoice Fragen noch numerische Fragen. Eine statistische Auswertung ist für diese Evaluation nicht möglich!';
+$string['no_answer'] = 'keine Angabe';
+$string['cant_answer'] = 'k.b.';
+$string['i_dont_know'] = 'Kann ich nicht beantworten';
+
+// end compare_results_inc.php
+
 $string['active_only'] = 'Nur Aktive';
 $string['AllActivities'] = 'Alle Aktivitäten dieser Evaluation';
 $string['all_courses'] = 'Alle Kurse';
