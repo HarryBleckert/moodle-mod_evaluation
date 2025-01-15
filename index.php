@@ -128,7 +128,8 @@ foreach ($evaluations as $evaluation) {
     $evaluation_isPrivilegedUser = evaluation_isPrivilegedUser($evaluation);
 
     $dimmedclass = $evaluation->visible ? '' : 'class="dimmed"';
-    $link = '<a ' . $dimmedclass . ' href="' . $viewurl->out() . '">' . $evaluation->name . '</a>';
+    $link = '<a ' . $dimmedclass . ' href="' . $viewurl->out() . '">'
+            . '<span title="' . ev_get_string('sort_tag') .'">' . $evaluation->name . '</span></a>';
 
     if ($usesections) {
         $tabledata = array(get_section_name($course, $evaluation->section), $link);
