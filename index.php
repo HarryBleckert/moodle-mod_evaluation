@@ -129,7 +129,7 @@ foreach ($evaluations as $evaluation) {
 
     $dimmedclass = $evaluation->visible ? '' : 'class="dimmed"';
     $link = '<a ' . $dimmedclass . ' href="' . $viewurl->out() . '">'
-            . '<span title="' . ev_get_string('sort_tag') .'">' . $evaluation->name . '</span></a>';
+            . '<span title="' . ev_get_string('sort_tag') . ": " . $evaluation->sort_tag . '">' . $evaluation->name . '</span></a>';
 
     if ($usesections) {
         $tabledata = array(get_section_name($course, $evaluation->section), $link);
