@@ -5017,3 +5017,65 @@ function array_searchi($needle, $haystack) {
     }
     return false;
 }
+
+function ev_get_tr($source_string, $args=array(), $source_lang='de',$field='') {
+    global $DB, $USER;
+    $target_lang = $USER->lang;
+    $target_string = $source_string;
+    if ($target_lang == $source_lang){
+        return $source_string;
+    }
+    $updated = false;
+
+    if (is_array($args)) {
+        foreach ($args as $key => $value) {
+            if (!stristr($source_string, "{" . $key . "}")) {
+                continue;
+            }
+            $source_string = str_replace("{" . $key . "}", $value, $source_string);
+        }
+    }
+
+    if ( $translation = $DB->get_record_sql("SELECT * from {evaluation_translator} 
+         WHERE source_string = '$source_string' AND source_lang = '$source_lang' AND target_lang='$target_lang'")){
+        return $translation->target_string;
+    }
+
+    // handle special case of german evaluation name
+    if ($field == 'name' AND $source_lang == 'de'){
+        $repl = "Evaluation der Lehrveranstaltungen";
+        $evaluation_of_courses = ev_get_string('evaluation_of_courses');
+        if (stristr($source_string, $repl ) AND $evaluation_of_courses !=="evaluation_of_courses"){
+            $target_string = str_ireplace($repl, $evaluation_of_courses, $target_string);
+        }
+        $repl = "durch Studierende";
+        $by_students = ev_get_string('by_students');
+        if (stristr($source_string, $repl ) AND $by_students !=="by_students"){
+            $target_string = str_ireplace($repl, $by_students, $target_string);
+        }
+        $repl = " des ";
+        $of = ev_get_string(' of ');
+        if (stristr($source_string, $repl ) AND $of !==" of "){
+            $target_string = str_ireplace($repl, $of, $target_string);
+        }
+        $repl = " sose ";
+        $sose = ev_get_string(' sose ');
+        if (stristr($source_string, $repl ) AND $sose !==" sose "){
+            $target_string = str_ireplace($repl, $sose, $target_string);
+        }
+        $repl = " wise ";
+        $wise = ev_get_string(' wise ');
+        if (stristr($source_string, $repl ) AND $sose !==" wise "){
+            $target_string = str_ireplace($repl, $wise, $target_string);
+        }
+    }
+
+    $str_trans = new stdClass();
+    $str_trans->source_lang = $source_lang;
+    $str_trans->target_lang = $target_lang;
+    $str_trans->source_string = $source_string;
+    $str_trans->target_string = $target_string;
+    $str_trans->timemodified = time();
+    $DB->insert_record("evaluation_translator", $str_trans);
+    return $target_string;
+}

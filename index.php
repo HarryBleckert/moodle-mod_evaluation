@@ -128,8 +128,15 @@ foreach ($evaluations as $evaluation) {
     $evaluation_isPrivilegedUser = evaluation_isPrivilegedUser($evaluation);
 
     $dimmedclass = $evaluation->visible ? '' : 'class="dimmed"';
+
+    if (substr($USER->lang, 0, 2) == "de") {
+        $ev_name = ev_get_tr($evaluation->name, array(), 'de', 'name');
+    } else {
+        $ev_name = ev_get_tr($evaluation->name);
+    }
+
     $link = '<a ' . $dimmedclass . ' href="' . $viewurl->out() . '">'
-            . '<span title="' . ev_get_string('sort_tag') . ": " . $evaluation->sort_tag . '">' . $evaluation->name . '</span></a>';
+            . '<span title="' . ev_get_string('sort_tag') . ": " . $evaluation->sort_tag . '">' . $ev_name . '</span></a>';
 
     if ($usesections) {
         $tabledata = array(get_section_name($course, $evaluation->section), $link);

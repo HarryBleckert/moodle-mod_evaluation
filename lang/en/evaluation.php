@@ -29,6 +29,15 @@ defined('MOODLE_INTERNAL') || die();
 // $string[''] = '';
 $string['language'] = 'en';
 
+// translator function
+$string['evaluation_of_courses'] = 'Evaluation der Lehrveranstaltungen';
+$string['by_students'] = 'by students';
+$string[' of '] = ' of ';
+$string[' for '] = ' for ';
+$string[' sose '] = ' summer semester ';
+$string[' wise '] = ' winter semester ';
+// end translator function
+
 // view.php
 $string['is'] = 'is';
 $string['was'] = 'was';

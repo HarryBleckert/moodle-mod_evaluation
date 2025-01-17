@@ -104,6 +104,13 @@ else{
     $evaluation_semester = $semester;
 }
 
+
+if (substr($USER->lang, 0, 2) == "de") {
+    $ev_name = ev_get_tr($evaluation->name, array(), 'de', 'name');
+} else {
+    $ev_name = ev_get_tr($evaluation->name);
+}
+
 //$previewimg = '<i style="color:blue;" class="fa fa-search-plus fa-fw fa-2x" title="'.get_string('preview').'">';
 $previewimg = $OUTPUT->pix_icon('t/preview', get_string('preview'));
 $previewlnk = new moodle_url('/mod/evaluation/print.php', array("id" => $id, "courseid" => $courseid));
@@ -111,7 +118,7 @@ if ($courseid) {
     $previewlnk->param('courseid', $courseid);
 }
 $preview = $previewQ = html_writer::link($previewlnk, $previewimg);
-$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $ev_name . '">';
 $msg = "";
 //$context = context_module::instance($id);
 // if ( is_siteadmin() OR has_capability('moodle/course:update', $context) )
@@ -120,7 +127,7 @@ if (has_capability('mod/evaluation:edititems', $context)) {
     // $msg = '&nbsp;<a href="/course/modedit.php?update='.$id.'&return=1"><i class="fa fa-cog fa-solid" style="color:blue;" aria-hidden="true"></i></a>';
     $msg = '&nbsp;<span onclick="' . $jssn . '"><i class="fa fa-cog fa-solid" style="color:blue;" aria-hidden="true"></i></span>';
 }
-echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name) . "&nbsp;" . $preview . $msg);
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($ev_name) . "&nbsp;" . $preview . $msg);
 
 $previewimg = $OUTPUT->pix_icon('t/preview', get_string('course_of_studies_list', 'evaluation'));
 $previewlnk->param('showCourses_of_studies', 1);
@@ -835,8 +842,8 @@ if (is_siteadmin()) {
     }
 
     if ($SiteEvaluation and (!isset($_SESSION["make_block_evaluation_visible"]) or
-                    $_SESSION["make_block_evaluation_visible"] !== $evaluation->name)) {
-        $_SESSION["make_block_evaluation_visible"] = $evaluation->name;
+                    $_SESSION["make_block_evaluation_visible"] !== $evaluation->id)) {
+        $_SESSION["make_block_evaluation_visible"] = $evaluation->id;
         print make_block_evaluation_visible($evaluation);
     }
     if (isset($_GET['shuffle'])) {

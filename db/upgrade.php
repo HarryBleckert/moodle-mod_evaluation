@@ -538,6 +538,30 @@ function xmldb_evaluation_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, $newversion, 'evaluation');
     }
+
+
+    $newversion = 2025011800;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation_translator');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('source_lang', XMLDB_TYPE_TEXT, null, null, null, null, '');
+        $table->add_field('target_lang', XMLDB_TYPE_TEXT, null, null, null, null, '');
+        $table->add_field('source_string', XMLDB_TYPE_TEXT, null, null, null, null, '');
+        $table->add_field('target_string', XMLDB_TYPE_TEXT, null, null, null, null, '');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        // Adding keys to table evaluation_users.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        // Adding indexes to table evaluation_users.
+        $table->add_index('source_lang', XMLDB_INDEX_NOTUNIQUE, ['source_lang']);
+        $table->add_index('target_lang', XMLDB_INDEX_NOTUNIQUE, ['source_lang']);
+        $table->add_index('source_string', XMLDB_INDEX_NOTUNIQUE, ['source_lang']);
+        // Conditionally launch create table for evaluation_users.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
+
     return true;
 }
 

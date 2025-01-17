@@ -58,6 +58,7 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
+
     <TABLE NAME="evaluation_template" COMMENT="templates of evaluation structures">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
@@ -270,6 +271,25 @@
 	</INDEXES>
 	</TABLE>
 
+      <TABLE NAME="evaluation_translator" COMMENT="translate any strings to this table">
+          <FIELDS>
+              <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+              <FIELD NAME="source_lang" TYPE="char" LENGTH="6" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
+              <FIELD NAME="target_lang" TYPE="char" LENGTH="6" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
+              <FIELD NAME="source_string" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
+              <FIELD NAME="target_string" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
+              <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+          </FIELDS>
+          <KEYS>
+              <KEY NAME="id" UNIQUE="true" FIELDS="id"/>
+          </KEYS>
+          <INDEXES>
+              <INDEX NAME="source_lang" UNIQUE="false" FIELDS="source_lang"/>
+              <INDEX NAME="target_lang" UNIQUE="false" FIELDS="target_lang"/>
+              <INDEX NAME="source_string" UNIQUE="false" FIELDS="source_string"/>
+              <INDEX NAME="source_lang_string" UNIQUE="false" FIELDS="$source_lang,source_string"/>
+          </INDEXES>
+      </TABLE>
 
   </TABLES>
 </XMLDB>
