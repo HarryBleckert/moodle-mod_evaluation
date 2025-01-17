@@ -5029,12 +5029,13 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
 
     if ( $translation = $DB->get_record_sql("SELECT * from {evaluation_translator} 
          WHERE source_string = '$source_string' AND source_lang = '$source_lang' AND target_lang='$target_lang'")){
+        $target_string = $translation->target_string;
         if (is_object($args)) {
             foreach ($args as $key => $value) {
                 if (!stristr($translation->target_string, "{" . $key . "}")) {
                     continue;
                 }
-                $target_string = str_replace("{" . $key . "}", $value, $translation->target_string);
+                $target_string = str_replace("{" . $key . "}", $value, $target_string);
             }
         }
         return $target_string;
@@ -5077,7 +5078,7 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
             $target_string = str_ireplace($repl, $sose, $target_string);
         }
         $repl = "Wintersemester";
-        $sose = ev_get_string('wise_');
+        $wise = ev_get_string('wise_');
         if (stristr($target_string, $repl )){
             $target_string = str_ireplace($repl, $wise, $target_string);
         }
