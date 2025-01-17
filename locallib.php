@@ -2499,7 +2499,8 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     evaluation_has_user_participated($evaluation, $USER->id, $myEvaluation["courseid"]);
         }
 
-        if (!$evaluation_is_open or $isTeacher or stristr($myEvaluation["reminder"], get_string("analysis", "evaluation"))) {
+        if (!$evaluation_is_open or $isTeacher or $evaluation_has_user_participated ){
+            // stristr($myEvaluation["reminder"], ev_get_string("analysis"))) {
             $color = "grey";
             $actionTxt = get_string("analysis", "evaluation");
             $statTxt = get_string("statistics", "evaluation");
@@ -2555,7 +2556,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     if ($completed and isset($completed->teacherid) and $completed->teacherid == $teacher['id']) {
                         $color = "green";
                         $Txt = '<span style="font-weight:normal;color:$color;">'
-                                . ev_get_string('evaluated_for') . "<br>" . ev_get_string('teacher')
+                                . ev_get_string('submitted_for') . "<br>" . ev_get_string('teacher')
                                 . " " . $teacher['fullname'] . "</span>";
                         $str .= "<td><b style=\"color:$color;\">$Txt</b></td>";
                     } else {
