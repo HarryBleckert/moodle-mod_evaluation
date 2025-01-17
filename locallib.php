@@ -2015,8 +2015,8 @@ function evaluation_is_student($evaluation, $myEvaluations, $courseid = false, $
     global $USER;
     foreach ($myEvaluations as $myEvaluation) {
         if ($myEvaluation['role'] == "student" and $myEvaluation['id'] == $USER->id) {
-            if ($teacherid ){
-                if (array_key_exists( $teacherid, $myEvaluation['teachers'])) {
+            if ($teacherid){
+                if (is_array($myEvaluation['teachers']) AND array_key_exists( $teacherid, $myEvaluation['teachers'])) {
                     return true;
                 } else {
                     continue;
