@@ -545,8 +545,8 @@ function xmldb_evaluation_upgrade($oldversion) {
         $table = new xmldb_table('evaluation_translator');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('source_lang', XMLDB_TYPE_TEXT, '6', null, null, null, '');
-        $table->add_field('target_lang', XMLDB_TYPE_TEXT, '6'', null, null, null, '');
-        $table->add_field('source_string', XMLDB_TYPE_TEXT, '255'', null, null, null, '');
+        $table->add_field('target_lang', XMLDB_TYPE_TEXT, '6', null, null, null, '');
+        $table->add_field('source_string', XMLDB_TYPE_TEXT, '255', null, null, null, '');
         $table->add_field('target_string', XMLDB_TYPE_TEXT, '255', null, null, null, '');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         // Adding keys to table evaluation_users.
