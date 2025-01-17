@@ -2165,6 +2165,10 @@ function array_merge_recursive_new() {
             }
         }
 
+        if (empty($_SESSION["allteachers"][$courseid])) {
+            evaluation_get_course_teachers($courseid);
+        }
+
         if (isset($course->idnumber) and !empty($course->idnumber)) //$from_course )
         {    //if ( $evaluation->course == SITEID AND substr( $course->idnumber, -5) !== $evaluation_semester )
             //{	continue; }
@@ -2188,10 +2192,11 @@ function array_merge_recursive_new() {
 
         //$contextC = get_context_instance(CONTEXT_COURSE, $course->id);
         $contextC = context_course::instance($course->id);
-
-        // should be only used when open! Problem: No replacement yet for get_role_users:
-        // $evaluation_is_open AND
-        if ( $evaluation_is_open AND (is_array($contextC) or is_object($contextC))) {
+        if (!is_array($contextC) AND !is_object($contextC)){
+            continue;
+        }
+        // only used when open!
+        if ( $evaluation_is_open) {
             // $cnt=0;
             foreach ($roleT as $role) {
                 $rolesC = get_role_users($role->id, $contextC);
@@ -2262,15 +2267,7 @@ function array_merge_recursive_new() {
             }
         }
 
-        if (!$evaluation_is_open) //else	// from evc
-        {    // get students
-            /*
-            $rolesC = $DB->get_records_sql("SELECT evc.id AS evcid, evc.courseid, evc.userid AS id, evc.teacherid, evu.id AS evuid, evu.username,
-													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
-												FROM {evaluation_completed} AS evc, {evaluation_users} AS evu, {evaluation_users_la} AS evul
-												WHERE evc.evaluation = $evaluation->id AND evc.courseid=$course->id AND evu.userid = evc.userid
-														AND evul.userid = evc.userid AND evul.evaluation = evc.evaluation");
-            */
+        if (!$evaluation_is_open){    // get students
             $rolesC = $DB->get_records_sql("SELECT evul.id AS evulid, evul.userid AS id, evu.id AS evuid, evu.username,
 													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
 												FROM {evaluation_users_la} AS evul, {evaluation_users} AS evu
@@ -2313,12 +2310,6 @@ function array_merge_recursive_new() {
                 }
             }
             // get teachers
-            /*$rolesC = $DB->get_records_sql("SELECT evc.id AS evcid, evc.courseid, evc.teacherid AS id, evc.teacherid, evu.id AS evuid, evu.username,
-													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
-												FROM {evaluation_completed} AS evc, {evaluation_users} AS evu, {evaluation_users_la} AS evul
-												WHERE evc.evaluation = $evaluation->id AND evc.courseid=$course->id AND evc.teacherid = evu.userid
-													AND evul.userid = evc.teacherid  AND evul.evaluation = evc.evaluation");
-            */
             $rolesC = $DB->get_records_sql("SELECT evul.id AS evulid, evul.userid AS id, evu.id AS evuid, evu.username,
 													evu.firstname, evu.lastname, evu.alternatename, evu.email, evul.lastaccess
 												FROM {evaluation_users_la} AS evul, {evaluation_users} AS evu

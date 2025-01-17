@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,10 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'evaluation', language 'en', branch 'MOODLE_311_STABLE'
+ * Strings for component 'evaluation', language 'en', branch 'MOODLE_405_STABLE'
  *
  * @package mod_evaluation
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @category    string
+ * @copyright 1999 onwards Martin Dougiamas  {@link https://moodle.com}
+ * @copyright 2021 onwards Harry Bleckert for ASH Berlin  {@link https://ash-berlin.eu}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // $string[''] = '';
 $string['language'] = 'en';
+
 // view.php
 $string['is'] = 'is';
 $string['was'] = 'was';
@@ -87,20 +90,6 @@ $string['for_you'] = 'for you';
 $string['in_your_courses'] = 'in your participating courses';
 $string['summer_semester'] = 'Summer semester';
 $string['winter_semester'] = 'Winter semester';
-$string['all_submissions'] = 'All submissions';
-$string['course_participants_info'] = 'This course has {$a->numTeachers} and {$a->numStudents}. {$a->participated} participants have participated in this evaluation. This corresponds to a participation of {$a->evaluated}.';
-$string['completed_for_this_teacher'] = '{$a->completed} of the participants have rated this lecturer.';
-$string['completed_for_all_teachers'] = '{$a->completed} of the participants have rated all lecturers. ';
-$string['submissions_for_course'] = '{$a->numresultsF} of a maximum of {$a->numToDo} submissions have been made. The submission quota is {$a->quote}.';
-$string['course_has_no_students'] = 'This course has no student participants.';
-$string['no_teamteaching_all_same'] = 'This evaluation has not activated team teaching. In courses with team teaching, all lecturers therefore have the same evaluation.';
-$string['analyzed'] = 'Evaluated';
-$string['of_total'] = 'of total';
-$string['incl_duplicated'] = 'including {$a->duplicated} duplicated submissions';
-$string['permitted_cos'] = 'Viewable courses';
-$string['all_filtered_submissions'] = 'All filtered submissions {$a->ftitle}';
-$string['omitted_submissions'] = '{$a->allSubject} with less than {$a->minReplies} submissions {$a->percentage}';
-// $string[''] = '';
 // end view.php
 
 // compare_results_inc.php
@@ -141,8 +130,22 @@ $string['except_siteadmin'] = ' - siteadmins excluded';
 $string['team_teaching'] = 'Team Teaching';
 $string['single_submission_per_course'] = 'One submission per participant and course';
 $string['this_course_has_numteachers'] = 'This course has {$a->numTeachers}';
-
-
+$string['all_submissions'] = 'All submissions';
+$string['course_participants_info'] = 'This course has {$a->numTeachers} and {$a->numStudents}. {$a->participated} participants have participated in this evaluation. This corresponds to a participation of {$a->evaluated}.';
+$string['completed_for_this_teacher'] = '{$a->completed} of the participants have rated this lecturer.';
+$string['completed_for_all_teachers'] = '{$a->completed} of the participants have rated all lecturers. ';
+$string['submissions_for_course'] = '{$a->numresultsF} of a maximum of {$a->numToDo} submissions have been made. The submission quota is {$a->quote}.';
+$string['course_has_no_students'] = 'This course has no student participants.';
+$string['no_teamteaching_all_same'] = 'This evaluation has not activated team teaching. In courses with team teaching, all lecturers therefore have the same evaluation.';
+$string['analyzed'] = 'Evaluated';
+$string['of_total'] = 'of total';
+$string['incl_duplicated'] = 'including {$a->duplicated} duplicated submissions';
+$string['permitted_cos'] = 'Viewable courses';
+$string['all_filtered_submissions'] = 'All filtered submissions {$a->ftitle}';
+$string['omitted_submissions'] = '{$a->allSubject} with less than {$a->minReplies} submissions {$a->percentage}';
+//$string[''] = '';
+//$string[''] = '';
+// $string[''] = '';
 // end compare_results_inc.php
 
 $string['active_only'] = 'Active only';
@@ -190,8 +193,7 @@ $string['min_results'] = 'Less than {$a} evaluations have been completed. No res
 $string['min_results_desc'] = 'Privacy: No of evaluations required to show results.';
 $string['min_results_text'] = 'Less than {$a} evaluations have been completed. No text results displayed to protect privacy!';
 $string['min_results_text_desc'] = 'Privacy: No of evaluations required to show free text results.';
-$string['min_results_priv'] =
-        'Less than {$a} evaluations have been completed. No results displayed to privileged users to protect privacy!';
+$string['min_results_priv'] = 'Less than {$a} evaluations have been completed. No results displayed to privileged users to protect privacy!';
 $string['min_results_priv_desc'] = 'Privacy: No of evaluations required to show results to privileged users.';
 $string['no_course_selected'] = "No course for evaluation selectedt!";
 $string['no_data'] = "No data found for this view!";
@@ -216,8 +218,7 @@ $string['privileged_users_overview'] = 'Overview of persons privileged to access
 $string['reminders_sent_at'] = 'Reminders were mailed at:';
 $string['send_reminders_to'] = 'Mail reminders to:';
 $string['reminders_title'] = 'Reminder mails can be sent by admins or as a scheduled server task only. The note \'NR\' indicates that only students without submissions or lecturers with fewer than three submissions (non-responders) were contacted.';
-$string['select_teacher'] = '<b>Please select a teacher for this evaluation!</b><br>Note: 
-		You can give a separate evaluation of each teacher<b>';
+$string['select_teacher'] = 'Please select a teacher for this evaluation!<br>Note: You can give a separate evaluation of each teacher';
 $string['semesters'] = 'Semesters';
 $string['sendername'] = 'Reminders: Sender name';
 $string['sendermail'] = 'Reminders: Sender mailaddress';
@@ -249,9 +250,9 @@ $string['config_course_of_studies_cat_field'] = 'Course category field identifie
 $string['config_semester_cat_level'] = 'Course category level for semester';
 $string['config_course_semester_field'] = 'Course field identifier for semester';
 $string['config_summer_semester'] = 'Summer semester months';
+// end settings for plugin configuration
 
-// $string[''] = '';
-
+// partly from Moodle 3.10 evaluation
 $string['add_item'] = 'Add question';
 $string['add_pagebreak'] = 'Add a page break';
 $string['adjustment'] = 'Adjustment';
@@ -289,8 +290,7 @@ $string['complete_the_form'] = 'Answer the questions';
 $string['completed'] = 'Completed';
 $string['completedon'] = 'Completed on {$a}';
 $string['completionsubmit'] = 'View as completed if the evaluation is submitted';
-$string['configallowfullanonymous'] =
-        'If set to \'yes\', users can complete a evaluation activity on the front page without being required to log in.';
+$string['configallowfullanonymous'] = 'If set to \'yes\', users can complete a evaluation activity on the front page without being required to log in.';
 $string['confirmdeleteentry'] = 'Are you sure you want to delete this entry?';
 $string['confirmdeleteitem'] = 'Are you sure you want to delete this element?';
 $string['confirmdeletetemplate'] = 'Are you sure you want to delete this template?';
@@ -339,32 +339,22 @@ $string['edit_item'] = 'Edit question';
 $string['edit_items'] = 'Edit questions';
 $string['email_notification'] = 'Enable notification of submissions';
 $string['email_notification_help'] = 'If enabled, teachers will receive notification of evaluation submissions.';
-$string['emailteachermail'] = '{$a->username} has completed evaluation activity : \'{$a->evaluation}\'
-You can view it here: 
-{$a->url}';
-$string['emailteachermailhtml'] = '<p>{$a->username} has completed evaluation activity : <i>\'{$a->evaluation}\'</i>.</p>
-<p>It is <a href="{$a->url}">available on the site</a>.</p>';
+$string['emailteachermail'] = '{$a->username} has completed evaluation activity: \'{$a->evaluation}\' You can view it here: {$a->url}';
+$string['emailteachermailhtml'] = '<p>{$a->username} has completed evaluation activity : <i>\'{$a->evaluation}\'</i>.</p><p>It is <a href="{$a->url}">available on the site</a>.</p>';
 $string['entries_saved'] = 'Your answers have been saved. Thank you.';
 $string['eventresponsedeleted'] = 'Response deleted';
 $string['eventresponsesubmitted'] = 'Response submitted';
 $string['export_questions'] = 'Export questions';
 $string['export_to_excel'] = 'Export to Excel';
-$string['eventresponsedeleted'] = 'Response deleted';
-$string['eventresponsesubmitted'] = 'Response submitted';
 $string['ev_end_msg'] = 'Evaluation period ends in {$a->ev_end_msg}';
-$string['evaluationcompleted'] = '{$a->username} completed {$a->evaluationname}';
 $string['evaluation:addinstance'] = 'Add a new evaluation';
-$string['evaluationclose'] = 'Allow answers to';
 $string['evaluation:complete'] = 'Complete a evaluation';
 $string['evaluation:createprivatetemplate'] = 'Create private template';
 $string['evaluation:createpublictemplate'] = 'Create public template';
 $string['evaluation:deletesubmissions'] = 'Delete completed submissions';
 $string['evaluation:deletetemplate'] = 'Delete template';
 $string['evaluation:edititems'] = 'Edit items';
-$string['evaluation_is_not_for_anonymous'] = 'Evaluation is not for anonymous';
-$string['evaluation_is_not_open'] = 'The evaluation is not open';
 $string['evaluation:mapcourse'] = 'Map courses to global evaluations';
-$string['evaluationopen'] = 'Allow answers from';
 $string['evaluation:receivemail'] = 'Receive email notification';
 $string['evaluation:view'] = 'View a evaluation';
 $string['evaluation:viewanalysepage'] = 'View the analysis page after submit';
@@ -378,31 +368,19 @@ $string['file'] = 'File';
 $string['filter_by_course'] = 'Filter by course';
 $string['handling_error'] = 'Error occurred in evaluation module action handling';
 $string['hide_no_select_option'] = 'Hide the "Not selected" option';
-// $string['horizontal'] = 'Horizontal';
-$string['check'] = 'Multiple choice - multiple answers';
-$string['checkbox'] = 'Multiple choice - multiple answers allowed (check boxes)';
-$string['check_values'] = 'Possible responses';
-$string['choosefile'] = 'Choose a file';
-$string['chosen_evaluation_response'] = 'Chosen evaluation response';
-$string['downloadresponseas'] = 'Download all responses as:';
-$string['importfromthisfile'] = 'Import from this file';
 $string['import_questions'] = 'Import questions';
 $string['import_successfully'] = 'Import successfully';
 $string['importfromthisfile'] = 'Import from this file';
 $string['includeuserinrecipientslist'] = 'Include {$a} in the list of recipients';
 $string['indicator:cognitivedepth'] = 'Evaluation cognitive';
-$string['indicator:cognitivedepth_help'] =
-        'This indicator is based on the cognitive depth reached by the student in a Evaluation activity.';
+$string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Evaluation activity.';
 $string['indicator:cognitivedepthdef'] = 'Evaluation cognitive';
-$string['indicator:cognitivedepthdef_help'] =
-        'The participant has reached this percentage of the cognitive engagement offered by the Evaluation activities during this analysis interval (Levels = No view, View, Submit)';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Evaluation activities during this analysis interval (Levels = No view, View, Submit)';
 $string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'Evaluation social';
-$string['indicator:socialbreadth_help'] =
-        'This indicator is based on the social breadth reached by the student in a Evaluation activity.';
+$string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Evaluation activity.';
 $string['indicator:socialbreadthdef'] = 'Evaluation social';
-$string['indicator:socialbreadthdef_help'] =
-        'The participant has reached this percentage of the social engagement offered by the Evaluation activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Evaluation activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['info'] = 'Information';
 $string['infotype'] = 'Information type';
@@ -413,19 +391,14 @@ $string['item_label'] = 'Label';
 $string['item_name'] = 'Question';
 $string['label'] = 'Label';
 $string['labelcontents'] = 'Contents';
-$string['mapcourseinfo'] =
-        'This is a site-wide evaluation that is available to all courses using the evaluation block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this evaluation.';
-$string['mapcoursenone'] = 'No courses mapped. Evaluation available to all courses';
 $string['mapcourse'] = 'Map evaluation to courses';
 $string['mapcourse_help'] = 'By default, evaluation forms created on your homepage are available site-wide
 and will appear in all courses using the evaluation block. You can force the evaluation form to appear by making it a sticky block or limit the courses in which a evaluation form will appear by mapping it to specific courses.';
-$string['mapcourseinfo'] =
-        'This is a site-wide evaluation that is available to all courses using the evaluation block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this evaluation.';
+$string['mapcourseinfo'] = 'This is a site-wide evaluation that is available to all courses using the evaluation block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this evaluation.';
 $string['mapcoursenone'] = 'No courses mapped. Evaluation available to all courses';
 $string['mapcourses'] = 'Map evaluation to courses';
 $string['mappedcourses'] = 'Mapped courses';
 $string['mappingchanged'] = 'Course mapping has been changed';
-$string['minimal'] = 'Minimum';
 $string['maximal'] = 'Maximum';
 $string['messageprovider:message'] = 'Evaluation reminder';
 $string['messageprovider:submission'] = 'Evaluation notifications';
@@ -433,7 +406,6 @@ $string['minimal'] = 'Minimum';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'Evaluation';
 $string['modulename_help'] = 'The evaluation activity module enables a teacher to create a custom survey for collecting evaluation from participants using a variety of question types including multiple choice, yes/no or text input.
-
 Evluation responses may be anonymous if desired, and results may be shown to all participants or restricted to teachers only. Any evaluation activities on the site front page may also be completed by non-logged-in users.
 
 Evaluation activities may be used
@@ -461,12 +433,12 @@ $string['no_handler'] = 'No action handler exists for';
 $string['no_itemlabel'] = 'No label';
 $string['no_itemname'] = 'No itemname';
 $string['no_items_available_yet'] = 'No questions have been set up yet';
+$string['no_templates_available_yet'] = 'No templates available yet';
 $string['non_anonymous'] = 'User\'s name will be logged and shown with answers';
 $string['non_anonymous_entries'] = 'Non anonymous entries ({$a})';
 $string['non_respondents_students'] = 'Non-respondent students ({$a})';
 $string['not_completed_yet'] = 'Not completed yet';
 $string['not_started'] = 'Not started';
-$string['no_templates_available_yet'] = 'No templates available yet';
 $string['not_selected'] = 'Not selected';
 $string['numberoutofrange'] = 'Number out of range';
 $string['numeric'] = 'Numeric answer';

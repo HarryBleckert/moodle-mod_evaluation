@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'evaluation', language 'de', version '3.11'.
+ * Strings for component 'evaluation', language 'de', branch 'MOODLE_405_STABLE'
  *
  * @package     mod_evaluation
  * @category    string
  * @copyright 1999 onwards Martin Dougiamas  {@link https://moodle.com}
+ * @copyright 2021 onwards Harry Bleckert for ASH Berlin  {@link https://ash-berlin.eu}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * This file @copyright 2021 onwards Harry Bleckert for ASH Berlin  {@link http://ash-berlin.eu}
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -49,8 +49,7 @@ $string['questionaireenglish'] = 'Hier ist eine englische Übersetzung des Frage
 $string['clickquestionaireenglish'] = '<b>Click here</b> to open an English translation of the questionnaire';
 $string['also'] = 'auch';
 $string['foryourcourses'] = 'für jeden Ihrer Kurse';
-$string['msg_student_all_courses'] = 'Bitte beteiligen {$a->also} Sie sich {$a->foryourcourses} an dieser Evaluation. 
-                Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs.<br>Klicken Sie unten für jeden Ihrer noch nicht evaluierten Kurse auf \'<b>Jetzt evaluieren</b>\' 
+$string['msg_student_all_courses'] = 'Bitte beteiligen {$a->also} Sie sich {$a->foryourcourses} an dieser Evaluation. Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs.<br>Klicken Sie unten für jeden Ihrer noch nicht evaluierten Kurse auf \'<b>Jetzt evaluieren</b>\' 
                 und füllen Sie dann jeweils den Fragebogen aus.';
 $string['yourevaluationhelps'] = 'Ihre Evaluation ist uns eine große Hilfe!';
 $string['resultconditions'] = 'Für jeden bereits von Ihnen evaluierten Kurs können Sie die Auswertung einsehen, sobald {$a->minresults} Abgaben vorliegen.';
@@ -107,7 +106,6 @@ $string['reply_scheme'] = 'Antwort - Schema';
 $string['filter_on_questions'] = 'Filter auf Fragen';
 $string['with_reply'] = 'mit Antwort';
 $string['change_sort_up_down'] = 'Sortierung zwischen Aufsteigend und Absteigend wechseln';
-
 $string['change_sort_by'] = 'Sortierung nach Abgaben oder nach Mittwlwerten';
 $string['click_for_graphics'] = 'Hier Klicken um direkt zur Grafik zu scrollen';
 $string['horizontal'] = 'Horizontal';
@@ -156,7 +154,6 @@ $string['all_courses'] = 'Alle Kurse';
 $string['all_course_of_studies'] = 'Alle Studiengänge';
 $string['all_teachers'] = 'Alle Dozent_innen';
 $string['AllViews'] = 'Alle Ansichten dieser Evaluation';
-$string['analysis'] = 'Auswertung';
 $string['autoreminders'] = 'Erinnerungen automatisch per Mail senden';
 $string['autoreminders_help'] = 'Zu Beginn der Evaluation, alle 2 Wochen, 4 Tage vor Ende der Evaluation. Non-Responders: wöchentlich';
 $string['cannot_participate'] = 'Sie können an dieser Evaluation nicht selbst teilnehmen';
@@ -192,20 +189,16 @@ $string['fulllistofteachers'] = 'Alle Dozent_innen';
 $string['fulllistofdepartments'] = 'Alle Fachbereiche';
 $string['good_day'] = 'Guten Tag';
 $string['global_evaluations'] = 'Globale Evaluationen';
-$string['min_results'] =
-        'Bisher gibt es leider weniger als {$a} Abgaben. Aus datenschutzrechtlichen Gründen dürfen keine Ergebnisse gezeigt werden.';
+$string['min_results'] = 'Bisher gibt es leider weniger als {$a} Abgaben. Aus datenschutzrechtlichen Gründen dürfen keine Ergebnisse gezeigt werden.';
 $string['min_results_desc'] = 'Datenschutz: Mindestanzahl der Abgaben bevor Resultate angezeigt werden dürfen.';
-$string['min_results_text'] =
-        'Bisher gibt es leider weniger als {$a} Abgaben. Aus datenschutzrechtlichen Gründen dürfen keine Textantworten gezeigt werden.';
+$string['min_results_text'] = 'Bisher gibt es leider weniger als {$a} Abgaben. Aus datenschutzrechtlichen Gründen dürfen keine Textantworten gezeigt werden.';
 $string['min_results_text_desc'] = 'Datenschutz: Mindestanzahl der Abgaben bevor Textantworten angezeigt werden dürfen.';
-$string['min_results_priv'] =
-        'Bisher gibt es leider weniger als {$a} Abgaben. Aus datenschutzrechtlichen Gründen dürfen auch priv. Personen keine Ergebnisse gezeigt werden.';
-$string['min_results_priv_desc'] =
-        'Datenschutz: Mindestanzahl der Abgaben bevor privilegierten Personen Resultate angezeigt werden dürfen.';
+$string['min_results_priv'] = 'Bisher gibt es leider weniger als {$a} Abgaben. Aus datenschutzrechtlichen Gründen dürfen auch priv. Personen keine Ergebnisse gezeigt werden.';
+$string['min_results_priv_desc'] = 'Datenschutz: Mindestanzahl der Abgaben bevor privilegierten Personen Resultate angezeigt werden dürfen.';
 $string['no_course_selected'] = "Es wurde kein zu evalierender Kurs gesetzt!";
 $string['no_data'] = "Es gibt keine Daten für diese Ansicht!";
-$string['no_permission_analysis'] = 'Sie haben nicht die für diese Auswertung notwendigen Rechte!';
 $string['no_permission'] = $string['you_have_no_permission'] = 'Sie haben nicht die für diese Seite notwendigen Rechte!';
+$string['no_permission_analysis'] = 'Sie haben nicht die für diese Auswertung notwendigen Rechte!';
 $string['no_responses_yet'] = "Es gibt keine Abgaben!";
 $string['non_responders_only'] = 'Nur Non Responders';
 $string['not_participated'] = 'Sie haben bisher <b>für keinen Kurs</b> teilgenommen.';
@@ -225,7 +218,7 @@ $string['privileged_users_overview'] = 'Übersicht der für diese Evaluation zur
 $string['reminders_sent_at'] = 'Hinweismails wurden versandt am:';
 $string['send_reminders_to'] = 'Hinweismails versenden an:';
 $string['reminders_title'] = 'Hinweismails können nur von Admins oder als geplanter Server Task versandt werden. Der Vermerk \'NR\' weist darauf hin, dass nur Studierende ohne Abgaben bzw. Dozent_innen mit weniger als 3 Abgaben (Non-Responders) angeschrieben wurden.';
-$string['select_teacher'] = '<b>Bitte wählen Sie die Dozentin/den Dozenten für diese Evaluation!</b><br>Hinweis: Sie können einen Fragebogen pro Dozent_in ausfüllen<b>';
+$string['select_teacher'] = 'Bitte wählen Sie die Dozentin/den Dozenten für diese Evaluation!<br>Hinweis: Sie können einen Fragebogen pro Dozent_in ausfüllen';
 $string['semesters'] = 'Semester';
 $string['sendername'] = 'Hinweismails: Absender Name';
 $string['sendermail'] = 'Hinweismails: Absender Mailadresse';
@@ -257,13 +250,9 @@ $string['config_course_of_studies_cat_field'] = 'Kurskategorie Feld für Semeste
 $string['config_semester_cat_level'] = 'Kurskategorie Level für semester';
 $string['config_course_semester_field'] = 'Kurs Feld für Semester (JJJJ1 oder JJJJ2)';
 $string['config_summer_semester'] = 'Monate des Somersmesters';
-/*
-$string[''] = '';
-get_string('','evaluation')
-*/
+// end settings for plugin configuration
 
 // partly from Moodle 3.10 evaluation
-
 $string['add_item'] = 'Frage hinzufügen';
 $string['add_pagebreak'] = 'Seitenumbruch hinzufügen';
 $string['adjustment'] = 'Ausrichtung';
@@ -301,14 +290,14 @@ $string['completed'] = 'Abgeschlossen';
 $string['completed_evaluations'] = 'Abgeschlossene Evaluationen';
 $string['completedon'] = 'Abgeschlossen am {$a}';
 $string['completionsubmit'] = 'Als abgeschlossen ansehen, wenn die Evaluation abgegeben wurde';
-$string['configallowfullanonymous'] =
-        'Wenn diese Option aktiviert ist, kann eine Evaluation ohne vorhergehende Anmeldung abgegeben werden. Dies betrifft aber ausschließlich Evaluationen auf der Startseite.';
+$string['configallowfullanonymous'] = 'Wenn diese Option aktiviert ist, kann eine Evaluation ohne vorhergehende Anmeldung abgegeben werden. Dies betrifft aber ausschließlich Evaluationen auf der Startseite.';
 $string['confirmdeleteentry'] = 'Möchten Sie diesen Eintrag wirklich löschen?';
 $string['confirmdeleteitem'] = 'Möchten Sie dieses Element wirklich löschen?';
 $string['confirmdeletetemplate'] = 'Möchten Sie diese Vorlage wirklich löschen?';
 $string['confirmusetemplate'] = 'Möchten Sie diese Vorlage wirklich verwenden?';
 $string['continue_the_form'] = 'Ausfüllen des Formulars fortsetzen';
 $string['count_of_nums'] = 'Anzahl von Werten';
+$string['course'] = 'Course';
 $string['courseid'] = 'Kurs-ID';
 $string['creating_templates'] = 'Diese Fragen als neue Vorlage speichern';
 $string['delete_entry'] = 'Eintrag löschen';
@@ -349,15 +338,9 @@ $string['dropdownrated'] = 'Dropdown-Menü (skaliert)';
 $string['edit_item'] = 'Element bearbeiten';
 $string['edit_items'] = 'Elemente bearbeiten';
 $string['email_notification'] = 'Systemnachricht bei Abgabe senden';
-$string['email_notification_help'] =
-        'Wenn diese Option aktiviert ist, bekommen die Lehrenden naach Abgaben eine Systemnachricht.';
-$string['emailteachermail'] = '{$a->username} hat die Evaluation \'{$a->evaluation}\' abgeschlossen.
-
-Sie können es hier anschauen:
-
-{$a->url}';
-$string['emailteachermailhtml'] = '<p>{$a->username} hat die Evaluation \'{$a->evaluation}\' abgeschlossen</p><p>
-Die Evaluation ist <a href="{$a->url}">auf der Webseite</a> verfügbar.</p>';
+$string['email_notification_help'] = 'Wenn diese Option aktiviert ist, bekommen die Lehrenden naach Abgaben eine Systemnachricht.';
+$string['emailteachermail'] = '{$a->username} hat die Evaluation \'{$a->evaluation}\' abgeschlossen. Sie können es hier anschauen: {$a->url}';
+$string['emailteachermailhtml'] = '<p>{$a->username} hat die Evaluation \'{$a->evaluation}\' abgeschlossen</p><p>Die Evaluation ist <a href="{$a->url}">auf der Webseite</a> verfügbar.</p>';
 $string['entries_saved'] = 'Diese Evaluation wurde als abgegeben gespeichert.';
 $string['eventresponsedeleted'] = 'Antwort gelöscht';
 $string['eventresponsesubmitted'] = 'Antwort abgegeben';
@@ -385,23 +368,20 @@ $string['file'] = 'Datei';
 $string['filter_by_course'] = 'Kursfilter';
 $string['handling_error'] = 'Fehler bei der Verarbeitung';
 $string['hide_no_select_option'] = '\'Nicht gewählt\' verbergen';
-// $string['horizontal'] = 'Nebeneinander';
 $string['import_questions'] = 'Fragen importieren';
 $string['import_successfully'] = 'Erfolgreich importiert';
 $string['importfromthisfile'] = 'Aus dieser Datei importieren';
 $string['includeuserinrecipientslist'] = 'Fügen Sie {$a} in die Empfängerliste hinzu';
 $string['indicator:cognitivedepth'] = 'Evaluation kognitiv';
-$string['indicator:cognitivedepth_help'] =
-        'Dieser Indikator basiert auf der kognitiven Tiefe, die eine Person in einer Evaluation-Aktivität erreicht hat.';
+$string['indicator:cognitivedepth_help'] = 'Dieser Indikator basiert auf der kognitiven Tiefe, die eine Person in einer Evaluation-Aktivität erreicht hat.';
 $string['indicator:cognitivedepthdef'] = 'Evaluation kognitiv';
-$string['indicator:cognitivedepthdef_help'] =
-        'Die Person hat diesen Prozentsatz des kognitiven Engagements erreicht, das die Evaluation-Aktivitäten während dieses Analyseintervalls aufzeigen (Ebenen = Keine Ansicht, Ansicht, Beiträge).';
+$string['indicator:cognitivedepthdef_help'] = 'Die Person hat diesen Prozentsatz des kognitiven Engagements erreicht, das die Evaluation-Aktivitäten während dieses Analyseintervalls aufzeigen (Ebenen = Keine Ansicht, Ansicht, Beiträge).';
+$string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'Evaluation sozial';
-$string['indicator:socialbreadth_help'] =
-        'Dieser Indikator basiert auf der sozialen Breite, die eine Person in einer Evaluation-Aktivität erreicht hat.';
+$string['indicator:socialbreadth_help'] = 'Dieser Indikator basiert auf der sozialen Breite, die eine Person in einer Evaluation-Aktivität erreicht hat.';
 $string['indicator:socialbreadthdef'] = 'Evaluation sozial';
-$string['indicator:socialbreadthdef_help'] =
-        'Die Person hat diesen Prozentsatz des soziale Engagements erreicht, das die Evaluation-Aktivitäten während dieses Analyseintervalls aufzeigen (Ebenen = Keine Teilnahme, Teilnahme allein, Teilnahme mit anderen).';
+$string['indicator:socialbreadthdef_help'] = 'Die Person hat diesen Prozentsatz des soziale Engagements erreicht, das die Evaluation-Aktivitäten während dieses Analyseintervalls aufzeigen (Ebenen = Keine Teilnahme, Teilnahme allein, Teilnahme mit anderen).';
+$string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['info'] = 'Information';
 $string['infotype'] = 'Informationstyp';
 $string['insufficient_responses'] = 'Unzulängliche Antworten';
@@ -413,10 +393,8 @@ $string['label'] = 'Textfeld';
 $string['labelcontents'] = 'Inhalte';
 $string['mapcourse'] = 'Kurs zuordnen';
 $string['mapcourse_help'] = 'Die auf der Startseite erstellten Evaluationen sind auf der gesamten Website verfügbar und werden über den Block \'Evaluation\' in allen Kursen angezeigt.
-
 Sie können das Erscheinen in jedem Kurs erzwingen, indem Sie einen festen Block erzeugen. Andererseits können Sie die Evaluation auf ausgewählte Kurse einschränken, indem Sie die Evaluation mit bestimmten Kursen verknüpfen.';
-$string['mapcourseinfo'] =
-        'Dieses globale Evaluation ist in allen Kursen verfügbar, die den Block \'Evaluation\' nutzen. Sie können die Kurse einschränken, in denen die Evaluation angezeigt wird. Ordnen Sie dazu die Evaluation ausgewählten Kursen zu.';
+$string['mapcourseinfo'] = 'Dieses globale Evaluation ist in allen Kursen verfügbar, die den Block \'Evaluation\' nutzen. Sie können die Kurse einschränken, in denen die Evaluation angezeigt wird. Ordnen Sie dazu die Evaluation ausgewählten Kursen zu.';
 $string['mapcoursenone'] = 'Keinem Kurs zugeordnet. Dieses Evaluation ist in allen Kursen verfügbar.';
 $string['mapcourses'] = 'Evaluation zu Kursen zuordnen';
 $string['mappedcourses'] = 'Zugeordnete Kurse';
@@ -428,18 +406,16 @@ $string['minimal'] = 'Minimal';
 $string['mode'] = 'Modus';
 $string['modulename'] = 'Evaluation';
 $string['modulename_help'] = 'Mit der Evaluation können Sie eigene Umfragen oder Evaluationsformulare anlegen, wofür eine Reihe von Fragetypen, einschließlich Multiple-Choice, Ja/Nein oder Texteingabe, zur Verfügung stehen.
-
 Die Antworten können Personen zugeordnet werden oder anonym erfolgen. Die Ergebnisse können Sie nach dem Ausfüllen anzeigen lassen und später als Datei exportieren.
-
 Evaluationen auf der Startseite können völlig anonym auch von nicht angemeldeten Personen ausgefüllt und abgegeben werden.
-
 Eine Evaluation-Aktivität kann verwendet werden
 
-* Lehrevaluationen der Sudierenden
+* Lehrevaluationen der Studierenden
 * Evaluationen der Lehrenden
-* Bei Kursbewertungen, um den Inhalt für spätere Teilnehmer/innen zu verbessern
-* Um den Teilnehmer/innen die Möglichkeit zu geben, sich für Kursmodule, Veranstaltungen usw. anzumelden
-* Für Anti-Mobbing-Befragungen, bei denen Teilnehmer/innen Vorfälle anonym melden können';
+* Bei Kursbewertungen, um den Inhalt für spätere Teilnehmer_innen zu verbessern
+* Um den Teilnehmer_innen die Möglichkeit zu geben, sich für Kursmodule, Veranstaltungen usw. anzumelden
+* Für Anti-Mobbing-Befragungen, bei denen Teilnehmer_innen Vorfälle anonym melden können';
+$string['modulename_link'] = 'mod/evaluation/view';
 $string['modulenameplural'] = 'Evaluationen';
 $string['move_item'] = 'Element verschieben';
 $string['multichoice'] = 'Multiple-Choice';
@@ -448,8 +424,7 @@ $string['multichoiceoption'] = '<span class="weight">({$a->weight}) </span> {$a-
 $string['multichoicerated'] = 'Multiple-Choice (skaliert)';
 $string['multichoicetype'] = 'Typ';
 $string['multiplesubmit'] = 'Mehrfache Abgabe';
-$string['multiplesubmit_help'] =
-        'Wenn die Option für anonyme Fragebögen aktiviert ist, dürfen Nutzer/innen die Evaluation beliebig oft abgeben.';
+$string['multiplesubmit_help'] = 'Wenn die Option für anonyme Fragebögen aktiviert ist, dürfen Nutzer/innen die Evaluation beliebig oft abgeben.';
 $string['name'] = 'Name';
 $string['name_required'] = 'Name benötigt';
 $string['nameandlabelformat'] = '({$a->label}) {$a->name}';
@@ -495,8 +470,7 @@ $string['public'] = 'öffentlich';
 $string['question'] = 'Frage';
 $string['questionandsubmission'] = 'Einstellungen für Fragen und Einträge';
 $string['questions'] = 'Fragen';
-$string['questionslimited'] =
-        'Nur die ersten {$a} Fragen werden angezeigt. Um alles zu sehen, lassen Sie sich die individuellen Antworten anzeigen oder laden Sie die gesamte Tabelle herunter.';
+$string['questionslimited'] = 'Nur die ersten {$a} Fragen werden angezeigt. Um alles zu sehen, lassen Sie sich die individuellen Antworten anzeigen oder laden Sie die gesamte Tabelle herunter.';
 $string['radio'] = 'Einzelne Antwort - Radiobutton';
 $string['radio_values'] = 'Antworten';
 $string['ready_evaluations'] = 'Fertige Evaluationen';
@@ -509,8 +483,7 @@ $string['responsetime'] = 'Antwortzeit';
 $string['save_as_new_item'] = 'Als neue Frage speichern';
 $string['save_as_new_template'] = 'Als neue Vorlage speichern';
 $string['save_entries'] = 'Evaluation abgeben (Antworten speichern)';
-$string['save_entries_help'] = 'Ihre Antworten werden erst durch die Abgabe dieser Evaluation gespeichert und somit abgegeben.'
-        . "<br>\nNach der Abgabe sind keine Änderungen mehr möglich!";
+$string['save_entries_help'] = 'Ihre Antworten werden erst durch die Abgabe dieser Evaluation gespeichert und somit abgegeben.<br>Nach der Abgabe sind keine Änderungen mehr möglich!';
 $string['save_item'] = 'Element speichern';
 $string['saving_failed'] = 'Fehler beim Speichern';
 $string['search:activity'] = 'Evaluation - Aktivitätsinfo';
