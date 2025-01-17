@@ -486,7 +486,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             print "</select>\n";
             if ($qSelected) {
                 if (defined('EVALUATION_OWNER')) {
-                    $a->action = ev_get_string(in_array($qSelected, $subqueryids) ? "remove" : "apply")
+                    $a->action = ev_get_string(in_array($qSelected, $subqueryids) ? "remove" : "apply");
                     $value = in_array($qSelected, $subqueryids) ? "2" : "1";
                     $label = ev_get_string('filter_action',$a);
                     ?>
