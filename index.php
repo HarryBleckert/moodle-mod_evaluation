@@ -129,7 +129,7 @@ foreach ($evaluations as $evaluation) {
 
     $dimmedclass = $evaluation->visible ? '' : 'class="dimmed"';
 
-    if (substr($USER->lang, 0, 2) == "de") {
+    if (substr($USER->lang, 0, 2) == "en") {
         $ev_name = ev_get_tr($evaluation->name, array(), 'de', 'name');
     } else {
         $ev_name = ev_get_tr($evaluation->name);
