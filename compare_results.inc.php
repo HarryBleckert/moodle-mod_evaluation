@@ -143,8 +143,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
     // access control
     $myEvaluations = get_evaluation_participants($evaluation, $USER->id);
+    print nl2br("\$myEvaluations" . var_export($myEvaluations, true));
     if (defined('EVALUATION_OWNER')) {
-        print nl2br("\$myEvaluations" . var_export($myEvaluations, true));
         get_evaluation_filters($evaluation);
         if ($department AND isset($_SESSION['CoS_department']) and safeCount($_SESSION['CoS_department'])) {
             $CoS = "'" . implode("','", array_keys($_SESSION['CoS_department'], $department)) . "'";
