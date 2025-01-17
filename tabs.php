@@ -140,7 +140,7 @@ $analysis_course =  ev_get_string('analysis_course'); // Auswertung Kurs
 $analysis_own_courses =  ev_get_string('analysis_own_courses'); // Auswertung eigene Kurse
 $analysis_all_courses =  ev_get_string('analysis_all_courses'); // Auswertung aller Kurse
 $analysis_own_cos =  ev_get_string('analysis_own_cos'); // Auswertung eigene Studiengänge
-$statistic=ev_get_string('statistic'); //Statistik
+$statistic=ev_get_string('statistics'); //Statistik
 
 if ($evaluation->course == SITEID) {
     if (defined('EVALUATION_OWNER') || $can_view

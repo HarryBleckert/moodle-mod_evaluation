@@ -76,18 +76,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
     if ( !is_siteadmin() AND $minReplies < $minResults ){
         $minReplies = $minResults;
     }
-    /*if ( $isFilter AND $allSelected == "useFilter" )
-    {	if ( $courseid ) { $allSelected = "allCourses"; }
-        $isFilter = false; $course_of_studiesID=false; $teacherid=false; $courseid = false;
-    }*/
     $isStudent = $isTeacher = false;
     $allSubject = $subquery = $subqueryC = $subquerytxt = $filterDept = "";
     $data = $subqueryids = array();
     $zeroReplies = $invalidReplies = array();
     $evaluatedResults = $evaluationResults = $omittedResults = $omittedSubjects = 0;
-    //if ( !$course_of_studiesID AND ( $cosPrivileged = evaluation_cosPrivileged( $evaluation ) ) )
-    //{	$course_of_studiesID = evaluation_get_course_of_studies_id_from_evc( $id, $_SESSION['CoS_privileged'][$USER->username][0], $evaluation ); }
-
     $course_of_studies = false;
     if ($course_of_studiesID) {
         $course_of_studies = evaluation_get_course_of_studies_from_evc($course_of_studiesID, $evaluation);
@@ -123,8 +116,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     $responses = get_string('completed_evaluations', "evaluation");
     $filterSubject = ev_get_string('reset_selection');
-    echo '<h1 title="' . ev_get_string('question_hint') . '" style="display:inline;color:darkgreen;text-align:left;font-weight:bolder;">'
-        . ev_get_string('statistic') . "</h1><br>\n";
+    echo '<h1 title="' . ev_get_string('question_hint')
+            . '" style="display:inline;color:darkgreen;text-align:left;font-weight:bolder;">'
+            . ev_get_string('statistics') . "</h1><br>\n";
 
     if ($allSelected == "allDepartments") {
         $allSubject = get_string("departments", "evaluation");
