@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['language'] = 'en';
 
 // translator function
-$string['evaluation_of_courses'] = 'Evaluation der Lehrveranstaltungen';
+$string['evaluation_of_courses'] = 'Evaluation of courses';
 $string['by_students'] = 'by students';
 $string[' of '] = ' of ';
 $string[' for '] = ' for ';
