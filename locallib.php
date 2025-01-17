@@ -5039,7 +5039,7 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
         return $target_string;
     }
     // handle special case of german evaluation name
-    if ($field == 'name' AND $source_lang == 'de'){
+    if ($field == 'name' AND $source_lang == 'de' AND $target_lang == 'en' ){
         $repl = "Evaluation der Lehrveranstaltungen";
         $evaluation_of_courses = ev_get_string('evaluation_of_courses');
         if (stristr($target_string, $repl ) AND $evaluation_of_courses !=="evaluation_of_courses"){
@@ -5066,13 +5066,14 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
             $target_string = str_ireplace($repl, $wise, $target_string);
         }
     }
-
-    $str_trans = new stdClass();
-    $str_trans->source_lang = $source_lang;
-    $str_trans->target_lang = $target_lang;
-    $str_trans->source_string = $source_string;
-    $str_trans->target_string = $target_string;
-    $str_trans->timemodified = time();
-    $DB->insert_record("evaluation_translator", $str_trans);
+    if ( is_siteadmin()) {
+        $str_trans = new stdClass();
+        $str_trans->source_lang = $source_lang;
+        $str_trans->target_lang = $target_lang;
+        $str_trans->source_string = $source_string;
+        $str_trans->target_string = $target_string;
+        $str_trans->timemodified = time();
+        $DB->insert_record("evaluation_translator", $str_trans);
+    }
     return $target_string;
 }
