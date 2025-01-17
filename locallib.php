@@ -2499,9 +2499,9 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     evaluation_has_user_participated($evaluation, $USER->id, $myEvaluation["courseid"]);
         }
 
-        if (!$evaluation_is_open or $isTeacher or $evaluation_has_user_participated ){
-            // stristr($myEvaluation["reminder"], ev_get_string("analysis"))) {
-            print "<hr>Reminder: ".$myEvaluation["reminder"]." - " .ev_get_string("analysis") ."<hr>";
+        if (!$evaluation_is_open or $isTeacher or
+                stristr($myEvaluation["reminder"], ev_get_string("analysis"))) {
+            // print "<hr>Reminder: ".$myEvaluation["reminder"]." - " .ev_get_string("analysis") ."<hr>";
             $color = "grey";
             $actionTxt = get_string("analysis", "evaluation");
             $statTxt = get_string("statistics", "evaluation");
