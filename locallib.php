@@ -5071,12 +5071,12 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
             $target_string = str_ireplace($repl, $wise, $target_string);
         }
         $repl = "Sommersemester";
-        $sose = ev_get_string('summer_semester');
+        $sose = ev_get_string('sose_');
         if (stristr($target_string, $repl )){
             $target_string = str_ireplace($repl, $sose, $target_string);
         }
         $repl = "Wintersemester";
-        $wise = ev_get_string('winter_semester');
+        $sose = ev_get_string('wise_');
         if (stristr($target_string, $repl )){
             $target_string = str_ireplace($repl, $wise, $target_string);
         }
