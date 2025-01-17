@@ -30,6 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 $string['language'] = 'de';
 
 // view.php
+$string['is'] = 'ist';
+$string['was'] = 'war';
 $string['teamteachingtxt'] = 'In Seminaren mit Team Teaching werden die Dozent_innen jeweils einzeln evaluiert.';
 $string['is_WM_disabled'] = 'Ausgenommen sind Weiterbildende Master Studiengänge.';
 $string['siteadmintxt'] = 'Administrator und daher';

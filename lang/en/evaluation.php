@@ -27,7 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 // $string[''] = '';
 $string['language'] = 'en';
 // view.php
-
+$string['is'] = 'is';
+$string['was'] = 'was';
 $string['teamteachingtxt'] = 'In seminars with team teaching, the lecturers are evaluated individually.';
 $string['is_WM_disabled'] = 'Continuing education master\'s degree programs are excluded.';
 $string['siteadmintxt'] = 'Administrator and thus';
