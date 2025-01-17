@@ -368,7 +368,7 @@ $string['file'] = 'Datei';
 $string['filter_by_course'] = 'Kursfilter';
 $string['handling_error'] = 'Fehler bei der Verarbeitung';
 $string['hide_no_select_option'] = '\'Nicht gewählt\' verbergen';
-$string['horizontal'] = 'Nebeneinander';
+// $string['horizontal'] = 'Nebeneinander';
 $string['import_questions'] = 'Fragen importieren';
 $string['import_successfully'] = 'Erfolgreich importiert';
 $string['importfromthisfile'] = 'Aus dieser Datei importieren';
@@ -535,4 +535,4 @@ $string['url_for_continue_help'] =
 $string['use_one_line_for_each_value'] = 'Schreiben Sie jede Antwort in eine neue Zeile!';
 $string['use_this_template'] = 'Diese Vorlage verwenden';
 $string['using_templates'] = 'Vorlage verwenden';
-$string['vertical'] = 'Untereinander';
+

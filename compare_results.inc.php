@@ -346,7 +346,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     . ev_get_string('change_sort_up_down') . '"></span>'; ?>
                 </button>
                 <?php
-                $label = ($sortKey == "replies" ? "Abgaben" : "Mittelwert");
+                $label = ev_get_string($sortKey == "replies" ? "Abgaben" : "Mittelwert");
                 $value = ($sortKey == "values" ? "replies" : "values");
                 ?>
                 <button name="sortKey" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
@@ -358,7 +358,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         if (!$qSelected){  //AND ($allSelected AND $allSelected !== "allCourses" AND $allSelected !== "allTeachers" ) )
             print '<div style="display:inline;" id="showGraf" title="' . ev_get_string('click_for_graphics') . '"><b>'
                 . ev_get_string('graphics') . "</b>: </div>\n";
-            $label = ev_get_string(($ChartAxis == "x" ? "horizontal" : "vertical"));
+            $label = ev_get_string(($ChartAxis == "x" )? "horizontal" : "vertical");
             $value = ($ChartAxis == "x" ? "y" : "x");
             ?>
             <button name="ChartAxis" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"

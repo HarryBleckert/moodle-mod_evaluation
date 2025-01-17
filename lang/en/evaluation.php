@@ -364,7 +364,7 @@ $string['file'] = 'File';
 $string['filter_by_course'] = 'Filter by course';
 $string['handling_error'] = 'Error occurred in evaluation module action handling';
 $string['hide_no_select_option'] = 'Hide the "Not selected" option';
-$string['horizontal'] = 'Horizontal';
+// $string['horizontal'] = 'Horizontal';
 $string['check'] = 'Multiple choice - multiple answers';
 $string['checkbox'] = 'Multiple choice - multiple answers allowed (check boxes)';
 $string['check_values'] = 'Possible responses';
@@ -539,4 +539,4 @@ $string['url_for_continue_help'] =
 $string['use_one_line_for_each_value'] = 'Use one line for each answer!';
 $string['use_this_template'] = 'Use this template';
 $string['using_templates'] = 'Use a template';
-$string['vertical'] = 'Vertical';
+
