@@ -144,7 +144,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     // access control
     $myEvaluations = get_evaluation_participants($evaluation, $USER->id);
     // print nl2br("\$myEvaluations" . var_export($myEvaluations, true));
-    
+
     if (defined('EVALUATION_OWNER')) {
         get_evaluation_filters($evaluation);
         if ($department AND isset($_SESSION['CoS_department']) and safeCount($_SESSION['CoS_department'])) {
@@ -795,7 +795,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
 
             if ((defined('EVALUATION_OWNER') && !isset($_SESSION['CoS_privileged_sgl'][$USER->username]))
-                    OR evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)) {
+                    OR evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
+                    OR $isCourseStudent) {
                 $links = '<a href="analysis_course.php?id=' . $id . '&courseid=' . $allResult->courseid
                         . '" title="' . $fullname . '" target="analysis">'
                         . (strlen($fullname) > 120 ? substr($fullname, 0, 120) . "..." : $fullname) . "</a>";
