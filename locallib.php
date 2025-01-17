@@ -2501,7 +2501,6 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
 
         if (!$evaluation_is_open or $isTeacher or
                 stristr($myEvaluation["reminder"], ev_get_string("analysis"))) {
-            // print "<hr>Reminder: ".$myEvaluation["reminder"]." - " .ev_get_string("analysis") ."<hr>";
             $color = "grey";
             $actionTxt = get_string("analysis", "evaluation");
             $statTxt = get_string("statistics", "evaluation");
@@ -2521,6 +2520,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                 $urlC = "<a href=\"$wwwroot/course/view.php?id=" . $myEvaluation["courseid"] . "\">";
             } else {
                 $urlC = "<a href=\"#\">";
+                print "<hr>Reminder: ".$myEvaluation["reminder"]." - " .ev_get_string("analysis") ."<hr>";
             }
             $str .= "<tr>\n";
             $str .= "<td $min_resInfo>$urlF<b style=\"color:$color;\">$actionTxt</b></a></td>\n";
