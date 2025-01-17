@@ -121,8 +121,16 @@ $string['this_is_a_multichoice_question'] = 'This is a multi-choice question. On
 $string['apply'] = 'apply';
 $string['remove'] = 'remove';
 $string['filter_action'] = '{$a->action} <b>Filter</b>';
+$string['remove_filter'] = 'Remove filter';
+$string['less_minreplies'] = '<span style="color:red;font-weight:bold;">There are <span style="color:red;font-weight:bold;">less than {$a->minReplies} submissions</span> for</span> {$a->ftitle}. <b>Therefore, no evaluation is displayed!</b>';
+$string['except_siteadmin'] = ' - siteadmins excluded';
+$string['team_teaching'] = 'Team Teaching';
+$string['single_submission_per_course'] = 'One submission per participant and course';
+$string['this_course_has_numteachers'] = 'This course has {$a->numTeachers}';
+
 
 // end compare_results_inc.php
+
 $string['active_only'] = 'Active only';
 $string['AllActivities'] = 'All activities of this Evaluation';
 $string['all_courses'] = 'All courses';
