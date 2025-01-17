@@ -5066,7 +5066,7 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
             $target_string = str_ireplace($repl, $wise, $target_string);
         }
     }
-    if ( is_siteadmin()) {
+    if ( false AND is_siteadmin()) {
         $str_trans = new stdClass();
         $str_trans->source_lang = $source_lang;
         $str_trans->target_lang = $target_lang;
