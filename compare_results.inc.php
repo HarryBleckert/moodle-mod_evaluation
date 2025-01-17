@@ -455,7 +455,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 // show or hide lines < minReplies
                 print '<button name="showOmitted" style="' . $buttonStyle . '" value="' . ($showOmitted ?0 :1) .
                 '" title="' . ev_get_string('toggle_by_minreplies') . '"' . ' onclick="this.form.submit();">';
-                echo ev_get_string(($showOmitted ?"show" :"hide") . "</button>\n";
+                echo ev_get_string(($showOmitted) ?"show" :"hide") . "</button>\n";
             }
             print "</span>";
             //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
