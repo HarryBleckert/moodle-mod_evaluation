@@ -1005,7 +1005,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $a->minReplies = $minReplies;
         $a->allSubject = $allSubject;
         print  '<tr><td style="text-align:left;">'
-                . ev_get_string('omitted_submissions'.$a)
+                . ev_get_string('omitted_submissions',$a)
                 . ": " . $omittedSubjects . "/" . $evaluatedResults 
         . '</td>
 				<td>&nbsp;</td>
