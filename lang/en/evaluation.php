@@ -86,6 +86,7 @@ $string['for_you'] = 'for you';
 $string['in_your_courses'] = 'in your participating courses';
 $string['summer_semester'] = 'Summer semester';
 $string['winter_semester'] = 'Winter semester';
+$string['all_submissions'] = 'all submissions';
 // $string[''] = '';
 // end view.php
 

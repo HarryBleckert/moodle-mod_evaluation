@@ -346,7 +346,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     . ev_get_string('change_sort_up_down') . '"></span>'; ?>
                 </button>
                 <?php
-                $label = ev_get_string($sortKey == "replies" ? "Abgaben" : "Mittelwert");
+                $label = ev_get_string(($sortKey == "replies") ? "submissions" : "average");
                 $value = ($sortKey == "values" ? "replies" : "values");
                 ?>
                 <button name="sortKey" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
@@ -953,12 +953,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
     print '<style> table, th, td { border:1px solid black;} th, td { padding:5px; text-align:right; vertical-align:bottom;}</style>';
     print '<table id="chartResultsTable" style="border-collapse:collapse;margin: 5px 30px;font-size:12pt;font-weight:normal;">';
     print   "\n" . '<tr style="font-weight:bold;background-color:lightgrey;">'
-            . "\n" . '<th colspan="2" style="text-align:left">' . "Abgaben"
+            . "\n" . '<th colspan="2" style="text-align:left">' . ev_get_string('submissions')
             . ($_SESSION["duplicated"] ? " <small>(inkl. "
                     . evaluation_number_format($_SESSION["duplicated"]) . " duplizierter Abgaben)</small>"
                     : "") . '</th>
-			<th colspan="2">' . 'Mittelwert' . "</th>\n</tr>\n";
-    print  '<tr><td style="text-align:left;">' . "Alle Abgaben:" . '</td>
+			<th colspan="2">' . ev_get_string('average') . "</th>\n</tr>\n";
+    print  '<tr><td style="text-align:left;">' . ev_get_string('all_submissions') . ":" . '</td>
 				<td>' . evaluation_number_format($numresults) . '</td>
 				<td style="text-align:left;"><span id="totalPresentation"></span></td>
 				<td><span id="totalAvg"></span></td></tr>' . "\n";

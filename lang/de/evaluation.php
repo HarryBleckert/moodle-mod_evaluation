@@ -130,7 +130,12 @@ $string['except_siteadmin'] = ' - ausgenommen sind Admins';
 $string['team_teaching'] = 'Team Teaching';
 $string['single_submission_per_course'] = 'Eine Abgabe pro Teilnehmer_in und Kurs';
 $string['this_course_has_numteachers'] = 'Dieser Kurs hat {$a->numTeachers}';
-    // $string[''] = '';
+$string['all_submissions'] = 'Alle Abgaben';
+
+
+// $string[''] = '';
+// $string[''] = '';
+// $string[''] = '';
 // end compare_results_inc.php
 
 $string['active_only'] = 'Nur Aktive';
