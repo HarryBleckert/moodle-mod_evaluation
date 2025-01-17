@@ -695,6 +695,7 @@ if ($evaluationcompletion->can_complete()) {
         // Evaluation is not yet open or is already closed.
         $a->timeopen = date("d.m.Y", $evaluation->timeopen);
         $a->timeclose = date("d.m.Y", $evaluation->timeclose);
+        $a->is_or_was = get_string(($is_open)?"is" :"was");
         echo "<b>" . ev_get_string('evaluationperiod',$a) . "</b><br>\n";
         if ($is_open) {
             echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
