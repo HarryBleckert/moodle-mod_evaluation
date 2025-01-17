@@ -489,7 +489,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 if (defined('EVALUATION_OWNER')) {
                     $a->action = ev_get_string(in_array($qSelected, $subqueryids) ? "remove" : "apply")
                     $value = in_array($qSelected, $subqueryids) ? "2" : "1";
-                    $label = ev_get_string('filter_action');
+                    $label = ev_get_string('filter_action',$a);
                     ?>
                     <button name="sqfilter" style="<?php echo $style; ?>" value="<?php echo $value; ?>"
                             onclick="this.form.submit();"><?php
@@ -568,7 +568,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&courseid=' . $courseid
                     . '&course_of_studiesID=' . $course_of_studiesID
-                    . '&department=' .$department . '">' . "Filter entfernen" . '</a>)';
+                    . '&department=' .$department . '">' . ev_get_string('remove_filter') . '</a>)';
         } else {
             print $anker;
         }
@@ -595,18 +595,17 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 '</a>';
 
         // option to remove filter
-        // if (defined('EVALUATION_OWNER') OR $isTeacher) {
-            print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
-                    . $id . '&teacherid=' . $teacherid
-                    . '&course_of_studiesID=' . $course_of_studiesID
-                    . '&department=' .$department . '">' . "Filter entfernen" . '</a>)';
-        // }
-        //$msg = ($evaluation->teamteaching AND $numTeachers>1) ?" (Team Teaching)" :" (Eine Abgabe pro Teilnehmer_in und Kurs)";
-        $msg = ($numTeachers > 1) ? " (Team Teaching)" : " (Eine Abgabe pro Teilnehmer_in und Kurs)";
+        print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
+                . $id . '&teacherid=' . $teacherid
+                . '&course_of_studiesID=' . $course_of_studiesID
+                . '&department=' .$department . '">' . ev_get_string('remove_filter') . '</a>)';
+        $msg = ($numTeachers > 1) ? " (" .ev_get_string('team_teaching') . ")"
+                : " (" .ev_get_string('single_submission_per_course') . ")";
         if (defined("showTeachers")) {
             echo showTeachers . $msg . "<br>\n";
         } else {
-            $msg = "<br>- Dieser Kurs hat $numTeachers " . get_string("teacher" . ($numTeachers > 1 ? "s" : ""), "evaluation") .
+            $msg = "<br>- " . ev_get_string('this_course_has_numteachers') . " "
+                    . get_string("teacher" . ($numTeachers > 1 ? "s" : ""), "evaluation") .
                     $msg;
             print '<span style="font-size:12pt;font-weight:normal;display:inline;">'
                     . $msg . "</span><br>\n";
@@ -625,7 +624,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&teacherid=' . $teacherid
                     . '&courseid=' . $courseid
-                    . '&department=' .$department . '">' . "Filter entfernen" . '</a>)';
+                    . '&department=' .$department . '">' . ev_get_string('remove_filter') . '</a>)';
         // }
         print "<br>\n";
     }
@@ -641,7 +640,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             print ' (<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
                     . $id . '&teacherid=' . $teacherid
                     . '&courseid=' . $courseid
-                    . '&course_of_studiesID=' . $course_of_studiesID . '">' . "Filter entfernen" . '</a>)';
+                    . '&course_of_studiesID=' . $course_of_studiesID . '">' . ev_get_string('remove_filter') . '</a>)';
         // }
         print "<br>\n";;
     }
@@ -651,9 +650,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
             safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
                 WHERE evaluation=$evaluation->id $filter $subqueryC"));
     if ($filter and $numresultsF < $minReplies) {
-        print '<span style="color:red;font-weight:bold;">' . "Es gibt für</span> '" . implode(", ", $fTitle) . "' "
-                . '<span style="color:red;font-weight:bold;">' . "weniger als $minReplies Abgaben</span>. "
-                . "<b>Daher wird keine Auswertung angezeigt!</b><br>" . (is_siteadmin() ? "- except for siteadmin" : "") . "<br>\n";
+        $a->ftitle = implode(", ", $fTitle);
+        print ev_get_string('less_minreplies',$a) . "<br>\n"
+                . (is_siteadmin() ? ev_get_string('except_siteadmin') : "") . "<br>\n";
     }
     //handle CoS priv users
     $setFilter = $filter;

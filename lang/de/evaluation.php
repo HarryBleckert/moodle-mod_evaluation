@@ -124,10 +124,13 @@ $string['this_is_a_multichoice_question'] = 'Dies ist eine Multi Choice Frage. E
 $string['apply'] = 'anwenden';
 $string['remove'] = 'entfernen';
 $string['filter_action'] = '<b>Filter</b> {$a->action}';
-
-// $string[''] = '';
-// $string[''] = '';
-// $string[''] = '';
+$string['remove_filter'] = 'Filter entfernen';
+$string['less_minreplies'] = '<span style="color:red;font-weight:bold;">Es gibt für</span>  {$a->ftitle} <span style="color:red;font-weight:bold;">weniger als {$a->minReplies} Abgaben</span>. <b>Daher wird keine Auswertung angezeigt!</b>';
+$string['except_siteadmin'] = ' - ausgenommen sind Admins';
+$string['team_teaching'] = 'Team Teaching';
+$string['single_submission_per_course'] = 'Eine Abgabe pro Teilnehmer_in und Kurs';
+$string['this_course_has_numteachers'] = 'Dieser Kurs hat {$a->numTeachers}';
+    // $string[''] = '';
 // end compare_results_inc.php
 
 $string['active_only'] = 'Nur Aktive';
