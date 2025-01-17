@@ -39,8 +39,8 @@ $string['wise_'] = 'winter semester';
 // end translator function
 
 // graph lib
-$string['show_graphic_data'] = 'Hhow graphics data';
-$string['hide_graphic_data'] = 'Hide graphics data';
+$string['show_graphic_data'] = 'Hhow chart data';
+$string['hide_graphic_data'] = 'Hide chart data';
 // end graph lib
 
 // view.php
