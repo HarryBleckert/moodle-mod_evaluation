@@ -103,8 +103,24 @@ $string['reply_scheme'] = 'Reply scheme';
 $string['filter_on_questions'] = 'Filter on questions';
 $string['with_reply'] = 'mit Antwort';
 $string['change_sort_up_down'] = 'Switch sorting between Ascending and Descending';
-
-
+$string['change_sort_by'] = 'Sort by submissions or by averages';
+$string['click_for_graphics'] = 'Click here to scroll directly to the graphic';
+$string['horizontal'] = 'Horizontal';
+$string['vertical'] = 'Vertical';
+$string['maxgraphs'] = 'maximum number for graphic display';
+$string['graphics'] = 'Graphic';
+$string['no_minreplies_no_show'] = 'Evaluations for {$a->allSubject} with less than {$a->minReplies} submissions can not be evaluated.';
+$string['submissions'] = 'Submissions';
+$string['with_minimum'] = 'with at least';
+$string['show'] = 'show';
+$string['hide'] = 'hide';
+$string['toggle_by_minreplies'] = 'Show/hide results with less than {$a->minReplies} submissions';
+$string['evaluated_question'] = 'Evaluated question';
+$string['all_numquestions'] = 'All {$a->numQuestions} comparable evaluable questions';
+$string['this_is_a_multichoice_question'] = 'This is a multi-choice question. Only single-choice answers can be meaningfully evaluated';
+$string['apply'] = 'apply';
+$string['remove'] = 'remove';
+$string['filter_action'] = '{$a->action} <b>Filter</b>';
 
 // end compare_results_inc.php
 $string['active_only'] = 'Active only';
