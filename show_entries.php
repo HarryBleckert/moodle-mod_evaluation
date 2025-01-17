@@ -112,11 +112,11 @@ list($sg_filter, $courses_filter) = get_evaluation_filters($evaluation);
 
 if (!isset($_SESSION['myEvaluations'])) {
     $_SESSION["myEvaluations"] = get_evaluation_participants($evaluation, $USER->id);
-    $_SESSION["myEvaluationsName"] = $evaluation->name;
+    $_SESSION["myEvaluationsName"] = ev_get_tr($evaluation->name);
 }
 
 defined('EVALUATION_OWNER') || require_capability('mod/evaluation:viewreports', $context);
-
+$ev_name = ev_get_tr($evaluation->name);
 if (!$downloading) {    //echo $OUTPUT->header();
     // handle CoS priveleged user
     if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
@@ -124,8 +124,8 @@ if (!$downloading) {    //echo $OUTPUT->header();
                 . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span><br>\n";
     }
 
-    $icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
-    echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+    $icon = '<img src="pix/icon120.png" height="30" alt="' . $ev_name . '">';
+    echo $OUTPUT->heading($icon . "&nbsp;" . format_string($ev_name));
     // fix for bootstrap 4 media declaration conflicting with chrome + Edge printing
     echo '<style type="text/css"> @page { size: auto; } </style>';
 

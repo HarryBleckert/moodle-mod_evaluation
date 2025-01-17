@@ -175,7 +175,7 @@ function evSetPage($url, $url2 = false, $anker = false) {
 
     /*doesn't work
 	$previewnode = $PAGE->navigation->add(get_string("modulenameplural", "evaluation"),$evurl, navigation_node::TYPE_CONTAINER);
-	$thingnode = $previewnode->add($evaluation->name, new moodle_url('/mod/evaluation/view.php', array('id'=>$id )));
+	$thingnode = $previewnode->add(ev_get_tr($evaluation->name), new moodle_url('/mod/evaluation/view.php', array('id'=>$id )));
 	$thingnode->make_active();
 	*/
     // add navbar /mod/evaluation/
@@ -183,7 +183,7 @@ function evSetPage($url, $url2 = false, $anker = false) {
 
     // view page settings
     $evurl = new moodle_url('/mod/evaluation/view.php', array('id' => $id));
-    $PAGE->navbar->add($evaluation->name, $evurl);
+    $PAGE->navbar->add(ev_get_tr($evaluation->name), $evurl);
 
     // current page settings
     if ($url2) {
@@ -200,7 +200,7 @@ function evSetPage($url, $url2 = false, $anker = false) {
     }
 
     $PAGE->set_url($url);
-    $PAGE->set_title($evaluation->name);
+    $PAGE->set_title(ev_get_tr($evaluation->name));
     $PAGE->set_heading($course->fullname);
     if (!$downloading) {    // Print the page header
         echo $OUTPUT->header();
@@ -484,11 +484,11 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
 function ev_shuffle_completed_userids($evaluation, $force = false) {
     global $DB;
     if ($evaluation->anonymous < 1) {
-        print "<br>Funktion ev_shuffle_completed_userids(): Die Evaluation '$evaluation->name' ist nicht anonym.<br>"
+        print "<br>Funktion ev_shuffle_completed_userids(): Die Evaluation '".ev_get_tr($evaluation->name)."' ist nicht anonym.<br>"
                 . "Daher ist keine Anonymisierung der Abgaben erforderlich!<br>\n";
         return;
     } else if ($evaluation->anonymized and !$force) {
-        print "<br>Funktion ev_shuffle_completed_userids(): Die Evaluation '$evaluation->name' wurde bereits anonymisiert.<br>"
+        print "<br>Funktion ev_shuffle_completed_userids(): Die Evaluation '".ev_get_tr($evaluation->name)."' wurde bereits anonymisiert.<br>"
                 . "Daher ist keine Anonymisierung der Abgaben erforderlich!<br>\n";
         return;
     }
@@ -539,7 +539,7 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
 // identify course roles and set permissions
 function evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, $setD = true, $user = false) {
     global $DB, $USER, $CFG;
-    $evaluationName = $evaluation->name;
+    $evaluationName = ev_get_tr($evaluation->name);
     $evaluationCourse = $evaluation->course;
     $isPermitted = $isTeacher = $isStudent = $SiteEvaluation = false;
     $teachers = array();
@@ -2446,7 +2446,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
     foreach ($myEvaluations as $myEvaluation) {
         $str .= "<h2>" . ($showName ? "<b>" . $myEvaluation["fullname"] . "</b>:" . ($userResults ? " " .ev_get_string('your') : "") : "")
                 . " " .ev_get_string('courses_of') ." "
-                . $evaluation->name . "</h2>\n";
+                . ev_get_tr($evaluation->name) . "</h2>\n";
         if ($myEvaluation["role"] != "teacher") {
             $num_courses = safeCount(ev_courses_of_id($evaluation, $myEvaluation["id"]));
             if (!$evaluation_is_open and $num_courses > safeCount($myEvaluations)) {
@@ -3258,7 +3258,7 @@ function make_block_evaluation_visible($evaluation) {
     }
 
     if ($corrections) {
-        return "List of courses participating in $evaluation->name with higher block positions and hidden block evaluation made visible again:<br>\n"
+        return "List of courses participating in '" .ev_get_tr($evaluation->name) ."' with higher block positions and hidden block evaluation made visible again:<br>\n"
                 . $corrections;
     }
     return "<br><br>make_block_evaluation_visible(evaluation): No corrections required<br>";
@@ -3454,7 +3454,7 @@ function pass_evaluation_filters($evaluation, $courseid) {
         if ($passed and !empty($courses_filter) and in_arrayi($courseid, $courses_filter)) {
             $passed = false;
         }
-        //print "<br><br><hr>Evaluation: $evaluation->name - Studiengang: $Studiengang - ".var_export($sg_filter,true)." - showEval: ".($showEval ?"Yes" :"No") ."<br>\n";
+        //print "<br><br><hr>Evaluation: " .ev_get_tr($evaluation->name)." - Studiengang: $Studiengang - ".var_export($sg_filter,true)." - showEval: ".($showEval ?"Yes" :"No") ."<br>\n";
     } else if (!empty($courses_filter) and is_array($courses_filter)
             and !in_array($courseid, $courses_filter)) {
         $passed = false;
@@ -3728,7 +3728,7 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
     if (($SiteEvaluation and trim(substr($course->idnumber, -5)) != $evaluation_semester)
             or (intval(date("Ymd", $timeopen)) > intval(date("Ymd")) and
                     !$showPriv)) {
-        //print "<br><hr>Evaluation: $evaluation->name - idnumber,-5: ".trim(substr( $course->idnumber, -5))
+        //print "<br><hr>Evaluation: ".ev_get_tr($evaluation->name)." - idnumber,-5: ".trim(substr( $course->idnumber, -5))
         //		." - showPriv: ".($showPriv ?"Yes" :"No") ." - evaluation_semester: $evaluation_semester<br>\n";
         return array(false, "");
     }
@@ -3910,7 +3910,7 @@ function evaluation_autofill_field_studiengang() {
 function evaluation_autofill_field_teacherid($evaluation, $reset = false) {
     global $DB;
     if ($evaluation->teamteaching) {
-        echo "<br><b>Evaluation $evaluation->name has team teaching enabled. No autofill of teachers possible!</b><br>\n";
+        echo "<br><b>Evaluation " . ev_get_tr($evaluation->name) ." has team teaching enabled. No autofill of teachers possible!</b><br>\n";
         return false;
     } else {
         if ($reset) {
@@ -3920,7 +3920,7 @@ function evaluation_autofill_field_teacherid($evaluation, $reset = false) {
         $completed = $DB->get_records_sql("SELECT * FROM {evaluation_completed} 
 											WHERE evaluation = $evaluation->id AND teacherid<1 ORDER BY id");
         if (!safeCount($completed) > 1) {
-            echo "<br><b>Evaluation $evaluation->name (ID: $evaluation->id) teacherid autofill was already done!</b><br>\n";
+            echo "<br><b>Evaluation ev_get_tr($evaluation->name) (ID: $evaluation->id) teacherid autofill was already done!</b><br>\n";
             return false;
         }
     }
@@ -4470,6 +4470,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         ev_show_reminders_log("ERROR: The evaluation '$evaluation->name' is not open. Reminders can not be mailed!", $cronjob);
         return false;
     }
+    $ev_name = ev_get_tr($evaluation->name);
     // set user var to Admin Harry
     if (empty($USER) or !isset($USER->username)) {
         /*
@@ -4514,8 +4515,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $cmid = get_evaluation_cmid_from_id($evaluation);
     $evUrl = "https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=" . $cmid;
 
-    //$subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
-    $subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
+    //$subject = '=?UTF-8?B?' . base64_encode($ev_name) . '?=';
+    $subject = '=?UTF-8?B?' . base64_encode($ev_name) . '?=';
     $senderName = '=?UTF-8?B?' . base64_encode($evaluation->sendername) . '?=';
     $senderMail = $evaluation->sendermail;
     $sender = $senderName . " <$senderMail>";
@@ -4616,14 +4617,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 <body>
 $testMsg<p>Guten Tag $fullname</p>
 <p>Bitte beteiligen $also Sie sich an der $reminder
-<a href="$evUrl"><b>$evaluation->name</b></a>.<br><br>
+<a href="$evUrl"><b>$ev_name</b></a>.<br><br>
 Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs und Dozent_in.<br>
 Für jeden bereits von Ihnen evaluierten Kurs können Sie selbst sofort die Auswertung einsehen, wenn mindestens $minResults Abgaben erfolgt sind.<br>
 Ausgenommen sind aus Datenschutzgründen die persönlichen Angaben, sowie die Antworten auf die offenen Fragen.
 </p>
 <p><b>Mit Ihrer Teilnahme tragen Sie dazu bei die Lehre zu verbessern!</b></p>
 <p>Hier eine Übersicht Ihrer Kurse, die an der 
-<a href="$evUrl"><b>$evaluation->name</b></a> teilnehmen:</p>
+<a href="$evUrl"><b>$ev_name</b></a> teilnehmen:</p>
 $myCourses
 <p style="margin-bottom: 0cm">Mit besten Grüßen<br>
 $evaluation->signature<hr>
@@ -4677,7 +4678,7 @@ Studierenden während der Veranstaltung die wenigen Minuten Zeit zur Teilnahme g
 Nur wenn mindestens $minResultsText Abgaben für Sie gemacht wurden, können Sie auch selbst die Textantworten einsehen<br>
 </p>
 <p>Hier eine Übersicht Ihrer Kurse, die an der 
-<a href="$evUrl"><b>$evaluation->name</b></a> teilnehmen:</p>
+<a href="$evUrl"><b>$ev_name</b></a> teilnehmen:</p>
 $myCourses
 <p style="margin-bottom: 0cm">Mit besten Grüßen<br>
 $evaluation->signature<hr>
@@ -5081,7 +5082,7 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
             $target_string = str_ireplace($repl, $wise, $target_string);
         }
     }
-    if ( false AND is_siteadmin()) {
+    if ( is_siteadmin()) {
         $str_trans = new stdClass();
         $str_trans->source_lang = $source_lang;
         $str_trans->target_lang = $target_lang;

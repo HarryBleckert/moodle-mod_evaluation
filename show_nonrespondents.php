@@ -92,7 +92,7 @@ if ($action == 'sendmessage' and $canbulkmessaging) {
     $htmlmessage .= '<div class="navbar">' .
             '<a target="_blank" href="' . $link1 . '">' . $shortname . '</a> &raquo; ' .
             '<a target="_blank" href="' . $link2 . '">' . $strevaluations . '</a> &raquo; ' .
-            '<a target="_blank" href="' . $link3 . '">' . format_string($evaluation->name, true) . '</a>' .
+            '<a target="_blank" href="' . $link3 . '">' . format_string(ev_get_tr($evaluation->name), true) . '</a>' .
             '</div>';
 
     $htmlmessage .= $message;
@@ -115,7 +115,7 @@ if ($action == 'sendmessage' and $canbulkmessaging) {
             $eventdata->smallmessage = '';
             $eventdata->courseid = $course->id;
             $eventdata->contexturl = $link3;
-            $eventdata->contexturlname = $evaluation->name;
+            $eventdata->contexturlname = ev_get_tr($evaluation->name);
             $good = $good && message_send($eventdata);
         }
         if (!empty($good)) {
@@ -134,10 +134,10 @@ if ($action == 'sendmessage' and $canbulkmessaging) {
 
 /// Print the page header
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($evaluation->name);
+$PAGE->set_title(ev_get_tr($evaluation->name));
 echo $OUTPUT->header();
-$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
-echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+$icon = '<img src="pix/icon120.png" height="30" alt="' . ev_get_tr($evaluation->name) . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string(ev_get_tr($evaluation->name)));
 
 require('tabs.php');
 

@@ -48,13 +48,13 @@ if (($SiteEvaluation and !defined('EVALUATION_OWNER')) || !$evaluationstructure-
 }
 
 /// Print the page header
-
+$ev_name = ev_get_tr($evaluation->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($evaluation->name);
+$PAGE->set_title($ev_name);
 echo $OUTPUT->header();
 
-$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
-echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $ev_name . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($ev_name));
 
 /// print the tabs
 require('tabs.php');

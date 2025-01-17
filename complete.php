@@ -48,7 +48,7 @@ if ($courseid) {
     }
     $course_of_studies = evaluation_get_course_of_studies($courseid);
 }
-
+$ev_name = ev_get_tr($evaluation->name);
 $context = context_module::instance($cm->id);
 $evaluationcompletion =
         new mod_evaluation_completion($evaluation, $cm, $courseid, false, null, null, 0, $teacherid, $course_of_studies);
@@ -77,7 +77,7 @@ if ($courseid and $courseid != SITEID) {
 
 if (!$evaluationcompletion->can_complete() or !defined("EVALUATION_ALLOWED")) {
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($evaluation->name));
+    echo $OUTPUT->heading(format_string($ev_name));
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     echo $OUTPUT->notification('Sie können an dieser Evaluation nicht teilnehmen!');
     $url = "/mod/evaluation/view.php?id=$id";
@@ -89,7 +89,7 @@ if (!$evaluationcompletion->can_complete() or !defined("EVALUATION_ALLOWED")) {
 
 $PAGE->navbar->add(get_string('evaluation:complete', 'evaluation'));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($evaluation->name);
+$PAGE->set_title($ev_name);
 $PAGE->set_pagelayout('incourse');
 
 // Check if the evaluation is open (timeopen, timeclose) and couresid supplied for global evaluation
@@ -97,7 +97,7 @@ $courseMissing =
         ($evaluation->course == SITEID and (!$courseid or $courseid == SITEID));  //($course->id == SITEID AND !$courseid) ;
 if (!$evaluationcompletion->is_open() || $courseMissing) {
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($evaluation->name));
+    echo $OUTPUT->heading(format_string($ev_name));
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     if ($courseMissing) {
         echo $OUTPUT->notification(get_string('no_course_selected', 'evaluation'));
@@ -136,8 +136,8 @@ echo $OUTPUT->header();
 // hide settings menu in Moodle 4
 evHideSettings();
 
-$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
-echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $ev_name . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($ev_name));
 
 if ($courseid and $courseid !== SITEID) {
     $Studiengang = $course_of_studies = evaluation_get_course_of_studies($courseid, false);

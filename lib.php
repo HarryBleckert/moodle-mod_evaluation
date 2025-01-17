@@ -2597,7 +2597,7 @@ function evaluation_send_email($cm, $evaluation, $course, $user, $completed = nu
         foreach ($teachers as $teacher) {
             $info = new stdClass();
             $info->username = $printusername;
-            $info->evaluation = format_string($evaluation->name, true);
+            $info->evaluation = format_string(ev_get_tr($evaluation->name), true);
             $info->url = $CFG->wwwroot . '/mod/evaluation/show_entries.php?' .
                     'id=' . $cm->id . '&' .
                     'userid=' . $user->id;
@@ -2609,7 +2609,7 @@ function evaluation_send_email($cm, $evaluation, $course, $user, $completed = nu
                 }
             }
 
-            $a = array('username' => $info->username, 'evaluationname' => $evaluation->name);
+            $a = array('username' => $info->username, 'evaluationname' => ev_get_tr($evaluation->name));
 
             $postsubject = get_string('evaluationcompleted', 'evaluation', $a);
             $posttext = evaluation_send_email_text($info, $course);
@@ -2700,10 +2700,10 @@ function evaluation_send_email_anonym($cm, $evaluation, $course) {
         foreach ($teachers as $teacher) {
             $info = new stdClass();
             $info->username = $printusername;
-            $info->evaluation = format_string($evaluation->name, true);
+            $info->evaluation = format_string(ev_get_tr($evaluation->name), true);
             $info->url = $CFG->wwwroot . '/mod/evaluation/show_entries.php?id=' . $cm->id;
 
-            $a = array('username' => $info->username, 'evaluationname' => $evaluation->name);
+            $a = array('username' => $info->username, 'evaluationname' => ev_get_tr($evaluation->name));
 
             $postsubject = get_string('evaluationcompleted', 'evaluation', $a);
             $posttext = evaluation_send_email_text($info, $course);
@@ -3030,7 +3030,7 @@ function evaluation_get_coursemodule_info($coursemodule) {
     }
 
     $result = new cached_cm_info();
-    $result->name = $evaluation->name;
+    $result->name = ev_get_tr($evaluation->name);
 
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
@@ -3052,7 +3052,7 @@ function evaluation_get_coursemodule_info($coursemodule) {
         $result->customdata['anonymous'] = $evaluation->anonymous;
     }
     // patched by harry
-    //$result->customdata['name'] = $evaluation->name;
+    //$result->customdata['name'] = ev_get_tr($evaluation->name);
     //$result->customdata['course'] = $evaluation->course;
     // end patch
     return $result;
@@ -3172,7 +3172,7 @@ function evaluation_set_events($evaluation) {
         $event = new stdClass();
         $event->eventtype = EVALUATION_EVENT_TYPE_OPEN;
         $event->type = empty($evaluation->timeclose) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
-        $event->name = get_string('calendarstart', 'evaluation', $evaluation->name);
+        $event->name = get_string('calendarstart', 'evaluation', ev_get_tr($evaluation->name));
         $event->description =
                 "$evaluation->intro"; //format_module_intro('evaluation', $evaluation, $evaluation->coursemodule, false);
         $event->format = FORMAT_HTML;
@@ -3210,7 +3210,7 @@ function evaluation_set_events($evaluation) {
         $event = new stdClass();
         $event->type = CALENDAR_EVENT_TYPE_ACTION;
         $event->eventtype = EVALUATION_EVENT_TYPE_CLOSE;
-        $event->name = get_string('calendarend', 'evaluation', $evaluation->name);
+        $event->name = get_string('calendarend', 'evaluation', ev_get_tr($evaluation->name));
         $event->description =
                 "$evaluation->intro"; // format_module_intro('evaluation', $evaluation, $evaluation->coursemodule, false);
         $event->format = FORMAT_HTML;

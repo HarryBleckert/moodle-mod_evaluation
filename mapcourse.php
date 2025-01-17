@@ -56,12 +56,12 @@ $strevaluations = get_string("modulenameplural", "evaluation");
 $strevaluation = get_string("modulename", "evaluation");
 
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($evaluation->name);
+$PAGE->set_title(ev_get_tr($evaluation->name));
 echo $OUTPUT->header();
 
 if (substr($CFG->release, 0, 1) < "4") {
-    $icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
-    echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+    $icon = '<img src="pix/icon120.png" height="30" alt="' . ev_get_tr($evaluation->name) . '">';
+    echo $OUTPUT->heading($icon . "&nbsp;" . format_string(ev_get_tr($evaluation->name)));
     require('tabs.php');
 }
 echo $OUTPUT->box(get_string('mapcourseinfo', 'evaluation'));

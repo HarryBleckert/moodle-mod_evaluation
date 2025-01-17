@@ -157,7 +157,8 @@ else  //if ( $ChartAxis == "bar")
 }
 
 //$chart = new \core\chart_line();
-$chart->set_title($evaluation->name);
+$ev_name = ev_get_tr($evaluation->name);
+$chart->set_title($ev_name);
 $series = new \core\chart_series(format_string("Alle Abgaben"), $data['average']);
 $series->set_labels($data['average_labels']);
 $chart->add_series($series);

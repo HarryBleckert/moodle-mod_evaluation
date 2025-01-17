@@ -97,12 +97,13 @@ if ($item->id) {
 } else {
     $PAGE->navbar->add(get_string('add_item', 'evaluation'));
 }
+$ev_name = ev_get_tr($evaluation->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($evaluation->name);
+$PAGE->set_title($ev_name);
 echo $OUTPUT->header();
 
 // Print the main part of the page.
-echo $OUTPUT->heading(format_string($evaluation->name));
+echo $OUTPUT->heading(format_string($ev_name));
 
 /// print the tabs
 $current_tab = 'edit';

@@ -63,15 +63,15 @@ if ($deletetempl) {
 $strevaluations = get_string("modulenameplural", "evaluation");
 $strevaluation = get_string("modulename", "evaluation");
 $strdeleteevaluation = get_string('delete_template', 'evaluation');
-
+$ev_name = ev_get_tr($evaluation->name);
 navigation_node::override_active_url(new moodle_url('/mod/evaluation/edit.php',
         array('id' => $id, 'do_show' => 'templates')));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($evaluation->name);
+$PAGE->set_title($ev_name);
 echo $OUTPUT->header();
 
-$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
-echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $ev_name . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($ev_name));
 
 /// print the tabs
 require('tabs.php');

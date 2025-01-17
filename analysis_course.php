@@ -115,9 +115,9 @@ if (isset($_SESSION['CoS_privileged'][$USER->username])) {
     print "Auswertungen der Studiengänge: " . '<span style="font-weight:600;white-space:pre-line;">'
             . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span><br>\n";
 }
-
-$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
-echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+$ev_name = ev_get_tr($evaluation->name);
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $ev_name . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($ev_name));
 
 if (!isset($_SESSION["participating_courses_of_studies"])) {
     $_SESSION["participating_courses_of_studies"] = 3;

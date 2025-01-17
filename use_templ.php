@@ -63,15 +63,15 @@ $strevaluation = get_string("modulename", "evaluation");
 navigation_node::override_active_url(new moodle_url('/mod/evaluation/edit.php',
         array('id' => $id, 'do_show' => 'templates')));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($evaluation->name);
+$PAGE->set_title(ev_get_tr($evaluation->name));
 echo $OUTPUT->header();
 
 /// Print the main part of the page
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
-echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+$icon = '<img src="pix/icon120.png" height="30" alt="' . ev_get_tr($evaluation->name) . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string(ev_get_tr($evaluation->name)));
 
 echo $OUTPUT->heading(get_string('confirmusetemplate', 'evaluation'), 4);
 

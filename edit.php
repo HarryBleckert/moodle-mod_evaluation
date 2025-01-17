@@ -132,8 +132,8 @@ if (count($evaluationitems) > 1) {
 
 echo $OUTPUT->header();
 if (substr($CFG->release, 0, 1) < "4") {
-    $icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
-    echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+    $icon = '<img src="pix/icon120.png" height="30" alt="' . ev_get_tr($evaluation->name) . '">';
+    echo $OUTPUT->heading($icon . "&nbsp;" . format_string(ev_get_tr($evaluation->name)));
 
     /// print the tabs
     require('tabs.php');

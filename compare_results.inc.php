@@ -1529,9 +1529,10 @@ function evaluation_compare_results($evaluation, $courseid = false,
         );
         $colors = ($colors0 + $colors0 + $colors0 + $colors0 + $colors0);
         $labelAxis = ($ChartAxis == "x" ? "y" : "x");
+        $ev_name = ev_get_tr($evaluation->name);
         $options = ['responsive' => true, 'indexAxis' => $ChartAxis, 'lineTension' => 0.3,
                 'radius' => 4, 'hoverRadius' => 8,
-                'plugins' => ['title' => ['display' => true, 'text' => $evaluation->name, 'fontSize' => 18]],
+                'plugins' => ['title' => ['display' => true, 'text' => $ev_name, 'fontSize' => 18]],
                 'scales' => [
                     //$labelAxis => [ 'suggestedMin' => 1, 'suggestedMax' => $maxval, 'ticks' => [ 'stepSize' => 1,] ],
                     //$labelAxis => [ 'min' => 1, 'max' => $maxval, 'ticks' => [ 'stepSize' => 1,'min' => 1, 'max' => $maxval] ],

@@ -155,9 +155,8 @@ $lastEvaluationDay = date("d. m.Y", $evaluation->timeclose);
 $date_ending = date("d. M", $evaluation->timeclose);
 $cmid = get_evaluation_cmid_from_id($evaluation);
 $evUrl = "https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=" . $cmid;
-
-//$subject = '=?UTF-8?B?' . base64_encode($evaluation->name) . '?=';
-$subject = '=?UTF-8?Q?' . quoted_printable_encode($evaluation->name) . '?=';
+$ev_name = ev_get_tr($evaluation->name);
+$subject = '=?UTF-8?Q?' . quoted_printable_encode($ev_name) . '?=';
 $cntStudents = $cntTeachers = 0;
 $cnt = 1;
 foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
@@ -255,7 +254,7 @@ Ausgenommen sind aus Datenschutzgründen die persönlichen Angaben sowie die Ant
 </p>
 <p><b>Mit Ihrer Teilnahme tragen Sie dazu bei die Lehre zu verbessern!</b></p>
 <p>Hier eine Übersicht Ihrer Kurse, die an der 
-<a href="$evUrl"><b>$evaluation->name</b></a> teilnehmen:</p>
+<a href="$evUrl"><b>$ev_name</b></a> teilnehmen:</p>
 $myCourses
 <p style="margin-bottom: 0cm">Wie freuen uns über eine rege Beteiligung, vielen Dank schon einmal!<br>
 Ihr BKS Team<hr>
@@ -307,7 +306,7 @@ Nur wenn mindestens $minResultsText Abgaben für Sie gemacht wurden, können Sie
 </p>
 <p>Die Evaluation wird online über Moodle durchgeführt und der Link zur Teilnahme erscheint auf allen Kurshauptseiten des Sommersemesters 2023.</p>
 <p>Hier eine Übersicht Ihrer Kurse, die an der 
-<a href="$evUrl"><b>$evaluation->name</b></a> teilnehmen:</p>
+<a href="$evUrl"><b>$ev_name</b></a> teilnehmen:</p>
 $myCourses
 <p style="margin-bottom: 0cm">Mit besten Grüßen<br>
 Ihr BKS Team<hr>

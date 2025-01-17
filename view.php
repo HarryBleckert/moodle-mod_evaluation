@@ -105,11 +105,7 @@ else{
 }
 
 
-if (substr($USER->lang, 0, 2) == "en") {
-    $ev_name = ev_get_tr($evaluation->name, array(), 'de', 'name');
-} else {
-    $ev_name = ev_get_tr($evaluation->name);
-}
+$ev_name = ev_get_tr($evaluation->name);
 
 //$previewimg = '<i style="color:blue;" class="fa fa-search-plus fa-fw fa-2x" title="'.get_string('preview').'">';
 $previewimg = $OUTPUT->pix_icon('t/preview', get_string('preview'));

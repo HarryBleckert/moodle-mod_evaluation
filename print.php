@@ -84,17 +84,17 @@ $PAGE->set_pagelayout('popup');
 //$strevaluations = get_string("modulenameplural", "evaluation");
 //$evaluation_url = new moodle_url('/mod/evaluation/index.php', array('id'=>$course->id));
 //$PAGE->navbar->add($strevaluations, $evaluation_url);
-//$PAGE->navbar->add(format_string($evaluation->name));
+//$PAGE->navbar->add(format_string(ev_get_tr($evaluation->name)));
 
-$PAGE->set_title($evaluation->name);
+$PAGE->set_title(ev_get_tr($evaluation->name));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 print '<div id="LoginAs" class="LoginAs d-print-none"></div><span style="clear:both;"><br></span>';
 evaluation_LoginAs();
 
 // Print the main part of the page.
-$icon = '<img src="pix/icon120.png" height="30" alt="' . $evaluation->name . '">';
-echo $OUTPUT->heading($icon . "&nbsp;" . format_string($evaluation->name));
+$icon = '<img src="pix/icon120.png" height="30" alt="' . ev_get_tr($evaluation->name) . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string(ev_get_tr($evaluation->name)));
 
 // show return button
 $goBack = html_writer::tag('button', "Zurück",
