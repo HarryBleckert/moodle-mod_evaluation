@@ -84,6 +84,8 @@ $string['to_evaluate'] = 'To be submitted';
 $string['non_of_your_courses_participated'] = 'None of your courses participated in this evaluation!';
 $string['for_you'] = 'for you';
 $string['in_your_courses'] = 'in your participating courses';
+$string['summer_semester'] = 'Summer semester';
+$string['winter_semester'] = 'Winter semester';
 // $string[''] = '';
 // end view.php
 
@@ -96,6 +98,13 @@ $string['no_questions_for_analysis'] = 'There are neither multi-choice questions
 $string['no_answer'] = 'no answer';
 $string['cant_answer'] = 'k.b.';
 $string['i_dont_know'] = 'I can\'t answer';
+$string['analyzed_sc_questions'] = 'Analyzed single choice questions';
+$string['reply_scheme'] = 'Reply scheme';
+$string['filter_on_questions'] = 'Filter on questions';
+$string['with_reply'] = 'mit Antwort';
+$string['change_sort_up_down'] = 'Switch sorting between Ascending and Descending';
+
+
 
 // end compare_results_inc.php
 $string['active_only'] = 'Active only';

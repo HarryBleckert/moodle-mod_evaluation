@@ -96,10 +96,10 @@ if (empty($evaluation_semester)){
 }
 else{
     $syear = substr($evaluation_semester, 0, 4);
-    $semester = "Sommersemester " . $syear;
+    $semester = ev_get_string('summer_semester') . " " . $syear;
     if (substr($evaluation_semester, -1,1) == "2"){
         $syear2 = intval(substr($evaluation_semester, 2, 2)) + 1;
-        $semester = "Wintersemester " . $syear . "/" . $syear2;
+        $semester = ev_get_string('winter_semester') . " " . $syear . "/" . $syear2;
     }
     $evaluation_semester = $semester;
 }

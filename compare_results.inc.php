@@ -26,6 +26,7 @@ define('EVALUATION_MULTICHOICE_HIDENOSELECT', 'h');
 function evaluation_compare_results($evaluation, $courseid = false,
         $teacherid = false, $course_of_studiesID = false, $department =false) {
     global $DB, $OUTPUT, $USER;
+    $a = new stdClass();
     validate_evaluation_sessions($evaluation);
     if (!isset($_SESSION["duplicated"])) {
         $_SESSION["duplicated"] = evaluation_count_duplicated_replies($evaluation);
@@ -273,20 +274,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
         for ($cnt = 1; $cnt <= (safeCount($presentation)); $cnt++) {
             $qfValues .= "'$cnt'" . ($cnt < safeCount($presentation) ? "," : "");
         }
-        print '<span title="' . $hint . '">Ausgewertete Single Choice Fragen: </span><span style="'
+        print ev_get_string('analyzed_sc_questions') . ': <span style="'
                 . $boldStyle . '">' . $numQuestions . "</span> - ";
-    }
-    if (false) //empty($presentation) )
-    {
-        echo $OUTPUT->notification("Es gibt keine multichoice Fragen und auch keine Fragen mit numerischen Antworten. 
-				Eine statistische Auswertung ist für diese Evaluation nicht möglich!");
-        echo $OUTPUT->footer();
-        flush();
-        exit;
     }
 
     if (!empty($_SESSION['subqueries'])) {
-        $subquerytxt = "Filter auf Fragen: ";
+        $subquerytxt = ev_get_string('filter_on_questions');
         foreach ($_SESSION['subqueries'] as $subqueryid) {
             $subqueryids[] = $subqueryid['item'];
             if ($applysubquery) {
@@ -300,7 +293,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 		                        WHERE item=" . $subqueryid['item'] . " and value='" . $subqueryid['value'] . "'))";
                 $subqueryC .= str_ireplace("AND completed", "AND id", $subquery);
             }
-            $subquerytxt .= " '" . $subqueryid['name'] . "' mit Antwort: '" . $subqueryid['reply'] . "', ";
+            $subquerytxt .= " '" . $subqueryid['name'] . "' " . ev_get_string('with_reply') . ": '" . $subqueryid['reply'] . "', ";
         }
         $subquerytxt = substr($subquerytxt, 0, -2);
         // print "subqueries: ".nl2br(var_dump($_SESSION['subqueries'], true));
@@ -308,7 +301,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
 
     $numAnswers = safeCount($presentation);
-    echo "<b>Antwort - Schema</b>: $scheme<br>\n";
+    echo "<b>" . ev_get_string('reply_scheme') . "</b>: $scheme<br>\n";
     //echo "<b>\$presentation ".var_export($presentation,true) . "</b><br>\n";
 
     $buttonStyle = 'margin: 3px 5px;font-weight:bold;color:white;background-color:teal;';
@@ -348,8 +341,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 ?>
                 <button name="sortOrder" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
                         onclick="this.form.submit();"><?php
-                    echo '<span style="width:21px;color:white;" class="fa fa-arrow-' . $label . ' fa-1x" 
-                  title="Sortierung zwischen Aufsteigend und Absteigend wechseln"></span>'; ?>
+                    echo '<span style="width:21px;color:white;" class="fa fa-arrow-' . $label . ' fa-1x" title="'
+                    . ev_get_string('change_sort_up_down') . '"></span>'; ?>
                 </button>
                 <?php
                 $label = ($sortKey == "replies" ? "Abgaben" : "Mittelwert");
@@ -358,15 +351,13 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 <button name="sortKey" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
                         onclick="this.form.submit();">
                 <?php
-                echo '<span title="Sortierung nach Abgaben oder nach AMittwlwerten">' . $label . '</span></button>';
+                echo '<span title="' . ev_get_string('change_sort_by') . '">' . $label . '</span></button>';
 
             }
         if (!$qSelected){  //AND ($allSelected AND $allSelected !== "allCourses" AND $allSelected !== "allTeachers" ) )
-            ?>
-            <div style="display:inline;" id="showGraf" title="Hier Klicken um direkt zur Grafik zu scrollen"><b>Grafik</b>:
-            </div>
-            <?php
-            $label = ($ChartAxis == "x" ? "Horizonal" : "Vertikal");
+            print '<div style="display:inline;" id="showGraf" title="' . ev_get_string('click_for_graphics') . '"><b>'
+                . ev_get_string('graphics') . "</b>: </div>\n";
+            $label = ev_get_string(($ChartAxis == "x" ? "horizontal" : "vertical"));
             $value = ($ChartAxis == "x" ? "y" : "x");
             ?>
             <button name="ChartAxis" style="<?php echo $buttonStyle; ?>" value="<?php echo $value; ?>"
@@ -376,8 +367,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             <?php
             if (defined('EVALUATION_OWNER') or is_siteadmin()) {
                 print '<input type="number" name="maxCharts" value="' . $maxCharts
-                        . '" style="width:42px;font-size:100%;color:white;background-color:teal;" min="3" ondblclick="this.form.submit();" 
-                    title="maximale Anzahl für die grafische Anzeige">';
+                        . '" style="width:42px;font-size:100%;color:white;background-color:teal;" min="3" ondblclick="this.form.submit();" title="'
+                        . ev_get_string('maxgraphs') . '">';
             }
 
         }
@@ -448,29 +439,23 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     $style = $buttonStyle;
                     $value = "allTeachers";
                 }
-                ?>
-                <button name="allSelected" style="<?php echo $style; ?>" value="<?php echo $value; ?>"
-                        onclick="this.form.submit();"><?php
-                    echo get_string("teachers", "evaluation"); ?></button>
-                <?php
+                print '<button name="allSelected" style="'. $style .'" value="' . $value .'" onclick="this.form.submit();">'
+                echo get_string("teachers", "evaluation") . "</button>\n";
             }
-            print '<span title="Evaluationen für ' .$allSubject. ' mit weniger als ' . $minReplies
-                        . ' Abgaben'."\n".'dürfen nicht ausgewertet werden.">';
+            $a->allSubject = $allSubject;
+            $a->minReplies = $minReplies;
+            print '<span title="' . ev_get_string('no_minreplies_no_show',$a) . '">';
             if (($allSelected == "allCourses" or $allSelected == "allTeachers")) {
-                print 'mit mindestens <input type="number" name="minReplies" value="' . $minReplies . '"
+                print  ev_get_string('with_minimum');
+                print ' <input type="number" name="minReplies" value="' . $minReplies . '"
                     style="width:42px;font-size:100%;color:white;background-color:teal;" 
                     ondblclick="this.form.submit();"
-                    min="'
-                        .($privGlobalUser?1:$minResults)
-                        .'"> Abgaben';
+                    min="'.($privGlobalUser?1:$minResults).'"> ';
+                print ev_get_string('submissions');
                 // show or hide lines < minReplies
-                ?>
-                <button name="showOmitted" style="<?php echo $buttonStyle; ?>" value="<?php
-                echo ($showOmitted ?0 :1); ?>" title="Ergebnisse mit weniger als <?php
-                echo $minReplies;?> Abgaben anzeigen/verbergen"
-                        onclick="this.form.submit();"><?php
-                    echo ($showOmitted ?"anzeigen" :"verbergen"); ?></button>
-                <?php
+                print '<button name="showOmitted" style="' . $buttonStyle . '" value="' . ($showOmitted ?0 :1) .
+                '" title="' . ev_get_string('toggle_by_minreplies') . '"' . ' onclick="this.form.submit();">';
+                echo ev_get_string(($showOmitted ?"show" :"hide") . "</button>\n";
             }
             print "</span>";
             //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
@@ -478,13 +463,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
             // start of snippet duplicated in analysis_course.php
             if ($qSelected) {
-                print "<b>Ausgewertete Frage</b>: ";
+                print "<b>" . ev_get_string('evaluated_question') . "</b>: ";
             }
-
-            print    '<select name="qSelected" style="' . $buttonStyle . '" onchange="this.form.submit();">' . "\n"
-                    . '<option value="">' . get_string("all") . " " . $numQuestions
-                    . " vergleichbar auswertbaren " .
-                    get_string("questions", "evaluation") . "</option>\n"; //. $numAllQuestions ." "
+            $a->numQuestions = $numQuestions;
+            print    '<select name="qSelected" style="' . $buttonStyle . '" onchange="this.form.submit();">' . "\n" . '<option value="">'
+                    . ev_get_string('all_numquestions') . "</option>\n";
             foreach ($allQuestions as $question) {
                 $selected = "";
                 if ($question->id == $qSelected) {
@@ -504,8 +487,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
             print "</select>\n";
             if ($qSelected) {
                 if (defined('EVALUATION_OWNER')) {
+                    $a->action = ev_get_string(in_array($qSelected, $subqueryids) ? "remove" : "apply")
                     $value = in_array($qSelected, $subqueryids) ? "2" : "1";
-                    $label = "Filter " . (in_array($qSelected, $subqueryids) ? "entfernen" : "setzen");
+                    $label = ev_get_string('filter_action');
                     ?>
                     <button name="sqfilter" style="<?php echo $style; ?>" value="<?php echo $value; ?>"
                             onclick="this.form.submit();"><?php
@@ -528,19 +512,16 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     }
                 }
                 if ($itemInfo->subtype == 'c') {
-                    print '<br><span style="color:blue;">Dies ist eine Multi Choice Frage. 
-                            Es können nur Single Choice Antworten sinnvoll ausgwertet werden'
-                            . "</span><br>\n";
+                    print '<br><span style="color:blue;">' . ev_get_string('this_is_a_multichoice_question') . "</span><br>\n";
                 }
             }
             // subqueries
             if (!empty($_SESSION['subqueries'])) {
-                ?><br><b>Filter</b> anwenden:&nbsp;
-                <label><input type="radio" name="applysubquery" <?php echo($applysubquery ? "checked" : ""); ?>
-                              value="1">Ja</label>&nbsp;
-                <label><input type="radio" name="applysubquery" <?php echo(!$applysubquery ? "checked" : ""); ?>
-                              value="0">Nein</label>
-                <?php
+                print "<br>\n" . ev_get_string('apply_filter') . ":&nbsp;";
+                print '<label><input type="radio" name="applysubquery" ' . ($applysubquery ? "checked" : "")
+                        . ' value="1">' . get_string('yes') .'</label>&nbsp;
+                <label><input type="radio" name="applysubquery" ' . (!$applysubquery ? "checked" : "")
+                        . 'value="0">' . get_string('no') .'</label>';
 
                 // results for subqueries
                 if ($subquerytxt) {

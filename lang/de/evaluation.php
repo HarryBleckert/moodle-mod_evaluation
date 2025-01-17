@@ -87,7 +87,8 @@ $string['to_evaluate'] = 'Abzugeben';
 $string['non_of_your_courses_participated'] = 'Keiner Ihrer Kurse nahm an dieser Evaluation teil!';
 $string['for_you'] = 'für Sie';
 $string['in_your_courses'] = 'in Ihren teilnehmenden Kursen';
-// $string[''] = '';
+$string['summer_semester'] = 'Sommersemester';
+$string['winter_semester'] = 'Wintersemester';
 // end view.php
 
 // compare_results_inc.php
@@ -99,7 +100,34 @@ $string['no_questions_for_analysis'] = 'Es gibt weder Multichoice Fragen noch nu
 $string['no_answer'] = 'keine Angabe';
 $string['cant_answer'] = 'k.b.';
 $string['i_dont_know'] = 'Kann ich nicht beantworten';
+$string['analyzed_sc_questions'] = 'Ausgewertete Single Choice Fragen';
+$string['reply_scheme'] = 'Antwort - Schema';
+$string['filter_on_questions'] = 'Filter auf Fragen';
+$string['with_reply'] = 'mit Antwort';
+$string['change_sort_up_down'] = 'Sortierung zwischen Aufsteigend und Absteigend wechseln';
 
+$string['change_sort_by'] = 'Sortierung nach Abgaben oder nach Mittwlwerten';
+$string['click_for_graphics'] = 'Hier Klicken um direkt zur Grafik zu scrollen';
+$string['horizontal'] = 'Horizontal';
+$string['vertical'] = 'Vertikal';
+$string['maxgraphs'] = 'maximale Anzahl für die grafische Anzeige';
+$string['graphics'] = 'Grafik';
+$string['no_minreplies_no_show'] = 'Evaluationen für {$a->allSubject} mit weniger als {$a->minReplies} Abgaben dürfen nicht ausgewertet werden.';
+$string['submissions'] = 'Abgaben';
+$string['with_minimum'] = 'mit mindestens';
+$string['show'] = 'anzeigen';
+$string['hide'] = 'verbergen';
+$string['toggle_by_minreplies'] = 'Ergebnisse mit weniger als {$a->minReplies} Abgaben anzeigen/verbergen';
+$string['evaluated_question'] = 'Ausgewertete Frage';
+$string['all_numquestions'] = 'Alle {$a->numQuestions} vergleichbar auswertbaren Fragen';
+$string['this_is_a_multichoice_question'] = 'Dies ist eine Multi Choice Frage. Es können nur Single Choice Antworten sinnvoll ausgwertet werden';
+$string['apply'] = 'anwenden';
+$string['remove'] = 'entfernen';
+$string['filter_action'] = '<b>Filter</b> {$a->action}';
+
+// $string[''] = '';
+// $string[''] = '';
+// $string[''] = '';
 // end compare_results_inc.php
 
 $string['active_only'] = 'Nur Aktive';
