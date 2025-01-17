@@ -911,27 +911,26 @@ function evaluation_compare_results($evaluation, $courseid = false,
         print '<span style="font-size:12pt;font-weight:normal;">';
         if ($numStudents) {
             $numToDo = $numStudents * $divisor;
-            $evaluated = round(($participated / $numStudents) * 100, 1) . "%";
-            print "Dieser Kurs hat $numTeachers Dozent_in" . ($numTeachers > 1 ? "nen" : "")
-                    . " und $numStudents studentische Teilnehmer_innen. 
-				   $participated Teilnehmer_innen haben sich an dieser Evaluation beteiligt. 
-				   Das entspricht einer Beteiligung von $evaluated.<br>\n";
-            if (true) //$evaluation->teamteaching )
-            {
-                if ($numTeachers > 1) {
-                    $completed = round(($completed / $numStudents) * 100, 1) . "%";
-                    print "$completed der Teilnehmer_innen haben alle Dozent_innen bewertet. ";
-                    if (!empty($teacherid)) {
-                        $completed = round(($numresultsF / $numStudents) * 100, 1) . "%";
-                        print "<br>$completed der Teilnehmer_innen haben diese Dozent_in bewertet.";
-                    }
+            $a->evaluated = round(($participated / $numStudents) * 100, 1) . "%";
+            $a->numTeachers = $numTeachers . " " . ev_get_string(($numTeachers > 1) ? "teachers" : "teacher");
+            $a->numStudents = $numStudents . " " . ev_get_string(($numStudents > 1) ? "students" : "student");
+            $a->$participated = $participated;
+            print ev_get_string('course_participants_info') . "<br>\n";
+            if ($numTeachers > 1) {
+                $a->completed = round(($completed / $numStudents) * 100, 1) . "%";
+                print ev_get_string('completed_for_all_teachers',$a);
+                if (!empty($teacherid)) {
+                    $a->completed = round(($numresultsF / $numStudents) * 100, 1) . "%";
+                    print "<br>" . ev_get_string('completed_for_this_teacher',$a);
                 }
-                $quote = round(($numresultsF / $numToDo) * 100, 1) . "%";
-                print "Es wurden " . evaluation_number_format($numresultsF) . " von maximal " . evaluation_number_format($numToDo)
-                        . " Abgaben gemacht. Die Abgabequote beträgt $quote. ";
             }
+            $a->quote = round(($numresultsF / $numToDo) * 100, 1) . "%";
+            // print ev_get_string('completed_for_this_teacher',$a);
+            $a->numresultsF = evaluation_number_format($numresultsF);
+            $a->numToDo = evaluation_number_format($numToDo);
+            print ev_get_string('submissions_for_course',$a);
         } else {
-            print "Dieser Kurs hat keine studentischen Teilnehmer_innen.";
+            print ev_get_string('course_has_no_students');
         }
         echo "</span><br>\n";
     }
@@ -939,23 +938,21 @@ function evaluation_compare_results($evaluation, $courseid = false,
     if ($allKey) {
         $hint = "";
         if ($allSelected == "allTeachers" and !$evaluation->teamteaching) {
-            $hint = "<br><small>Diese Evaluation hat kein Team Teaching aktiviert. 
-					In Kursen mit Team Teaching haben daher alle Dozent_innen dieselbe Auswertung.</small><br>\n";
+            $hint = "<br>\n<small>" . ev_get_string('no_teamteaching_all_same') . "</small><br>\n";
         }
-        print "Ausgewertete "
+        print ev_get_string('analyzed') . "  "
                 . '<span style="font-size:12pt;font-weight:bold;display:inline;">' . $allSubject . ': ' . $evaluatedResults
                 . ($evaluatedResults == $evaluationResults
-                        ? "" : " von insgesamt " . $evaluationResults) . $hint . "</span><br>\n";
+                        ? "" : " " . ev_get_string('of_total',$a) . $evaluationResults) . $hint . "</span><br>\n";
     }
 
     $numresults = safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} WHERE evaluation=$evaluation->id"));
-
+    $a->duplicated = evaluation_number_format($_SESSION["duplicated"]);
     print '<style> table, th, td { border:1px solid black;} th, td { padding:5px; text-align:right; vertical-align:bottom;}</style>';
     print '<table id="chartResultsTable" style="border-collapse:collapse;margin: 5px 30px;font-size:12pt;font-weight:normal;">';
     print   "\n" . '<tr style="font-weight:bold;background-color:lightgrey;">'
             . "\n" . '<th colspan="2" style="text-align:left">' . ev_get_string('submissions')
-            . ($_SESSION["duplicated"] ? " <small>(inkl. "
-                    . evaluation_number_format($_SESSION["duplicated"]) . " duplizierter Abgaben)</small>"
+            . ($_SESSION["duplicated"] ? " <small>(" . ev_get_string('incl_duplicated',$a) . ")</small>"
                     : "") . '</th>
 			<th colspan="2">' . ev_get_string('average') . "</th>\n</tr>\n";
     print  '<tr><td style="text-align:left;">' . ev_get_string('all_submissions') . ":" . '</td>
@@ -965,14 +962,15 @@ function evaluation_compare_results($evaluation, $courseid = false,
     $title = "";
     if ($filter) {
         if (empty($fTitle) and $cosPrivileged_filter) {
-            $fTitle[] = "Einsehbare Studiengänge";
+            $fTitle[] = ev_get_string('permitted_cos');
         }
         $numresultsF =
                 safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
                 WHERE evaluation=$evaluation->id $filter"));
 
         $title = implode("<br>\n", $fTitle);
-        print '<tr id="showFilter" style="display:table-row;"><td style="text-align:left;">' . "Alle Abgaben für: " . $title .
+        print '<tr id="showFilter" style="display:table-row;"><td style="text-align:left;">'
+                . ev_get_string('all_submissions') . " " . get_string('for') . ": " . $title .
                 '</td>'
                 . '<td>' . $numresultsF . '</td>'
                 . '<td style="text-align:left;"><span id="filterPresentation"></span></td>'
@@ -983,7 +981,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $numresultsSq =
                 safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
                 WHERE evaluation=$evaluation->id $filter $subqueryC"));
-        $sqTitle = "Alle gefilterten Abgaben" . (!empty($title) ? " für $title" : "");
+        $a->ftitle = (!empty($title) ? " " . get_string('for') . " " . $title : "");
+        $sqTitle = . ev_get_string('all_filtered_submissions',$a);
         print '<tr id="showSqFilter" style="display:table-row;"><td style="text-align:left;">'
                 . '<span title="' . htmlentities($subquerytxt) . '"><b>' . $sqTitle . '</b></span></td>'
                 . '<td>' . $numresultsSq . '</td>'
@@ -995,15 +994,20 @@ function evaluation_compare_results($evaluation, $courseid = false,
     if ($omittedResults) {
         $button = '';
         $percentage = evaluation_calc_perc($omittedResults, ($filter ? $numresultsF : $numresults));
-        print  '<tr><td style="text-align:left;">' . "Alle Abgaben <" . $minReplies . $percentage . '</td>
+        print  '<tr><td style="text-align:left;">' . ev_get_string('all_submissions') . " < "
+        . $minReplies . $percentage . '</td>
 				<td>' . $omittedResults . '</td>
 				<td style="text-align:left;"><span id="omittedResult"></span></td>
 				<td><span id="omittedAvg"></span></td></tr>' . "\n";
     }
     if ($omittedSubjects){
-        $percentage = evaluation_calc_perc($omittedSubjects,$evaluatedResults);
-        print  '<tr><td style="text-align:left;">' . "$allSubject mit weniger als ".$minReplies . " Abgaben" .$percentage . ": " . $omittedSubjects
-                . "/" . $evaluatedResults . '</td>
+        $a->percentage = evaluation_calc_perc($omittedSubjects,$evaluatedResults);
+        $a->minReplies = $minReplies;
+        $a->allSubject = $allSubject;
+        print  '<tr><td style="text-align:left;">'
+                . ev_get_string('omitted_submissions'.$a)
+                . ": " . $omittedSubjects . "/" . $evaluatedResults 
+        . '</td>
 				<td>&nbsp;</td>
 				<td style="text-align:left;"><span id="omittedResult"></span></td>
 				<td><span id="omittedAvg"></span></td></tr>' . "\n";

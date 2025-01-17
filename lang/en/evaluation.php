@@ -86,7 +86,19 @@ $string['for_you'] = 'for you';
 $string['in_your_courses'] = 'in your participating courses';
 $string['summer_semester'] = 'Summer semester';
 $string['winter_semester'] = 'Winter semester';
-$string['all_submissions'] = 'all submissions';
+$string['all_submissions'] = 'All submissions';
+$string['course_participants_info'] = 'This course has {$a->numTeachers} and {$a->numStudents}. {$a->participated} participants have participated in this evaluation. This corresponds to a participation of {$a->evaluated}.';
+$string['completed_for_this_teacher'] = '{$a->completed} of the participants have rated this lecturer.';
+$string['completed_for_all_teachers'] = '{$a->completed} of the participants have rated all lecturers. ';
+$string['submissions_for_course'] = '{$a->numresultsF)} of a maximum of $a->numToDo} submissions have been made. The submission quota is {$a->quote}.';
+$string['course_has_no_students'] = 'This course has no student participants.';
+$string['no_teamteaching_all_same'] = 'This evaluation has not activated team teaching. In courses with team teaching, all lecturers therefore have the same evaluation.';
+$string['analyzed'] = 'Evaluated';
+$string['of_total'] = 'of total';
+$string['incl_duplicated'] = 'including {$a->duplicated} duplicated submissions';
+$string['permitted_cos'] = 'Viewable courses';
+$string['all_filtered_submissions'] = 'All filtered submissions {$a->ftitle}';
+$string['omitted_submissions'] = '{$a->allSubject} with less than {$a->minReplies} submissions {$a->percentage}';
 // $string[''] = '';
 // end view.php
 

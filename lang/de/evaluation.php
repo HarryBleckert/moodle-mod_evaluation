@@ -131,10 +131,20 @@ $string['team_teaching'] = 'Team Teaching';
 $string['single_submission_per_course'] = 'Eine Abgabe pro Teilnehmer_in und Kurs';
 $string['this_course_has_numteachers'] = 'Dieser Kurs hat {$a->numTeachers}';
 $string['all_submissions'] = 'Alle Abgaben';
-
-
-// $string[''] = '';
-// $string[''] = '';
+$string['course_participants_info'] = 'Dieser Kurs hat {$a->numTeachers} und {$a->numStudents}. {$a->participated} Teilnehmer_innen haben sich an dieser Evaluation beteiligt. Das entspricht einer Beteiligung von {$a->evaluated}.';
+$string['completed_for_this_teacher'] = '{$a->completed} der Teilnehmer_innen haben diese Dozent_in bewertet.';
+$string['completed_for_all_teachers'] = '{$a->completed} der Teilnehmer_innen haben alle Dozent_innen bewertet. ';
+$string['submissions_for_course'] = 'Es wurden {$a->numresultsF)} von maximal $a->numToDo} Abgaben gemacht. Die Abgabequote beträgt {$a->quote}.';
+$string['course_has_no_students'] = 'Dieser Kurs hat keine studentischen Teilnehmer_innen.';
+$string['no_teamteaching_all_same'] = 'Diese Evaluation hat kein Team Teaching aktiviert. In Kursen mit Team Teaching haben daher alle Dozent_innen dieselbe Auswertung.';
+$string['analyzed'] = 'Ausgewertete';
+$string['of_total'] = 'von insgesamt';
+$string['incl_duplicated'] = 'inkl. {$a->duplicated} duplizierter Abgaben ';
+$string['permitted_cos'] = 'Einsehbare Studiengänge';
+$string['all_filtered_submissions'] = 'Alle gefilterten Abgaben {$a->ftitle}';
+$string['omitted_submissions'] = '{$a->allSubject} mit weniger als {$a->minReplies} Abgaben {$a->percentage}';
+//$string[''] = '';
+//$string[''] = '';
 // $string[''] = '';
 // end compare_results_inc.php
 
