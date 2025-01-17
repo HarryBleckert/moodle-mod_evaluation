@@ -914,7 +914,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $a->evaluated = round(($participated / $numStudents) * 100, 1) . "%";
             $a->numTeachers = $numTeachers . " " . ev_get_string(($numTeachers > 1) ? "teachers" : "teacher");
             $a->numStudents = $numStudents . " " . ev_get_string(($numStudents > 1) ? "students" : "student");
-            $a->$participated = $participated;
+            $a->participated = $participated;
             print ev_get_string('course_participants_info',$a) . "<br>\n";
             if ($numTeachers > 1) {
                 $a->completed = round(($completed / $numStudents) * 100, 1) . "%";
