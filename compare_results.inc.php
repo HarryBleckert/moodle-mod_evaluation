@@ -439,7 +439,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     $style = $buttonStyle;
                     $value = "allTeachers";
                 }
-                print '<button name="allSelected" style="'. $style .'" value="' . $value .'" onclick="this.form.submit();">'
+                print '<button name="allSelected" style="'. $style .'" value="' . $value .'" onclick="this.form.submit();">';
                 echo get_string("teachers", "evaluation") . "</button>\n";
             }
             $a->allSubject = $allSubject;
