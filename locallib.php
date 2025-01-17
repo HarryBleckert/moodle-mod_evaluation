@@ -5050,7 +5050,7 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
         $repl = "durch Studierende";
         $by_students = ev_get_string('by_students');
         if (stristr($target_string, $repl ) AND $by_students !=="by_students"){
-            $target_string = str_ireplace($repl, $by_students, $target_string);
+            $target_string = str_ireplace($repl, "", $target_string);
         }
         $repl = " des ";
         $of = " " . ev_get_string('of_') ." ";
