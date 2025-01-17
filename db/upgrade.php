@@ -554,7 +554,7 @@ function xmldb_evaluation_upgrade($oldversion) {
         // Adding indexes to table evaluation_users.
         $table->add_index('s_lang', XMLDB_INDEX_NOTUNIQUE, ['source_lang']);
         $table->add_index('t_lang', XMLDB_INDEX_NOTUNIQUE, ['target_lang']);
-        $table->add_index('s_string', XMLDB_INDEX_NOTUNIQUE, ['source_string']);
+        // $table->add_index('s_string', XMLDB_INDEX_NOTUNIQUE, ['source_string']);
         $table->add_index('slc', XMLDB_INDEX_NOTUNIQUE, ['source_lang,source_string']);
         // Conditionally launch create table for evaluation_users.
         if (!$dbman->table_exists($table)) {
