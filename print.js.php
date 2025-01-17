@@ -65,11 +65,11 @@
 
         if (showGraf == "true") {
             $("[id^=chart-table-data-]").show();
-            $("[aria-controls^=chart-table-data-]").text("Grafikdaten verbergen");
+            $("[aria-controls^=chart-table-data-]").text(ev_get_string('hide_graphic_data'));
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", true);
         } else {
             $("[id^=chart-table-data-]").hide();
-            $("[aria-controls^=chart-table-data-]").text("Grafikdaten anzeigen");
+            $("[aria-controls^=chart-table-data-]").text(ev_get_string('show_graphic_data'));
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", false);
         }
     });
@@ -133,7 +133,7 @@
 }
 };
     require(["jquery"], function($) {
-    showAnker = "Grafikdaten anzeigen";
+    showAnker = ev_get_string('show_graphic_data');
     if ( showGraf == "true")
 {showAnker = "Grafikdaten verbergen";}
     $("[aria-controls^=chart-table-data-]").text(showAnker);
@@ -157,11 +157,11 @@
 
         if (showGraf == "true") {
             $("[id^=chart-table-data-]").show();
-            $("[aria-controls^=chart-table-data-]").text("Grafikdaten verbergen");
+            $("[aria-controls^=chart-table-data-]").text(ev_get_string('hide_graphic_data'));
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", true);
         } else {
             $("[id^=chart-table-data-]").hide();
-            $("[aria-controls^=chart-table-data-]").text("Grafikdaten anzeigen");
+            $("[aria-controls^=chart-table-data-]").text(ev_get_string('show_graphic_data'));
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", false);
         }
     });;

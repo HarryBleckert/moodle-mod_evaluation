@@ -38,6 +38,11 @@ $string['sose_'] = 'Sommersemester';
 $string['wise_'] = 'Wintersemester';
 // end translator function
 
+// graph lib
+$string['show_graphic_data'] = 'Grafikdaten anzeigen';
+$string['hide_graphic_data'] = 'Grafikdaten verbergen';
+// end graph lib
+
 // view.php
 $string['is'] = 'ist';
 $string['was'] = 'war';
