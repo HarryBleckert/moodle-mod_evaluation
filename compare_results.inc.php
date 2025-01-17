@@ -982,7 +982,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
                 WHERE evaluation=$evaluation->id $filter $subqueryC"));
         $a->ftitle = (!empty($title) ? " " . get_string('for') . " " . $title : "");
-        $sqTitle = . ev_get_string('all_filtered_submissions',$a);
+        $sqTitle = ev_get_string('all_filtered_submissions',$a);
         print '<tr id="showSqFilter" style="display:table-row;"><td style="text-align:left;">'
                 . '<span title="' . htmlentities($subquerytxt) . '"><b>' . $sqTitle . '</b></span></td>'
                 . '<td>' . $numresultsSq . '</td>'
