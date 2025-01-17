@@ -465,8 +465,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 print "<b>" . ev_get_string('evaluated_question') . "</b>: ";
             }
             $a->numQuestions = $numQuestions;
-            print    '<select name="qSelected" style="' . $buttonStyle . '" onchange="this.form.submit();">' . "\n" . '<option value="">'
-                    . ev_get_string('all_numquestions') . "</option>\n";
+            print '<select name="qSelected" style="' . $buttonStyle . '" onchange="this.form.submit();">'
+                  . "\n" . '<option value="">' . ev_get_string('all_numquestions',$a) . "</option>\n";
             foreach ($allQuestions as $question) {
                 $selected = "";
                 if ($question->id == $qSelected) {
