@@ -123,7 +123,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     $responses = get_string('completed_evaluations', "evaluation");
     $filterSubject = ev_get_string('reset_selection');
-    echo '<h1 title="' . ev_get_string('question_hint') . '" style="display:inline;color:darkgreen;text-align:left;font-weight:bolder;">Statistik</h1><br>';
+    echo '<h1 title="' . ev_get_string('question_hint') . '" style="display:inline;color:darkgreen;text-align:left;font-weight:bolder;">'
+        . ev_get_string('statistic') . "</h1><br>\n";
 
     if ($allSelected == "allDepartments") {
         $allSubject = get_string("departments", "evaluation");
