@@ -453,13 +453,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     min="'.($privGlobalUser?1:$minResults).'"> ';
                 print ev_get_string('submissions');
                 // show or hide lines < minReplies
-                print '<button name="showOmitted" style="' . $buttonStyle . '" value="' . ($showOmitted ?0 :1) .
-                '" title="' . ev_get_string('toggle_by_minreplies') . '"' . ' onclick="this.form.submit();">';
-                echo ev_get_string(($showOmitted) ?"show" :"hide") . "</button>\n";
+                print '<button name="showOmitted" style="' . $buttonStyle . '" value="' . ($showOmitted ?0 :1)
+                        . '" title="' . ev_get_string('toggle_by_minreplies') . '"' . ' onclick="this.form.submit();">';
+                print ev_get_string(($showOmitted ?"show" :"hide")) . "</button>\n";
             }
             print "</span>";
-            //print 	"\n<br><b>" . $numAllQuestions . " " . get_string("questions","evaluation")	. '</b> '
-            print        "\n<br>";
+            print "\n<br>";
 
             // start of snippet duplicated in analysis_course.php
             if ($qSelected) {
