@@ -5020,12 +5020,11 @@ function array_searchi($needle, $haystack) {
 
 function ev_get_tr($source_string, $args=array(), $source_lang='de',$field='') {
     global $DB, $USER;
-    $target_lang = $USER->lang;
+    $target_lang = substr($USER->lang,0,2);
     $target_string = $source_string;
-    if ($target_lang == $source_lang){
+    if (substr($target_lang,0,2) == substr($source_lang,0,2)){
         return $source_string;
     }
-    $updated = false;
 
     if (is_array($args)) {
         foreach ($args as $key => $value) {
