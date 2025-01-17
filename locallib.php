@@ -5051,17 +5051,22 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
             $target_string = str_ireplace($repl, $by_students, $target_string);
         }
         $repl = " des ";
-        $of = ev_get_string(' of ');
+        $of = " " . ev_get_string('of_') ." ";
+        if (stristr($target_string, $repl )){
+            $target_string = str_ireplace($repl, $of, $target_string);
+        }
+        $repl = " für das ";
+        $of = " " . ev_get_string('for_') ." ";
         if (stristr($target_string, $repl )){
             $target_string = str_ireplace($repl, $of, $target_string);
         }
         $repl = " sose ";
-        $sose = ev_get_string(' sose ');
+        $sose = " " . ev_get_string('sose_') ." ";
         if (stristr($target_string, $repl )){
             $target_string = str_ireplace($repl, $sose, $target_string);
         }
         $repl = " wise ";
-        $wise = ev_get_string('wise');
+        $wise = " " . ev_get_string('wise_') ." ";
         if (stristr($target_string, $repl )){
             $target_string = str_ireplace($repl, $wise, $target_string);
         }
@@ -5070,7 +5075,7 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
         if (stristr($target_string, $repl )){
             $target_string = str_ireplace($repl, $sose, $target_string);
         }
-        $repl = " Wintersemester ";
+        $repl = "Wintersemester";
         $wise = ev_get_string('winter_semester');
         if (stristr($target_string, $repl )){
             $target_string = str_ireplace($repl, $wise, $target_string);

@@ -32,10 +32,10 @@ $string['language'] = 'de';
 // translator function
 $string['evaluation_of_courses'] = 'Evaluation der Lehrveranstaltungen';
 $string['by_students'] = 'durch Studierende';
-$string[' of '] = ' des ';
-$string[' for '] = ' für das ';
-$string[' sose '] = ' Sommersemester ';
-$string[' wise '] = ' Wintersemester ';
+$string['of_'] = 'des';
+$string['for_'] = 'für das';
+$string['sose_'] = 'Sommersemester';
+$string['wise_'] = 'Wintersemester';
 // end translator function
 
 // view.php
