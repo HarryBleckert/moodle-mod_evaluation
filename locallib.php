@@ -4821,9 +4821,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $mailsSent = "\$CFG->noemailever: " . ($CFG->noemailever ?"No m" :"M") . "ails sent. \n";
         force_current_language(get_user_lang($admin->username));
         if (!$test) {
-            $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
+            $a->testmsg = ev_get_string('send_reminders_pmsg', $a) . "\n";
             if ($noreplies) {
-                $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
+                $a->testmsg .= "<br> - " . ev_get_string($send_reminders_noreplies, $a);
             }
             $a->testmsg .= "<hr>\n";
         }

@@ -32,7 +32,7 @@ $string['language'] = 'de';
 // send reminders
 $string['send_reminders_noreplies_teachers'] = 'Nur an Lehrende, für die bisher weniger als {$a->min_results_text} Abgaben gemacht wurden.';
 $string['send_reminders_noreplies_students'] = 'Nur an Studierende, die bisher noch nicht an der Evaluation teilgenommen haben.';
-$string['send_reminders_pmsg'] = 'Heute wurden Mails mit Hinweisen zur laufenden Evaluation an alle {$a->role} versandt, deren Kurse an der Evaluation teilnehmen.';
+$string['send_reminders_pmsg'] = 'Heute wurden Mails mit Hinweisen zur laufenden Evaluation an alle {$a->role} versandt, deren Kurse an der Evaluation teilnehmen. Unten sehen Sie ein Beispiel. ';
 $string['send_reminders_remaining'] = 'nur noch {$a->remaining_evaluation_days} Tage bis zum {$a->lastEvaluationDay}';
 $string['send_reminders_students'] = '{$a->testmsg}<p>Guten Tag {$a->fullname}</p>
 <p>Bitte beteiligen {$a->also} Sie sich an der {$a->reminder} laufenden Evaluation<br>

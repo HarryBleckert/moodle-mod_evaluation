@@ -31,8 +31,8 @@ $string['language'] = 'en';
 // send reminders
 $string['send_reminders_noreplies_teachers'] = 'Only to teachers for whom less than {$a->min_results_text} submissions have been made so far.';
 $string['send_reminders_noreplies_students'] = 'Only to students who have not yet taken part in the evaluation.';
-$string['send_reminders_pmsg'] = 'Today, emails with information about the ongoing evaluation were sent to all {$a->role} whose courses are taking part in the evaluation.';
-$string['send_reminders_remaining'] = 'Only {$a->remaining_evaluation_days} days left until {$a->lastEvaluationDay}';
+$string['send_reminders_pmsg'] = 'Today, emails with information about the ongoing evaluation were sent to all {$a->role} whose courses are taking part in the evaluation.<br>See the sample mail below';
+$string['send_reminders_remaining'] = ': Only {$a->remaining_evaluation_days} days left until {$a->lastEvaluationDay}';
 $string['send_reminders_students'] = '{$a->testmsg}<p>Hello {$a->fullname}</p>
 <p>Please participate {$a->also} in the ongoing evaluation: {$a->reminder}<br>
 This evaluation is anonymous and it only takes a few minutes per course and lecturer.<br>
@@ -49,7 +49,7 @@ $a->signum</p>';
 
 $string['send_reminders_teachers'] = '{$a->testmsg}<p>Good day {$a->fullname}</p>
 {$a->onlyfew}
-<p>Please encourage your students to take part in the ongoing evaluation: {$a->reminder}<br>
+<p>Please encourage your students to take part in the ongoing evaluation {$a->reminder}.<br>
 It would be ideal if you integrated participation into your courses by making a motivating call for it and giving the
 students a few minutes to participate during the course!</p>
 <p>If at least {$a->minResults} submissions <b>are available for you</b> for any of your courses, you can view the results of the submissions made for you.<br>
