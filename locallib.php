@@ -4715,7 +4715,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             $a->myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
             $cntStudents++;
             $a->also = (($hasParticipated or remaining_evaluation_days($evaluation) > 15) ? ""
-                    :ev_get_string('also');
+                    :ev_get_string('also'));
             $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
                     . ev_get_string('send_reminders_students', $a) . "</body></html>";
         } else { // $role == teacher
