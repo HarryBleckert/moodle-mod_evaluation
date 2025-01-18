@@ -4820,11 +4820,13 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $dbname = "<br>\n(" . $CFG->dbname .") ";
         $mailsSent = "\$CFG->noemailever: " . ($CFG->noemailever ?"No m" :"M") . "ails sent. \n";
         force_current_language(get_user_lang($username));
-        $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
-        if ($noreplies){
-            $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
+        if (!$test) {
+            $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
+            if ($noreplies) {
+                $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
+            }
+            $a->testmsg .= "<hr>\n";
         }
-        $a->testmsg .= "<hr>\n";
         $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
                 . ev_get_string('send_reminders_'.$role.'s', $a) . "</body></html>";
         $msg = "Hey Admin :)<br><br>\n" . ev_get_string('send_reminders_privileged')
