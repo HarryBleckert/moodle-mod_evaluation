@@ -52,7 +52,7 @@ $string['send_reminders_teachers'] = '{$a->testmsg}<p>Good day {$a->fullname}</p
 <p>Please encourage your students to take part in the ongoing evaluation {$a->reminder}.<br>
 It would be ideal if you integrated participation into your courses by making a motivating call for it and giving the
 students a few minutes to participate during the course!</p>
-<p>If at least {$a->minResults} submissions <b>are available for you</b> for any of your courses, you can view the results of the submissions made for you.<br>
+<p>If at least {$a->minResults} submissions <b>have been done for you</b> and any of your courses, you can view the results of the submissions made for you.<br>
 Only if at least {$a->min_results_text} submissions have been made for you can you also view the text responses yourself</p>
 <p>Here is an overview of your courses that are participating in the
 <a href="{$a->evUrl}"><b>{$a->ev_name}</b></a>:</p>
