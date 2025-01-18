@@ -32,14 +32,14 @@ $string['language'] = 'en';
 $string['send_reminders_noreplies_teachers'] = 'Only to teachers for whom less than {$a->min_results_text} submissions have been made so far.';
 $string['send_reminders_noreplies_students'] = 'Only to students who have not yet taken part in the evaluation.';
 $string['send_reminders_pmsg'] = 'Today, emails with information about the ongoing evaluation were sent to all {$a->role} whose courses are taking part in the evaluation.';
-$string['send_reminders_remaining'] = 'only {$a->remaining_evaluation_days} days left until {$a->lastEvaluationDay}';
+$string['send_reminders_remaining'] = 'Only {$a->remaining_evaluation_days} days left until {$a->lastEvaluationDay}';
 $string['send_reminders_students'] = '{$a->testmsg}<p>Hello {$a->fullname}</p>
-<p>Please {$a->also} take part in the {$a->reminder} ongoing evaluation<br>
-The survey is anonymous and only takes a few minutes per course and lecturer.<br>
+<p>Please participate {$a->also} in the ongoing evaluation: {$a->reminder}<br>
+This evaluation is anonymous and it only takes a few minutes per course and lecturer.<br>
 You can immediately view the evaluation results for each course you have already evaluated if at least {$a->minResults} submissions have been made.<br>
 For data protection reasons, personal information and answers to the open questions are excluded.
 </p>
-<p><b>By participating, you are helping to improve teaching!</b></p>
+<p><b>By participating, you are helping to improve the quality of teaching!</b></p>
 <p>Here is an overview of your courses that are participating in the
 <a href="{$a->evUrl}"><b>{$a->ev_name}</b></a>:</p>
 {$a->myCourses}
@@ -49,13 +49,13 @@ $a->signum</p>';
 
 $string['send_reminders_teachers'] = '{$a->testmsg}<p>Good day {$a->fullname}</p>
 {$a->onlyfew}
-<p>Please encourage your students to take part in the {$a->reminder} ongoing evaluation<br>
+<p>Please encourage your students to take part in the ongoing evaluation: {$a->reminder}<br>
 It would be ideal if you integrated participation into your courses by making a motivating call for it and giving the
 students a few minutes to participate during the course!</p>
-<p>If at least {$a->minResults} submissions <b>are available for you</b> for one of your courses, you can view the results of the submissions made for you.<br>
+<p>If at least {$a->minResults} submissions <b>are available for you</b> for any of your courses, you can view the results of the submissions made for you.<br>
 Only if at least {$a->min_results_text} submissions have been made for you can you also view the text responses yourself</p>
-<p>Here is an overview of your courses that are taking part in the
-<a href="{$a->evUrl}"><b>{$a->ev_name}</b></a> participate:</p>
+<p>Here is an overview of your courses that are participating in the
+<a href="{$a->evUrl}"><b>{$a->ev_name}</b></a>:</p>
 {$a->myCourses}
 <p style="margin-bottom: 0cm">Best regards<br>
 {$a->signature}
