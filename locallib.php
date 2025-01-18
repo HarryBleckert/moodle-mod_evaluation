@@ -4783,14 +4783,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 force_current_language('de');
                 $a->ev_name = ev_get_tr($evaluation->name);
                 $subject = '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
-                foreach ($emails as $to) {
-                    if (!strstr($to,"@") || !strstr($to,"<")){
+                foreach ($emails as $email) {
+                    if (!strstr($email,"@") || !strstr($email,"<")){
                         continue;
                     }
-                    list($fullname, $emailt) = explode(' <', trim($to, '> '));
+                    list($fullname, $emailt) = explode(' <', trim($email, '> '));
                     $a->fullname = $fullname;
-                    $to = '=?UTF-8?B?' . base64_encode($fullname). '?=' . " <$emailt>";
-                    // $to = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
+                    $email = '=?UTF-8?B?' . base64_encode($fullname). '?=' . " <$emailt>";
+                    // $email = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
                     $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
                     if ($noreplies){
                         $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
@@ -4799,7 +4799,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     $msg = ev_get_string('good_day') . " " . $a->fullname . "<br><br>\n" . ev_get_string('send_reminders_privileged');
                     $msg .=  $a->testmsg;
                     $msg = str_ireplace("<body>", "<body>" . $msg, $message);
-                    mail($to, $subject, quoted_printable_encode($msg), $headers);
+                    mail($email, $subject, quoted_printable_encode($msg), $headers);
                     $msg = "-Info an Privilegierte:";
                     ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt - ID: $userid", $cronjob);
                     $cnt++;
