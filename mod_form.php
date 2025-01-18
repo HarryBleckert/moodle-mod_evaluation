@@ -231,7 +231,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
             $default_values['min_results_priv'] = 0;
             $default_values['show_on_index'] = 1;
             $default_values['semester'] = evaluation_get_current_semester();
-            if ( $CFG->ash) {
+            if ( empty($CFG->ash)) {
                 $default_values['sort_tag'] = "ASH";
                 $default_values['sendermail'] = "khayat@ash-berlin.eu";
                 $default_values['sendername'] = "ASH Berlin (Qualitätsmanagement)";

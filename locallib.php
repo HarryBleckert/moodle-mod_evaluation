@@ -127,7 +127,7 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
         return $target_string;
     }
     // handle special case of german evaluation name
-    if (isset($CFG->ash) AND $field == 'name' AND $source_lang == 'de'){
+    if (!empty($CFG->ash) AND $field == 'name' AND $source_lang == 'de'){
         $repl = "Evaluation der Lehrveranstaltungen";
         $evaluation_of_courses = ev_get_string('evaluation_of_courses');
         if (stristr($target_string, $repl ) AND $evaluation_of_courses !=="evaluation_of_courses"){
@@ -565,7 +565,7 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
 
         $evaluation->timeclose = $timecloseSaved;
         if (is_siteadmin()) {
-            if ($CFG->ash and !evaluation_is_item_course_of_studies($evaluation->id)) {
+            if (!empty($CFG->ash) and !evaluation_is_item_course_of_studies($evaluation->id)) {
                 evaluation_autofill_item_studiengang($evaluation);
             }
             // shuffle userids per evaluation and course
@@ -4681,7 +4681,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $subject = $testinfo . '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
 
         $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
-        $a->signum = (isset($CFG->ash)
+        $a->signum = (!empty($CFG->ash)
                 ?"<hr>
                 <b>Alice Salomon Hochschule Berlin</b><br>
                  - University of Applied Sciences -<br>
@@ -4732,8 +4732,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             $a->distinct_s = $_SESSION["distinct_s"];
             $a->replies = $replies;
             $a->submissions = ev_get_string('submission' . ($replies>1 ?"s" :""));
-            $a->onlyfew = "";
 
+            $a->onlyfew = "";
             if ($current_evaluation_day > 7 or $replies > 3) {
                 if ($replies < 21) {
                     if ($replies < 1) {
