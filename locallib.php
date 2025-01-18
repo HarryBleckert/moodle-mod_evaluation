@@ -4813,7 +4813,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             }
         }
     }
-    if (!stripos($to, "bleckert")) {
+    if (true OR !stripos($to, "bleckert")) {
         $a->ev_name = ev_get_tr($evaluation->name);
         $subject = '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
         $dbname = "<br>\n(" . $CFG->dbname .") ";
@@ -4832,7 +4832,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
         force_current_language($current_language);
     }
-
     return true;
 }
 
