@@ -28,9 +28,47 @@ defined('MOODLE_INTERNAL') || die();
 
 // $string[''] = '';
 $string['language'] = 'en';
+// send reminders
+$string['send_reminders_noreplies_teachers'] = 'Only to teachers for whom less than {$a->min_results_text} submissions have been made so far.';
+$string['send_reminders_noreplies_students'] = 'Only to students who have not yet taken part in the evaluation.';
+$string['send_reminders_pmsg'] = 'Today, emails with information about the ongoing evaluation were sent to all {$a->role} whose courses are taking part in the evaluation.';
+$string['send_reminders_remaining'] = 'only {$a->remaining_evaluation_days} days left until {$a->lastEvaluationDay}';
+$string['send_reminders_students'] = '{$a->testmsg}<p>Hello {$a->fullname}</p>
+<p>Please {$a->also} take part in the {$a->reminder} ongoing evaluation<br>
+The survey is anonymous and only takes a few minutes per course and lecturer.<br>
+You can immediately view the evaluation results for each course you have already evaluated if at least {$a->minResults} submissions have been made.<br>
+For data protection reasons, personal information and answers to the open questions are excluded.
+</p>
+<p><b>By participating, you are helping to improve teaching!</b></p>
+<p>Here is an overview of your courses that are participating in the
+<a href="{$a->evUrl}"><b>{$a->ev_name}</b></a>:</p>
+{$a->myCourses}
+<p style="margin-bottom: 0cm">Best regards<br>
+{$a->signature}
+$a->signum</p>';
+
+$string['send_reminders_teachers'] = '{$a->testmsg}<p>Good day {$a->fullname}</p>
+{$a->onlyfew}
+<p>Please encourage your students to take part in the {$a->reminder} ongoing evaluation<br>
+It would be ideal if you integrated participation into your courses by making a motivating call for it and giving the
+students a few minutes to participate during the course!</p>
+<p>If at least {$a->minResults} submissions <b>are available for you</b> for one of your courses, you can view the results of the submissions made for you.<br>
+Only if at least {$a->min_results_text} submissions have been made for you can you also view the text responses yourself</p>
+<p>Here is an overview of your courses that are taking part in the
+<a href="{$a->evUrl}"><b>{$a->ev_name}</b></a> participate:</p>
+{$a->myCourses}
+<p style="margin-bottom: 0cm">Best regards<br>
+{$a->signature}
+$a->signum</p>';
+
+$string['send_reminders_no_replies'] = 'None of your {$a->distinct_s} students have participated yet. ';
+$string['send_reminders_few_replies'] = 'So far there are only {$a->replies} {$a->submissions} from your {$a->distinct_s} students. ';
+$string['send_reminders_many_replies'] = 'So far there are {$a->replies} submissions from your {$a->distinct_s} students';
+$string['send_reminders_privileged'] = 'You are receiving this email for your information, as you are authorized to view the results of this evaluation.';
+// end send reminders
 
 // translator function
-$string['evaluation_of_courses'] = 'Evaluation of courses';
+$string['evaluation_of_courses'] = 'Evaluation of the courses';
 $string['by_students'] = 'by students';
 $string['of_'] = 'of';
 $string['for_'] = 'for';
@@ -127,6 +165,7 @@ $string['vertical'] = 'Vertical';
 $string['maxgraphs'] = 'maximum number for graphic display';
 $string['graphics'] = 'Graphic';
 $string['no_minreplies_no_show'] = 'Evaluations for {$a->allSubject} with less than {$a->minReplies} submissions can not be evaluated.';
+$string['submission'] = 'Submission';
 $string['submissions'] = 'Submissions';
 $string['with_minimum'] = 'with at least';
 $string['show'] = 'show';

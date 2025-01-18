@@ -72,19 +72,115 @@ function safeCount($value) {
 }
 
 // get_string for get_string('show_user', 'mod_evaluarion');
-function ev_get_string($string, $param = new stdclass()) {
+function ev_get_string($string, $param = null, $language = null) {
+    $currentlang = current_language();
+    if (!empty($language)) {
+        // Temporarily force the target language
+        force_current_language($language);
+    }
     $plugin = 'evaluation';
     $trstring = get_string($string, $plugin, $param);
-    /*if ( !empty($param) )
-	{	$trstring = get_string($string, $plugin, $param ); }
-	else
-	{	$trstring = get_string($string, $plugin ); }
-	*/
+
+    if (!empty($language)) {
+        // Restore the original language
+        force_current_language($currentlang);
+
+    }
+
     if (stristr($trstring, ']')) {
         return $string;
     }
     return $trstring;
 }
+
+
+function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$field='', $target_lang = null) {
+    global $CFG, $DB;
+    if (!$target_lang) {
+        $target_lang = current_language();
+    }
+    $target_string = $source_string;
+
+    if (substr($target_lang,0,2) == substr($source_lang,0,2)){
+        if (is_object($args)) {
+            foreach ($args as $key => $value) {
+                if (!stristr($target_string, "{" . $key . "}")) {
+                    continue;
+                }
+                $target_string = str_replace("{" . $key . "}", $value, $target_string);
+            }
+        }
+        return $target_string;
+    }
+
+    if ( $translation = $DB->get_record_sql("SELECT * from {evaluation_translator} 
+         WHERE source_string = '$source_string' AND target_lang='$target_lang'")){  // source_lang = '$source_lang' AND
+        $target_string = $translation->target_string;
+        if (is_object($args)) {
+            foreach ($args as $key => $value) {
+                if (!stristr($translation->target_string, "{" . $key . "}")) {
+                    continue;
+                }
+                $target_string = str_replace("{" . $key . "}", $value, $target_string);
+            }
+        }
+        return $target_string;
+    }
+    // handle special case of german evaluation name
+    if (isset($CFG->ash) AND $field == 'name' AND $source_lang == 'de'){
+        $repl = "Evaluation der Lehrveranstaltungen";
+        $evaluation_of_courses = ev_get_string('evaluation_of_courses');
+        if (stristr($target_string, $repl ) AND $evaluation_of_courses !=="evaluation_of_courses"){
+            $target_string = str_ireplace($repl, $evaluation_of_courses, $target_string);
+        }
+        $repl = "durch Studierende";
+        $by_students = ev_get_string('by_students');
+        if (stristr($target_string, $repl ) AND $by_students !=="by_students"){
+            $target_string = str_ireplace($repl, "", $target_string);
+        }
+        $repl = " des ";
+        $of = " " . ev_get_string('of_') ." ";
+        if (stristr($target_string, $repl )){
+            $target_string = str_ireplace($repl, $of, $target_string);
+        }
+        $repl = " für das ";
+        $of = " " . ev_get_string('for_') ." ";
+        if (stristr($target_string, $repl )){
+            $target_string = str_ireplace($repl, $of, $target_string);
+        }
+        $repl = " sose ";
+        $sose = " " . ev_get_string('sose_') ." ";
+        if (stristr($target_string, $repl )){
+            $target_string = str_ireplace($repl, $sose, $target_string);
+        }
+        $repl = " wise ";
+        $wise = " " . ev_get_string('wise_') ." ";
+        if (stristr($target_string, $repl )){
+            $target_string = str_ireplace($repl, $wise, $target_string);
+        }
+        $repl = "Sommersemester";
+        $sose = ev_get_string('sose_');
+        if (stristr($target_string, $repl )){
+            $target_string = str_ireplace($repl, $sose, $target_string);
+        }
+        $repl = "Wintersemester";
+        $wise = ev_get_string('wise_');
+        if (stristr($target_string, $repl )){
+            $target_string = str_ireplace($repl, $wise, $target_string);
+        }
+    }
+    if ( is_siteadmin()) {
+        $str_trans = new stdClass();
+        $str_trans->source_lang = $source_lang;
+        $str_trans->target_lang = $target_lang;
+        $str_trans->source_string = $source_string;
+        $str_trans->target_string = $target_string;
+        $str_trans->timemodified = time();
+        $DB->insert_record("evaluation_translator", $str_trans);
+    }
+    return $target_string;
+}
+
 
 // Moodle return clode for addidional html settings
 function evaluation_additional_html() {
@@ -1893,6 +1989,21 @@ function evaluation_participating_courses($evaluation, $userid = false, $cstudie
     return $ids;
 }
 
+/**
+ * Retrieve the preferred language of a user.
+ *
+ * @param int $userid The ID of the user whose preferred language is being retrieved.
+ * @return string|$CFG->lang The preferred language of the user, or $CFG->lang if not set.
+ */
+function ev_get_user_language($userid) {
+    global $CFG, $DB;
+
+    // Retrieve the preferred language for the user.
+    $user = $DB->get_record('user', array('id' => $userid), 'lang', IGNORE_MISSING);
+
+    // Return the preferred language or null if not set.
+    return $user ? $user->lang : $CFG->lang;
+}
 function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role = "student", $courseid=false) {
     global $DB;
     if (empty($lastaccess)) {
@@ -2072,27 +2183,6 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
     return $merged;
 }
 
-function array_merge_recursive_new() {
-    $arrays = func_get_args();
-    $base = array_shift($arrays);
-
-    foreach ($arrays as $array) {
-        reset($base); //important
-        while (list($key, $value) = @each($array)) {
-            if (is_array($value) && @is_array($base[$key])) {
-                $base[$key] = array_merge_recursive_new($base[$key], $value);
-            } else {
-                if (isset($base[$key]) && is_int($key)) {
-                    $key++;
-                }
-                $base[$key] = $value;
-            }
-        }
-    }
-
-    return $base;
-}
-
 // get all participants of evaluation by various filters. Count teachers and students in all participating courses of given evaluation
  function get_evaluation_participants($evaluation, $userid = false, $courseid = false, $getTeachers = false,
          $getStudents = false, $CoSfilter = false) {
@@ -2206,6 +2296,8 @@ function array_merge_recursive_new() {
                     }
                     $cnt++;
                     */
+
+                    $lang = ev_get_user_language($userid);
                     $fullname = ($roleC->alternatename ? $roleC->alternatename : $roleC->firstname) . " " . $roleC->lastname;
                     if ($roleC->roleid == 5)  // student
                     {
@@ -2225,14 +2317,14 @@ function array_merge_recursive_new() {
                                     "username" => $roleC->username,
                                     "email" => $roleC->email, "fullname" => $fullname, "courseid" => $course->id,
                                     "course" => $course->fullname, "shortname" => $course->shortname,
-                                    "lastaccess" => $roleC->lastaccess, "teachers" => $_SESSION["allteachers"][$course->id],
-                                    "reminder" => $reminder);
+                                    "lastaccess" => $roleC->lastaccess, "language" => $lang,
+                                    "teachers" => $_SESSION["allteachers"][$course->id], "reminder" => $reminder);
                         } else if ($getStudents) {
                             $my_evaluation_users[$roleC->id] =
                                     array("fullname" => $fullname, "id" => $roleC->id, "username" => $roleC->username,
                                             "email" => $roleC->email, "firstname" => $roleC->firstname,
                                             "lastname" => $roleC->lastname, "alternatename" => $roleC->alternatename,
-                                            "role" => "student", "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
+                                            "language" => $lang, "role" => "student", "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                         }
 
                 }
@@ -2254,13 +2346,13 @@ function array_merge_recursive_new() {
                                             "email" => $roleC->email, "fullname" => $fullname, "courseid" => $course->id,
                                             "course" => $course->fullname, "shortname" => $course->shortname,
                                             "teachers" => $_SESSION["allteachers"][$course->id], "lastaccess" => $roleC->lastaccess,
-                                            "reminder" => $reminder);
+                                            "language" => $lang, "reminder" => $reminder);
                         } else if ($getTeachers) {
                             $my_evaluation_users[$roleC->id] =
                                     array("fullname" => $fullname, "id" => $roleC->id, "username" => $roleC->username,
                                             "email" => $roleC->email, "firstname" => $roleC->firstname,
                                             "lastname" => $roleC->lastname, "alternatename" => $roleC->alternatename,
-                                            "role" => "teacher", "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
+                                            "language" => $lang, "role" => "teacher", "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                         }
                     }
                 }
@@ -2297,15 +2389,15 @@ function array_merge_recursive_new() {
 
                 if ($userid and ($userid < 0 or $userid == $roleC->id)) {
                     $my_evaluation_courses[$course->id] =
-                            array("role" => "student", "id" => $roleC->id, "username" => $roleC->username,
+                            array("role" => "student", "id" => $roleC->id, "username" => $roleC->username, "language" => $lang,
                                     "email" => $roleC->email, "fullname" => $fullname, "courseid" => $course->id,
                                     "course" => $course->fullname, "shortname" => $course->shortname,
                                     "teachers" => $_SESSION["allteachers"][$course->id], "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                 } else if ($getStudents) {
                     $my_evaluation_users[$roleC->id] =
-                            array("fullname" => $fullname, "id" => $roleC->id, "username" => $roleC->username,
+                            array("fullname" => $fullname, "id" => $roleC->id, "username" => $roleC->username, "language" => $lang,
                                     "email" => $roleC->email, "firstname" => $roleC->firstname,
-                                    "lastname" => $roleC->lastname, "alternatename" => $roleC->alternatename,
+                                    "lastname" => $roleC->lastname, "alternatename" => $roleC->alternatename, "language" => $lang,
                                     "role" => "student", "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                 }
             }
@@ -2333,13 +2425,13 @@ function array_merge_recursive_new() {
                 }
                 if ($userid and ($userid < 0 or $userid == $roleC->id)) {
                     $my_evaluation_courses[$course->id] =
-                            array("courseid" => $course->id, "role" => "teacher", "id" => $roleC->id,
+                            array("courseid" => $course->id, "role" => "teacher", "id" => $roleC->id, "language" => $lang,
                                     "username" => $roleC->username, "email" => $roleC->email, "fullname" => $fullname,
                                     "course" => $course->fullname, "shortname" => $course->shortname,
                                     "teachers" => $_SESSION["allteachers"][$course->id],"lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                 } else if ($getTeachers) {
                     $my_evaluation_users[$roleC->id] =
-                            array("fullname" => $fullname, "id" => $roleC->id, "username" => $roleC->username,
+                            array("fullname" => $fullname, "id" => $roleC->id, "username" => $roleC->username, "language" => $lang,
                                     "email" => $roleC->email, "firstname" => $roleC->firstname,
                                     "lastname" => $roleC->lastname, "alternatename" => $roleC->alternatename,
                                     "role" => "teacher", "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
@@ -4040,11 +4132,7 @@ function evaluation_trigger_module_viewed($evaluation, $cm, $courseid) {
         if (!$courseid) {
             $courseid = $evaluation->course;
         }
-        if (!$cm) {
-            list($course, $cm) = get_course_and_cm_from_cmid($id, 'evaluation');
-        } else {
-            $course = $DB->get_record('course', array('id' => $courseid), '*');
-        }
+        $course = $DB->get_record('course', array('id' => $courseid), '*');
         $event = \mod_evaluation\event\course_module_viewed::create_from_record($evaluation, $cm, $course);
         $event->trigger();
     }
@@ -4470,7 +4558,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         ev_show_reminders_log("ERROR: The evaluation '$evaluation->name' is not open. Reminders can not be mailed!", $cronjob);
         return false;
     }
-    $ev_name = ev_get_tr($evaluation->name);
     // set user var to Admin Harry
     if (empty($USER) or !isset($USER->username)) {
         /*
@@ -4482,21 +4569,13 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     // $saveduser = $USER;
 
     setlocale(LC_ALL, 'de_DE');
+    $current_language = current_language();
+    $role = ($role == "participants" ?"student" :$role);
 
     ev_show_reminders_log("\n" . date("Ymd H:i:s") .
             "\nSending reminders to all participants with role $role in evaluation ($CFG->dbname)"
             . "'$evaluation->name' (ID: $evaluation->id)", $cronjob);
 
-    $norpliestxt = "";
-    if ($noreplies) {
-        if ($role == "teacher") {
-            $norpliestxt = "- Nur an Lehrende, für die bisher weniger als 3 Abgaben gemacht wurden.";
-        } else {
-            $norpliestxt = "- Nur an Studiernde, die bisher noch nicht an der Evaluation teilgenommen haben.";
-        }
-        ev_show_reminders_log($norpliestxt, $cronjob);
-        $norpliestxt = "<br>\n" . $norpliestxt;
-    }
 
     if ($test) {
         ev_show_reminders_log("Test Mode $test", $cronjob);
@@ -4513,10 +4592,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     // $total_evaluation_days = total_evaluation_days($evaluation);
     $lastEvaluationDay = date("d.m.Y", $evaluation->timeclose);
     $cmid = get_evaluation_cmid_from_id($evaluation);
-    $evUrl = "https://moodle.ash-berlin.eu/mod/evaluation/view.php?id=" . $cmid;
-
-    //$subject = '=?UTF-8?B?' . base64_encode($ev_name) . '?=';
-    $subject = '=?UTF-8?B?' . base64_encode($ev_name) . '?=';
+    $evUrl = $CFG->wwwroot . "/evaluation/view.php?id=" . $cmid;
     $senderName = '=?UTF-8?B?' . base64_encode($evaluation->sendername) . '?=';
     $senderMail = $evaluation->sendermail;
     $sender = $senderName . " <$senderMail>";
@@ -4528,10 +4604,17 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     }*/
     ini_set("output_buffering", 600);
     $testinfo = ($test ? " Test: " : "");
-    $role = ($role != "participants" ? $role : "student");
-    $target = ($role == "teacher" ? "Lehrende" : "Studierende");
-    $testMsg = $pMsg =
-            "<p>Heute wurden Mails mit Hinweisen zur laufenden Evaluation an $target versandt, deren Kurse an der Evaluation teilnehmen. $norpliestxt.</p><hr>";
+
+    $a = new stdClass();
+    $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
+    $send_reminders_noreplies = "send_reminders_noreplies_students";
+    if ($noreplies) {
+        if ($role == "teacher") {
+            $send_reminders_noreplies = "send_reminders_noreplies_teachers";
+        }
+        ev_show_reminders_log(ev_get_string($send_reminders_noreplies, $a), $cronjob);
+    }
+
     foreach ($evaluation_users as $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
        if(!$cronjob) {
            @ob_flush();
@@ -4547,8 +4630,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $fullname = $evaluation_user["fullname"];
         $email = $evaluation_user["email"];
         $userid = $evaluation_user["id"];
+        $lang = $evaluation_user["language"];
+
         $headers = array("From" => $sender, "Return-Path" => $senderMail, "Reply-To" => $sender, "MIME-Version" => "1.0",
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
+
         if( empty($username) || empty($firstname)){
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user", $cronjob);
             continue;
@@ -4565,12 +4651,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
                     . "Teilnehmende Kurse: " . count(evaluation_is_user_enrolled($evaluation, $userid)), $cronjob);
             continue;
-        }
-
-        if ($role == "student") {
-            $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
-        } else {
-            $myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, true, true);
         }
 
         if ($test ) { // OR ($cnt<2 AND $CFG->noemailever)) {
@@ -4595,8 +4675,34 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             $testMsg = "";
         }
 
-        $reminder = ($remaining_evaluation_days <= 9 ?
-                "<b>nur noch $remaining_evaluation_days Tage bis zum $lastEvaluationDay laufenden</b> " : "laufenden ");
+        force_current_language($lang);
+        $a->ev_name = ev_get_tr($evaluation->name);
+        $subject = '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
+
+        $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
+        $a->signum = (isset($CFG->ash)
+                ?"<hr>
+                <b>Alice Salomon Hochschule Berlin</b><br>
+                 - University of Applied Sciences -<br>
+                Alice-Salomon-Platz 5, 12627 Berlin<br>"
+                :"");
+        $a->minResults = $minResults;
+        $a->min_results_text = $minResultsText;
+
+        $a->testmsg = "";
+        if ($test){
+            $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
+            if ($noreplies){
+                $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
+            }
+            $a->testmsg .= "<hr>\n";
+        }
+        $a->fullname = $fullname;
+        $a->remaining_evaluation_days = $remaining_evaluation_days;
+        $a->lastEvaluationDay = $lastEvaluationDay;
+        $a->evUrl = $evUrl;
+        $a->reminder = ($remaining_evaluation_days <= 9 ?"<b>" . ev_get_string('send_reminders_remaining', $a) ."</b>" :"");
+        $a->signature = $evaluation->signature;
         if ($role == "student") {
             $hasParticipated = evaluation_has_user_participated($evaluation, $userid);
             if ($noreplies AND $hasParticipated) {
@@ -4606,89 +4712,43 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 ev_show_reminders_log("$cnt. $fullname - $username - $userid - $email - COMPLETED ALL!!", $cronjob);
                 continue;
             }
+            $a->myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
             $cntStudents++;
-            $also = (($hasParticipated or remaining_evaluation_days($evaluation) > 15) ? ""
-                    :"auch");
-            $message = <<<HEREDOC
-<html>
-<head>
-<title>$subject</title>
-</head>
-<body>
-$testMsg<p>Guten Tag $fullname</p>
-<p>Bitte beteiligen $also Sie sich an der $reminder
-<a href="$evUrl"><b>$ev_name</b></a>.<br><br>
-Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs und Dozent_in.<br>
-Für jeden bereits von Ihnen evaluierten Kurs können Sie selbst sofort die Auswertung einsehen, wenn mindestens $minResults Abgaben erfolgt sind.<br>
-Ausgenommen sind aus Datenschutzgründen die persönlichen Angaben, sowie die Antworten auf die offenen Fragen.
-</p>
-<p><b>Mit Ihrer Teilnahme tragen Sie dazu bei die Lehre zu verbessern!</b></p>
-<p>Hier eine Übersicht Ihrer Kurse, die an der 
-<a href="$evUrl"><b>$ev_name</b></a> teilnehmen:</p>
-$myCourses
-<p style="margin-bottom: 0cm">Mit besten Grüßen<br>
-$evaluation->signature<hr>
-<b>Alice Salomon Hochschule Berlin</b><br>
-- University of Applied Sciences -<br>
-Alice-Salomon-Platz 5, 12627 Berlin
-	</p>
-</body>
-</html>
-HEREDOC;
+            $a->also = (($hasParticipated or remaining_evaluation_days($evaluation) > 15) ? ""
+                    :ev_get_string('also');
+            $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
+                    . ev_get_string('send_reminders_students', $a) . "</body></html>";
         } else { // $role == teacher
             if (!safeCount($_SESSION["distinct_s"])) {
                 continue;
             }
-            $testTeacher = true;
-            // $possible_evaluations = ev_get_participants($evaluation, $myEvaluations);
-            // Bis zu $possible_evaluations Abgaben für Sie sind möglich.
-            $onlyfew = "";
 
             $replies = evaluation_countCourseEvaluations($evaluation, false, "teacher", $userid);
             if ($noreplies AND $replies>=3) {
                 continue;
             }
+            $a->myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, true, true);
+            $a->distinct_s = $_SESSION["distinct_s"];
+            $a->replies = $replies;
+            $a->submissions = ev_get_string('submission' . ($replies>1 ?"s" :""));
+            $a->onlyfew = "";
+
             if ($current_evaluation_day > 7 or $replies > 3) {
                 if ($replies < 21) {
                     if ($replies < 1) {
-                        $onlyfew = "<b>Keine Ihrer " . $_SESSION["distinct_s"] . " Studierenden hat bisher teilgenommen</b>.<br>";
+                        $a->onlyfew = "<b>" .ev_get_string('send_reminders_no_replies') . "</b>.<br>\n";
                     } else {
-                        $onlyfew = "<b>Bisher gibt es nur $replies Abgabe" . ($replies < 2 ? "" : "n")
-                                . " Ihrer " . $_SESSION["distinct_s"] . " Studierenden</b>.<br>";
-                        // .($replies<2 ?"hat" :"haben")." bisher teilgenommen</b>. ";
+                        $a->onlyfew = "<b>" . ev_get_string('send_reminders_few_replies') . "</b>.<br>\n";
                     }
                 } else {
-                    $onlyfew = "<b>Bisher gibt es $replies Abgaben Ihrer " . $_SESSION["distinct_s"] . " Studierenden</b>.<br>";
+                    $a->onlyfew = "<b>" . ev_get_string('send_reminders_many_replies') .  "</b>.<br>";
                 }
             }
 
             $cntTeachers++;
-            $message = <<<HEREDOC
-<html>
-<head>
-<title>$subject</title>
-</head>
-<body>
-$testMsg<p>Guten Tag $fullname</p>
-$onlyfew
-Bitte motivieren Sie Ihre Studierenden an der $reminder Evaluation teilzunehmen!</b><br>
-Optimal wäre es, wenn Sie die Teilnahme jeweils in Ihre Veranstaltungen integrieren, indem Sie dafür einen motivierenden Aufruf machen und den 
-Studierenden während der Veranstaltung die wenigen Minuten Zeit zur Teilnahme geben!</p>
-<p>Sofern für einen Ihrer Kurse mindestens $minResults Abgaben <b>für Sie</b> vorliegen, können Sie jeweils die Auswertung der für Sie gemachten Abgaben einsehen.<br>
-Nur wenn mindestens $minResultsText Abgaben für Sie gemacht wurden, können Sie auch selbst die Textantworten einsehen<br>
-</p>
-<p>Hier eine Übersicht Ihrer Kurse, die an der 
-<a href="$evUrl"><b>$ev_name</b></a> teilnehmen:</p>
-$myCourses
-<p style="margin-bottom: 0cm">Mit besten Grüßen<br>
-$evaluation->signature<hr>
-<b>Alice Salomon Hochschule Berlin</b><br>
-- University of Applied Sciences -<br>
-Alice-Salomon-Platz 5, 12627 Berlin
-	</p>
-</body>
-</html>
-HEREDOC;
+            $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
+                    . ev_get_string('send_reminders_teachers', $a) . "</body></html>";
+
         }
         if (!$CFG->noemailever || $test) {
             mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
@@ -4699,6 +4759,7 @@ HEREDOC;
         }
         $cnt++;
     }
+    force_current_language($current_language);
     $elapsed = time() - $start;
     echo "";
     if ($role == "student") {
@@ -4718,30 +4779,51 @@ HEREDOC;
             if ($emails = ev_set_privileged_users(false, true)){
                 //$mails = explode("\n",$emails);
                 $cnt = 1;
+
+                force_current_language('de');
+                $a->ev_name = ev_get_tr($evaluation->name);
+                $subject = '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
                 foreach ($emails as $to) {
                     if (!strstr($to,"@") || !strstr($to,"<")){
                         continue;
                     }
                     list($fullname, $emailt) = explode(' <', trim($to, '> '));
+                    $a->fullname = $fullname;
                     $to = '=?UTF-8?B?' . base64_encode($fullname). '?=' . " <$emailt>";
                     // $to = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
-                    $msg = "Guten Tag $fullname<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.$pMsg";
+                    $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
+                    if ($noreplies){
+                        $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
+                    }
+                    $a->testmsg .= "<hr>\n";
+                    $msg = ev_get_string('good_day') . " " . $a->fullname . "<br><br>\n" . ev_get_string('send_reminders_privileged');
+                    $msg .=  $a->testmsg;
                     $msg = str_ireplace("<body>", "<body>" . $msg, $message);
                     mail($to, $subject, quoted_printable_encode($msg), $headers);
                     $msg = "-Info an Privilegierte:";
                     ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt - ID: $userid", $cronjob);
                     $cnt++;
                 }
+                force_current_language($current_language);
             } else if ( is_siteadmin()){
                 print nl2br("<hr>Emails:\n" . var_export($emails,true));
             }
         }
     }
     if (!stripos($to, "bleckert")) {
+        $a->ev_name = ev_get_tr($evaluation->name);
+        $subject = '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
         $dbname = "<br>\n(" . $CFG->dbname .") ";
         $mailsSent = "\$CFG->noemailever: " . ($CFG->noemailever ?"No m" :"M") . "ails sent. \n";
-        $msg = "Hey Admin :)<br><br>\nSie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind."
-                . $dbname . $mailsSent . $pMsg;
+
+        $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
+        if ($noreplies){
+            $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
+        }
+        $a->testmsg .= "<hr>\n";
+
+        $msg = "Hey Admin :)<br><br>\n" . ev_get_string('send_reminders_privileged');
+                . $dbname . $mailsSent . $a->testmsg;
         $msg = str_ireplace("<body>", "<body>" . $msg, $message);
         mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
     }
@@ -5017,80 +5099,4 @@ function array_searchi($needle, $haystack) {
         }
     }
     return false;
-}
-
-function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$field='') {
-    global $DB, $USER;
-    $target_lang = substr($USER->lang,0,2);
-    $target_string = $source_string;
-    if (substr($target_lang,0,2) == substr($source_lang,0,2)){
-        return $source_string;
-    }
-
-    if ( $translation = $DB->get_record_sql("SELECT * from {evaluation_translator} 
-         WHERE source_string = '$source_string' AND source_lang = '$source_lang' AND target_lang='$target_lang'")){
-        $target_string = $translation->target_string;
-        if (is_object($args)) {
-            foreach ($args as $key => $value) {
-                if (!stristr($translation->target_string, "{" . $key . "}")) {
-                    continue;
-                }
-                $target_string = str_replace("{" . $key . "}", $value, $target_string);
-            }
-        }
-        return $target_string;
-    }
-    // handle special case of german evaluation name
-    if ($field == 'name' AND $source_lang == 'de' AND $target_lang == 'en' ){
-        $repl = "Evaluation der Lehrveranstaltungen";
-        $evaluation_of_courses = ev_get_string('evaluation_of_courses');
-        if (stristr($target_string, $repl ) AND $evaluation_of_courses !=="evaluation_of_courses"){
-            $target_string = str_ireplace($repl, $evaluation_of_courses, $target_string);
-        }
-        $repl = "durch Studierende";
-        $by_students = ev_get_string('by_students');
-        if (stristr($target_string, $repl ) AND $by_students !=="by_students"){
-            $target_string = str_ireplace($repl, "", $target_string);
-        }
-        $repl = " des ";
-        $of = " " . ev_get_string('of_') ." ";
-        if (stristr($target_string, $repl )){
-            $target_string = str_ireplace($repl, $of, $target_string);
-        }
-        $repl = " für das ";
-        $of = " " . ev_get_string('for_') ." ";
-        if (stristr($target_string, $repl )){
-            $target_string = str_ireplace($repl, $of, $target_string);
-        }
-        $repl = " sose ";
-        $sose = " " . ev_get_string('sose_') ." ";
-        if (stristr($target_string, $repl )){
-            $target_string = str_ireplace($repl, $sose, $target_string);
-        }
-        $repl = " wise ";
-        $wise = " " . ev_get_string('wise_') ." ";
-        if (stristr($target_string, $repl )){
-            $target_string = str_ireplace($repl, $wise, $target_string);
-        }
-        $repl = "Sommersemester";
-        $sose = ev_get_string('sose_');
-        if (stristr($target_string, $repl )){
-            $target_string = str_ireplace($repl, $sose, $target_string);
-        }
-        $repl = "Wintersemester";
-        $wise = ev_get_string('wise_');
-        if (stristr($target_string, $repl )){
-            $target_string = str_ireplace($repl, $wise, $target_string);
-        }
-    }
-    if ( is_siteadmin()) {
-        $str_trans = new stdClass();
-        $str_trans->source_lang = $source_lang;
-        $str_trans->target_lang = $target_lang;
-        $str_trans->source_string = $source_string;
-        $str_trans->target_string = $target_string;
-        $str_trans->timemodified = time();
-        $DB->insert_record("evaluation_translator", $str_trans);
-    }
-    return $target_string;
 }

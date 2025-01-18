@@ -29,6 +29,45 @@ defined('MOODLE_INTERNAL') || die();
 // $string[''] = '';
 $string['language'] = 'de';
 
+// send reminders
+$string['send_reminders_noreplies_teachers'] = 'Nur an Lehrende, für die bisher weniger als {$a->min_results_text} Abgaben gemacht wurden.';
+$string['send_reminders_noreplies_students'] = 'Nur an Studierende, die bisher noch nicht an der Evaluation teilgenommen haben.';
+$string['send_reminders_pmsg'] = 'Heute wurden Mails mit Hinweisen zur laufenden Evaluation an alle {$a->role} versandt, deren Kurse an der Evaluation teilnehmen.';
+$string['send_reminders_remaining'] = 'nur noch {$a->remaining_evaluation_days} Tage bis zum {$a->lastEvaluationDay}';
+$string['send_reminders_students'] = '{$a->testmsg}<p>Guten Tag {$a->fullname}</p>
+<p>Bitte beteiligen {$a->also} Sie sich an der {$a->reminder} laufenden Evaluation<br>
+Die Befragung erfolgt anonym und dauert nur wenige Minuten pro Kurs und Dozent_in.<br>
+Für jeden bereits von Ihnen evaluierten Kurs können Sie selbst sofort die Auswertung einsehen, wenn mindestens {$a->minResults} Abgaben erfolgt sind.<br>
+Ausgenommen sind aus Datenschutzgründen die persönlichen Angaben, sowie die Antworten auf die offenen Fragen.
+</p>
+<p><b>Mit Ihrer Teilnahme tragen Sie dazu bei die Lehre zu verbessern!</b></p>
+<p>Hier eine Übersicht Ihrer Kurse, die an der 
+<a href="{$a->evUrl}"><b>{$a->ev_name}</b></a> teilnehmen:</p>
+{$a->myCourses}
+<p style="margin-bottom: 0cm">Mit besten Grüßen<br>
+{$a->signature}
+$a->signum</p>';
+
+$string['send_reminders_teachers'] = '{$a->testmsg}<p>Guten Tag {$a->fullname}</p>
+{$a->onlyfew}
+<p>Bitte motivieren Sie Ihre Studierenden an der {$a->reminder} laufenden Evaluation teilzunehmen<br>
+Optimal wäre es, wenn Sie die Teilnahme jeweils in Ihre Veranstaltungen integrieren, indem Sie dafür einen motivierenden Aufruf machen und den 
+Studierenden während der Veranstaltung die wenigen Minuten Zeit zur Teilnahme geben!</p>
+<p>Sofern für einen Ihrer Kurse mindestens {$a->minResults} Abgaben <b>für Sie</b> vorliegen, können Sie jeweils die Auswertung der für Sie gemachten Abgaben einsehen.<br>
+Nur wenn mindestens {$a->min_results_text} Abgaben für Sie gemacht wurden, können Sie auch selbst die Textantworten einsehen</p>
+<p>Hier eine Übersicht Ihrer Kurse, die an der 
+<a href="{$a->evUrl}"><b>{$a->ev_name}</b></a> teilnehmen:</p>
+{$a->myCourses}
+<p style="margin-bottom: 0cm">Mit besten Grüßen<br>
+{$a->signature}
+$a->signum</p>';
+
+$string['send_reminders_no_replies'] = 'Keine Ihrer {$a->distinct_s} Studierenden hat bisher teilgenommen. ';
+$string['send_reminders_few_replies'] = 'Bisher gibt es nur {$a->replies} {$a->submissions} Ihrer {$a->distinct_s} Studierenden. ';
+$string['send_reminders_many_replies'] = 'Bisher gibt es {$a->replies} Abgaben Ihrer {$a->distinct_s} Studierenden';
+$string['send_reminders_privileged'] = 'Sie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.';
+// end send reminders
+
 // translator function
 $string['evaluation_of_courses'] = 'Evaluation der Lehrveranstaltungen';
 $string['by_students'] = 'durch Studierende';
@@ -127,6 +166,7 @@ $string['vertical'] = 'Vertikal';
 $string['maxgraphs'] = 'maximale Anzahl für die grafische Anzeige';
 $string['graphics'] = 'Grafik';
 $string['no_minreplies_no_show'] = 'Evaluationen für {$a->allSubject} mit weniger als {$a->minReplies} Abgaben dürfen nicht ausgewertet werden.';
+$string['submission'] = 'Abgabe';
 $string['submissions'] = 'Abgaben';
 $string['with_minimum'] = 'mit mindestens';
 $string['show'] = 'anzeigen';
