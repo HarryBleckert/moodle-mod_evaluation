@@ -5111,7 +5111,7 @@ function get_user_lang($username) {
     global $DB;
 
     // Check if the user exists
-    $user = $DB->get_record('user', ['iusername' => $username], 'id, username, lang', MUST_EXIST);
+    $user = $DB->get_record('user', ['username' => $username], 'id, username, lang', MUST_EXIST);
 
     // Return the user's preferred language, or default to the site's default language
     return !empty($user->lang) ? $user->lang : get_string('defaultlang', 'langconfig');
