@@ -45,7 +45,7 @@ For data protection reasons, personal information and answers to the open questi
 {$a->myCourses}
 <p style="margin-bottom: 0cm">Best regards<br>
 {$a->signature}
-$a->signum</p>';
+{$a->signum}</p>';
 
 $string['send_reminders_teachers'] = '{$a->testmsg}<p>Good day {$a->fullname}</p>
 {$a->onlyfew}
@@ -59,7 +59,7 @@ Only if at least {$a->min_results_text} submissions have been made for you can y
 {$a->myCourses}
 <p style="margin-bottom: 0cm">Best regards<br>
 {$a->signature}
-$a->signum</p>';
+{$a->signum}</p>';
 
 $string['send_reminders_no_replies'] = 'None of your {$a->distinct_s} students have participated yet. ';
 $string['send_reminders_few_replies'] = 'So far there are only {$a->replies} {$a->submissions} from your {$a->distinct_s} students. ';

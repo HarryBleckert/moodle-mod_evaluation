@@ -4835,6 +4835,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
         force_current_language($current_language);
     }
+    unset($_SESSION["EvaluationsID"]);
+    validate_evaluation_sessions($evaluation);
     return true;
 }
 
