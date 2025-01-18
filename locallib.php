@@ -4797,7 +4797,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     }
                     $a->testmsg .= "<hr>\n";
                     $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
-                            . ev_get_string('send_reminders_'.$role, $a) . "</body></html>";
+                            . ev_get_string('send_reminders_'.$role.'s', $a) . "</body></html>";
                     $msg = ev_get_string('good_day') . " " . $a->fullname . "<br><br>\n" . ev_get_string('send_reminders_privileged');
                     $msg .=  $a->testmsg;
                     $msg = str_ireplace("<body>", "<body>" . $msg, $message);
@@ -4824,7 +4824,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         }
         $a->testmsg .= "<hr>\n";
         $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
-                . ev_get_string('send_reminders_'.$role, $a) . "</body></html>";
+                . ev_get_string('send_reminders_'.$role.'s', $a) . "</body></html>";
         $msg = "Hey Admin :)<br><br>\n" . ev_get_string('send_reminders_privileged')
                 . $dbname . $mailsSent . $a->testmsg;
         $msg = str_ireplace("<body>", "<body>" . $msg, $message);
