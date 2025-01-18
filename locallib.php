@@ -4822,7 +4822,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         }
         $a->testmsg .= "<hr>\n";
 
-        $msg = "Hey Admin :)<br><br>\n" . ev_get_string('send_reminders_privileged');
+        $msg = "Hey Admin :)<br><br>\n" . ev_get_string('send_reminders_privileged')
                 . $dbname . $mailsSent . $a->testmsg;
         $msg = str_ireplace("<body>", "<body>" . $msg, $message);
         mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
