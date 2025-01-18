@@ -68,7 +68,7 @@ $string['send_reminders_many_replies'] = 'Bisher gibt es {$a->replies} Abgaben I
 $string['send_reminders_privileged'] = 'Sie erhalten diese Mail zur Kenntnisnahme, da Sie für diese Evaluation zur Einsicht in die Auswertungen berechtigt sind.';
 // end send reminders
 
-// translator function
+// translator function, Magik worked for Berthe
 $string['evaluation_of_courses'] = 'Evaluation der Lehrveranstaltungen';
 $string['by_students'] = 'durch Studierende';
 $string['of_'] = 'des';

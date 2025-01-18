@@ -4736,12 +4736,12 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             if ($current_evaluation_day > 7 or $replies > 3) {
                 if ($replies < 21) {
                     if ($replies < 1) {
-                        $a->onlyfew = "<b>" .ev_get_string('send_reminders_no_replies') . "</b>.<br>\n";
+                        $a->onlyfew = "<b>" .ev_get_string('send_reminders_no_replies',$a) . "</b>.<br>\n";
                     } else {
-                        $a->onlyfew = "<b>" . ev_get_string('send_reminders_few_replies') . "</b>.<br>\n";
+                        $a->onlyfew = "<b>" . ev_get_string('send_reminders_few_replies',$a) . "</b>.<br>\n";
                     }
                 } else {
-                    $a->onlyfew = "<b>" . ev_get_string('send_reminders_many_replies') .  "</b>.<br>";
+                    $a->onlyfew = "<b>" . ev_get_string('send_reminders_many_replies',$a) .  "</b>.<br>";
                 }
             }
 
@@ -4796,6 +4796,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                         $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
                     }
                     $a->testmsg .= "<hr>\n";
+                    $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
+                            . ev_get_string('send_reminders_'.$role, $a) . "</body></html>";
                     $msg = ev_get_string('good_day') . " " . $a->fullname . "<br><br>\n" . ev_get_string('send_reminders_privileged');
                     $msg .=  $a->testmsg;
                     $msg = str_ireplace("<body>", "<body>" . $msg, $message);
@@ -4821,7 +4823,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
         }
         $a->testmsg .= "<hr>\n";
-
+        $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
+                . ev_get_string('send_reminders_'.$role, $a) . "</body></html>";
         $msg = "Hey Admin :)<br><br>\n" . ev_get_string('send_reminders_privileged')
                 . $dbname . $mailsSent . $a->testmsg;
         $msg = str_ireplace("<body>", "<body>" . $msg, $message);
