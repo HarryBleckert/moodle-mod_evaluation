@@ -46,7 +46,7 @@ Ausgenommen sind aus Datenschutzgründen die persönlichen Angaben, sowie die An
 {$a->myCourses}
 <p style="margin-bottom: 0cm">Mit besten Grüßen<br>
 {$a->signature}
-$a->signum</p>';
+{$a->signum}</p>';
 
 $string['send_reminders_teachers'] = '{$a->testmsg}<p>Guten Tag {$a->fullname}</p>
 {$a->onlyfew}
@@ -60,7 +60,7 @@ Nur wenn mindestens {$a->min_results_text} Abgaben für Sie gemacht wurden, kön
 {$a->myCourses}
 <p style="margin-bottom: 0cm">Mit besten Grüßen<br>
 {$a->signature}
-$a->signum</p>';
+{$a->signum}</p>';
 
 $string['send_reminders_no_replies'] = 'Keine Ihrer {$a->distinct_s} Studierenden hat bisher teilgenommen. ';
 $string['send_reminders_few_replies'] = 'Bisher gibt es nur {$a->replies} {$a->submissions} Ihrer {$a->distinct_s} Studierenden. ';
