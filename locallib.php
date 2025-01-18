@@ -4603,7 +4603,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         define('NO_OUTPUT_BUFFERING', true);
     }*/
     ini_set("output_buffering", 600);
-    $testinfo = ($test ? " Test: " : "");
 
     $a = new stdClass();
     $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
@@ -4677,7 +4676,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         force_current_language($lang);
         $a->ev_name = ev_get_tr($evaluation->name);
-        $subject = '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
+
+        $testinfo = ($test ? " Test: " : "");
+        $subject = $testinfo . '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
 
         $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
         $a->signum = (isset($CFG->ash)
