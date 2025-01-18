@@ -4783,7 +4783,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
                 force_current_language('de');
                 $a->ev_name = ev_get_tr($evaluation->name);
-                $subject = '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
+                $subject = $testinfo . '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
                 foreach ($emails as $username => $email) {
                     if (!strstr($email,"@") || !strstr($email,"<")){
                         continue;
@@ -4814,12 +4814,12 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             }
         }
     }
-    if (true OR !stripos($to, "bleckert")) {
+    if ($admin = get_site_admin_user('harry')) {
         $a->ev_name = ev_get_tr($evaluation->name);
-        $subject = '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
+        $subject = $testinfo . '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
         $dbname = "<br>\n(" . $CFG->dbname .") ";
         $mailsSent = "\$CFG->noemailever: " . ($CFG->noemailever ?"No m" :"M") . "ails sent. \n";
-        force_current_language(get_user_lang($username));
+        force_current_language(get_user_lang($admin->username));
         if (!$test) {
             $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
             if ($noreplies) {
@@ -4830,7 +4830,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
                 . ev_get_string('send_reminders_'.$role.'s', $a) . "</body></html>";
         $msg = "Hey Admin :)<br><br>\n" . ev_get_string('send_reminders_privileged')
-                . $dbname . $mailsSent . $a->testmsg;
+                . $dbname . $mailsSent;
         $msg = str_ireplace("<body>", "<body>" . $msg, $message);
         mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
         force_current_language($current_language);
@@ -5127,4 +5127,36 @@ function get_user_preferred_language($userid) {
 
     // Return the user's preferred language, or default to the site's default language
     return !empty($user->lang) ? $user->lang : get_string('defaultlang', 'langconfig');
+}
+
+/**
+ * Retrieve the site administrator user data.
+ *
+ * @return mixed|stdClass|null The site admin user data, or null if not found.
+ * @throws dml_exception In case of database issues.
+ */
+function get_site_admin_user($username) {
+    global $DB,$USER;
+
+    // Fetch the first site admin's user ID from the config table.
+    $siteadmins = get_config('moodle', 'siteadmins');
+
+    if (empty($siteadmins)) {
+        return null; // No site admins found.
+    }
+
+    // Get the first admin user ID.
+    $siteadminids = explode(',', $siteadmins);
+    foreach ($siteadminids as $siteadminid) {
+        // Retrieve the site admin user data from the user table.
+        if ( $siteadmin = $DB->get_record('user', ['id' => $siteadminid], '*')){
+            if ($siteadmin->username == $username) {
+                return $siteadmin;
+            }
+        }
+    }
+    if (is_siteadmin()) {
+        return $USER;
+    }
+    return new stdClass();
 }
