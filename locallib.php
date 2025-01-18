@@ -4783,10 +4783,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 force_current_language('de');
                 $a->ev_name = ev_get_tr($evaluation->name);
                 $subject = '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
-                foreach ($emails as $email) {
+                foreach ($emails as $username => $email) {
                     if (!strstr($email,"@") || !strstr($email,"<")){
                         continue;
                     }
+                    force_current_language(get_user_lang($username));
                     list($fullname, $emailt) = explode(' <', trim($email, '> '));
                     $a->fullname = $fullname;
                     $email = '=?UTF-8?B?' . base64_encode($fullname). '?=' . " <$emailt>";
@@ -4817,7 +4818,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $subject = '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
         $dbname = "<br>\n(" . $CFG->dbname .") ";
         $mailsSent = "\$CFG->noemailever: " . ($CFG->noemailever ?"No m" :"M") . "ails sent. \n";
-
+        force_current_language(get_user_lang($username));
         $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
         if ($noreplies){
             $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
@@ -4829,6 +4830,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 . $dbname . $mailsSent . $a->testmsg;
         $msg = str_ireplace("<body>", "<body>" . $msg, $message);
         mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
+        force_current_language($current_language);
     }
 
     return true;
@@ -5102,4 +5104,25 @@ function array_searchi($needle, $haystack) {
         }
     }
     return false;
+}
+
+// Retrieve a user's preferred language by username
+function get_user_lang($username) {
+    global $DB;
+
+    // Check if the user exists
+    $user = $DB->get_record('user', ['iusername' => $username], 'id, username, lang', MUST_EXIST);
+
+    // Return the user's preferred language, or default to the site's default language
+    return !empty($user->lang) ? $user->lang : get_string('defaultlang', 'langconfig');
+}
+// Retrieve a user's preferred language by user ID
+function get_user_preferred_language($userid) {
+    global $DB;
+
+    // Check if the user exists
+    $user = $DB->get_record('user', ['id' => $userid], 'id, lang', MUST_EXIST);
+
+    // Return the user's preferred language, or default to the site's default language
+    return !empty($user->lang) ? $user->lang : get_string('defaultlang', 'langconfig');
 }
