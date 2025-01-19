@@ -145,7 +145,7 @@ if (!empty($_SESSION["myEvaluations"])) {
     }
 }
 
-if ($isStudent AND isset($_POST['studentid'])){
+if ($isStudent AND isset($_REQUEST['studentid'])){
     $_SESSION['studentid'] = $USER->id;
 }
 else{
