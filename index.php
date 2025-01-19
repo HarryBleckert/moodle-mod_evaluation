@@ -75,7 +75,7 @@ $strname = get_string("name");
 $strresponses = get_string('responses', 'evaluation');
 $groupby = '<span title="' . ev_get_string('sort_tag') . '">' . ev_get_string('index_group_by_tag') . '</span>';
 $table = new html_table();
-$table->attributes['style'] = 'width: auto; max-width: 100%; border-top: 1px solid #000;';
+$table->attributes['style'] = 'width: auto; max-width: 100%; border-top: 3px solid #000;';
 
 if ($usesections) {
     $strsectionname = get_string('sectionname', 'format_' . $course->format);
