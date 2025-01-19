@@ -2169,7 +2169,28 @@ function evaluation_get_group_values($item,
         if ($subquery){
             $select .= " $subquery ";
         }
-        $values = $DB->get_records_select('evaluation_value', $select, $params);
+        if (isset($_SESSION['studentid'])) {
+            $query = "SELECT completed.id,completed.courseid
+                        FROM {evaluation_completed} completed
+                        WHERE completed.evaluation = :evaluation
+						AND completed.userid = :userid";
+            $params = array('evaluation' => $this->evaluation->id, 'userid' => $_SESSION['studentid']);
+            if ($myCourses = $DB->get_records_sql($query, $params)) {
+                $courses = array();
+                foreach ($myCourses as $myCourse) {
+                    $courses[] = $myCourse->courseid;
+                }
+                $courses = implode(",", $courses);
+            } else {
+                $courses = "0";
+            }
+            $query = "SELECT *
+                        FROM {evaluation_value} WHERE itemid => $item->id AND courseid IN ($courses)";
+            $values = $DB->get_records_sql($query);
+        }
+        else {
+            $values = $DB->get_records_select('evaluation_value', $select, $params);
+        }
     }
 
     if (false AND is_siteadmin()){

@@ -47,6 +47,7 @@ if (empty($Chart)) {
 } else {
     $_SESSION["Chart"] = $Chart;
 }
+$a = new stdClass();
 
 $urlparams = ['id' => $id];
 $url = new moodle_url('/mod/evaluation/analysis_course.php', array('id' => $id)); // ,'courseid' => $courseid ) );
@@ -735,7 +736,8 @@ if ( $subquery AND $applysubquery){
     $numresultsSq =
             safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
                 WHERE evaluation=$evaluation->id $filter $subqueryC"));
-    $sqTitle = "Alle gefilterten Abgaben: ";
+    $a->ftitle = (!empty($title) ? " " . get_string('for') . " " . $title : "");
+    $sqTitle = ev_get_string('all_filtered_submissions',$a);
     echo '<span><b>' . $sqTitle . '</b></span>: '
             . $numresultsSq
             . "<br>\n";
