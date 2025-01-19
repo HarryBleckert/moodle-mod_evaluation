@@ -141,10 +141,10 @@ foreach ($evaluations as $evaluation) {
             . '<span title="' . ev_get_string('sort_tag') . ": " . $evaluation->sort_tag . '">' . $ev_name . '</span></a>';
 
     if ($usesections) {
-        $tabledata[] = array(get_section_name($course, $evaluation->section), $link);
-    } else {
-        $tabledata[] = array($link);
+        $tabledata[] = get_section_name($course, $evaluation->section);
     }
+    $tabledata[] = $link;
+
 
     $tablerow = new html_table_row();
     /*
