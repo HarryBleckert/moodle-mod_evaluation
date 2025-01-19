@@ -217,7 +217,7 @@ $showPrivDocu = '<a href="print.php?id='.$id.'&showPrivUsers=1">'
 $good_day = ev_get_string('good_day');
 
 $q_translink = '';
-$lang = (!empty($_GET["lang"]) ?$_GET["lang"] :$USER->lang);
+$lang = (!empty($_GET["lang"]) ?$_GET["lang"] :current_language());
 if (strtolower(substr($lang,0,2)) != 'de') {
     // Hier ist eine englische Übersetzung des Fragebogens.
     $q_translink = '<a title="' . ev_get_string('questionaireenglish') . '" target="translation"
@@ -236,7 +236,7 @@ if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
     }
     $a->andrawdata  = ev_get_string('andrawdata'); // und Rohdaten
     $a->yourcos = ev_get_string('yourcos'); // Ihrer Studiengänge
-    $a->minresultspriv = min_results_priv($evaluation);
+    $a->minresultspriv = (is_siteadmin() ?1 :$minResultsPriv);
     $a->viewanddownload = ev_get_string('viewanddownload',$a); // einsehen und herunterladen.
     $a->privilegestxt = ev_get_string('privilegestxt',$a); // Als {$a->siteadmintxt für diese Evaluation privilegierte Person können Sie alle Auswertungen {$a->andrawdata}
     $msg_privPersons = $good_day . " " . trim($USER->firstname) . " " . trim($USER->lastname) . "<br>\n"
@@ -334,7 +334,7 @@ if ($courseid) {
 
 }
 
-$fullname = ($USER->alternatename ? $USER->alternatename : $USER->firstname) . " " . $USER->lastname;
+$fullname = ($USER->alternatename ?: $USER->firstname) . " " . $USER->lastname;
 
 $a->also = $a->foryourcourses = "";
 $a->minresults = $minResults;
