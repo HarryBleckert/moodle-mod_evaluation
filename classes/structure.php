@@ -408,7 +408,7 @@ class mod_evaluation_structure {
             $query = "SELECT COUNT(completed.id)
                         FROM {evaluation_completed} completed
                         WHERE completed.evaluation = :evaluation
-						AND completed.courseid IN " . implode(",", $courseids);
+						AND completed.courseid IN (" . implode(",", $courseids) .")";
                 $filter = ""; //  AND userid=" . $_SESSION['studentid'];
                 $params = array('evaluation' => $this->evaluation->id);
         } else {
