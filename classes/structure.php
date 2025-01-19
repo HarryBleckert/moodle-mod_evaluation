@@ -398,8 +398,9 @@ class mod_evaluation_structure {
             $query = "SELECT COUNT(completed.id)
                         FROM {evaluation_completed} completed
                         WHERE completed.evaluation = :evaluation
-						AND completed.courseid = :courseid $fteacher $ftoday";
-                $filter = " AND userid=" . $_SESSION['studentid'];
+						AND completed.userid = :userid";
+                $filter = ""; //  AND userid=" . $_SESSION['studentid'];
+                $params = array('userid' => $_SESSION['studentid']);
         } else {
             $query = "SELECT COUNT(completed.id) FROM {evaluation_completed} completed 
 						WHERE completed.evaluation = :evaluation $fteacher $fstudies $filterD $ftoday $cosPrivileged_filter";
