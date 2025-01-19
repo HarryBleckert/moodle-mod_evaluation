@@ -189,7 +189,7 @@ if ($analysisCoS){
     if ($Teacher AND $teacherid) {
         $current_tab = 'analysisTeacher';
     } else {
-        if ($isStudent AND isset($_POST['studentid'])){
+        if ($isStudent AND isset($_REQUEST['studentid'])){
             $current_tab = 'analysisStudent';
         } else {
             $current_tab = 'analysisASH';
