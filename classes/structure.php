@@ -400,7 +400,7 @@ class mod_evaluation_structure {
                         WHERE completed.evaluation = :evaluation
 						AND completed.userid = :userid";
                 $filter = ""; //  AND userid=" . $_SESSION['studentid'];
-                $params = array('userid' => $_SESSION['studentid']);
+                $params = array('evaluation' => $this->evaluation->id, 'userid' => $_SESSION['studentid']);
         } else {
             $query = "SELECT COUNT(completed.id) FROM {evaluation_completed} completed 
 						WHERE completed.evaluation = :evaluation $fteacher $fstudies $filterD $ftoday $cosPrivileged_filter";
