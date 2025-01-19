@@ -393,14 +393,24 @@ class mod_evaluation_structure {
                         FROM {evaluation_completed} completed
                         WHERE completed.evaluation = :evaluation
 						AND completed.courseid = :courseid $fteacher $ftoday";
-                $filter .= " AND courseid=" . $this->courseid;
+                // $filter .= " AND courseid=" . $this->courseid;
         } else if (isset($_SESSION['studentid'])) {
-            $query = "SELECT COUNT(completed.id)
+            $query = "SELECT completed.id,completed.courseid
                         FROM {evaluation_completed} completed
                         WHERE completed.evaluation = :evaluation
 						AND completed.userid = :userid";
+            $params = array('evaluation' => $this->evaluation->id, 'userid' => $_SESSION['studentid']);
+            $myCourses = $DB->get_field_sql($query, $params);
+            $courseids = array();
+            foreach($myCourses as $courseid) {
+                $courseids[] = $courseid;
+            }
+            $query = "SELECT COUNT(completed.id)
+                        FROM {evaluation_completed} completed
+                        WHERE completed.evaluation = :evaluation
+						AND completed.courseid IN " . implode(",", $courseids);
                 $filter = ""; //  AND userid=" . $_SESSION['studentid'];
-                $params = array('evaluation' => $this->evaluation->id, 'userid' => $_SESSION['studentid']);
+                $params = array('evaluation' => $this->evaluation->id);
         } else {
             $query = "SELECT COUNT(completed.id) FROM {evaluation_completed} completed 
 						WHERE completed.evaluation = :evaluation $fteacher $fstudies $filterD $ftoday $cosPrivileged_filter";
