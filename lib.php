@@ -2186,7 +2186,7 @@ function evaluation_get_group_values($item,
                 $courses = "0";
             }
             $query = "SELECT *
-                        FROM {evaluation_value} WHERE itemid => $item->id AND courseid IN ($courses)";
+                        FROM {evaluation_value} WHERE itemid = $item->id AND courseid IN ($courses)";
             $values = $DB->get_records_sql($query);
         }
         else {
