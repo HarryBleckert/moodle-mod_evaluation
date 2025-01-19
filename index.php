@@ -75,6 +75,7 @@ $strname = get_string("name");
 $strresponses = get_string('responses', 'evaluation');
 
 $table = new html_table();
+$table->attributes['style'] = 'width: auto; max-width: 100%;';
 
 if ($usesections) {
     $strsectionname = get_string('sectionname', 'format_' . $course->format);
