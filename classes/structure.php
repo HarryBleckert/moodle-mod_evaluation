@@ -401,11 +401,11 @@ class mod_evaluation_structure {
 						AND completed.userid = :userid";
             $params = array('evaluation' => $this->evaluation->id, 'userid' => $_SESSION['studentid']);
             if ($myCourses = $DB->get_records_sql($query, $params)) {
-                $courseids = array();
+                $courses = array();
                 foreach ($myCourses as $courseid) {
-                    $courseids[] = $courseid;
+                    $courses[] = $courseid;
                 }
-                $courses = implode(",", $courseids);
+                $courses = implode(",", $courses);
             } else {
                 $courses = "0";
             }
