@@ -400,15 +400,19 @@ class mod_evaluation_structure {
                         WHERE completed.evaluation = :evaluation
 						AND completed.userid = :userid";
             $params = array('evaluation' => $this->evaluation->id, 'userid' => $_SESSION['studentid']);
-            $myCourses = $DB->get_records_sql($query, $params);
-            $courseids = array();
-            foreach($myCourses as $courseid) {
-                $courseids[] = $courseid;
+            if ($myCourses = $DB->get_records_sql($query, $params)) {
+                $courseids = array();
+                foreach ($myCourses as $courseid) {
+                    $courseids[] = $courseid;
+                }
+                $courseids = implode(",", $courseids);
+            } else {
+                $courseids = "0";
             }
             $query = "SELECT COUNT(completed.id)
                         FROM {evaluation_completed} completed
                         WHERE completed.evaluation = :evaluation
-						AND completed.courseid IN (" . implode(",", $courseids) .")";
+						AND completed.courseid IN ($courseids)";
                 $filter = ""; //  AND userid=" . $_SESSION['studentid'];
                 $params = array('evaluation' => $this->evaluation->id);
         } else {
