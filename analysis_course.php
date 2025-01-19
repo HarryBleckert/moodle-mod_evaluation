@@ -136,6 +136,15 @@ if (!isset($_SESSION['myEvaluations'])) {
 
 $isTeacher = defined('isTeacher');
 $isStudent = defined('isStudent');
+if (!empty($_SESSION["myEvaluations"])) {
+    if (!$isTeacher) {
+        $isTeacher = evaluation_is_teacher($evaluation, $_SESSION["myEvaluations"]);
+    }
+    if (!$isStudent) {
+        $isStudent = evaluation_is_student($evaluation, $_SESSION["myEvaluations"]);
+    }
+}
+
 if ($isStudent AND isset($_POST['studentid'])){
     $_SESSION['studentid'] = $USER->id;
 }
@@ -160,22 +169,9 @@ if (isset($_SESSION['CoS_privileged_sgl'][$USER->username])){
     $graphicsonly = true;
 }
 
-
 $numTextQ = evaluation_count_qtype($evaluation, "textarea");
 $is_open = evaluation_is_open($evaluation);
-
-if (!empty($_SESSION["myEvaluations"])) {
-    if (!$isTeacher) {
-        $isTeacher = evaluation_is_teacher($evaluation, $_SESSION["myEvaluations"]);
-    }
-    if (!$isStudent) {
-        $isStudent = evaluation_is_student($evaluation, $_SESSION["myEvaluations"]);
-    }
-}
-
-/*$Teacher 	= ( ( defined('EVALUATION_OWNER') OR defined("isStudent")) ? false 
-			: evaluation_is_teacher( $evaluation, $_SESSION["myEvaluations"], $courseid ));*/
-//echo "Teacher: $Teacher - SESSION['myEvaluations']: ".nl2br(var_export($_SESSION["myEvaluations"],true));
+// echo "Teacher: $Teacher - SESSION['myEvaluations']: ".nl2br(var_export($_SESSION["myEvaluations"],true));
 $Teacher = evaluation_is_teacher($evaluation, $_SESSION["myEvaluations"], $courseid);
 
 $showUnmatched_minResults = false;
@@ -194,7 +190,6 @@ if ($analysisCoS){
         $current_tab = 'analysisTeacher';
     } else {
         if ($isStudent AND isset($_POST['studentid'])){
-            $_SESSION['studentid'] = $USER->id;
             $current_tab = 'analysisStudent';
         } else {
             $current_tab = 'analysisASH';
