@@ -402,8 +402,8 @@ class mod_evaluation_structure {
             $params = array('evaluation' => $this->evaluation->id, 'userid' => $_SESSION['studentid']);
             if ($myCourses = $DB->get_records_sql($query, $params)) {
                 $courses = array();
-                foreach ($myCourses as $courseid) {
-                    $courses[] = $courseid;
+                foreach ($myCourses as $myCourse) {
+                    $courses[] = $myCourse->courseid;
                 }
                 $courses = implode(",", $courses);
             } else {
