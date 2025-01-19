@@ -2170,11 +2170,12 @@ function evaluation_get_group_values($item,
             $select .= " $subquery ";
         }
         if (isset($_SESSION['studentid'])) {
+
             $query = "SELECT completed.id,completed.courseid
                         FROM {evaluation_completed} completed
                         WHERE completed.evaluation = :evaluation
 						AND completed.userid = :userid";
-            $params = array('evaluation' => $this->evaluation->id, 'userid' => $_SESSION['studentid']);
+            $params = array('evaluation' => $item->evaluation, 'userid' => $_SESSION['studentid']);
             if ($myCourses = $DB->get_records_sql($query, $params)) {
                 $courses = array();
                 foreach ($myCourses as $myCourse) {
