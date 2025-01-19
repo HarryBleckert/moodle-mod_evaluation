@@ -405,14 +405,14 @@ class mod_evaluation_structure {
                 foreach ($myCourses as $courseid) {
                     $courseids[] = $courseid;
                 }
-                $courseids = implode(",", $courseids);
+                $courses = implode(",", $courseids);
             } else {
-                $courseids = "0";
+                $courses = "0";
             }
             $query = "SELECT COUNT(completed.id)
                         FROM {evaluation_completed} completed
                         WHERE completed.evaluation = :evaluation
-						AND completed.courseid IN ($courseids)";
+						AND completed.courseid IN ($courses)";
                 $filter = ""; //  AND userid=" . $_SESSION['studentid'];
                 $params = array('evaluation' => $this->evaluation->id);
         } else {
