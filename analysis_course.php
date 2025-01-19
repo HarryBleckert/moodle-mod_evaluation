@@ -182,11 +182,15 @@ if ($Teacher) {
 $current_tab = 'analysis';
 if ($analysisCoS){
     $current_tab = 'analysisCoS';
-} else if ($Teacher and !$courseid) {
-    if ($teacherid) {
+} else if (($Teacher OR $isStudent) AND !$courseid) {
+    if ($Teacher AND $teacherid) {
         $current_tab = 'analysisTeacher';
     } else {
-        $current_tab = 'analysisASH';
+        if ($isStudent AND isset($_POST['studentid'])){
+            $current_tab = 'analysisStudent';
+        } else {
+            $current_tab = 'analysisASH';
+        }
     }
 } else if ((!$isPermitted and !$courseid) and !$is_open) {
     $current_tab = 'analysisASH';
