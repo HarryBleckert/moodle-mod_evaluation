@@ -2185,8 +2185,14 @@ function evaluation_get_group_values($item,
             } else {
                 $courses = "0";
             }
+            if ($ignore_empty) {
+                $ignore_empty_select = "AND value !='' AND value !=0";
+            } else {
+                $ignore_empty_select = "";
+            }
+
             $query = "SELECT *
-                        FROM {evaluation_value} WHERE item = $item->id AND courseid IN ($courses)";
+                        FROM {evaluation_value} WHERE item = $item->id AND courseid IN ($courses) $ignore_empty_select";
             $values = $DB->get_records_sql($query);
         }
         else {
