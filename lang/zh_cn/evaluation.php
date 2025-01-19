@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 // $string[''] = '';
-$string['language'] = 'zh_CN';
+$string['language'] = 'zh_cn';
 
 $string['index_group_by_tag'] = '群组';
 // 结束 index.php
