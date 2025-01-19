@@ -73,28 +73,28 @@ $usesections = course_format_uses_sections($course->format);
 $timenow = time();
 $strname = get_string("name");
 $strresponses = get_string('responses', 'evaluation');
-
+$groupby = '<span title="' . ev_get_string('sort_tag') . '">' . ev_get_string('index_group_by_tag') . '</span>';
 $table = new html_table();
 $table->attributes['style'] = 'width: auto; max-width: 100%;';
 
 if ($usesections) {
     $strsectionname = get_string('sectionname', 'format_' . $course->format);
     if (1 or has_capability('mod/evaluation:viewreports', $context)) {
-        $table->head = array($strsectionname, $strname, get_string('evaluation_period', 'evaluation'),
+        $table->head = array($groupby,$strsectionname, $strname, get_string('evaluation_period', 'evaluation'),
                 $strresponses, '<span style="font-size:20px;"> &#248;</span> ' . get_string("day"));
-        $table->align = array("center", "left", "center", 'right', 'right');
+        $table->align = array("left", "center", "left", "center", 'right', 'right');
     } else {
-        $table->head = array($strsectionname, $strname);
-        $table->align = array("center", "left", 'right');
+        $table->head = array($groupby,$strsectionname, $strname);
+        $table->align = array("left", "center", "left", 'right');
     }
 } else {
     if (1 or has_capability('mod/evaluation:viewreports', $context)) {
-        $table->head = array($strname, get_string('evaluation_period', 'evaluation'),
+        $table->head = array($groupby, $strname, get_string('evaluation_period', 'evaluation'),
                 $strresponses, '<span style="font-size:20px;"> &#248;</span> ' . get_string("day"));
-        $table->align = array("left", "center", "right", "right");
+        $table->align = array("left", "left", "center", "right", "right");
     } else {
-        $table->head = array($strname, get_string('evaluation_period', 'evaluation'));
-        $table->align = array("left", "left", "left");
+        $table->head = array($groupby, $strname, get_string('evaluation_period', 'evaluation'));
+        $table->align = array("left", "left", "left", "left");
     }
 }
 
@@ -136,13 +136,14 @@ foreach ($evaluations as $evaluation) {
         $ev_name = ev_get_tr($evaluation->name);
     }
 
+    $tabledata = array($evaluation->sort_tag);
     $link = '<a ' . $dimmedclass . ' href="' . $viewurl->out() . '">'
             . '<span title="' . ev_get_string('sort_tag') . ": " . $evaluation->sort_tag . '">' . $ev_name . '</span></a>';
 
     if ($usesections) {
-        $tabledata = array(get_section_name($course, $evaluation->section), $link);
+        $tabledata[] = array(get_section_name($course, $evaluation->section), $link);
     } else {
-        $tabledata = array($link);
+        $tabledata[] = array($link);
     }
 
     $tablerow = new html_table_row();

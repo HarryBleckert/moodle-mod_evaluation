@@ -29,6 +29,10 @@ defined('MOODLE_INTERNAL') || die();
 // $string[''] = '';
 $string['language'] = 'de';
 
+// index.php
+$string['index_group_by_tag'] = 'Gruppe';
+// end index.php
+
 // send reminders
 $string['send_reminders_noreplies_teachers'] = 'Nur an Lehrende, für die bisher weniger als {$a->min_results_text} Abgaben gemacht wurden.';
 $string['send_reminders_noreplies_students'] = 'Nur an Studierende, die bisher noch nicht an der Evaluation teilgenommen haben.';

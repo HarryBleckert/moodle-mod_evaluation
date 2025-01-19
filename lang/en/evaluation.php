@@ -28,6 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 
 // $string[''] = '';
 $string['language'] = 'en';
+
+// index.php
+$string['index_group_by_tag'] = 'Group';
+// end index.php
+
 // send reminders
 $string['send_reminders_noreplies_teachers'] = 'Only to teachers for whom less than {$a->min_results_text} submissions have been made so far.';
 $string['send_reminders_noreplies_students'] = 'Only to students who have not yet taken part in the evaluation.';
