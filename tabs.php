@@ -173,7 +173,7 @@ if ($evaluation->course == SITEID) {
                     if ($isStudent) {
                         $urlparamsIDS = ['id' => $usedid,'studentid' => $USER->id];
                         $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparamsIDS);
-                        $row[] = new tabobject('analysisSrudent', $analysisurl->out(), $analysis_own_courses);
+                        $row[] = new tabobject('analysisStudent', $analysisurl->out(), $analysis_own_courses);
                     }
                     if (defined('EVALUATION_OWNER')) {
                         $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparams);

@@ -146,6 +146,7 @@ if (!empty($_SESSION["myEvaluations"])) {
     }
 }
 
+// required to filter student's own courses only
 if ($isStudent AND isset($_REQUEST['studentid'])){
     $_SESSION['studentid'] = $USER->id;
 }
