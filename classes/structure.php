@@ -400,7 +400,7 @@ class mod_evaluation_structure {
                         WHERE completed.evaluation = :evaluation
 						AND completed.userid = :userid";
             $params = array('evaluation' => $this->evaluation->id, 'userid' => $_SESSION['studentid']);
-            $myCourses = $DB->get_field_sql($query, $params);
+            $myCourses = $DB->get_records_sql($query, $params);
             $courseids = array();
             foreach($myCourses as $courseid) {
                 $courseids[] = $courseid;
