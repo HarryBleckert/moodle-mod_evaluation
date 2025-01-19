@@ -66,8 +66,8 @@ $string['send_reminders_students'] = '{$a->testmsg} <p>您好 {$a->fullname}
     {$a->签名}
     {$a->signum}';
 
-$string['send_reminders_no_replies'] = '您的{$a->distinct_s}名学生尚未参加。 '；
-$string['send_reminders_few_replies'] = '目前为止，只有 {$a->replies} 个 {$a->submissions} 来自您的 {$a->distinct_s} 名学生。 '；
+$string['send_reminders_no_replies'] = '您的{$a->distinct_s}名学生尚未参加。 ';
+$string['send_reminders_few_replies'] = '目前为止，只有 {$a->replies} 个 {$a->submissions} 来自您的 {$a->distinct_s} 名学生。 ';
 $string['send_reminders_many_replies'] = '到目前为止您的 {$a->distinct_s} 名学生共提交了 {$a->replies} 条回复';
 $string['send_reminders_privileged'] = '您收到这封电子邮件是为了了解信息，因为您被授权查看此次评估的评估结果。';
 // 结束发送提醒
