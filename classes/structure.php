@@ -359,7 +359,7 @@ class mod_evaluation_structure {
             $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($this->evaluation, "completed");
         }
         $params = ['evaluation' => $this->evaluation->id, 'groupid' => $groupid, 'courseid' => $this->courseid];
-        $filter = $fstudies = $fteacher = $ftoday = $fcourseid = fstudent = "";
+        $filter = $fstudies = $fteacher = $ftoday = "";
         if ($this->get_course_of_studies()) {
             $filter .= " AND course_of_studies = '" . $this->get_course_of_studies() . "'";
             $fstudies = " AND completed.course_of_studies = :course_of_studies";
@@ -399,7 +399,7 @@ class mod_evaluation_structure {
                         FROM {evaluation_completed} completed
                         WHERE completed.evaluation = :evaluation
 						AND completed.courseid = :courseid $fteacher $ftoday";
-                $filter .= " AND userid=" . $_SESSION['studentid'];
+                $filter = " AND userid=" . $_SESSION['studentid'];
         } else {
             $query = "SELECT COUNT(completed.id) FROM {evaluation_completed} completed 
 						WHERE completed.evaluation = :evaluation $fteacher $fstudies $filterD $ftoday $cosPrivileged_filter";
