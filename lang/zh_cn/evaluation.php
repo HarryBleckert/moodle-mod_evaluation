@@ -93,4 +93,3 @@ $string['send_reminders_students'] = '{$a->testmsg} <p>您好 {$a->fullname}
     $string['is_WM_disabled'] = '继续教育硕士学位课程被排除在外。';
     $string['siteadmintxt'] = '管理员因此';
     $string['andrawdata'] = '和原始数据';
-    $string['yourcos'] = '你的学位课程
