@@ -497,9 +497,9 @@ class mod_evaluation_structure {
         if (!empty($filterD)) {
             $filter .= $filterD;
         }
-        if ( isset($_SESSION['studentid'])){
+        /*if ( isset($_SESSION['studentid'])){
             $filter = " AND completed.userid=" . $_SESSION['studentid'];
-        }
+        }*/
         $sql = "SELECT DISTINCT ON (completed.courseid) completed.courseid, c.fullname, c.shortname
 				FROM {evaluation_completed} completed, {"
                 .($is_open ?"course" :"evaluation_enrolments")
