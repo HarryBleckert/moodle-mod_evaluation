@@ -133,6 +133,15 @@ if (!isset($_SESSION['myEvaluations'])) {
     $_SESSION["myEvaluations"] = get_evaluation_participants($evaluation, $USER->id);
     $_SESSION["myEvaluationsName"] = $evaluation->name;
 }
+
+$isTeacher = defined('isTeacher');
+$isStudent = defined('isStudent');
+if ($isStudent AND isset($_POST['studentid'])){
+    $_SESSION['studentid'] = $USER->id;
+}
+else{
+    unset($_SESSION['studentid']);
+}
 $evaluationstructure = new mod_evaluation_structure($evaluation, $PAGE->cm, $courseid, null, 0,
             $teacherid, $course_of_studies, $course_of_studiesID, $department, $analysisCoS);
 
@@ -155,8 +164,6 @@ if (isset($_SESSION['CoS_privileged_sgl'][$USER->username])){
 $numTextQ = evaluation_count_qtype($evaluation, "textarea");
 $is_open = evaluation_is_open($evaluation);
 
-$isTeacher = defined('isTeacher');
-$isStudent = defined('isStudent');
 if (!empty($_SESSION["myEvaluations"])) {
     if (!$isTeacher) {
         $isTeacher = evaluation_is_teacher($evaluation, $_SESSION["myEvaluations"]);
@@ -187,6 +194,7 @@ if ($analysisCoS){
         $current_tab = 'analysisTeacher';
     } else {
         if ($isStudent AND isset($_POST['studentid'])){
+            $_SESSION['studentid'] = $USER->id;
             $current_tab = 'analysisStudent';
         } else {
             $current_tab = 'analysisASH';

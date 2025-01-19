@@ -359,7 +359,7 @@ class mod_evaluation_structure {
             $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($this->evaluation, "completed");
         }
         $params = ['evaluation' => $this->evaluation->id, 'groupid' => $groupid, 'courseid' => $this->courseid];
-        $filter = $fstudies = $fteacher = $ftoday = $fcourseid = "";
+        $filter = $fstudies = $fteacher = $ftoday = $fcourseid = fstudent = "";
         if ($this->get_course_of_studies()) {
             $filter .= " AND course_of_studies = '" . $this->get_course_of_studies() . "'";
             $fstudies = " AND completed.course_of_studies = :course_of_studies";
@@ -393,7 +393,13 @@ class mod_evaluation_structure {
                         FROM {evaluation_completed} completed
                         WHERE completed.evaluation = :evaluation
 						AND completed.courseid = :courseid $fteacher $ftoday";
-            $filter .= " AND courseid=" . $this->courseid;
+                $filter .= " AND courseid=" . $this->courseid;
+        } else if (isset($_SESSION['studentid'])) {
+            $query = "SELECT COUNT(completed.id)
+                        FROM {evaluation_completed} completed
+                        WHERE completed.evaluation = :evaluation
+						AND completed.courseid = :courseid $fteacher $ftoday";
+                $filter .= " AND userid=" . $_SESSION['studentid'];
         } else {
             $query = "SELECT COUNT(completed.id) FROM {evaluation_completed} completed 
 						WHERE completed.evaluation = :evaluation $fteacher $fstudies $filterD $ftoday $cosPrivileged_filter";
@@ -490,7 +496,9 @@ class mod_evaluation_structure {
         if (!empty($filterD)) {
             $filter .= $filterD;
         }
-
+        if ( isset($_SESSION['studentid'])){
+            $filter = " AND completed.userid=" . $_SESSION['studentid'];
+        }
         $sql = "SELECT DISTINCT ON (completed.courseid) completed.courseid, c.fullname, c.shortname
 				FROM {evaluation_completed} completed, {"
                 .($is_open ?"course" :"evaluation_enrolments")
