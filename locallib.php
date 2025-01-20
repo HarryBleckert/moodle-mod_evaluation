@@ -4991,7 +4991,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     global $CFG, $DB;
     // mtrace('send_reminders cron is currently disabled in function ev_cron');
     // return true;
-    $test = true;
+    // $test = true;
     mtrace('mod_evaluation: Start processing send_reminders');
 
     setlocale(LC_ALL, 'de_DE');
