@@ -5129,6 +5129,8 @@ function get_user_lang($username) {
     // Return the user's preferred language, or default to the site's default language
     return !empty($user->lang) ? $user->lang : get_string('defaultlang', 'langconfig');
 }
+
+
 // Retrieve a user's preferred language by user ID
 function get_user_preferred_language($userid) {
     global $DB;
@@ -5203,7 +5205,7 @@ function ev_mail_error_to_admin($error, $additional_info = []) {
             'Timestamp' => date('Y-m-d H:i:s'),
             'Error Type' => get_class($error),
             'Error Message' => $error->getMessage(),
-            'File' => $error->getFile(),,
+            'File' => $error->getFile(),
             'Line' => $error->getLine(),
             'User' => isset($USER->id) ? "{$USER->username} (ID: {$USER->id})" : 'Not logged in',
             'URL' => qualified_me(),
