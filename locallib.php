@@ -2678,11 +2678,10 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
             } else {
                 $Txt = $actionTxt;
                 $url = $urlF;
-                $completed = array();
                 $str .= "<tr>\n";
                 $completed = $DB->get_record_sql("select id,evaluation,courseid,userid,teacherid from {evaluation_completed} 
                             WHERE evaluation=" . $evaluation->id . " AND userid=" . $myEvaluation["id"]
-                        . " AND courseid=" . $myEvaluation['courseid']);
+                        . " AND courseid=" . $myEvaluation['courseid'],IGNORE_MULTIPLE);
                 if (isset($completed->teacherid) and safeCount($completed)) {
                     $color = "green";
                     $Txt = '<span style="font-weight:normal;color:' . $color . ';">' .ev_get_string('evaluated'). 'Abgegeben</span>';
