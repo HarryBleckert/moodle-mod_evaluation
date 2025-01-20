@@ -100,7 +100,9 @@ function ev_get_tr($source_string, $args=new stdClass(), $source_lang='de',$fiel
         $target_lang = current_language();
     }
     $target_string = $source_string;
-
+    if (substr($target_lang,0,2) != 'en'){
+        return $target_string;
+    }
     if (substr($target_lang,0,2) == substr($source_lang,0,2)){
         if (is_object($args)) {
             foreach ($args as $key => $value) {
@@ -4813,12 +4815,13 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             }
         }
     }
+    // send also one copy to Moodle admin (Harry)
     if ($admin = get_site_admin_user('harry')) {
+        force_current_language(get_user_lang($admin->username));
         $a->ev_name = ev_get_tr($evaluation->name);
         $subject = $testinfo . '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
         $dbname = "<br>\n(" . $CFG->dbname .") ";
         $mailsSent = "\$CFG->noemailever: " . ($CFG->noemailever ?"No m" :"M") . "ails sent. \n";
-        force_current_language(get_user_lang($admin->username));
         if (!$test) {
             $a->testmsg = ev_get_string('send_reminders_pmsg', $a) . "\n";
             if ($noreplies) {
