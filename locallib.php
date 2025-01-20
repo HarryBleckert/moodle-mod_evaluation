@@ -5166,9 +5166,9 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                 }
             }
         }
-        if (!$reminders_sent){
-            // mtrace("Evaluation '$evaluation->name': No reminders due gor sending");
-        }
+        /*if (!$reminders_sent){
+            mtrace("Evaluation '$evaluation->name': No reminders due for sending");
+        }*/
         unset($_SESSION["EvaluationsID"]);
         validate_evaluation_sessions($evaluation);
     }
