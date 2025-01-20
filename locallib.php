@@ -4866,6 +4866,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     }
                     force_current_language(get_user_lang($username));
                     list($fullname, $emailt) = explode(' <', trim($email, '> '));
+                    $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
                     $a->fullname = $fullname;
                     $email = '=?UTF-8?B?' . base64_encode($fullname). '?=' . " <$emailt>";
                     // $email = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
@@ -4894,6 +4895,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($admin = get_site_admin_user('harry')) {
         force_current_language(get_user_lang($admin->username));
         $a->ev_name = ev_get_tr($evaluation->name);
+        $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
         $subject = $testinfo . '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
         $dbname = "<br>\n(" . $CFG->dbname .") ";
         $mailsSent = "\$CFG->noemailever: " . ($CFG->noemailever ?"No m" :"M") . "ails sent. \n";
