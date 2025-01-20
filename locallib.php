@@ -5060,7 +5060,6 @@ function ev_get_reminders($evaluation, $id) {
 // maybe better use as a non-Moodle cron job, meanwhile call reminders from view.php
 // for testing as non-cron task: commented all cron related lines...
 function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
-    XXXFORAMT;
     global $CFG, $DB;
     // mtrace('send_reminders cron is currently disabled in function ev_cron');
     // return true;
@@ -5083,6 +5082,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     // $verbose = false;
     $noreplies = false;
     try {
+        XXXFORAMT;
         foreach ($evaluations as $evaluation) {
             if (!$evaluation->autoreminders) {
                 continue;
