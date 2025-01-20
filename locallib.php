@@ -2646,7 +2646,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                     $str .= "<tr>\n";
                     $completed = $DB->get_record_sql("select id,evaluation,courseid,userid,teacherid from {evaluation_completed} 
                                     WHERE evaluation=" . $evaluation->id . " AND userid=" . $myEvaluation["id"]
-                            . " AND courseid=" . $myEvaluation['courseid'] . " AND teacherid=" . $teacher['id'],IGNORE_MULTIPLE);
+                            . " AND courseid=" . $myEvaluation['courseid'] . " AND teacherid=" . $teacher['id'], null,IGNORE_MULTIPLE);
                     //$str .= "$actionTxt";
                     if ($completed and isset($completed->teacherid) and $completed->teacherid == $teacher['id']) {
                         $color = "green";
@@ -2683,7 +2683,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                 $str .= "<tr>\n";
                 $completed = $DB->get_record_sql("select id,evaluation,courseid,userid,teacherid from {evaluation_completed} 
                             WHERE evaluation=" . $evaluation->id . " AND userid=" . $myEvaluation["id"]
-                        . " AND courseid=" . $myEvaluation['courseid'],IGNORE_MULTIPLE);
+                        . " AND courseid=" . $myEvaluation['courseid'], null,IGNORE_MULTIPLE);
                 if (isset($completed->teacherid) and safeCount($completed)) {
                     $color = "green";
                     $Txt = '<span style="font-weight:normal;color:' . $color . ';">' .ev_get_string('evaluated'). 'Abgegeben</span>';
