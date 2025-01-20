@@ -4745,14 +4745,13 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             $cntTeachers++;
             // add text to explain receiving 9 reminders on this day due to software error
             if ( $cnt<68 and date("Ymd") == "20250120" ) {
-                $a->testmsg .= "Guten Tag $fullanme<br><br>Sie erhalten hiermit die 10. Hinweismail am selben Tag. (sic!)<br>
+                $a->testmsg .= "Guten Tag $fullanme<br><br>Sie erhalten hiermit die 10. Hinweismail am selben Tag. (<b>sic!</b>)<br>
                 Ursache war ein Softwarefehler, den ich beim Testen nicht erkannt hatte. 
                 Dieser Fehler führte dazu, dass Moodle insgesamt heute morgen neun mal versucht hat, hat den Versand der Hinweismails zu wiederholen.<br>
                 Für diese Störung bitte ich um Ihr Verständnis.<br>
                 Übrigens: Da Lehrende, für die weniger als 6 Abgaben vorliegen, aus Datenschutzgründen keine Textantworten einsehen können, 
-                erhalten Lehrende mit weniger als insgesamt 6 Abgaben wöchenlich diese Hinweismails, alle anderen im Abstand von 2 Wochen.<br><br>
+                erhalten nur Lehrende mit bisher weniger als 6 Abgaben wöchenlich diese Hinweismails, alle anderen im Abstand von 2 Wochen.<br><br>
                 Herzliche Grüße<br>Harry Bleckert<hr>";
-                ";
             }
             $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
                     . ev_get_string('send_reminders_teachers', $a) . "</body></html>";
