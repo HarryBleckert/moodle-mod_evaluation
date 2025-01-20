@@ -62,7 +62,7 @@ class cron_task extends \core\task\scheduled_task {
             $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
             $task->clear_fail_delay();
             ev_mail_error_to_admin($e);
-            throw new moodle_exception('scheduled_tasks_error', 'error', '', $e->getMessage());
+            throw new moodle_exception('ev_cron_error', 'error', '', $e->getMessage());
         }
         return true;
     }
