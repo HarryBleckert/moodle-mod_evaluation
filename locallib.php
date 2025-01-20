@@ -5082,7 +5082,6 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     // $verbose = false;
     $noreplies = false;
     try {
-        XXXFORAMT;
         foreach ($evaluations as $evaluation) {
             if (!$evaluation->autoreminders) {
                 continue;
