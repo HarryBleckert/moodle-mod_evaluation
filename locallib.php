@@ -5307,6 +5307,7 @@ function ev_mail_error_to_admin($error, $additional_info = []) {
     // Email subject
     $subject = "[{$CFG->sitename}]: Error in {$error_details['file']} on {$error_details['line']}";
 
+    mtrace('mod_evaluation: Error caught and mail was sent to ' . $admin->lastname);
     // Send email using Moodle's email function
     return email_to_user(
             $admin,
