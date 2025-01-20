@@ -4984,8 +4984,8 @@ function ev_get_reminders($evaluation, $id) {
 // for testing as non-cron task: commented all cron related lines...
 function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     global $CFG, $DB;
-    // mtrace('send_reminders cron is currently disabled in function ev_cron');
-    // return true;
+   mtrace('send_reminders cron is currently disabled in function ev_cron');
+   return true;
     mtrace('mod_evaluation: Start processing send_reminders');
 
     setlocale(LC_ALL, 'de_DE');
