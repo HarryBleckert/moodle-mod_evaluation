@@ -87,8 +87,6 @@ $string['hide_graphic_data'] = '隐藏图形数据';
 // 结束图库
 
 // 视图.php
-$string['是'] = '是';
-$string['是'] = '是';
 $string['teamteachingtxt'] = '在团队教学的研讨会上，讲师将接受单独评估。';
 $string['is_WM_disabled'] = '继续教育硕士学位课程被排除在外。';
 $string['siteadmintxt'] = '管理员因此';
