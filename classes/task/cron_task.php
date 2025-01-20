@@ -54,7 +54,14 @@ class cron_task extends \core\task\scheduled_task {
         require_once($CFG->dirroot . '/mod/evaluation/lib.php');
         // \evaluation::cron();
         //mtrace("Evaluationn: Scheduled cron task has been disabled for performance reasons and is now called from index.php");
-        ev_cron();
+        try {
+            ev_cron();
+        }
+        catch (Exception $e) {
+            // Send error to admin with additional context
+            ev_mail_error_to_admin($e, __FUNCTION__);
+            throw new moodle_exception('scheduled_tasks_error', 'error', '', $e->getMessage());
+        }
         return true;
     }
 }

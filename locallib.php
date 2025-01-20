@@ -4989,8 +4989,9 @@ function ev_get_reminders($evaluation, $id) {
 // for testing as non-cron task: commented all cron related lines...
 function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     global $CFG, $DB;
-   mtrace('send_reminders cron is currently disabled in function ev_cron');
-   return true;
+    // mtrace('send_reminders cron is currently disabled in function ev_cron');
+    // return true;
+    $test = true;
     mtrace('mod_evaluation: Start processing send_reminders');
 
     setlocale(LC_ALL, 'de_DE');
@@ -4998,6 +4999,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     $reminders_sent = false;
     $timenow = time();
     $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
+    $task->clear_fail_delay();
     $lastruntime = $task->get_last_run_time();
     mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: "
            .date("d.m,Y H:i:s",$lastruntime));
@@ -5169,3 +5171,75 @@ function get_site_admin_user($username) {
     }
     return new stdClass();
 }
+
+/**
+ * Sends error information to site admin
+ *
+ * @param Exception $error The caught exception
+ * @param string $function_name Name of the function where error occurred
+ * @param array $additional_info Optional additional information to include in email
+ * @return bool Success/failure of email sending
+ * // Usage example:
+ * /* try {
+ * ... code ....
+ * } catch (Exception $e) {
+ * // Send error to admin with additional context
+ * ev_mail_error_to_admin($e,__FUNCTION__,additional_info);
+ * throw new moodle_exception('scheduled_tasks_error', 'error', '', $e->getMessage());
+ * /
+ */
+
+function ev_mail_error_to_admin($error, $function_name='', $additional_info = []) {
+    global $CFG, $USER;
+
+    // Get admin user
+    $admin = get_admin();
+    if (!$admin) {
+        error_log('Could not find site admin for error notification');
+        return false;
+    }
+
+    // Build error details
+    $error_details = [
+            'Timestamp' => date('Y-m-d H:i:s'),
+            'Error Type' => get_class($error),
+            'Error Message' => $error->getMessage(),
+            'File' => $error->getFile(),
+            'function' => $function_name,
+            'Line' => $error->getLine(),
+            'User' => isset($USER->id) ? "{$USER->username} (ID: {$USER->id})" : 'Not logged in',
+            'URL' => qualified_me(),
+            'Referrer' => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'N/A',
+            'User Agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'N/A'
+    ];
+
+    // Add any additional info
+    if (!empty($additional_info)) {
+        $error_details['Additional Information'] = $additional_info;
+    }
+
+    // Add stack trace
+    $error_details['Stack Trace'] = $error->getTraceAsString();
+
+    // Format message
+    $message = '';
+    foreach ($error_details as $key => $value) {
+        if (is_array($value)) {
+            $message .= "$key:\n" . print_r($value, true) . "\n";
+        } else {
+            $message .= "$key: $value\n";
+        }
+    }
+
+    // Email subject
+    $subject = "[{$CFG->sitename}] Error in {$error_details['file']}";
+
+    // Send email using Moodle's email function
+    return email_to_user(
+            $admin,
+            core_user::get_support_user(),
+            $subject,
+            $message
+    );
+}
+
