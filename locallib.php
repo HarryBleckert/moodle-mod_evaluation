@@ -4623,11 +4623,10 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $username = $evaluation_user["username"];
         $firstname = $evaluation_user["firstname"];
         $lastname = $evaluation_user["lastname"];
-        $fullname = $evaluation_user["fullname"];
+        $fullname = $a->fullname = $evaluation_user["fullname"];
         $email = $evaluation_user["email"];
         $userid = $evaluation_user["id"];
         $lang = $evaluation_user["language"];
-
         $headers = array("From" => $sender, "Return-Path" => $senderMail, "Reply-To" => $sender, "MIME-Version" => "1.0",
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
 
@@ -4636,7 +4635,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             continue;
         }
         if (empty($email) or strtolower($email) == "unknown" or !strstr($email, "@") or stristr($email, "unknown@")) {
-            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to unknown@", $cronjob);
+            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to $email", $cronjob);
             continue;
         }
 
@@ -4656,17 +4655,17 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             $to = "Harry <Harry@Bleckert.com>";
             // $to = $sender;
             // $to = "Anja Voss <voss@ash-berlin.eu>";
-            $fullname = "Test";
+            $tname = "Test";
             if (strpos($test,"@")){
                 $to = $test;
-                $fullname = "Test";
+                $tname = "Test";
             }
             if ( strpos($to,"<") !== false AND strpos($to,">") !== false) {
-                list($fullname, $emailt) = explode(' <', trim($to, '> '));
-                $to = '=?UTF-8?B?' . base64_encode($fullname." (Test)") . '?=' . " <$emailt>";
+                list($tname, $emailt) = explode(' <', trim($to, '> '));
+                $to = '=?UTF-8?B?' . base64_encode($tname." (Test)") . '?=' . " <$emailt>";
             }
         } else {
-            $to = '=?UTF-8?B?' . base64_encode($firstname . " " . $lastname )
+            $to = '=?UTF-8?B?' . base64_encode($fullname )
                 . '?=' . " <$email>";
             $testMsg = "";
         }
@@ -4695,7 +4694,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             }
             $a->testmsg .= "<hr>\n";
         }
-        $a->fullname = $fullname;
+
         $a->remaining_evaluation_days = $remaining_evaluation_days;
         $a->lastEvaluationDay = $lastEvaluationDay;
         $a->evUrl = $evUrl;
@@ -4744,6 +4743,17 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             }
 
             $cntTeachers++;
+            // add text to explain receiving 9 reminders on this day due to software error
+            if ( $cnt<68 and date("Ymd") == "20250120" ) {
+                $a->testmsg .= "Guten Tag $fullanme<br><br>Sie erhalten hiermit die 10. Hinweismail am selben Tag. (sic!)<br>
+                Ursache war ein Softwarefehler, den ich beim Testen nicht erkannt hatte. 
+                Dieser Fehler führte dazu, dass Moodle insgesamt heute morgen neun mal versucht hat, hat den Versand der Hinweismails zu wiederholen.<br>
+                Für diese Störung bitte ich um Ihr Verständnis.<br>
+                Übrigens: Da Lehrende, für die weniger als 6 Abgaben vorliegen, aus Datenschutzgründen keine Textantworten einsehen können, 
+                erhalten Lehrende mit weniger als insgesamt 6 Abgaben wöchenlich diese Hinweismails, alle anderen im Abstand von 2 Wochen.<br><br>
+                Herzliche Grüße<br>Harry Bleckert<hr>";
+                ";
+            }
             $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
                     . ev_get_string('send_reminders_teachers', $a) . "</body></html>";
 
