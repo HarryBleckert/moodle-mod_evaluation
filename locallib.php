@@ -4999,7 +4999,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     $reminders_sent = false;
     $timenow = time();
     $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
-    $task->clear_fail_delay();
+    // $task->clear_fail_delay();
     $lastruntime = $task->get_last_run_time();
     mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: "
            .date("d.m,Y H:i:s",$lastruntime));
@@ -5176,7 +5176,6 @@ function get_site_admin_user($username) {
  * Sends error information to site admin
  *
  * @param Exception $error The caught exception
- * @param string $function_name Name of the function where error occurred
  * @param array $additional_info Optional additional information to include in email
  * @return bool Success/failure of email sending
  * // Usage example:
@@ -5189,7 +5188,7 @@ function get_site_admin_user($username) {
  * /
  */
 
-function ev_mail_error_to_admin($error, $function_name='', $additional_info = []) {
+function ev_mail_error_to_admin($error, $additional_info = []) {
     global $CFG, $USER;
 
     // Get admin user
@@ -5204,8 +5203,7 @@ function ev_mail_error_to_admin($error, $function_name='', $additional_info = []
             'Timestamp' => date('Y-m-d H:i:s'),
             'Error Type' => get_class($error),
             'Error Message' => $error->getMessage(),
-            'File' => $error->getFile(),
-            'function' => $function_name,
+            'File' => $error->getFile(),,
             'Line' => $error->getLine(),
             'User' => isset($USER->id) ? "{$USER->username} (ID: {$USER->id})" : 'Not logged in',
             'URL' => qualified_me(),
@@ -5232,7 +5230,7 @@ function ev_mail_error_to_admin($error, $function_name='', $additional_info = []
     }
 
     // Email subject
-    $subject = "[{$CFG->sitename}] Error in {$error_details['file']}";
+    $subject = "[{$CFG->sitename}]: Error in {$error_details['file']} on {$error_details['line']}";
 
     // Send email using Moodle's email function
     return email_to_user(
