@@ -2636,10 +2636,6 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
             $replies = "";
             $cnt = 0;
             if ($evaluation->teamteaching) {    // get course teachers
-                //if ( !isset( $_SESSION["allteachers"][$myEvaluation["courseid"]] ) )
-                //{	get_course_teachers( $evaluation, $myEvaluation["courseid"], $cmid ); }
-                //print "<br><hr>SESSION['allteachers'][myEvaluation[courseid]]: ";var_dump($_SESSION['allteachers'][$myEvaluation['courseid']]);print "<hr>\n";
-                //$missing = isEvaluationCompleted( $evaluation, false, false, true );
                 foreach ($teachers as $teacher) {
                     $Txt = $actionTxt;
                     $url = $urlF;
