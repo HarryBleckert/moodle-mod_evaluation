@@ -355,7 +355,6 @@ $string['confirmdeletetemplate'] = 'Möchten Sie diese Vorlage wirklich löschen
 $string['confirmusetemplate'] = 'Möchten Sie diese Vorlage wirklich verwenden?';
 $string['continue_the_form'] = 'Ausfüllen des Formulars fortsetzen';
 $string['count_of_nums'] = 'Anzahl von Werten';
-$string['course'] = 'Course';
 $string['courseid'] = 'Kurs-ID';
 $string['creating_templates'] = 'Diese Fragen als neue Vorlage speichern';
 $string['delete_entry'] = 'Eintrag löschen';

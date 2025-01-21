@@ -4623,7 +4623,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $username = $evaluation_user["username"];
         $firstname = $evaluation_user["firstname"];
         $lastname = $evaluation_user["lastname"];
-        $fullname = $a->fullname = $evaluation_user["fullname"];
+        $fullname = $a->fullname = str_replace('"','',$evaluation_user["fullname"]);
         $email = $evaluation_user["email"];
         $userid = $evaluation_user["id"];
         $lang = $evaluation_user["language"];
@@ -4743,85 +4743,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             }
 
             $cntTeachers++;
-            // add text to explain receiving 9 reminders on this day due to software error
-            $emails = [
-                    'a.kaya@ash-berlin.eu',
-                    'ackermann@ash-berlin.eu',
-                    'archer@ash-berlin.eu',
-                    'attia@ash-berlin.eu',
-                    'beretta@ash-berlin.eu',
-                    'boden@ash-berlin.eu',
-                    'braun-thuermann@ash-berlin.eu',
-                    'brehmer@ash-berlin.eu',
-                    'broegeler@ash-berlin.eu',
-                    'carell@ash-berlin.eu',
-                    'castro@ash-berlin.eu',
-                    'catalan@ash-berlin.eu',
-                    'david.cornel@ash-berlin.eu',
-                    'dehler@ash-berlin.eu',
-                    'dutschke@ash-berlin.eu',
-                    'eichinger@ash-berlin.eu',
-                    'fehren@ash-berlin.eu',
-                    'franck@ash-berlin.eu',
-                    'froehlich@ash-berlin.eu',
-                    'gommel@sozialesundrecht.de',
-                    'gretschel@ash-berlin.eu',
-                    'grosse@ash-berlin.eu',
-                    'gutsche@ash-berlin.eu',
-                    'hruska@ash-berlin.eu',
-                    'jessie.lee@hotmail.de',
-                    'jochen.schaefer@ash-berlin.eu',
-                    'Johannes.Verch@web.de',
-                    'judith.mueller@ash-berlin.eu',
-                    'julien.schwarz@ash-berlin.eu',
-                    'jutta.hartmann@ash-berlin.eu',
-                    'keerstinmmiersch@aol.de',
-                    'kenel@ash-berlin.eu',
-                    'kerstin.kraus@ash-berlin.eu',
-                    'korte@anwalt.info',
-                    'lambrecht@ash-berlin.eu',
-                    'liedholz@ash-berlin.eu',
-                    'maether@ash-berlin.eu',
-                    'marc.ludwig@ash-berlin.eu',
-                    'marion.mayer@ash-berlin.eu',
-                    'mart.busche@ash-berlin.eu',
-                    'noreply-moodle@ash-berlin.eu',
-                    'noreply-moodle@ash-berlin.eu',
-                    'otterstein@ash-berlin.eu',
-                    'overmann@ash-berlin.eu',
-                    'pollmann@ash-berlin.eu',
-                    'posselt@ash-berlin.eu',
-                    'quetting@ash-berlin.eu',
-                    'ruemper@ash-berlin.eu',
-                    'saborowski@ash-berlin.eu',
-                    'sb@gahleitner.net',
-                    'schmude@ash-berlin.eu',
-                    'seckinaydin1980@gmail.com',
-                    'senel@ash-berlin.eu',
-                    'smykalla@ash-berlin.eu',
-                    'sorensen@ash-berlin.eu',
-                    'spadolini@ash-berlin.eu',
-                    'stapf-fine@ash-berlin.eu',
-                    'stefanie.kruse@ash-berlin.eu',
-                    'stern@ash-berlin.eu',
-                    'tadesse@ash-berlin.eu',
-                    'tanja.stern@ash-berlin.eu',
-                    'theisselmann@ash-berlin.eu',
-                    'thoma@ash-berlin.eu',
-                    'w.glanzer@gmx.de',
-                    'weipert@ash-berlin.eu',
-                    'weissgerber@ash-berlin.eu',
-                    'westermann@ash-berlin.eu'
-            ];
-           if ( date("Ymd") == "20250120" and in_array($email, $emails) ) {
-                $a->testmsg .= "Guten Tag $fullname<br><br>Sie erhalten hiermit die 10. Hinweismail am selben Tag. (<b>sic!</b>)<br>
-                Ursache war ein Softwarefehler, den ich beim Testen nicht erkannt hatte. 
-                Dieser Fehler führte dazu, dass Moodle heute morgen neun mal versucht hat, hat den Versand der Hinweismails zu wiederholen.<br>
-                Für diese Störung bitte ich Sie um Verständnis und Nachsicht.<br>
-                Übrigens: Da Lehrende, für die weniger als 6 Abgaben vorliegen, aus Datenschutzgründen keine Textantworten einsehen können, 
-                erhalten nur Lehrende mit bisher weniger als 6 Abgaben wöchenlich diese Hinweismails, alle anderen im Abstand von 2 Wochen.<br><br>
-                Herzliche Grüße<br>Harry Bleckert<hr>";
-            }
 
             $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
                     . ev_get_string('send_reminders_teachers', $a) . "</body></html>";
@@ -4867,7 +4788,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     force_current_language(get_user_lang($username));
                     list($fullname, $emailt) = explode(' <', trim($email, '> '));
                     $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
-                    $a->fullname = $fullname;
+                    $a->fullname = str_replace('"','',$fullname);
                     $email = '=?UTF-8?B?' . base64_encode($fullname). '?=' . " <$emailt>";
                     // $email = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
                     $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";

@@ -257,7 +257,8 @@ $Studiengang = $showTeachers = "";
 
 if ($SiteEvaluation and !$courseid) {
     $all_courses = true;
-    $CourseTitle = "\n<span style=\"font-size:12pt;font-weight:bold;display:inline;\">" . get_string("all_courses", "evaluation") .
+    $CourseTitle = "\n<span style=\"font-size:12pt;font-weight:bold;display:inline;\">"
+            . get_string('all_courses', "evaluation") .
             "</span><br>\n";
 }
 if ($courseid) {

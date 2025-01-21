@@ -355,7 +355,6 @@ $string['confirmdeletetemplate'] = 'Are you sure you want to delete this templat
 $string['confirmusetemplate'] = 'Are you sure you want to use this template?';
 $string['continue_the_form'] = 'Continue answering the questions';
 $string['count_of_nums'] = 'Count of numbers';
-$string['course'] = 'Course';
 $string['courseid'] = 'Course ID';
 $string['creating_templates'] = 'Save these questions as a new template';
 $string['delete_entry'] = 'Delete entry';
