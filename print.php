@@ -187,7 +187,7 @@ if ($logViews) {
     echo $goBack;
     echo evPrintButton();
     $a->logexpiry = get_config('logstore_standard')->loglifetime;
-    echo '<br>' . ev_get_string('analysis_of_logs') . "<br>\n";
+    echo '<br>' . ev_get_string('analysis_of_logs',$a) . "<br>\n";
 
     foreach ($subjects as $key => $subject) {
         if ($key == $logsubject) {
@@ -263,7 +263,7 @@ if ($logViews) {
             . evaluation_number_format($median) . " - <b>" . ev_get_string('modus') . "</b>: "
             . evaluation_number_format($modus) . ".<br>\n";
     $a->numresults = $NumResults;
-    echo  ev_get_string('numactivitydays') ."<br>\n";
+    echo  ev_get_string('numactivitydays',$a) ."<br>\n";
     echo "<b>" . ev_get_string('total_activities') ."</b>: <b>" . evaluation_number_format($views) . "</b>\n";
     echo '<div style="width:89%;">';
     $data = $results2 = array();
@@ -406,7 +406,7 @@ else if (false and $showEvaluations) {
     if ($dayC >= 1) {
         $prognosis = ". " . ev_get_string('prognosis') .": " . '<span style="color:darkgreen;font-weight:bolder;">'
                 . $prognosisval . "</span>";
-        $days = ". " . ev_get_string('remaining_days');
+        $days = ". " . ev_get_string('remaining_days',$a);
     } else {
         $days = "";
     }
@@ -418,7 +418,7 @@ else if (false and $showEvaluations) {
             . $modus . ".<br>\n";
     $a->numresults = $numresults;
     $a->completed_responses = $completed_responses;
-    echo  ev_get_string('numsubmissiondays') . $days ."<br>\n";
+    echo  ev_get_string('numsubmissiondays',$a) . $days ."<br>\n";
     echo "<b>" . ev_get_string('completed_responses') ."</b>: <b>" . $completed_responses . "</b>"
             . $prognosis . ".\n";
     // echo "Abgaben erfolgten an <b>" . $numresults . " Tagen</b>$days.<br>\n";
