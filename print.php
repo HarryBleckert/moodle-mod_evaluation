@@ -417,7 +417,7 @@ else if (false and $showEvaluations) {
             . $median . " - <b>" . ev_get_string('modus') . "</b>: "
             . $modus . ".<br>\n";
     $a->numresults = $numresults;
-
+    $a->completed_responses = $completed_responses;
     echo  ev_get_string('numsubmissiondays') . $days ."<br>\n";
     echo "<b>" . ev_get_string('completed_responses') ."</b>: <b>" . $completed_responses . "</b>"
             . $prognosis . ".\n";
