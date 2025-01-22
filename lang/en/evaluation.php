@@ -34,22 +34,22 @@ $string['index_group_by_tag'] = 'Group';
 // end index.php
 
 // print.php
-$string['analysis_of_logs'] = 'Auswertung des Moodle Logs. Log Daten werden {$a->logexpiry} Tage aufbewahrt.';
-$string['activities_per_day'] = 'Aktivitäten/Tag';
+$string['analysis_of_logs'] = 'Evaluation of the Moodle log. Log data is kept for {$a->logexpiry} days.';
+$string['activities_per_day'] = 'Activities/day';
 $string['median'] = 'Median';
-$string['modus'] = 'Modus';
-$string['numactivitydays'] = 'Aktivitäten gab es an <b>{$a->numresults} Tagen</b>';
-$string['total_activities'] = 'Summe Aktivitäten';
-$string['results_for_all_evaluated_teachers'] = 'Ergebnisse für alle evaluierten Dozent_innen';
-$string['results_for_all_participating_courses'] = 'Ergebnisse für alle teilnehmenden Kurse';
-$string['you_havent_yet_participated_for_this_course'] = 'Sie haben für diesen Kurs noch nicht teilgenommen. <b>Bitte beteiligen Sie sich!</b>';
-$string['i_want_participate_now'] = 'Ich will mich jetzt beteiligen!';
-$string['back_to_course'] = 'Zurück zum Kurs';
-$string['prognosis'] = 'Prognose';
-$string['remaining_days'] = 'Es verbleiben {$a->remaining_days} Tage Laufzeit';
-$string['submissions_per_day'] = 'Abgaben pro Tag';
-$string['numsubmissiondays'] = 'Abgaben erfolgten an <b>{$a->numresults} Tagen</b>';
-$string['completed_responses'] = 'Summe Abgaben';
+$string['modus'] = 'Mode';
+$string['numactivitydays'] = 'Activities took place on <b>{$a->numresults} days</b>';
+$string['total_activities'] = 'Total activities';
+$string['results_for_all_evaluated_teachers'] = 'Results for all evaluated teachers';
+$string['results_for_all_participating_courses'] = 'Results for all participating courses';
+$string['you_havent_yet_participated_for_this_course'] = 'You have not yet participated for this course. <b>Please participate!</b>';
+$string['i_want_participate_now'] = 'I want to participate now!';
+$string['back_to_course'] = 'Back to course';
+$string['prognosis'] = 'Forecast';
+$string['remaining_days'] = 'There are {$a->remaining_days} days left';
+$string['submissions_per_day'] = 'Submissions per day';
+$string['numsubmissiondays'] = 'Submissions were made on <b>{$a->numresults} days</b>';
+$string['completed_responses'] = 'Total submissions';
 // end print.php
 
 // send reminders
