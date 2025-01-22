@@ -78,26 +78,29 @@ if ($course_of_studiesID) {
     $course_of_studies = evaluation_get_course_of_studies_from_evc($course_of_studiesID, $evaluation);
 }
 
+$a = new stdClass();
+$ev_name = ev_get_tr($evaluation->name);
+
 $PAGE->set_pagelayout('popup');
 
 // Print the page header.
 //$strevaluations = get_string("modulenameplural", "evaluation");
 //$evaluation_url = new moodle_url('/mod/evaluation/index.php', array('id'=>$course->id));
 //$PAGE->navbar->add($strevaluations, $evaluation_url);
-//$PAGE->navbar->add(format_string(ev_get_tr($evaluation->name)));
+//$PAGE->navbar->add(format_string($ev_name));
 
-$PAGE->set_title(ev_get_tr($evaluation->name));
+$PAGE->set_title($ev_name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 print '<div id="LoginAs" class="LoginAs d-print-none"></div><span style="clear:both;"><br></span>';
 evaluation_LoginAs();
 
 // Print the main part of the page.
-$icon = '<img src="pix/icon120.png" height="30" alt="' . ev_get_tr($evaluation->name) . '">';
-echo $OUTPUT->heading($icon . "&nbsp;" . format_string(ev_get_tr($evaluation->name)));
+$icon = '<img src="pix/icon120.png" height="30" alt="' . $ev_name . '">';
+echo $OUTPUT->heading($icon . "&nbsp;" . format_string($ev_name));
 
 // show return button
-$goBack = html_writer::tag('button', "Zurück",
+$goBack = html_writer::tag('button', ev_get_string('back'),
         array('class' => "d-print-none", 'style' => 'color:white;background-color:black;text-align:center;',
                 'type' => 'button', 'onclick' => 'window.history.back();'));
 // 'type' => 'button','onclick'=>'(window.history.back()?window.history.back():window.close());'));
@@ -183,8 +186,8 @@ if ($logViews) {
                     'href' => '/mod/evaluation/view.php?id=' . $id));
     echo $goBack;
     echo evPrintButton();
-    echo '<br>Auswertung des Moodle Logs. Log Daten werden ' . get_config('logstore_standard')->loglifetime .
-            " Tage aufbewahrt.<br>\n";
+    $a->logexpiry = get_config('logstore_standard')->loglifetime;
+    echo '<br>' . ev_get_string('analysis_of_logs') . "<br>\n";
 
     foreach ($subjects as $key => $subject) {
         if ($key == $logsubject) {
@@ -224,10 +227,6 @@ if ($logViews) {
         echo "<b>" . get_string('evaluation_period', 'evaluation') . "</b>: " . date("d.m.Y", $evaluation->timeopen)
                 . " - " . date("d.m.Y", $evaluation->timeclose)
                 . " (" . total_evaluation_days($evaluation) . " " . get_string("days") . ")<br>\n";
-        if (false ) {
-            // $logsubject == "analysisExport" and $evaluation->timeclose < strtotime("March 13 2023")) {
-            echo "Der Filter 'Excel Export' wurde erstmals am 14.03.2023 gesetzt.<br>\n";
-        }
     }
 
     // if no results
@@ -255,16 +254,17 @@ if ($logViews) {
     }
 
     $average = round($views / $NumResults);
-
     $median = $results2[intval($NumResults / 2)]->{$responses};
     $modus = $results2[0]->{$responses};
 
     $date = get_string('date');
-    //echo get_string($logsubject,'evaluation');
-    echo "Aktivitäten/Tag: <b>Mittelwert</b>: " . evaluation_number_format($average) . " - <b>Median</b>: "
-            . evaluation_number_format($median) . " - <b>Modus</b>: " . evaluation_number_format($modus) . ".<br>\n";
-    echo "Aktivitäten gab es an <b>" . $NumResults . " Tagen</b>.<br>\n";
-    echo "<b>Summe Aktivitäten</b>: <b>" . evaluation_number_format($views) . "</b>\n";
+    echo ev_get_string('activities_per_day') . ": <b>" . ev_get_string('average')
+            . "</b>: " . evaluation_number_format($average) . " - <b>" . ev_get_string('median') . "</b>: "
+            . evaluation_number_format($median) . " - <b>" . ev_get_string('modus') . "</b>: "
+            . evaluation_number_format($modus) . ".<br>\n";
+    $a->numresults = $NumResults;
+    echo  ev_get_string('numactivitydays') ."<br>\n";
+    echo "<b>" . ev_get_string('total_activities') ."</b>: <b>" . evaluation_number_format($views) . "</b>\n";
     echo '<div style="width:89%;">';
     $data = $results2 = array();
     $count = $replies = $Modus = $Median = 0;
@@ -286,8 +286,8 @@ if ($logViews) {
     $chart = new \core\chart_bar();
     $series = new \core\chart_series(format_string(get_string("pageviews", "evaluation")), $data['series']);
     $seriesAvg = new \core\chart_series(get_string("average", "evaluation"), $data["average"]);
-    $seriesMed = new \core\chart_series('Median', $data["median"]);
-    $seriesMod = new \core\chart_series('Modus', $data["modus"]);
+    $seriesMed = new \core\chart_series(ev_get_string('median'), $data["median"]);
+    $seriesMod = new \core\chart_series(ev_get_string('modus'), $data["modus"]);
     $seriesAvg->set_type(\core\chart_series::TYPE_LINE); // Set the series type to line chart.
     $seriesMed->set_type(\core\chart_series::TYPE_LINE);
     $seriesMod->set_type(\core\chart_series::TYPE_LINE);
@@ -324,7 +324,7 @@ if ($showTeacher) {
         //if ( is_siteadmin() )	{	print nl2br("$teacherEvaluations - $courseEvaluations<hr>"); }
         if ((!evaluation_is_open($evaluation) or $evaluation->teamteaching) and $teacherEvaluations < $courseEvaluations) {
             print show_user_evaluation_courses($evaluation, $myEvaluations, $id, true, true, true);
-            print "<h3>Ergebnisse für alle evaluierten Dozent_innen</h3>\n";
+            print "<h3>" . ev_get_string('results_for_all_evaluated_teachers') . "</h3>\n";
         }
         print show_user_evaluation_courses($evaluation, $myEvaluations, $id, true, false, false);
 
@@ -342,20 +342,19 @@ else if (false and $showEvaluations) {
     list($isPermitted, $CourseTitle, $CourseName, $SiteEvaluation) =
             evaluation_check_Roles_and_Permissions($courseid, $evaluation, $cm, true);
     if (0 and defined('EVALUATION_OWNER')) {
-        print "<h3>Ergebnisse für alle teilnehmenden Kurse</h3>\n";
+        print "<h3>" . ev_get_string('results_for_all_participating_courses') . "</h3>\n";
         $SiteEvaluations = get_evaluation_participants($evaluation, -1); //($Userid = -1) );
         print show_user_evaluation_courses($evaluation, $SiteEvaluations, $id, true, false, false);
     }
 } else if ($reminder and $courseid) {
     $fullname = ($USER->alternatename ? $USER->alternatename : $USER->firstname) . " " . $USER->lastname;
     $myCourse = get_course($courseid);
-    echo "<h2>Kurs: $myCourse->fullname</h2><br>\n";
-    echo "<h3>Guten Tag $fullname,<br>Sie haben für diesen Kurs noch nicht teilgenommen. <b>Bitte beteiligen Sie sich!</b></h3><br><br>\n";
+    echo "<h2>" . ev_get_string('course') . ": ". $myCourse->fullname . "</h2><br>\n";
+    echo "<h3>" . ev_get_string('good_day') . $fullname . "<br>" . ev_get_string('you_havent_yet_participated_for_this_course') . "</h3><br><br>\n";
     ?>
-    <button><a href="/mod/evaluation/view.php?id=<?php echo $id ?>" style="font-size:125%;color:white;background-color:black;">Ich
-            will mich jetzt beteiligen!</a></button>
-    <button><a href="/course/view.php?id=<?php echo $courseid ?>" style="font-size:125%;color:white;background-color:black;">Zurück
-            zum Kurs</a></button>
+    <button><a href="/mod/evaluation/view.php?id=<?php echo $id ?>" style="font-size:125%;color:white;background-color:black;">" . ev_get_string('i_want_participate_now') . "</a></button>
+    <button><a href="/course/view.php?id=<?php echo $courseid ?>" style="font-size:125%;color:white;background-color:black;">"
+            . ev_get_string('back_to_course') . "</a></button>
     <?php
 } else if ($daily_progress) {
     if (!defined('EVALUATION_OWNER')) {
@@ -400,21 +399,30 @@ else if (false and $showEvaluations) {
     $median = $results2[intval($numresults / 2)]->{$responses};
     $modus = $results2[0]->{$responses};
     $dayC = round(remaining_evaluation_days($evaluation)); //+round(date("H")/24,4) );
-    //$dayC = current_evaluation_day($evaluation);
     $prognosis = "";
     $date = get_string('date');
+    $a->remaining_days = '<span style="color:darkgreen;font-weight:bolder;">' . $dayC . "</span>";
+    $prognosisval = round($completed_responses + (($completed_responses / $numresults) * $dayC));
     if ($dayC >= 1) {
-        $prognosis = ". Prognose: " . '<span style="color:darkgreen;font-weight:bolder;">'
-                . round($completed_responses + (($completed_responses / $numresults) * $dayC)) . "</span>";
-        $days = ". Es verbleiben " . '<span style="color:darkgreen;font-weight:bolder;">' . $dayC . "</span> Tage Laufzeit";
+        $prognosis = ". " . ev_get_string('prognosis') .": " . '<span style="color:darkgreen;font-weight:bolder;">'
+                . $prognosisval . "</span>";
+        $days = ". " . ev_get_string('remaining_days');
     } else {
         $days = "";
     }
 
-    echo "Abgaben pro Tag: <b>Mittelwert</b>: " . $average . " - <b>Median</b>: " . $median . " - <b>Modus</b>: " . $modus .
-            ".<br>\n";
-    echo "Abgaben erfolgten an <b>" . $numresults . " Tagen</b>$days.<br>\n";
-    echo "<b>Summe $responses</b>: <b>" . $completed_responses . "</b>" . $prognosis . "\n";
+
+    echo ev_get_string('submissions_per_day') . ": <b>" . ev_get_string('average')
+            . "</b>: " . $average . " - <b>" . ev_get_string('median') . "</b>: "
+            . $median . " - <b>" . ev_get_string('modus') . "</b>: "
+            . $modus . ".<br>\n";
+    $a->numresults = $numresults;
+
+    echo  ev_get_string('numasubmissiondays') . $days ."<br>\n";
+    echo "<b>" . ev_get_string('completed_responses') ."</b>: <b>" . $completed_responses . "</b>"
+            . $prognosis . ".\n";
+    // echo "Abgaben erfolgten an <b>" . $numresults . " Tagen</b>$days.<br>\n";
+    // echo "<b>Summe $responses</b>: <b>" . $completed_responses . "</b>" . $prognosis . "\n";
     echo '<div style="width:89%;">';
     $data = $results2 = array();
     $count = $replies = $Modus = $Median = 0;
@@ -435,9 +443,9 @@ else if (false and $showEvaluations) {
     // draw line chart
     $chart = new \core\chart_bar();
     $series = new \core\chart_series(format_string(get_string("submittedEvaluations", "evaluation")), $data['series']);
-    $seriesAvg = new \core\chart_series(get_string("average", "evaluation"), $data["average"]);
-    $seriesMed = new \core\chart_series('Median', $data["median"]);
-    $seriesMod = new \core\chart_series('Modus', $data["modus"]);
+    $seriesAvg = new \core\chart_series(ev_get_string("average"), $data["average"]);
+    $seriesMed = new \core\chart_series(ev_get_string("median"), $data["median"]);
+    $seriesMod = new \core\chart_series(ev_get_string("modus"), $data["modus"]);
     $seriesAvg->set_type(\core\chart_series::TYPE_LINE); // Set the series type to line chart.
     $seriesMed->set_type(\core\chart_series::TYPE_LINE); // Set the series type to line chart.
     $seriesMod->set_type(\core\chart_series::TYPE_LINE); // Set the series type to line chart.
