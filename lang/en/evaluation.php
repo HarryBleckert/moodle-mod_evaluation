@@ -33,6 +33,25 @@ $string['language'] = 'en';
 $string['index_group_by_tag'] = 'Group';
 // end index.php
 
+// print.php
+$string['analysis_of_logs'] = 'Auswertung des Moodle Logs. Log Daten werden {$a->logexpiry} Tage aufbewahrt.';
+$string['activities_per_day'] = 'Aktivitäten/Tag';
+$string['median'] = 'Median';
+$string['modus'] = 'Modus';
+$string['numactivitydays'] = 'Aktivitäten gab es an <b>{$a->numresults} Tagen</b>';
+$string['total_activities'] = 'Summe Aktivitäten';
+$string['results_for_all_evaluated_teachers'] = 'Ergebnisse für alle evaluierten Dozent_innen';
+$string['results_for_all_participating_courses'] = 'Ergebnisse für alle teilnehmenden Kurse';
+$string['you_havent_yet_participated_for_this_course'] = 'Sie haben für diesen Kurs noch nicht teilgenommen. <b>Bitte beteiligen Sie sich!</b>';
+$string['i_want_participate_now'] = 'Ich will mich jetzt beteiligen!';
+$string['back_to_course'] = 'Zurück zum Kurs';
+$string['prognosis'] = 'Prognose';
+$string['remaining_days'] = 'Es verbleiben {$a->remaining_days} Tage Laufzeit';
+$string['submissions_per_day'] = 'Abgaben pro Tag';
+$string['numsubmissiondays'] = 'Abgaben erfolgten an <b>{$a->numresults} Tagen</b>';
+$string['completed_responses'] = 'Summe Abgaben';
+// end print.php
+
 // send reminders
 $string['john_doe'] = 'John Doe';
 $string['send_reminders_noreplies_teachers'] = 'Only to teachers for whom less than {$a->min_results_text} submissions have been made so far.';

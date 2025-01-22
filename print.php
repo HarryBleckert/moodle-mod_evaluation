@@ -418,7 +418,7 @@ else if (false and $showEvaluations) {
             . $modus . ".<br>\n";
     $a->numresults = $numresults;
 
-    echo  ev_get_string('numasubmissiondays') . $days ."<br>\n";
+    echo  ev_get_string('numsubmissiondays') . $days ."<br>\n";
     echo "<b>" . ev_get_string('completed_responses') ."</b>: <b>" . $completed_responses . "</b>"
             . $prognosis . ".\n";
     // echo "Abgaben erfolgten an <b>" . $numresults . " Tagen</b>$days.<br>\n";

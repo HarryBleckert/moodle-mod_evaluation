@@ -48,7 +48,7 @@ $string['back_to_course'] = 'Zurück zum Kurs';
 $string['prognosis'] = 'Prognose';
 $string['remaining_days'] = 'Es verbleiben {$a->remaining_days} Tage Laufzeit';
 $string['submissions_per_day'] = 'Abgaben pro Tag';
-$string['numasubmissiondays'] = 'Abgaben erfolgten an <b>{$a->numresults} Tagen</b>';
+$string['numsubmissiondays'] = 'Abgaben erfolgten an <b>{$a->numresults} Tagen</b>';
 $string['completed_responses'] = 'Summe Abgaben';
 // end print.php
 
