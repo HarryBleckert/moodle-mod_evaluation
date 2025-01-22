@@ -4786,9 +4786,10 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                         continue;
                     }
                     force_current_language(get_user_lang($username));
+                    $a->ev_name = ev_get_tr($evaluation->name);
                     list($fullname, $emailt) = explode(' <', trim($email, '> '));
                     $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
-                    $a->fullname = str_replace('"','',$fullname);
+                    $a->fullname = ev_get_string('john_doe');
                     $email = '=?UTF-8?B?' . base64_encode($fullname). '?=' . " <$emailt>";
                     // $email = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
                     $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
@@ -4798,8 +4799,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     $a->testmsg .= "<hr>\n";
                     $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
                             . ev_get_string('send_reminders_'.$role.'s', $a) . "</body></html>";
-                    $msg = ev_get_string('good_day') . " " . $a->fullname . "<br><br>\n" . ev_get_string('send_reminders_privileged');
-                    $msg .=  $a->testmsg;
+                    $a->fullname = str_replace('"','',$fullname);
+                    $msg = ev_get_string('good_day') . " " . $a->fullname . "<br><br>\n"
+                            . ev_get_string('send_reminders_privileged');
                     $msg = str_ireplace("<body>", "<body>" . $msg, $message);
                     mail($email, $subject, quoted_printable_encode($msg), $headers);
                     $msg = "-Info an Privilegierte:";

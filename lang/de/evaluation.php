@@ -34,6 +34,7 @@ $string['index_group_by_tag'] = 'Gruppe';
 // end index.php
 
 // send reminders
+$string['john_doe'] = 'John Doe';
 $string['send_reminders_noreplies_teachers'] = 'Nur an Lehrende, für die bisher weniger als {$a->min_results_text} Abgaben gemacht wurden.';
 $string['send_reminders_noreplies_students'] = 'Nur an Studierende, die bisher noch nicht an der Evaluation teilgenommen haben.';
 $string['send_reminders_pmsg'] = 'Heute wurden Mails mit Hinweisen zur laufenden Evaluation an alle {$a->role} versandt, deren Kurse an der Evaluation teilnehmen. Unten sehen Sie ein Beispiel. ';
