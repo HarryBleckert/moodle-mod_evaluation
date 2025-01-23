@@ -259,8 +259,8 @@ if (safeCount($row) > 0) {
     $tabs[] = $row;
     // style="display:inline;font-weight: bold;.tabtree a:link {text-decoration: none;font-weight: normal;}"
     // <style>.tabtree a.current {font-weight: bold; text-decoration: underline;}</style>
-    echo "\n" . '<style>font-weight: normal; text-decoration: none;a:link {font-weight: bold; text-decoration: underline;}</style>
-        <div style="display:inline;" class="d-print-none">';
+    // '<style>font-weight: normal; text-decoration: none;a:link {font-weight: bold; text-decoration: underline;}</style>
+    echo "\n" . '<div style="display:inline;" class="d-print-none">';
     print_tabs($tabs, $current_tab, $inactive, $activated);
     echo "</div>\n";
 }

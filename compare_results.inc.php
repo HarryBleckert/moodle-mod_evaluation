@@ -106,9 +106,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                             . '&course_of_studiesID=' . $course_of_studiesID));
 
     // handle CoS priveleged user
-    if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
-        print  ev_get_string('analysis_cos') . ": " . '<span style="font-weight:600;white-space:pre-line;">'
-                . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span><br>\n";
+    if (!empty($_SESSION['CoS_privileged'][$USER->username]) AND empty($teacherid)) {
+        print  '<span style="font-weight:600;">' . ev_get_string('analysis_cos') . ": " . '<span style="white-space:pre-line;">'
+                . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span></span><br>\n";
     }
 
     print $goBack;
@@ -652,8 +652,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
     //handle CoS priv users
     $setFilter = $filter;
-    $filter .= $cosPrivileged_filter;
-
+    if (!$teacherid) {
+        $filter .= $cosPrivileged_filter;
+    }
     // subquery needs filter
     if ($isFilter and !empty($subquery)) {
         $subquery = str_ireplace("))", " $filter))", $subquery);
@@ -718,7 +719,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 											 GROUP BY course_of_studies ORDER BY course_of_studies"));
         $allResults = $DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
 											 FROM {evaluation_completed}
-											 WHERE evaluation=$evaluation->id $setFilter $subqueryC
+											 WHERE evaluation=$evaluation->id $filter $subqueryC
 											 GROUP BY course_of_studies ORDER BY course_of_studies");
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
@@ -729,9 +730,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $course_of_studiesID =
                     evaluation_get_course_of_studies_id_from_evc($id, $allResult->course_of_studies, $evaluation);
             $allCosIDs[] = $course_of_studiesID;
-            if (defined('EVALUATION_OWNER') && ($cosPrivileged ?
-                            isset($_SESSION['CoS_privileged'][$USER->username][$allResult->course_of_studies])
-                            :true) ) {
+            if (defined('EVALUATION_OWNER') &&
+                    (empty($_SESSION['CoS_privileged_sgl'][$USER->username]) ?true :empty($teacherid))) {
                 $links = '<a href="analysis_course.php?id=' . $id .
                         '&course_of_studiesID='
                         . $course_of_studiesID
@@ -788,7 +788,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
 
 
-            if ((defined('EVALUATION_OWNER') && !isset($_SESSION['CoS_privileged_sgl'][$USER->username]))
+            if ((defined('EVALUATION_OWNER') &&
+                            (empty($_SESSION['CoS_privileged_sgl'][$USER->username]) ?true :empty($teacherid)) )
                     || evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
                     || $isCourseStudent) {
                 $links = '<a href="analysis_course.php?id=' . $id . '&courseid=' . $allResult->courseid
@@ -854,7 +855,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 continue;
             }
             if ($USER->id == $allResult->teacherid
-                    || (defined('EVALUATION_OWNER') && !isset($_SESSION['CoS_privileged_sgl'][$USER->username]))) {
+                    || (defined('EVALUATION_OWNER') &&
+                            (empty($_SESSION['CoS_privileged_sgl'][$USER->username]) ?true :empty($teacherid)) )) {
                 $links = '<a href="print.php?id=' . $id . '&showTeacher=' . $allResult->teacherid
                         . '" target="analysis">' . $fullname . "</a>";
             } else {
