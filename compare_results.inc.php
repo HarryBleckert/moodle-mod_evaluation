@@ -105,12 +105,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     'href' => 'analysis_course.php?id=' . $id . '&courseid=' . $courseid . '&teacherid=' . $teacherid
                             . '&course_of_studiesID=' . $course_of_studiesID));
 
-    // handle CoS priveleged user
-    if (!empty($_SESSION['CoS_privileged'][$USER->username]) AND empty($teacherid)) {
-        print  '<span style="font-weight:600;">' . ev_get_string('analysis_cos') . ": " . '<span style="white-space:pre-line;">'
-                . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span></span><br>\n";
-    }
-
     print $goBack;
     echo evPrintButton();
 
@@ -933,6 +927,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
             print ev_get_string('course_has_no_students');
         }
         echo "</span><br>\n";
+    }
+
+    // show if CoS privileged filter applied for user
+    if (!empty($_SESSION['CoS_privileged'][$USER->username]) AND empty($teacherid)) {
+        print  '<span style="font-weight:600;">' . ev_get_string('analysis_cos') . ": " . '<span style="white-space:pre-line;">'
+                . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span></span><br>\n";
     }
 
     if ($allKey) {
