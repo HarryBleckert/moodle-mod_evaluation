@@ -341,6 +341,7 @@ $string['analysis_course'] = 'Auswertung Kurs';
 $string['analysis_own_courses'] = 'Auswertung eigene Kurse';
 $string['analysis_all_courses'] = 'Auswertung aller Kurse';
 $string['analysis_own_cos'] =  'Auswertung eigene Studiengänge';
+$string['analysis_own_cos_title'] =  'als dazu privilegierte Person';
 $string['anonymous'] = 'Anonym';
 $string['anonymous_edit'] = 'Anonym ausfüllen';
 $string['anonymous_entries'] = 'Anonyme Einträge ({$a})';

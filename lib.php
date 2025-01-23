@@ -3056,11 +3056,11 @@ function evaluation_get_coursemodule_info($coursemodule) {
         return false;
     }
 
-    // added by harry to hide list of evaluations on start page when not in editing mode
-    if (!$USER->editing && $evaluation->course == SITEID) {
+    // added to hide list of evaluations on start page when not in editing mode
+    /*if (!$USER->editing && $evaluation->course == SITEID) {
         // Disable/hide the list of activities
         return false;
-    }
+    }*/
 
     $result = new cached_cm_info();
     $result->name = ev_get_tr($evaluation->name);

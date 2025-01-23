@@ -341,6 +341,7 @@ $string['analysis_course'] = 'Analysis course';
 $string['analysis_own_courses'] = 'Analysis own courses';
 $string['analysis_all_courses'] = 'Analysis all courses';
 $string['analysis_own_cos'] =  'Analysis own courses of studies';
+$string['analysis_own_cos_title'] =  'as privileged person';
 $string['anonymous'] = 'Anonymous';
 $string['anonymous_edit'] = 'Record user names';
 $string['anonymous_entries'] = 'Anonymous entries ({$a})';

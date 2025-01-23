@@ -937,10 +937,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
         if ($allSelected == "allTeachers" and !$evaluation->teamteaching) {
             $hint = "<br>\n<small>" . ev_get_string('no_teamteaching_all_same') . "</small><br>\n";
         }
-        print ev_get_string('analyzed') . "  "
+        print ev_get_string('analyzed') . " "
                 . '<span style="font-size:12pt;font-weight:bold;display:inline;">' . $allSubject . ': ' . $evaluatedResults
                 . ($evaluatedResults == $evaluationResults
-                        ? "" : " " . ev_get_string('of_total',$a) . $evaluationResults) . $hint . "</span><br>\n";
+                        ? "" : " " . ev_get_string('of_total',$a) . $evaluationResults) . " "
+                . $hint . "</span><br>\n";
     }
 
     $numresults = safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} WHERE evaluation=$evaluation->id"));

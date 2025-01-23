@@ -140,6 +140,8 @@ $analysis_course =  ev_get_string('analysis_course'); // Auswertung Kurs
 $analysis_own_courses =  ev_get_string('analysis_own_courses'); // Auswertung eigene Kurse
 $analysis_all_courses =  ev_get_string('analysis_all_courses'); // Auswertung aller Kurse
 $analysis_own_cos =  ev_get_string('analysis_own_cos'); // Auswertung eigene Studiengänge
+$analysis_own_cos_title =  ev_get_string('analysis_own_cos_title'); // als dazu privilegierte Person
+
 $statistic=ev_get_string('statistics'); //Statistik
 
 if ($evaluation->course == SITEID) {
@@ -189,7 +191,7 @@ if ($evaluation->course == SITEID) {
             if ($cosPrivileged){
                 $urlparams['analysisCoS'] = 1;
                 $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparams);
-                $row[] = new tabobject('analysisCoS', $analysisurl->out(), $analysis_own_cos);
+                $row[] = new tabobject('analysisCoS', $analysisurl->out(), $analysis_own_cos,$analysis_own_cos_title);
             }
             //$txt = ($courseid||$teacherid) ?" mit Vergleich" :"";
             // if (!$is_open or $isTeacher OR defined('EVALUATION_OWNER')) {
