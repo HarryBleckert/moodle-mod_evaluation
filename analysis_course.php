@@ -300,6 +300,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
     if ($courseid){
         print "<br>";
     }
+    if ($privGlobalUser){
     // construct questions and subquery arrays
     // start of snippets duplicated in compare_results.php
     $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id 
@@ -509,7 +510,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
     if (is_siteadmin()) {
         echo '<span id="evFiltersMsg"></span>';
     } //<b>'.EVALUATION_OWNER.'</b>
-
+    }
 	// process department (Fachbereich) select form $_SESSION['CoS_department'][$CoS]
     if ($SiteEvaluation and $_SESSION["participating_courses_of_studies"]>1 AND
             !$cosPrivileged and !$courseid AND !$course_of_studiesID AND !$teacherid

@@ -768,7 +768,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         foreach ($allResults as $allResult) {
             $fullname = "";
             $isCourseStudent = evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid);
-            if (!defined('EVALUATION_OWNER')){
+            if (!$privGlobalUser){
                 if (!evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
                         and !$isCourseStudent) {
                     continue;
