@@ -189,11 +189,12 @@ if ($evaluation->course == SITEID) {
             }
             // Show all results for $cosPrivileged
             if ($cosPrivileged){
-                $urlparams['analysisCoS'] = 1;
-                unset($urlparams['teacherid']);
-                $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparams);
+                $urlparamsCoS = $urlparams;
+                $urlparamsCoS['analysisCoS'] = 1;
+                unset($urlparamsCoS['teacherid']);
+                $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparamsCoS);
                 $row[] = new tabobject('analysisCoS', $analysisurl->out(), $analysis_own_cos,
-                        $analysis_own_cos_title, true);
+                        $analysis_own_cos_title, false);
             }
             //$txt = ($courseid||$teacherid) ?" mit Vergleich" :"";
             // if (!$is_open or $isTeacher OR defined('EVALUATION_OWNER')) {
@@ -203,7 +204,7 @@ if ($evaluation->course == SITEID) {
             // }
 
             //if ( is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]) )
-            if (is_siteadmin() or isset($_SESSION["privileged_global_users"][$USER->username])) {
+            if (is_siteadmin() or !empty($_SESSION["privileged_global_users"][$USER->username])) {
                 $reporturl = new moodle_url('/mod/evaluation/show_entries.php', $urlparams);
                 $row[] = new tabobject('showentries',
                         $reporturl->out(),
