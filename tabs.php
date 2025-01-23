@@ -258,7 +258,7 @@ if ($evaluation->course != SITEID AND
 if (safeCount($row) > 0) {
     $tabs[] = $row;
     echo "\n" . '<div 
-        style="display:inline;.tabtree {text-decoration: underline;font-weight: bold;a:link {text-decoration: none;font-weight: normal;}}" 
+        style="display:inline;.tabtree text-decoration: underline;font-weight: bold;a:link {text-decoration: none;font-weight: normal;}" 
         class="d-print-none">';
     print_tabs($tabs, $current_tab, $inactive, $activated);
     echo "</div>\n";
