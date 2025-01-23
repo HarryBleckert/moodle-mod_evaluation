@@ -62,11 +62,11 @@ if (!empty($_SESSION["LoggedInAs"])) {
 
         if (showGraf == "true") {
             $("[id^=chart-table-data-]").show();
-            $("[aria-controls^=chart-table-data-]").text(<?php echo $hide_graphic_data;?>);
+            $("[aria-controls^=chart-table-data-]").text('<?php echo $hide_graphic_data;?>');
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", true);
         } else {
             $("[id^=chart-table-data-]").hide();
-            $("[aria-controls^=chart-table-data-]").text(<?php echo $show_graphic_data;?>);
+            $("[aria-controls^=chart-table-data-]").text('<?php echo $show_graphic_data;?>');
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", false);
         }
     });
@@ -88,17 +88,7 @@ if (!empty($_SESSION["LoggedInAs"])) {
 {let instance = Chart.instances[id];
     let b64 = instance.toBase64Image();
     let i = new Image();
-    i.style.maxWidth = printWidth; //"125vw"; //134vw "100%";
-    /*if ( instance.type == "line" )
-    {	i.scales.x.min = 1;
-        i.scales.x.max = 4;
-        i.scales.x.ticks.stepSize = 1;
-        i.style.line.borderWidth = 2;
-        i.radius = 14;
-        //Chart.defaults.global.elements.point.borderWidth = 1;
-        i.hoverRadius = 12;
-        i.style.pointStyle = "circle";
-    }*/
+    i.style.maxWidth = printWidth;
     i.src = b64;
     let parent = instance.canvas.parentNode;
     instance.tempImage = i;
@@ -130,9 +120,9 @@ if (!empty($_SESSION["LoggedInAs"])) {
 }
 };
     require(["jquery"], function($) {
-    showAnker = <?php echo $show_graphic_data;?>;
+    showAnker = '<?php echo $show_graphic_data;?>';
     if ( showGraf == "true")
-{showAnker = "Grafikdaten verbergen";}
+    {showAnker = '<?php echo $hide_graphic_data;?>';}
     $("[aria-controls^=chart-table-data-]").text(showAnker);
     $("[aria-controls^=chart-table-data-]").show();
     //$(".chart-table-expand").show();
@@ -154,11 +144,11 @@ if (!empty($_SESSION["LoggedInAs"])) {
 
         if (showGraf == "true") {
             $("[id^=chart-table-data-]").show();
-            $("[aria-controls^=chart-table-data-]").text(<?php echo $hide_graphic_data;?>);
+            $("[aria-controls^=chart-table-data-]").text('<?php echo $hide_graphic_data;?>');
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", true);
         } else {
             $("[id^=chart-table-data-]").hide();
-            $("[aria-controls^=chart-table-data-]").text(<?php echo $show_graphic_data;?>);
+            $("[aria-controls^=chart-table-data-]").text('<?php echo $show_graphic_data;?>');
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", false);
         }
     });;
