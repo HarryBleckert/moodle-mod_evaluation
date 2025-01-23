@@ -542,6 +542,14 @@ function evaluation_compare_results($evaluation, $courseid = false,
         exit;
     }
 
+
+    // show if CoS privileged filter applied for user
+    if (!empty($_SESSION['CoS_privileged'][$USER->username]) AND empty($teacherid)) {
+        print  '<span style="font-weight:600;">' . ev_get_string('analysis_cos') . ": " . '<span style="white-space:pre-line;">'
+                . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span></span><br>\n";
+    }
+
+
     $filter = $allKey = $allKeyV = "";
     $numTeachers = 0;
     $allIDs = $allValues = $allCounts = $allResults = $fTitle = $allCosIDs = $sortArray = array();
@@ -760,12 +768,14 @@ function evaluation_compare_results($evaluation, $courseid = false,
         foreach ($allResults as $allResult) {
             $fullname = "";
             $isCourseStudent = evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid);
-            if (!defined('EVALUATION_OWNER') and !evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
-                    and !$isCourseStudent) {
-                continue;
-            }
-            if ( $isCourseStudent AND !evaluation_has_user_participated($evaluation, $USER->id, $allResult->courseid) ){
-                continue;
+            if (!defined('EVALUATION_OWNER'){
+                if (!evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
+                        and !$isCourseStudent) {
+                    continue;
+                }
+                if ($isCourseStudent and !evaluation_has_user_participated($evaluation, $USER->id, $allResult->courseid)) {
+                    continue;
+                }
             }
             if ($allResult->courseid==SITEID OR empty($allResult->courseid)){
                 continue;
@@ -824,14 +834,17 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $evaluatedResults = 0;
         foreach ($allResults as $allResult) {
             $isMyTeacher = true;
-            if ($isStudent){
-                $isMyTeacher = evaluation_is_student($evaluation, $myEvaluations, false, $allResult->teacherid);
-                if (!evaluation_has_user_participated($evaluation, $USER->id, false, $allResult->teacherid)){
+
+            if (!defined('EVALUATION_OWNER'){
+                if ($isStudent) {
+                    $isMyTeacher = evaluation_is_student($evaluation, $myEvaluations, false, $allResult->teacherid);
+                    if (!evaluation_has_user_participated($evaluation, $USER->id, false, $allResult->teacherid)) {
+                        continue;
+                    }
+                }
+                if (!$isMyTeacher) {
                     continue;
                 }
-            }
-            if (!defined('EVALUATION_OWNER') AND !$isMyTeacher) {
-                continue;
             }
             if( empty($allResult->teacherid)){
                 continue;
@@ -926,12 +939,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
             print ev_get_string('course_has_no_students');
         }
         echo "</span><br>\n";
-    }
-
-    // show if CoS privileged filter applied for user
-    if (!empty($_SESSION['CoS_privileged'][$USER->username]) AND empty($teacherid)) {
-        print  '<span style="font-weight:600;">' . ev_get_string('analysis_cos') . ": " . '<span style="white-space:pre-line;">'
-                . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span></span><br>\n";
     }
 
     if ($allKey) {
