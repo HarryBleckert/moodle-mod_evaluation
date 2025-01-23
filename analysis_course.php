@@ -112,7 +112,7 @@ $evurl = new moodle_url('/mod/evaluation/analysis_course.php', array('id' => $id
 evSetPage($url, $evurl, get_string("analysis", "evaluation"));
 
 // handle CoS priveleged user
-if (isset($_SESSION['CoS_privileged'][$USER->username])) {
+if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
     print "Auswertungen der Studiengänge: " . '<span style="font-weight:600;white-space:pre-line;">'
             . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span><br>\n";
 }
@@ -167,7 +167,7 @@ if ($privGlobalUser) {
     $minResults = $minResultsText = $minResultsPriv;
 }
 
-if (!empty($teacherid) AND !empty($_SESSION['CoS_privileged_sgl'][$USER->username])){
+if (empty($teacherid) AND !empty($_SESSION['CoS_privileged_sgl'][$USER->username])){
     $graphicsonly = true;
 }
 
