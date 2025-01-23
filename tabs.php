@@ -190,8 +190,10 @@ if ($evaluation->course == SITEID) {
             // Show all results for $cosPrivileged
             if ($cosPrivileged){
                 $urlparams['analysisCoS'] = 1;
+                unset($urlparams['teacherid']);
                 $analysisurl = new moodle_url('/mod/evaluation/analysis_course.php', $urlparams);
-                $row[] = new tabobject('analysisCoS', $analysisurl->out(), $analysis_own_cos,$analysis_own_cos_title);
+                $row[] = new tabobject('analysisCoS', $analysisurl->out(), $analysis_own_cos,
+                        $analysis_own_cos_title, true);
             }
             //$txt = ($courseid||$teacherid) ?" mit Vergleich" :"";
             // if (!$is_open or $isTeacher OR defined('EVALUATION_OWNER')) {
