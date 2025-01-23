@@ -300,6 +300,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
     if ($courseid){
         print "<br>";
     }
+    // access subquery selector only for global priv users
     if ($privGlobalUser){
     // construct questions and subquery arrays
     // start of snippets duplicated in compare_results.php

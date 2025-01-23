@@ -268,7 +268,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 . $boldStyle . '">' . $numQuestions . "</span> - ";
     }
 
-    if (!empty($_SESSION['subqueries'])) {
+    if (
+    // access subquery selector only for global priv users
+    if ($privGlobalUser AND !empty($_SESSION['subqueries'])) {
         $subquerytxt = ev_get_string('filter_on_questions');
         foreach ($_SESSION['subqueries'] as $subqueryid) {
             $subqueryids[] = $subqueryid['item'];
@@ -505,7 +507,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 }
             }
             // subqueries
-            if (!empty($_SESSION['subqueries'])) {
+            if ($privGlobalUser AND !empty($_SESSION['subqueries'])) {
                 print "<br>\n" . ev_get_string('apply_filter') . ":&nbsp;";
                 print '<label><input type="radio" name="applysubquery" ' . ($applysubquery ? "checked" : "")
                         . ' value="1">' . get_string('yes') .'</label>&nbsp;
