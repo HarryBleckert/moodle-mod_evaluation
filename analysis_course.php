@@ -167,7 +167,7 @@ if ($privGlobalUser) {
     $minResults = $minResultsText = $minResultsPriv;
 }
 
-if (isset($_SESSION['CoS_privileged_sgl'][$USER->username])){
+if (!empty($teacherid) AND !empty($_SESSION['CoS_privileged_sgl'][$USER->username])){
     $graphicsonly = true;
 }
 
