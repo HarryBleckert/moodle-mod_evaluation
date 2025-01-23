@@ -2169,7 +2169,7 @@ function evaluation_get_group_values($item,
         if ($subquery){
             $select .= " $subquery ";
         }
-        if (isset($_SESSION['studentid'])) {
+        if (!empty($_SESSION['studentid'])) {
 
             $query = "SELECT completed.id,completed.courseid
                         FROM {evaluation_completed} completed
@@ -2210,7 +2210,6 @@ function evaluation_get_group_values($item,
             shuffle($values);
         }
     }
-
     return $values;
 }
 
