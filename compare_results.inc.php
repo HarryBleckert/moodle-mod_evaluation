@@ -268,7 +268,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 . $boldStyle . '">' . $numQuestions . "</span> - ";
     }
 
-    if (
     // access subquery selector only for global priv users
     if ($privGlobalUser AND !empty($_SESSION['subqueries'])) {
         $subquerytxt = ev_get_string('filter_on_questions');
