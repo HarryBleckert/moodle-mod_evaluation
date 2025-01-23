@@ -1,5 +1,4 @@
 ﻿<?php
-
 // this file is part of Moodle mod_evaluation plugin
 
 /*
