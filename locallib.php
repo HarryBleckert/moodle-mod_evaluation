@@ -2752,7 +2752,13 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
     } else {
         $_SESSION["orderBy"] = ($_SESSION["orderBy"] == "ASC" ? "DESC" : "ASC");
     }
-
+    $minResults = evaluation_min_results($evaluation);
+    // $minResultsText = min_results_text($evaluation);
+    $minResultsPriv = min_results_priv($evaluation);
+    $privGlobalUser = (is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]));
+    if ($privGlobalUser) {
+        $minResults = $minResultsPriv;
+    }
     print "<style>td { border: 1px solid #ddd;padding:8px;}</style>";
     $empty_courses = $listed_courses = $listed_empty_courses = $noteacher_courses = $nostudent_courses = 0;
     $notevaluated = false;
@@ -2850,7 +2856,7 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
     //{	return strcmp($a->course, $b->course);});
     //print print_r($results)."<br><hr>";
     $return_to = (isset($_REQUEST["goBack"]) ? $_REQUEST["goBack"] : "analysis_course");
-    $goBack = html_writer::tag('a', "Zurück",
+    $goBack = html_writer::tag('a',  ev_get_string('back'),
             array('class' => "d-print-none", 'style' => 'font-size:125%;color:white;background-color:black;text-align:right;',
                     'type' => 'button', 'href' => $return_to . '.php?id=' . $id . '&courseid=' . $courseid));
     print $goBack;
@@ -2865,12 +2871,13 @@ function showEvaluationCourseResults($evaluation, $showMin = 3, $sortBy = "fulln
     <form style="display:inline;line-break:inline;" method="POST" action="print.php">
         <input type="submit" style="font-size:100%;color:white;background-color:black;" value="Alle Kurse mit mindestens ">
         <input type="number" name="showResults" value="<?php echo $showMin; ?>"
+               min="<?php echo ($privGlobalUser?1:$minResults);?>"
                style="font-size:100%;color:white;background-color:teal;">
         <input type="hidden" name="sortBy" value="<?php echo $sortBy; ?>">
         <input type="hidden" name="courseid" value="<?php echo $courseid; ?>">
         <input type="hidden" name="id" value="<? echo $id; ?>">
         <input type="hidden" name="goBack" value="<? echo $return_to; ?>">
-        <input type="submit" style="font-size:100%;color:white;background-color:black;" value="Abgaben">
+        <input type="submit" style="font-size:100%;color:white;background-color:black;" value="<?php echo ev_get_string('submissions');?>">
         <br>
         <input type="submit" name="notevaluated" style="font-size:100%;color:white;background-color:black;"
                value="Kurse ohne Abgaben">
@@ -3097,6 +3104,15 @@ function showEvaluationTeacherResults($evaluation, $showMin = 6, $sortBy = "last
             $_SESSION["orderBy"] = ($_SESSION["orderBy"] == "ASC" ? "DESC" : "ASC");
         }
     }
+
+    $minResults = evaluation_min_results($evaluation);
+    // $minResultsText = min_results_text($evaluation);
+    $minResultsPriv = min_results_priv($evaluation);
+    $privGlobalUser = (is_siteadmin() OR isset($_SESSION["privileged_global_users"][$USER->username]));
+    if ($privGlobalUser) {
+        $minResults = $minResultsPriv;
+    }
+
     print "<style>td { border: 1px solid #ddd;padding:8px;}</style>";
 
     $notevaluated = false;
@@ -3171,7 +3187,7 @@ function showEvaluationTeacherResults($evaluation, $showMin = 6, $sortBy = "last
     //{	return strcmp($a->course, $b->course);});
     //print print_r($results)."<br><hr>";
     $return_to = (isset($_REQUEST["goBack"]) ? $_REQUEST["goBack"] : "analysis_course");
-    $goBack = html_writer::tag('a', "Zurück",
+    $goBack = html_writer::tag('a', ev_get_string('back'),
             array('class' => "d-print-none", 'style' => 'font-size:125%;color:white;background-color:black;text-align:right;',
                     'type' => 'button',
                     'href' => $return_to . '.php?id=' . $id . '&courseid=' . $courseid . '&teacherid=' . $courseid));
@@ -3189,6 +3205,7 @@ function showEvaluationTeacherResults($evaluation, $showMin = 6, $sortBy = "last
     <form style="display:inline;line-break:inline;" method="POST" action="print.php">
         <input type="submit" style="font-size:100%;color:white;background-color:black;" value="Alle Dozent_innen mit mindestens ">
         <input type="number" name="showTeacherResults" value="<?php echo $showMin; ?>"
+               min="<?php echo ($privGlobalUser?1:$minResults);?>"
                style="font-size:100%;color:white;background-color:teal;">
         <input type="hidden" name="sortBy" value="<?php echo $sortBy; ?>">
         <input type="hidden" name="courseid" value="<?php echo $courseid; ?>">
