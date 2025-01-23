@@ -198,6 +198,8 @@ if ($analysisCoS){
 
 
 require('tabs.php');
+
+
 // show if CoS privileged filter applied for user
 if (!empty($_SESSION['CoS_privileged'][$USER->username]) and empty($teacherid)) {
     print  '<span style="font-weight:600;">' . ev_get_string('analysis_cos') . ": " . '<span style="white-space:pre-line;">'
