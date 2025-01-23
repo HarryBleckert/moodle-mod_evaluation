@@ -29,26 +29,25 @@ if (!empty($_SESSION["LoggedInAs"])) {
         for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; };';
     }
 }
+
 //handle show data and print width
 ?>
 
 
-< style > @media print { @page
+<style> @media print { @page
     {size: auto;}
 }
 </style>
 
 
 <script>
-
-
     var addFunctionOnWindowLoad = function(callback)
     {if (window.addEventListener )
     {window.addEventListener('load',callback,false);}
         else {window.attachEvent('onload',callback);}
     }
 
-    <?php echo $hide; ?>
+    // <?php echo $hide; ?>
 
     // toggle show graphics data
     var showGraf = "<?php echo $showGraf;?>";
@@ -82,7 +81,7 @@ if (!empty($_SESSION["LoggedInAs"])) {
     }
 
 
-    //Fix chartjs printing: (problem with Frefox, right aligned)
+    //Fix chartjs printing: (problem with Firefox, right aligned)
     window.onbeforeprint = (ev) => {
     for (var id in Chart.instances)
 {let instance = Chart.instances[id];
