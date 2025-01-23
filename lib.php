@@ -3048,11 +3048,17 @@ function evaluation_check_updates_since(cm_info $cm, $from, $filter = array()) {
  *                        will know about (most noticeably, an icon).
  */
 function evaluation_get_coursemodule_info($coursemodule) {
-    global $DB;
+    global $DB, $USER;
 
     $dbparams = ['id' => $coursemodule->instance];
     $fields = 'id, name, intro, introformat, completionsubmit, timeopen, timeclose, teamteaching, semester, anonymous, course';
     if (!$evaluation = $DB->get_record('evaluation', $dbparams, $fields)) {
+        return false;
+    }
+
+    // added by harry to hide list of evaluations on start page when not in editing mode
+    if (!$USER->editing && $evaluation->id == SITEID) {
+        // Disable/hide the list of activities
         return false;
     }
 
@@ -3068,6 +3074,7 @@ function evaluation_get_coursemodule_info($coursemodule) {
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         $result->customdata['customcompletionrules']['completionsubmit'] = $evaluation->completionsubmit;
     }
+
     // Populate some other values that can be used in calendar or on dashboard.
     if ($evaluation->timeopen) {
         $result->customdata['timeopen'] = $evaluation->timeopen;
@@ -3459,4 +3466,14 @@ function mod_evaluation_core_calendar_provide_event_action(calendar_event $event
             1,
             $actionable
     );
+}
+
+function evaluation_get_overview_content($course) {
+    global $USER;
+
+    if (!$USER->editing && $course->id == SITEID) {
+        return [];  // Return empty array to hide on front page when not editing
+    }
+    // Your regular overview content generation code here
+    return $content;
 }
