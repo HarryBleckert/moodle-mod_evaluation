@@ -811,7 +811,7 @@ function evaluation_is_cosPrivileged_filter($needles, $haystack) {
 function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
     global $USER;
     $filter = "";
-    $setfilter = false;
+    $filterset = false;
     // get CoS privileged users
     if (!isset($_SESSION['CoS_privileged'])) {
         ev_set_privileged_users();
@@ -823,13 +823,12 @@ function evaluation_get_cosPrivileged_filter($evaluation, $tableName = "") {
     }
     if (!empty($_SESSION['CoS_privileged'][$USER->username]) AND !empty($_SESSION['filter_course_of_studies'])
             AND evaluation_is_cosPrivileged_filter($_SESSION['CoS_privileged'][$USER->username],$_SESSION['filter_course_of_studies'])) {
-           $setfilter = true;
 
-
-       if ($setfilter) {
+        $filterset = true;
+        if ($filterset) {
            $filter = " AND " . ($tableName ? $tableName . "." : "") . "course_of_studies ";
            $filter .= " IN ('" . implode("','", $_SESSION['CoS_privileged'][$USER->username]) . "')";
-       }
+        }
     //else
         //{	$filter .= "= '" . $_SESSION['CoS_privileged'][$USER->username][0] . "' "; }
     } // exclude WM course_of_studies from list

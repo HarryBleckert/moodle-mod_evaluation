@@ -1,46 +1,43 @@
 <?php
+// require_once("styles.css");
+// <!--link rel = "stylesheet" type = "text/css"  href = "https://moodle.ash-berlin.eu:88/mod/evaluation/styles.css"-- >
 
-//require_once("styles.css");
+
+// required for printing with comfortable width
+if (!isset($printWidth)) {
+    $printWidth = "100vw";
+}
+
+if (!isset($showGraf)) {
+    $showGraf = "";
+}
+
+$hide_graphic_data = ev_get_string('hide_graphic_data');
+$show_graphic_data = ev_get_string('show_graphic_data');
+
+// required for LoginAs
+$hide = "";
+if (!empty($_SESSION["LoggedInAs"])) {
+    if (substr($CFG->release, 0, 1) < "4") // Moodle Version <4
+    {
+        $hide = 'document.getElementById("page-footer").style.display="none";
+        var nav = document.getElementsByClassName("footnote");
+        for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; };';
+        //document.getElementsByClassName("logininfo")[0].style.display="none";
+    } else {
+        $hide = 'var nav = document.getElementsByClassName("usermenu");
+        for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; };';
+    }
+}
+//handle show data and print width
 ?>
-<!--link rel = "stylesheet" type = "text/css"  href = "https://moodle.ash-berlin.eu:88/mod/evaluation/styles.css"-- >
-        <?php
-
-        // required for printing
-
-        if (!isset($printWidth)) {
-            $printWidth = "100vw";
-        }
-
-        if (!isset($showGraf)) {
-            $showGraf = "";
-        }
-
-        // required for LoginAs
-        $hide = "";
-        if (!empty($_SESSION["LoggedInAs"])) {
-            if (substr($CFG->release, 0, 1) < "4") // Moodle Version <4
-            {
-                $hide = 'document.getElementById("page-footer").style.display="none";
-				var nav = document.getElementsByClassName("footnote");
-				for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; };';
-                //document.getElementsByClassName("logininfo")[0].style.display="none";
-            } else {
-                $hide = 'var nav = document.getElementsByClassName("usermenu");
-				for (var i = 0; i < nav.length; i++) {	nav[i].style.display="none"; };';
-            }
-        }
-        //handle show data and print width
-        ?>
 
 
-    < style > @media print { @page
+< style > @media print { @page
     {size: auto;}
 }
 </style>
 
-
-<!--script src = "js/chart/chart.min.js" > < /script>
-<script src="js/chart/driver.js"></script-->
 
 <script>
 
@@ -65,11 +62,11 @@
 
         if (showGraf == "true") {
             $("[id^=chart-table-data-]").show();
-            $("[aria-controls^=chart-table-data-]").text(ev_get_string('hide_graphic_data'));
+            $("[aria-controls^=chart-table-data-]").text(<?php echo $hide_graphic_data;?>);
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", true);
         } else {
             $("[id^=chart-table-data-]").hide();
-            $("[aria-controls^=chart-table-data-]").text(ev_get_string('show_graphic_data'));
+            $("[aria-controls^=chart-table-data-]").text(<?php echo $show_graphic_data;?>);
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", false);
         }
     });
@@ -133,7 +130,7 @@
 }
 };
     require(["jquery"], function($) {
-    showAnker = ev_get_string('show_graphic_data');
+    showAnker = <?php echo $show_graphic_data;?>;
     if ( showGraf == "true")
 {showAnker = "Grafikdaten verbergen";}
     $("[aria-controls^=chart-table-data-]").text(showAnker);
@@ -157,11 +154,11 @@
 
         if (showGraf == "true") {
             $("[id^=chart-table-data-]").show();
-            $("[aria-controls^=chart-table-data-]").text(ev_get_string('hide_graphic_data'));
+            $("[aria-controls^=chart-table-data-]").text(<?php echo $hide_graphic_data;?>);
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", true);
         } else {
             $("[id^=chart-table-data-]").hide();
-            $("[aria-controls^=chart-table-data-]").text(ev_get_string('show_graphic_data'));
+            $("[aria-controls^=chart-table-data-]").text(<?php echo $show_graphic_data;?>);
             $("[aria-controls^=chart-table-data-]").attr("aria-expanded", false);
         }
     });;
