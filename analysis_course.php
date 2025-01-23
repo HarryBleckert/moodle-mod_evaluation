@@ -111,11 +111,6 @@ if ($department) {
 $evurl = new moodle_url('/mod/evaluation/analysis_course.php', array('id' => $id)); //,'courseid' => $courseid ) );
 evSetPage($url, $evurl, get_string("analysis", "evaluation"));
 
-// handle CoS priveleged user
-if (!empty($_SESSION['CoS_privileged'][$USER->username])) {
-    print "Auswertungen der Studiengänge: " . '<span style="font-weight:600;white-space:pre-line;">'
-            . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span><br>\n";
-}
 $ev_name = ev_get_tr($evaluation->name);
 $icon = '<img src="pix/icon120.png" height="30" alt="' . $ev_name . '">';
 echo $OUTPUT->heading($icon . "&nbsp;" . format_string($ev_name));
@@ -203,9 +198,11 @@ if ($analysisCoS){
 
 
 require('tabs.php');
-
-
-if ($SiteEvaluation and !$courseid and (!defined('EVALUATION_OWNER') ? true : !$cosPrivileged)) {
+// show if CoS privileged filter applied for user
+if (!empty($_SESSION['CoS_privileged'][$USER->username]) and empty($teacherid)) {
+    print  '<span style="font-weight:600;">' . ev_get_string('analysis_cos') . ": " . '<span style="white-space:pre-line;">'
+            . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span></span><br>\n";
+} elseif ($SiteEvaluation and !$courseid and (!defined('EVALUATION_OWNER') ? true : !$cosPrivileged)) {
     $CourseTitle = "\n<span style=\"font-size:12pt;font-weight:bold;display:inline;\">" . get_string("all_courses", "evaluation") .
             "</span>";
 }
