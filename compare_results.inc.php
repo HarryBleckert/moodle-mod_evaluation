@@ -853,7 +853,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             if (isset($_SESSION['CoS_privileged_sgl'][$USER->username]) AND $USER->id != $allResult->teacherid){
                 continue;
             }
-            if (defined('EVALUATION_OWNER') && !isset($_SESSION['CoS_privileged_sgl'][$USER->username])) {
+            if ($USER->id == $allResult->teacherid
+                    || (defined('EVALUATION_OWNER') && !isset($_SESSION['CoS_privileged_sgl'][$USER->username]))) {
                 $links = '<a href="print.php?id=' . $id . '&showTeacher=' . $allResult->teacherid
                         . '" target="analysis">' . $fullname . "</a>";
             } else {
@@ -940,8 +941,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         print ev_get_string('analyzed') . " "
                 . '<span style="font-size:12pt;font-weight:bold;display:inline;">' . $allSubject . ': ' . $evaluatedResults
                 . ($evaluatedResults == $evaluationResults
-                        ? "" : " " . ev_get_string('of_total',$a) . $evaluationResults) . " "
-                . $hint . "</span><br>\n";
+                        ? "" : " " . ev_get_string('of_total') . " " . $evaluationResults) . $hint . "</span><br>\n";
     }
 
     $numresults = safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} WHERE evaluation=$evaluation->id"));
