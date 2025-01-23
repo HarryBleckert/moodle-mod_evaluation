@@ -3057,7 +3057,7 @@ function evaluation_get_coursemodule_info($coursemodule) {
     }
 
     // added by harry to hide list of evaluations on start page when not in editing mode
-    if (!$USER->editing && $evaluation->id == SITEID) {
+    if (!$USER->editing && $evaluation->course == SITEID) {
         // Disable/hide the list of activities
         return false;
     }
