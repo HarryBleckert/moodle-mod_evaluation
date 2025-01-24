@@ -156,8 +156,7 @@ $completed_responses = $evaluationstructure->count_completed_responses();
 $minResults = evaluation_min_results($evaluation);
 $minResultsText = min_results_text($evaluation);
 $minResultsPriv = min_results_priv($evaluation);
-$privGlobalUser = (is_siteadmin() OR (isset($_SESSION["privileged_global_users"][$USER->username]) &&
-        !empty($_SESSION["privileged_global_users"][$USER->username])));
+$privGlobalUser = (is_siteadmin() OR !empty($_SESSION["privileged_global_users"][$USER->username]) );
 if ($privGlobalUser) {
     $minResults = $minResultsText = $minResultsPriv;
 }
@@ -362,7 +361,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
             }
             $scheme = implode(", ", $presentation) . " <=> $qfValues";
 
-            array_unshift($presentation, ($validation ? "ungültig" : "keine Antwort"));
+           // array_unshift($presentation, ($validation ? "ungültig" : "keine Antwort"));
             break;
             //print "<br>qfValues: $qfValues<br>Scheme: $scheme<br>presentation: " . var_export($presentation,true)
             //. "<br>info: " .var_export($info,true) . "<br>" ;
