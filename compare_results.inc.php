@@ -769,7 +769,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         foreach ($allResults as $allResult) {
             $fullname = "";
             $isCourseStudent = evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid);
-            if (!$privGlobalUser AND (empty($_SESSION['CoS_privileged_sgl'][$USER->username]) ?true :empty($teacherid))){
+            if (!$privGlobalUser AND (empty($_SESSION['CoS_privileged_sgl'][$USER->username]) ?true :!empty($teacherid))){
                 if (!evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
                         and !$isCourseStudent) {
                     continue;
