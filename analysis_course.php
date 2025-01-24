@@ -296,12 +296,11 @@ evaluation_showLoading();
 
 // set filter forms
 if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context)
-                || (defined('EVALUATION_OWNER') AND ($cosPrivileged ?$analysisCoS:true )))) {
+                || (defined('EVALUATION_OWNER') OR ($cosPrivileged ?$analysisCoS:false )))) {
     if ($courseid){
         print "<br>";
     }
     // access subquery selector only for global priv users
-    if ($privGlobalUser){
     // construct questions and subquery arrays
     // start of snippets duplicated in compare_results.php
     $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id 
@@ -340,7 +339,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
                             $question->presentation));
 
             // sub queries
-            if (isset($_REQUEST['sqfilter']) ) {
+            if ( $privGlobalUser AND !empty($_REQUEST['sqfilter']) ) {
                 if (intval($_REQUEST['sqfilter']) == 1 and $_REQUEST['subreply']) {
                     $applysubquery = 1;
                     $_SESSION['subqueries'][$qSelected]['item'] = $qSelected;
@@ -406,7 +405,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
         exit;
     }
 
-    if (!empty($_SESSION['subqueries'])) {
+    if ($privGlobalUser AND !empty($_SESSION['subqueries'])) {
         $subquerytxt = "Filter auf Fragen: ";
         foreach ($_SESSION['subqueries'] as $subqueryid) {
             $subqueryids[] = $subqueryid['item'];
@@ -455,7 +454,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
                 . "</option>\n";
     }
     print "</select>\n";
-    if ($qSelected) {
+    if ($privGlobalUser AND $qSelected) {
         if (defined('EVALUATION_OWNER')) {
             $value = in_array($qSelected, $subqueryids) ? "2" : "1";
             $label = "Filter " . (in_array($qSelected, $subqueryids) ? "entfernen" : "setzen");
@@ -487,7 +486,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
         }
     }
     // subqueries
-    if (!empty($_SESSION['subqueries'])) {
+    if ($privGlobalUser AND !empty($_SESSION['subqueries'])) {
         ?><br><b>Filter</b> anwenden:&nbsp;
         <label><input type="radio" name="applysubquery" <?php echo($applysubquery ? "checked" : ""); ?>
                       onclick="this.form.submit();" value="1">Ja</label>&nbsp;
@@ -511,7 +510,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
     if (is_siteadmin()) {
         echo '<span id="evFiltersMsg"></span>';
     } //<b>'.EVALUATION_OWNER.'</b>
-    }
+
 	// process department (Fachbereich) select form $_SESSION['CoS_department'][$CoS]
     if ($SiteEvaluation and $_SESSION["participating_courses_of_studies"]>1 AND
             !$cosPrivileged and !$courseid AND !$course_of_studiesID AND !$teacherid

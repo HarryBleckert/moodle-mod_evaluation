@@ -2146,12 +2146,13 @@ function evaluation_get_group_values($item,
         } else {
             $ignore_empty_select = "";
         }
-
+        $filter = "";
         $select = "item = :itemid " . $ignore_empty_select;
         $params += array('itemid' => $item->id);
         if ($courseid) {
             $select .= " AND courseid = :courseid ";
             $params += array('courseid' => $courseid);
+            $filter .= "AND courseid = $courseid ";
         }
         if ($teacherid) {
             $select .= " AND teacherid = :teacherid ";
@@ -2169,8 +2170,15 @@ function evaluation_get_group_values($item,
         if ($subquery){
             $select .= " $subquery ";
         }
-        if (!empty($_SESSION['studentid'])) {
 
+        $cosPrivileged_filter = "";
+        if (!$teacherid AND $_SESSION['CoS_privileged'][$username][$CoS]) {
+            $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($item->evaluation);
+            $select .= $cosPrivileged_filter;
+            $params += array('course_of_studies' => $course_of_studies);
+        }
+
+        if (!empty($_SESSION['studentid'])) {
             $query = "SELECT completed.id,completed.courseid
                         FROM {evaluation_completed} completed
                         WHERE completed.evaluation = :evaluation
