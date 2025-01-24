@@ -2171,11 +2171,11 @@ function evaluation_get_group_values($item,
             $select .= " $subquery ";
         }
 
-        $cosPrivileged_filter = "";
         if (!$teacherid AND $_SESSION['CoS_privileged'][$USER->username]) {
-            $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($item->evaluation);
-            $select .= $cosPrivileged_filter;
-            $params += array('course_of_studies' => $course_of_studies);
+            if ($cosPrivileged_filter = evaluation_get_cosPrivileged_filter($item->evaluation)) {
+                $select .= $cosPrivileged_filter;
+                $params += array('item' => $item->id);
+            }
         }
 
         if (!empty($_SESSION['studentid'])) {
