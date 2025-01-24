@@ -2113,7 +2113,7 @@ function evaluation_get_group_values($item,
         $subquery = "",
         $ignore_empty = false
         ) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
 
     //if the groupid is given?
     if (intval($groupid) > 0) {
@@ -2172,7 +2172,7 @@ function evaluation_get_group_values($item,
         }
 
         $cosPrivileged_filter = "";
-        if (!$teacherid AND $_SESSION['CoS_privileged'][$username][$CoS]) {
+        if (!$teacherid AND $_SESSION['CoS_privileged'][$USER->username]) {
             $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($item->evaluation);
             $select .= $cosPrivileged_filter;
             $params += array('course_of_studies' => $course_of_studies);
