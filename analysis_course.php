@@ -339,7 +339,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
                             $question->presentation));
 
             // sub queries
-            if ( $privGlobalUser AND !empty($_REQUEST['sqfilter']) ) {
+            if ( !empty($_REQUEST['sqfilter']) ) {
                 if (intval($_REQUEST['sqfilter']) == 1 and $_REQUEST['subreply']) {
                     $applysubquery = 1;
                     $_SESSION['subqueries'][$qSelected]['item'] = $qSelected;
@@ -405,7 +405,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
         exit;
     }
 
-    if ($privGlobalUser AND !empty($_SESSION['subqueries'])) {
+    if (!empty($_SESSION['subqueries'])) {
         $subquerytxt = "Filter auf Fragen: ";
         foreach ($_SESSION['subqueries'] as $subqueryid) {
             $subqueryids[] = $subqueryid['item'];
@@ -454,7 +454,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
                 . "</option>\n";
     }
     print "</select>\n";
-    if ($privGlobalUser AND $qSelected) {
+    if ($qSelected) {
         if (defined('EVALUATION_OWNER')) {
             $value = in_array($qSelected, $subqueryids) ? "2" : "1";
             $label = "Filter " . (in_array($qSelected, $subqueryids) ? "entfernen" : "setzen");
@@ -486,7 +486,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
         }
     }
     // subqueries
-    if ($privGlobalUser AND !empty($_SESSION['subqueries'])) {
+    if (!empty($_SESSION['subqueries'])) {
         ?><br><b>Filter</b> anwenden:&nbsp;
         <label><input type="radio" name="applysubquery" <?php echo($applysubquery ? "checked" : ""); ?>
                       onclick="this.form.submit();" value="1">Ja</label>&nbsp;
