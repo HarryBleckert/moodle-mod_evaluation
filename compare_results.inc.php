@@ -269,7 +269,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
 
     // access subquery selector only for global priv users
-    if ($privGlobalUser AND !empty($_SESSION['subqueries'])) {
+    if (!empty($_SESSION['subqueries'])) {  // $privGlobalUser AND
         $subquerytxt = ev_get_string('filter_on_questions');
         foreach ($_SESSION['subqueries'] as $subqueryid) {
             $subqueryids[] = $subqueryid['item'];
@@ -363,15 +363,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
 
         }
-        /*
-        if ($isFilter and $allSelected and $allSelected !== "useFilter"){ // filter conditions set
-            ?>
-            <button name="allSelected" style="<?php echo $buttonStyle; ?>" value="useFilter"
-                    onclick="this.form.submit();"><?php
-                echo $filterSubject; ?></button>
-            <?php
-        }
-        */
         if (($isTeacher or $isStudent) or defined('EVALUATION_OWNER')){
             print $isFilter ? "" : "- alle: ";
 
@@ -476,7 +467,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
             print "</select>\n";
             if ($qSelected) {
-                if ($privGlobalUser AND defined('EVALUATION_OWNER')) {
+                if (defined('EVALUATION_OWNER')) {
                     $a->action = ev_get_string(in_array($qSelected, $subqueryids) ? "remove" : "apply");
                     $value = in_array($qSelected, $subqueryids) ? "2" : "1";
                     $label = ev_get_string('filter_action',$a);
@@ -506,7 +497,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 }
             }
             // subqueries
-            if ($privGlobalUser AND !empty($_SESSION['subqueries'])) {
+            if (!empty($_SESSION['subqueries'])) { // $privGlobalUser AND
                 print "<br>\n" . ev_get_string('apply_filter') . ":&nbsp;";
                 print '<label><input type="radio" name="applysubquery" ' . ($applysubquery ? "checked" : "")
                         . ' value="1">' . get_string('yes') .'</label>&nbsp;

@@ -4615,6 +4615,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     ini_set("output_buffering", 600);
 
     $a = new stdClass();
+    $a->minResults = $minResults;
+    $a->min_results_text = $minResultsText;
     $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
     $send_reminders_noreplies = "send_reminders_noreplies_students";
     if ($noreplies) {
@@ -4696,8 +4698,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                  - University of Applied Sciences -<br>
                 Alice-Salomon-Platz 5, 12627 Berlin<br>"
                 :"");
-        $a->minResults = $minResults;
-        $a->min_results_text = $minResultsText;
 
         $a->testmsg = "";
         if ($test){
@@ -4779,8 +4779,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         ev_show_reminders_log("Sent reminder to $cntTeachers teachers", $cronjob);
     }
     echo "\n";
-    ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60) . " seconds. " .
-            date("Ymd H:i:s"), $cronjob);
+    ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60)
+            . " seconds. " . date("Ymd H:i:s"), $cronjob);
 
     // send info mails to privileged
     if (!$test){
@@ -4790,19 +4790,18 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             if ($emails = ev_set_privileged_users(false, true)){
                 //$mails = explode("\n",$emails);
                 $cnt = 1;
-
-                force_current_language('de');
-                $a->ev_name = ev_get_tr($evaluation->name);
-                $subject = $testinfo . '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
                 foreach ($emails as $username => $email) {
                     if (!strstr($email,"@") || !strstr($email,"<")){
                         continue;
                     }
                     force_current_language(get_user_lang($username));
                     $a->ev_name = ev_get_tr($evaluation->name);
+                    $fullname_last = $fullname;
                     list($fullname, $emailt) = explode(' <', trim($email, '> '));
+                    $fullname = str_replace('"','',$fullname);
                     $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
-                    $a->fullname = ev_get_string('john_doe');
+                    $a->sent_reminders_info = ev_get_string('sent_reminders_info',$a) . ": ";
+                    $a->fullname = ""; // ev_get_string('john_doe');
                     $email = '=?UTF-8?B?' . base64_encode($fullname). '?=' . " <$emailt>";
                     // $email = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
                     $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
@@ -4811,14 +4810,13 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     }
                     $a->testmsg .= "<hr>\n";
                     $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
+                            . ev_get_string('good_day') . " " . $fullname . "<br><br>\n"
+                            . ev_get_string('send_reminders_privileged')
                             . ev_get_string('send_reminders_'.$role.'s', $a) . "</body></html>";
-                    $a->fullname = str_replace('"','',$fullname);
-                    $msg = ev_get_string('good_day') . " " . $a->fullname . "<br><br>\n"
-                            . ev_get_string('send_reminders_privileged');
-                    $msg = str_ireplace("<body>", "<body>" . $msg, $message);
-                    mail($email, $subject, quoted_printable_encode($msg), $headers);
-                    $msg = "-Info an Privilegierte:";
-                    ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt - ID: $userid", $cronjob);
+                    $subject = '=?UTF-8?B?' . base64_encode($a->sent_reminders_info . $a->ev_name) . '?=';
+                    mail($email, $subject, quoted_printable_encode($message), $headers);
+                    $msg = " -Info to privileged persons:";
+                    ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt", $cronjob);
                     $cnt++;
                 }
                 force_current_language($current_language);
@@ -4859,7 +4857,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 function ev_show_reminders_log($msg, $cronjob=false) {
     $logfile = "/var/log/moodle/evaluation_send_reminders.log";
     if (!$cronjob) {
-        if (isset($_SESSION['ev_cli']) and $_SESSION['ev_cli']) {
+        if (!empty($_SESSION['ev_cli'])) {
             echo $msg . "\n";
         } else {
             echo nl2br($msg . "\n");

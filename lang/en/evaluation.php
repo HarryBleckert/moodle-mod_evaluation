@@ -53,10 +53,11 @@ $string['completed_responses'] = 'Total submissions';
 // end print.php
 
 // send reminders
+$string['sent_reminders_info'] = 'Info mails sent to {$a->role}';
 $string['john_doe'] = 'John Doe';
 $string['send_reminders_noreplies_teachers'] = 'Only to teachers for whom less than {$a->min_results_text} submissions have been made so far.';
 $string['send_reminders_noreplies_students'] = 'Only to students who have not yet taken part in the evaluation.';
-$string['send_reminders_pmsg'] = 'Today, emails with information about the ongoing evaluation were sent to all {$a->role} whose courses are taking part in the evaluation.<br>See the sample mail below';
+$string['send_reminders_pmsg'] = 'Today, emails with information about the ongoing evaluation were sent to all {$a->role} whose courses are taking part in the evaluation.<br>See the <b>example</b> mail below';
 $string['send_reminders_remaining'] = ': Only {$a->remaining_evaluation_days} days left until {$a->lastEvaluationDay}';
 $string['send_reminders_students'] = '{$a->testmsg}<p>Hello {$a->fullname}</p>
 <p>Please participate {$a->also} in the ongoing evaluation: {$a->reminder}<br>

@@ -294,8 +294,8 @@ if (!$courseid) {
 evaluation_showLoading();
 
 // set filter forms
-if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context)
-                || (defined('EVALUATION_OWNER') OR ($cosPrivileged ?$analysisCoS:false )))) {
+if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context) || $isPermitted)) {
+                // || (defined('EVALUATION_OWNER') OR ($cosPrivileged ?$analysisCoS:false )))) {
     if ($courseid){
         print "<br>";
     }
