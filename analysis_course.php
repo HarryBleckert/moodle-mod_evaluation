@@ -732,6 +732,11 @@ if ( $subquery AND $applysubquery){
     if ($department){
         $filter .= str_replace("completed.","",$evaluationstructure->get_department_filter());
     }
+    if (!$teacherid) {
+        $cosPrivileged = evaluation_cosPrivileged($evaluation);
+        $cosPrivileged_filter = evaluation_get_cosPrivileged_filter($evaluation);
+        $filter .= $cosPrivileged_filter;
+    }
 
     $numresultsSq =
             safeCount($DB->get_records_sql("SELECT id FROM {evaluation_completed} 
