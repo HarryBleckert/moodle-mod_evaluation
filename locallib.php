@@ -5116,7 +5116,16 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     }
     catch (Exception $e) {
         // Send error to admin with additional context
+        mtrace("Task failed: " . $e->getMessage());
         $task->clear_fail_delay();
+        $task->set_fail_delay(0);
+        $task->set_next_run_time(0);
+        // Disable the task to prevent further executions
+        $task = $task->get_task_record();
+        if ($task) {
+            \core\task\manager::set_disabled($task->id, true);
+            mtrace("Task has been disabled due to an error.");
+        }
         ev_mail_error_to_admin($e);
         throw new moodle_exception('ev_cron_error', 'error', '', $e->getMessage());
     }
