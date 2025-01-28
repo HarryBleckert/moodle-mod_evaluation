@@ -5020,7 +5020,6 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     // $verbose = false;
     $noreplies = false;
     try {
-        $MYBUG = $DB->get_record('evaluation', array('teamteaching' => 1));
         foreach ($evaluations as $evaluation) {
             if (!$evaluation->autoreminders) {
                 continue;
