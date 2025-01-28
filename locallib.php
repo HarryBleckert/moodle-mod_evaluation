@@ -5008,8 +5008,9 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     // presets
     $task->set_fail_delay(0);
     $task->set_next_run_time(0);
-
-    $DB->update_record('task_scheduled', $task);
+    // $taskdb = $task->get_task_record();
+    // $taskdb->faildelay = 0;
+    // $DB->update_record('task_scheduled', $taskdb);
     $lastruntime = $task->get_last_run_time();
     mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: "
            .date("d.m,Y H:i:s",$lastruntime));
