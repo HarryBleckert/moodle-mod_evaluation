@@ -5005,7 +5005,11 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
     $reminders_sent = false;
     $timenow = time();
     $task = \core\task\manager::get_scheduled_task(mod_evaluation\task\cron_task::class);
-    // $task->clear_fail_delay();
+    // presets
+    $task->set_fail_delay(0);
+    $task->set_next_run_time(0);
+
+    $DB->update_record('task_scheduled', $task);
     $lastruntime = $task->get_last_run_time();
     mtrace("Time now: ".date("d.m,Y H:i:s",$timenow). " - last runtime: "
            .date("d.m,Y H:i:s",$lastruntime));

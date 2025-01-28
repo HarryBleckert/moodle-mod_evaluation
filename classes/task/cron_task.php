@@ -57,5 +57,9 @@ class cron_task extends \core\task\scheduled_task {
         ev_cron();
         return true;
     }
+
+    public function get_retry_count() {
+        return 0; // Disables retries
+    }
 }
 
