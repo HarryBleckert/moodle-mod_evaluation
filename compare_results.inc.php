@@ -1765,7 +1765,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $sql = "
     WITH unanswered AS (
         SELECT 
-            ebc.completed AS submission_id,
+            ebc.id AS submission_id,
             COUNT(ebv.id) AS unanswered_questions
         FROM {evaluation_completed} ebc
         JOIN {evaluation_value} ebv ON ebc.id = ebv.completed
@@ -1784,7 +1784,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         // Query to get the total number of submissions with unanswered questions for the specific evaluation
         $sql_total = "
     WITH unanswered AS (
-        SELECT ebc.completed
+        SELECT ebc.id
         FROM {evaluation_completed} ebc
         JOIN {evaluation_value} ebv ON ebc.id = ebv.completed
         JOIN {evaluation_item} ebi ON ebv.item = ebi.id
