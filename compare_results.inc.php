@@ -1799,15 +1799,35 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
         $total_unanswered_submissions = $DB->get_field_sql($sql_total, ['evaluationid' => $evaluationid]);
 
+        // Query to get the total number of valid answers
+        $sql_valid_answers = "
+    SELECT COUNT(ebv.id) AS total_valid_answers
+    FROM {evaluation_value} ebv
+    JOIN {evaluation_item} ebi ON ebv.item = ebi.id
+    JOIN {evaluation} e ON ebi.evaluation = e.id
+    WHERE e.id = :evaluationid
+    AND ebi.hasvalue = 1
+    AND ebv.value IS NOT NULL 
+    AND ebv.value <> '';
+";
+
+        $total_valid_answers = $DB->get_field_sql($sql_valid_answers, ['evaluationid' => $evaluationid]);
+
         // Output results
         echo "<br><hr>\n";
-        echo "Total submissions with unanswered questions for Evaluation ID $evaluationid: " . $total_unanswered_submissions . "<br>";
+
         $total_unanswered_questions = 0;
         foreach ($submissions as $submission) {
             $total_unanswered_questions += $submission->unanswered_questions;
+        }
+
+        echo "Total submissions with unanswered questions for Evaluation ID $evaluationid: " . $total_unanswered_submissions . "<br>";
+        echo "Total valid answers for Evaluation ID $evaluationid: " . $total_valid_answers . "<br>";
+        echo "<hr>Total unanswered questions for Evaluation ID $evaluationid: " . $total_unanswered_questions . "<br>";
+
+        foreach ($submissions as $submission) {
             echo "Submission ID: {$submission->submission_id}, Unanswered Questions: {$submission->unanswered_questions} <br>";
         }
-        echo "<hr>Total unanswered questions for Evaluation ID $evaluationid: " . $total_unanswered_questions . "<br>";
         echo "<hr><br>\n";
 
         $noAnswerSum = $ignoredAnswerSum = 0;
