@@ -1757,36 +1757,43 @@ function evaluation_compare_results($evaluation, $courseid = false,
     {
 
         // chatGPT
-        // Query to get the number of unanswered questions per submission
+
+        $evaluationid = $EVALUATION->id; // Replace with the actual evaluation ID
+
+        // Query to get the number of unanswered questions per submission for a specific evaluation
         $sql = "SELECT 
             ebc.completed AS submission_id,
             COUNT(ebv.id) AS unanswered_questions
         FROM {evaluation_completed} ebc
         JOIN {evaluation_value} ebv ON ebc.id = ebv.completed
         JOIN {evaluation_item} ebi ON ebv.item = ebi.id
-        WHERE ebi.hasvalue = 1
+        JOIN {evaluation} e ON ebi.evaluation = e.id
+        WHERE e.id = :evaluationid
+        AND ebi.hasvalue = 1
         AND (ebv.value IS NULL OR ebv.value = '')
         GROUP BY ebc.id
         ORDER BY unanswered_questions DESC";
 
-        $submissions = $DB->get_records_sql($sql);
+        $submissions = $DB->get_records_sql($sql, ['evaluationid' => $evaluationid]);
 
-        // Query to get the total number of submissions with unanswered questions
+        // Query to get the total number of submissions with unanswered questions for the specific evaluation
         $sql_total = "SELECT COUNT(*) AS submissions_with_unanswered_questions
               FROM (
                   SELECT ebc.completed
                   FROM {evaluation_completed} ebc
                   JOIN {evaluation_value} ebv ON ebc.id = ebv.completed
                   JOIN {evaluation_item} ebi ON ebv.item = ebi.id
-                  WHERE ebi.hasvalue = 1
+                  JOIN {evaluation} e ON ebi.evaluation = e.id
+                  WHERE e.id = :evaluationid
+                  AND ebi.hasvalue = 1
                   AND (ebv.value IS NULL OR ebv.value = '')
                   GROUP BY ebc.id
               ) AS subquery";
 
-        $total_unanswered_submissions = $DB->get_field_sql($sql_total);
+        $total_unanswered_submissions = $DB->get_field_sql($sql_total, ['evaluationid' => $evaluationid]);
 
         // Output results
-        echo "Total submissions with unanswered questions: " . $total_unanswered_submissions . "<br>";
+        echo "Total submissions with unanswered questions for Evaluation ID $evaluationid: " . $total_unanswered_submissions . "<br>";
         foreach ($submissions as $submission) {
             echo "Submission ID: {$submission->submission_id}, Unanswered Questions: {$submission->unanswered_questions} <br>";
         }
