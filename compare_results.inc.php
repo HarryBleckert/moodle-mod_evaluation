@@ -1758,7 +1758,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
         // chatGPT
 
-        $evaluationid = $EVALUATION->id; // Replace with the actual evaluation ID
+        $evaluationid = $evaluation->id; // Replace with the actual evaluation ID
 
 
         // Query to get the number of unanswered questions per submission for a specific evaluation
@@ -1774,7 +1774,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         WHERE e.id = :evaluationid
         AND ebi.hasvalue = 1
         AND (ebv.value IS NULL OR ebv.value = '')
-        GROUP BY ebc.id
+        ORDER BY ebc.id
     )
     SELECT * FROM unanswered ORDER BY unanswered_questions DESC;
 ";
@@ -1800,11 +1800,12 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $total_unanswered_submissions = $DB->get_field_sql($sql_total, ['evaluationid' => $evaluationid]);
 
         // Output results
+        echo "<br><hr>\n";
         echo "Total submissions with unanswered questions for Evaluation ID $evaluationid: " . $total_unanswered_submissions . "<br>";
         foreach ($submissions as $submission) {
             echo "Submission ID: {$submission->submission_id}, Unanswered Questions: {$submission->unanswered_questions} <br>";
         }
-
+        echo "<hr><br>\n";
 
         $noAnswerSum = $ignoredAnswerSum = 0;
         $noAnswerQSum = $ignoredAnswerQSum = array();
