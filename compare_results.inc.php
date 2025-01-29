@@ -1804,7 +1804,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         echo "Total submissions with unanswered questions for Evaluation ID $evaluationid: " . $total_unanswered_submissions . "<br>";
         $total_unanswered_questions = 0;
         foreach ($submissions as $submission) {
-            $total_unanswered_questions ++;
+            $total_unanswered_questions += $submission->unanswered_questions;
             echo "Submission ID: {$submission->submission_id}, Unanswered Questions: {$submission->unanswered_questions} <br>";
         }
         echo "<hr>Total unanswered questions for Evaluation ID $evaluationid: " . $total_unanswered_questions . "<br>";
