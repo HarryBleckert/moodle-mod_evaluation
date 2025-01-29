@@ -1774,7 +1774,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         WHERE e.id = :evaluationid
         AND ebi.hasvalue = 1
         AND (ebv.value IS NULL OR ebv.value = '')
-        ORDER BY ebc.id
+        ORDER BY ebc.id GROUP BY ebc.id
     )
     SELECT * FROM unanswered ORDER BY unanswered_questions DESC;
 ";
