@@ -1755,6 +1755,44 @@ function evaluation_compare_results($evaluation, $courseid = false,
     //check for unanswered questions
     if ($validation and is_siteadmin()) //AND ( safeCount($zeroReplies) OR safeCount($ignoredReplies) ) )
     {
+
+        // chatGPT
+        // Query to get the number of unanswered questions per submission
+        $sql = "SELECT 
+            ebc.completed AS submission_id,
+            COUNT(ebv.id) AS unanswered_questions
+        FROM {evaluation_completed} ebc
+        JOIN {evaluation_value} ebv ON ebc.id = ebv.completed
+        JOIN {evaluation_item} ebi ON ebv.item = ebi.id
+        WHERE ebi.hasvalue = 1
+        AND (ebv.value IS NULL OR ebv.value = '')
+        GROUP BY ebc.id
+        ORDER BY unanswered_questions DESC";
+
+        $submissions = $DB->get_records_sql($sql);
+
+        // Query to get the total number of submissions with unanswered questions
+        $sql_total = "SELECT COUNT(*) AS submissions_with_unanswered_questions
+              FROM (
+                  SELECT ebc.completed
+                  FROM {evaluation_completed} ebc
+                  JOIN {evaluation_value} ebv ON ebc.id = ebv.completed
+                  JOIN {evaluation_item} ebi ON ebv.item = ebi.id
+                  WHERE ebi.hasvalue = 1
+                  AND (ebv.value IS NULL OR ebv.value = '')
+                  GROUP BY ebc.id
+              ) AS subquery";
+
+        $total_unanswered_submissions = $DB->get_field_sql($sql_total);
+
+        // Output results
+        echo "Total submissions with unanswered questions: " . $total_unanswered_submissions . "<br>";
+        foreach ($submissions as $submission) {
+            echo "Submission ID: {$submission->submission_id}, Unanswered Questions: {$submission->unanswered_questions} <br>";
+        }
+
+
+
         $noAnswerSum = $ignoredAnswerSum = 0;
         $noAnswerQSum = $ignoredAnswerQSum = array();
         foreach ($zeroReplies as $key => $value) {
