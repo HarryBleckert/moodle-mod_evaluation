@@ -1760,8 +1760,11 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
         $evaluationid = $EVALUATION->id; // Replace with the actual evaluation ID
 
+
         // Query to get the number of unanswered questions per submission for a specific evaluation
-        $sql = "SELECT 
+        $sql = "
+    WITH unanswered AS (
+        SELECT 
             ebc.completed AS submission_id,
             COUNT(ebv.id) AS unanswered_questions
         FROM {evaluation_completed} ebc
@@ -1772,23 +1775,27 @@ function evaluation_compare_results($evaluation, $courseid = false,
         AND ebi.hasvalue = 1
         AND (ebv.value IS NULL OR ebv.value = '')
         GROUP BY ebc.id
-        ORDER BY unanswered_questions DESC";
+    )
+    SELECT * FROM unanswered ORDER BY unanswered_questions DESC;
+";
 
         $submissions = $DB->get_records_sql($sql, ['evaluationid' => $evaluationid]);
 
         // Query to get the total number of submissions with unanswered questions for the specific evaluation
-        $sql_total = "SELECT COUNT(*) AS submissions_with_unanswered_questions
-              FROM (
-                  SELECT ebc.completed
-                  FROM {evaluation_completed} ebc
-                  JOIN {evaluation_value} ebv ON ebc.id = ebv.completed
-                  JOIN {evaluation_item} ebi ON ebv.item = ebi.id
-                  JOIN {evaluation} e ON ebi.evaluation = e.id
-                  WHERE e.id = :evaluationid
-                  AND ebi.hasvalue = 1
-                  AND (ebv.value IS NULL OR ebv.value = '')
-                  GROUP BY ebc.id
-              ) AS subquery";
+        $sql_total = "
+    WITH unanswered AS (
+        SELECT ebc.completed
+        FROM {evaluation_completed} ebc
+        JOIN {evaluation_value} ebv ON ebc.id = ebv.completed
+        JOIN {evaluation_item} ebi ON ebv.item = ebi.id
+        JOIN {evaluation} e ON ebi.evaluation = e.id
+        WHERE e.id = :evaluationid
+        AND ebi.hasvalue = 1
+        AND (ebv.value IS NULL OR ebv.value = '')
+        GROUP BY ebc.id
+    )
+    SELECT COUNT(*) AS submissions_with_unanswered_questions FROM unanswered;
+";
 
         $total_unanswered_submissions = $DB->get_field_sql($sql_total, ['evaluationid' => $evaluationid]);
 
@@ -1797,7 +1804,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
         foreach ($submissions as $submission) {
             echo "Submission ID: {$submission->submission_id}, Unanswered Questions: {$submission->unanswered_questions} <br>";
         }
-
 
 
         $noAnswerSum = $ignoredAnswerSum = 0;
