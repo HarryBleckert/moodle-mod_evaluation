@@ -4660,6 +4660,13 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             continue;
         }
 
+        if (!empty($CFG->ash)) {
+            $blockedusers = array('01242044');
+            if (in_array($username, $blockedusers)){
+                ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - user is in blocklist. No mail sent!", $cronjob);
+                continue;
+            }
+        }
         unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
 
