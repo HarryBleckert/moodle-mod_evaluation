@@ -3441,11 +3441,15 @@ function mod_evaluation_core_calendar_provide_event_action(calendar_event $event
         return null;
     }
 
-    if (!$evaluation = $DB->get_record($event->modulename, array("id" => $event->instance))) {
+    if (!$evaluation = $DB->get_record('evaluation', array("id" => $event->instance))) {
         return null;
     }
 
-    $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, false, false, null, null, $userid);
+    $courseid = false;
+    if (!empty($parent->courseid)) {
+        $courseid = $parent->courseid;
+    }
+    $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, $courseid, false, null, null, $userid);
 
     if (!$evaluationcompletion->can_complete()) {    // The user can't complete the evaluation so there is no action for them.
         return null;
@@ -3454,7 +3458,7 @@ function mod_evaluation_core_calendar_provide_event_action(calendar_event $event
     // The evaluation is actionable if it does not have timeopen or timeopen is in the past.
     $actionable = $evaluationcompletion->is_open();
 
-    if ($actionable && $evaluationcompletion->is_already_submitted(false)) {
+    if ($actionable && $evaluationcompletion->is_already_submitted($courseid)) {
         // There is no need to display anything if the user has already submitted the evaluation.
         return null;
     }
@@ -3464,7 +3468,7 @@ function mod_evaluation_core_calendar_provide_event_action(calendar_event $event
     if ($evaluation->course == SITEID) {    // Don't show if user not participates
         //print "<br><br><br><hr>Course: ".$evaluation->course . " - is enrolled: "
         //.(evaluation_is_user_enrolled($evaluation, $userid ) ?"Ja":"Nein")."<br\n";exit;
-        if (empty(evaluation_is_user_enrolled($evaluation, $userid,false))) {
+        if (empty(evaluation_is_user_enrolled($evaluation, $userid))) {
             return null;
         }
         $anker = get_string('open_evaluation', 'evaluation');
