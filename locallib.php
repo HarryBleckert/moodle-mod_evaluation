@@ -4618,6 +4618,12 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $a->minResults = $minResults;
     $a->min_results_text = $minResultsText;
     $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
+    $a->signum = (!empty($CFG->ash)
+            ?"<hr>
+                <b>Alice Salomon Hochschule Berlin</b><br>
+                 - University of Applied Sciences -<br>
+                Alice-Salomon-Platz 5, 12627 Berlin<br>"
+            :"");
     $send_reminders_noreplies = "send_reminders_noreplies_students";
     if ($noreplies) {
         if ($role == "teacher") {
@@ -4659,9 +4665,12 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         if (empty($myEvaluations)) {
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
-                    . "Teilnehmende Kurse: " . count(evaluation_is_user_enrolled($evaluation, $userid)), $cronjob);
+                    . "Participating courses: " . count(evaluation_is_user_enrolled($evaluation, $userid)), $cronjob);
             continue;
         }
+
+        force_current_language($lang);
+        $a->ev_name = ev_get_tr($evaluation->name);
 
         if ($test ) { // OR ($cnt<2 AND $CFG->noemailever)) {
             if ($cnt > 1) {
@@ -4670,34 +4679,21 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             $to = "Harry <Harry@Bleckert.com>";
             // $to = $sender;
             // $to = "Anja Voss <voss@ash-berlin.eu>";
-            $tname = "Test";
             if (strpos($test,"@")){
                 $to = $test;
-                $tname = "Test";
             }
             if ( strpos($to,"<") !== false AND strpos($to,">") !== false) {
                 list($tname, $emailt) = explode(' <', trim($to, '> '));
                 $to = '=?UTF-8?B?' . base64_encode($tname." (Test)") . '?=' . " <$emailt>";
             }
         } else {
-            $to = '=?UTF-8?B?' . base64_encode($fullname )
-                . '?=' . " <$email>";
-            $testMsg = "";
+            $to = '=?UTF-8?B?' . base64_encode($fullname ) . '?=' . " <$email>";
         }
-
-        force_current_language($lang);
-        $a->ev_name = ev_get_tr($evaluation->name);
 
         $testinfo = ($test ? " Test: " : "");
         $subject = $testinfo . '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
 
         $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
-        $a->signum = (!empty($CFG->ash)
-                ?"<hr>
-                <b>Alice Salomon Hochschule Berlin</b><br>
-                 - University of Applied Sciences -<br>
-                Alice-Salomon-Platz 5, 12627 Berlin<br>"
-                :"");
 
         $a->testmsg = "";
         if ($test){

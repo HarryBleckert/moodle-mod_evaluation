@@ -205,7 +205,8 @@ $string['apply'] = 'anwenden';
 $string['remove'] = 'entfernen';
 $string['filter_action'] = '<b>Filter</b> {$a->action}';
 $string['remove_filter'] = 'Filter entfernen';
-$string['less_minreplies'] = '<span style="color:red;font-weight:bold;">Es gibt für</span>  {$a->ftitle} <span style="color:red;font-weight:bold;">weniger als {$a->minReplies} Abgaben</span>. <b>Daher wird keine Auswertung angezeigt!</b>';
+$string['less_minreplies'] =
+        '<span style="color:#000000;font-weight:bold;">Es gibt für</span>  {$a->ftitle} <span style="color:#000000;font-weight:bold;">weniger als {$a->minReplies} Abgaben</span>. <b>Daher wird keine Auswertung angezeigt!</b>';
 $string['except_siteadmin'] = ' - ausgenommen sind Admins';
 $string['team_teaching'] = 'Team Teaching';
 $string['single_submission_per_course'] = 'Eine Abgabe pro Teilnehmer_in und Kurs';

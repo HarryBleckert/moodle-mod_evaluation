@@ -3373,12 +3373,12 @@ function mod_evaluation_core_calendar_event_timestart_updated(\calendar_event $e
         // set the end time of the evaluation activity to be the new start
         // time of the event.
         if ($evaluation->timeclose != $event->timestart) {
-            $evaluation->timeclose = $event->timestart;
+            // $evaluation->timeclose = $event->timestart;
             $modified = true;
         }
     }
 
-    if ($modified) {
+    if (false) { // $modified) {
         $evaluation->timemodified = time();
         $DB->update_record('evaluation', $evaluation);
         $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
@@ -3436,12 +3436,16 @@ function mod_evaluation_core_calendar_provide_event_action(calendar_event $event
         return null;
     }
 
-    $evaluationcompletion = new mod_evaluation_completion(null, $cm, 0, false, null, null, $userid);
-
     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) {
         // Evaluation is already closed, do not display it even if it was never submitted.
         return null;
     }
+
+    if (!$evaluation = $DB->get_record($event->modulename, array("id" => $event->id))) {
+        return null;
+    }
+
+    $evaluationcompletion = new mod_evaluation_completion($evaluation, $cm, 0, false, null, null, $userid);
 
     if (!$evaluationcompletion->can_complete()) {    // The user can't complete the evaluation so there is no action for them.
         return null;
