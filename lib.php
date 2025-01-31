@@ -3441,7 +3441,7 @@ function mod_evaluation_core_calendar_provide_event_action(calendar_event $event
         return null;
     }
 
-    if (!$evaluation = $DB->get_record($event->modulename, array("id" => $event->id))) {
+    if (!$evaluation = $DB->get_record($event->modulename, array("id" => $event->instance))) {
         return null;
     }
 
@@ -3461,7 +3461,6 @@ function mod_evaluation_core_calendar_provide_event_action(calendar_event $event
 
     $anker = get_string('answerquestions', 'evaluation');
     //  global Evaluation
-    $evaluation = $evaluationcompletion->get_evaluation();
     if ($evaluation->course == SITEID) {    // Don't show if user not participates
         //print "<br><br><br><hr>Course: ".$evaluation->course . " - is enrolled: "
         //.(evaluation_is_user_enrolled($evaluation, $userid ) ?"Ja":"Nein")."<br\n";exit;
