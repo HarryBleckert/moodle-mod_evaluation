@@ -3298,7 +3298,7 @@ function evaluation_refresh_events($courseid = 0, $instance = null, $cm = null) 
     // If we have instance information then we can just update the one event instead of updating all events.
     if (isset($instance)) {
         if (!is_object($instance)) {
-            $instance = $DB->get_record('evaluation', array('id' => $instance), '*', MUST_EXIST);
+            $instance = $DB->get_record('evaluation', array('id' => $instance), '*', IGNORE_MISSING);
         }
         evaluation_set_events($instance);
         return true;
@@ -3397,7 +3397,7 @@ function mod_evaluation_core_calendar_event_timestart_updated(\calendar_event $e
  */
 function mod_evaluation_core_calendar_is_event_visible(calendar_event $event) {
     global $DB, $USER;
-    $evaluation = $DB->get_record('evaluation', ['id' => $event->instance], '*', MUST_EXIST);
+    $evaluation = $DB->get_record('evaluation', ['id' => $event->instance], '*',IGNORE_MISSING);
     if (!empty($evaluation) and !empty(evaluation_is_user_enrolled($evaluation, $USER->id))) {
         return true;
     }
@@ -3441,7 +3441,7 @@ function mod_evaluation_core_calendar_provide_event_action(calendar_event $event
         return null;
     }
 
-    if (!$evaluation = $DB->get_record($event->modulename, array("id" => $event->instance))) {
+    if (!$evaluation = $DB->get_record($event->modulename, array("id" => $event->instance),'*',IGNORE_MISSING)) {
         return null;
     }
 
