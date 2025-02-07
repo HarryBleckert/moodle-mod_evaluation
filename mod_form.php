@@ -79,7 +79,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
         );
         // Make it a multi-select
         $select->setMultiple(true);
-        $mform->setType('participant_roles', PARAM_CHAR);
+        $mform->setType('participant_roles', PARAM_TEXT);
         // Add help button
         $mform->addHelpButton('participant_roles', 'participant_roles', 'evaluation');
 
