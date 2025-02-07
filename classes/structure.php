@@ -336,7 +336,7 @@ class mod_evaluation_structure {
             unset($params['random_response']);
             $num = $DB->get_field_sql("SELECT MAX(random_response) FROM {evaluation_completed} WHERE evaluation = :evaluation", $params);
             $params['random_response'] = 0;
-            $evaluationcompleteds = $DB->get_records('evaluation_completed', $params, 'order by random_response DESC');
+            $evaluationcompleteds = $DB->get_records('evaluation_completed', $params, 'id');
             shuffle($evaluationcompleteds);
             foreach ($evaluationcompleteds as $compl) {
                 $compl->random_response = $num++;
