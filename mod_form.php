@@ -276,8 +276,11 @@ class mod_evaluation_mod_form extends moodleform_mod {
             $default_values['page_after_submit_editor']['itemid'] = $draftitemid;
         }
         // Convert array to string before saving
-        if (isset($default_values['participant_roles']) && is_array($default_values['participant_roles'])) {
+        if (!empty($default_values['participant_roles']) && is_array($default_values['participant_roles'])) {
             $default_values['participant_roles'] = implode(',', $default_values['participant_roles']);
+        }
+        else if (empty($evaluation->participant_roles)) {
+            $default_values['participant_roles'] = arrau('5');
         }
     }
 
@@ -307,7 +310,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
                 }
             }
         }
-        // patched by Harry
+
         if (isset($data->filter_course_of_studies) and !empty($data->filter_course_of_studies)) {
             $data->filter_course_of_studies = str_replace("\r", "", $data->filter_course_of_studies);
             $selected = explode("\n", $data->filter_course_of_studies);
@@ -351,7 +354,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
         } else {
             $data->privileged_users = "";
         }
-        // end patch
+
     }
 
     /**
