@@ -64,9 +64,35 @@ class mod_evaluation_mod_form extends moodleform_mod {
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'evaluationhdr', get_string('questionandsubmission', 'evaluation'));
 
+
+        // get participant roles
+        $roles = $DB->get_records_sql("SELECT id,shortname FROM {role} WHERE id NOT IN(1,2) ORDER BY id asc");
+        $participant_roles = array();
+        foreach ( $roles as $role ){
+            $participant_roles[$role->id] = ucfirst(trim($role->shortname));
+        }
+        // Add the multi-select element
+        $select = $mform->addElement('select', 'participant_roles',
+                ev_get_string('participant_roles'),
+                $participant_roles,
+                array('size' => '6')
+        );
+        // Make it a multi-select
+        $select->setMultiple(true);
+        $mform->setType('participant_roles', PARAM_TEXT);
+        // Add help button
+        $mform->addHelpButton('participant_roles', 'participant_roles', 'evaluation');
+
+        // Set default values (optional)
+        $mform->setDefault('participant_roles', array(3));
+
+        // Add validation rules (optional)
+        $mform->addRule('participant_roles', get_string('required'), 'required', null, 'client');
+
+
         $options = array();
-        $options[1] = get_string('anonymous', 'evaluation');
-        $options[2] = get_string('non_anonymous', 'evaluation');
+        $options[1] = ev_get_string('anonymous');
+        $options[2] = ev_get_string('non_anonymous');
         $mform->addElement('select',
                 'anonymous',
                 get_string('anonymous_edit', 'evaluation'),
@@ -119,6 +145,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'publish_stats', get_string('show_analysepage_after_submit', 'evaluation'));
 
         $mform->addElement('selectyesno', 'show_on_index', get_string('show_on_index', 'evaluation'));
+
         $mform->setType('sort_tag', PARAM_TEXT);
         $mform->addElement('text', 'sort_tag', get_string('sort_tag', 'evaluation'));
         $mform->setDefault('sort_tag','ASH');

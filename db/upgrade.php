@@ -563,6 +563,15 @@ function xmldb_evaluation_upgrade($oldversion) {
         upgrade_mod_savepoint(true, $newversion, 'evaluation');
     }
 
-    return true;
-}
+    $newversion = 2025020700;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('evaluation');
+        $field = new xmldb_field('participant_roles',  XMLDB_TYPE_TEXT, '39', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    }
+        upgrade_mod_savepoint(true, $newversion, 'evaluation');
+    }
 

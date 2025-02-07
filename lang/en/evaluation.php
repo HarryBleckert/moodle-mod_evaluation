@@ -33,6 +33,10 @@ $string['language'] = 'en';
 $string['index_group_by_tag'] = 'Group';
 // end index.php
 
+// mod_form.php
+$string['participant_roles'] = 'Participating role(s)';
+$string['participant_roles_help'] = 'Select in which course-related roles participation is possible (Default: student)';
+
 // print.php
 $string['analysis_of_logs'] = 'Evaluation of the Moodle log. Log data is kept for {$a->logexpiry} days.';
 $string['activities_per_day'] = 'Activities/day';

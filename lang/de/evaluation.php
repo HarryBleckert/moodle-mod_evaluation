@@ -33,6 +33,10 @@ $string['language'] = 'de';
 $string['index_group_by_tag'] = 'Gruppe';
 // end index.php
 
+// mod_form.php
+$string['participant_roles'] = 'Teilnehmende Rollen(n)';
+$string['participant_roles_help'] = 'Wählen Sie in welchen kursbezogenen Rollen die Teilnahme möglich ist (Standard: Student_in';
+
 // print.php
 $string['analysis_of_logs'] = 'Auswertung des Moodle Logs. Log Daten werden {$a->logexpiry} Tage aufbewahrt.';
 $string['activities_per_day'] = 'Aktivitäten/Tag';
