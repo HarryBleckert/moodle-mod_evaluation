@@ -82,9 +82,12 @@ class mod_evaluation_mod_form extends moodleform_mod {
         $mform->setType('participant_roles', PARAM_TEXT);
         // Add help button
         $mform->addHelpButton('participant_roles', 'participant_roles', 'evaluation');
-
-        // Set default values (optional)
-        $mform->setDefault('participant_roles', array('5'));
+        if (!empty($this->current->participant_roles)) {
+            $currentoptions = explode(',', $this->current->participant_roles);
+            $mform->setDefault('participant_roles', $currentoptions);
+        } else {
+            $mform->setDefault('participant_roles', array('5'));
+        }
 
         // Add validation rules (optional)
         //$mform->addRule('participant_roles', get_string('required'), 'required', null, 'client');
@@ -272,7 +275,10 @@ class mod_evaluation_mod_form extends moodleform_mod {
             $default_values['page_after_submit_editor']['format'] = editors_get_preferred_format();
             $default_values['page_after_submit_editor']['itemid'] = $draftitemid;
         }
-
+        // Convert array to string before saving
+        if (isset($default_values['participant_roles']) && is_array($default_values['participant_roles'])) {
+            $default_values['participant_roles'] = implode(',', $default_values['participant_roles']);
+        }
     }
 
     /**
@@ -363,7 +369,13 @@ class mod_evaluation_mod_form extends moodleform_mod {
                 $data['timeclose'] < $data['timeopen']) {
             $errors['timeclose'] = get_string('closebeforeopen', 'evaluation');
         }
-        if (count($data['participant_roles']) < 1) {
+        $participantroles = array();
+        if (!empty($data['participant_roles'])) {
+            $participantroles = is_array($data['participant_roles']) ?
+                    $data['participant_roles'] :
+                    explode(',', $data['participant_roles']);
+        }
+        if (count($participantroles) < 1) {
             $errors['participant_roles'] = get_string('rols_is_required', 'evaluation');
         }
         return $errors;

@@ -133,6 +133,12 @@ function evaluation_add_instance($evaluation) {
             $evaluation->signature = "Berthe Khayat und Harry Bleckert für das Evaluationsteam";
         }
     }
+
+    // Convert participant_roles array to string if it's an array
+    if (isset($evaluation->participant_roles) && is_array($evaluation->participant_roles)) {
+        $evaluation->participant_roles = implode(',', $evaluation->participant_roles);
+    }
+
     //saving the evaluation in db
     $evaluationid = $DB->insert_record("evaluation", $evaluation);
 
@@ -209,6 +215,13 @@ function evaluation_update_instance($evaluation) {
             $evaluation->signature = "Berthe Khayat und Harry Bleckert für das Evaluationsteam";
         }
     }
+
+    // Convert participant_roles array to string if it's an array
+    if (isset($evaluation->participant_roles) && is_array($evaluation->participant_roles)) {
+        $moduleinstance->$evaluation = implode(',', $evaluation->participant_roles);
+    }
+
+
     //save the evaluation into the db
     $DB->update_record("evaluation", $evaluation);
 
