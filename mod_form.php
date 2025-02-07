@@ -79,15 +79,15 @@ class mod_evaluation_mod_form extends moodleform_mod {
         );
         // Make it a multi-select
         $select->setMultiple(true);
-        $mform->setType('participant_roles', PARAM_TEXT);
+        // $mform->setType('participant_roles', PARAM_CHAR);
         // Add help button
         $mform->addHelpButton('participant_roles', 'participant_roles', 'evaluation');
 
         // Set default values (optional)
-        $mform->setDefault('participant_roles', "3");
+        $mform->setDefault('participant_roles', array("5,18"));
 
         // Add validation rules (optional)
-        $mform->addRule('participant_roles', get_string('required'), 'required', null, 'client');
+        //$mform->addRule('participant_roles', get_string('required'), 'required', null, 'client');
 
 
         $options = array();
@@ -362,6 +362,9 @@ class mod_evaluation_mod_form extends moodleform_mod {
         if ($data['timeopen'] && $data['timeclose'] &&
                 $data['timeclose'] < $data['timeopen']) {
             $errors['timeclose'] = get_string('closebeforeopen', 'evaluation');
+        }
+        if (count($data['participant_roles']) < 2) {
+            $errors['participant_roles'] = get_string('rols_is_required', 'evaluation');
         }
         return $errors;
     }

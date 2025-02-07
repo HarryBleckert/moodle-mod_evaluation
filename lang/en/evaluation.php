@@ -36,6 +36,7 @@ $string['index_group_by_tag'] = 'Group';
 // mod_form.php
 $string['participant_roles'] = 'Participating role(s)';
 $string['participant_roles_help'] = 'Select in which course-related roles participation is possible (Default: student)';
+$string['role_is_required'] = 'At least one role must be selected for participants!';
 
 // print.php
 $string['analysis_of_logs'] = 'Evaluation of the Moodle log. Log data is kept for {$a->logexpiry} days.';
