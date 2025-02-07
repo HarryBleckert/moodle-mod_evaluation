@@ -135,8 +135,11 @@ function evaluation_add_instance($evaluation) {
     }
 
     // Convert participant_roles array to string if it's an array
-    if (isset($evaluation->participant_roles) && is_array($evaluation->participant_roles)) {
+    if (!empty($evaluation->participant_roles) && is_array($evaluation->participant_roles)) {
         $evaluation->participant_roles = implode(',', $evaluation->participant_roles);
+    }
+    else if (empty($evaluation->participant_roles)) {
+        $evaluation->participant_roles = '5';
     }
 
     //saving the evaluation in db
@@ -217,8 +220,11 @@ function evaluation_update_instance($evaluation) {
     }
 
     // Convert participant_roles array to string if it's an array
-    if (isset($evaluation->participant_roles) && is_array($evaluation->participant_roles)) {
-        $moduleinstance->$evaluation = implode(',', $evaluation->participant_roles);
+    if (!empty($evaluation->participant_roles) && is_array($evaluation->participant_roles)) {
+        $evaluation->participant_roles = implode(',', $evaluation->participant_roles);
+    }
+    else if (empty($evaluation->participant_roles)) {
+        $evaluation->participant_roles = '5';
     }
 
 
