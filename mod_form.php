@@ -69,7 +69,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
         $roles = $DB->get_records_sql("SELECT id,shortname FROM {role} WHERE id NOT IN(1,2) ORDER BY id asc");
         $participant_roles = array();
         foreach ( $roles as $role ){
-            $participant_roles[$role->id] = ucfirst(trim($role->shortname)) . ' (' . $role->id . ')';
+            $participant_roles[$role->id] = ucfirst(trim($role->shortname)); //  . ' (' . $role->id . ')';
         }
         // Add the multi-select element
         $select = $mform->addElement('select', 'participant_roles',
