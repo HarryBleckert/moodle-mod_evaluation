@@ -1488,7 +1488,7 @@ function evaluation_showteachers($evaluation, $courseid, $cmid = false, $user = 
     //print '<br>teachers: ';var_dump($teachers); print "<br>\n";
     $showTeachers = "<br>" . ev_get_string('coursehasnoteachers');
     if (safeCount($teachers) > 0) {
-        $showTeachers = "<br>" . ev_get_string('teacher') . (safeCount($teachers) > 1 ? "nen" : "") . ": ";
+        $showTeachers = "<br>" . ev_get_string('teacher' . (safeCount($teachers) > 1 ? "s" : "")) . ": ";
         //var_dump($teachers);
         foreach ($teachers as $teacher) {
             if (defined("EVALUATION_OWNER") or $teacher["id"] == $USER->id) {
@@ -4661,7 +4661,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         }
 
         if (!empty($CFG->ash)) {
-            $blockedusers = array('01242044');
+            $blockedusers = array('01242044','00053230');
             if (in_array($username, $blockedusers)){
                 ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - user is in blocklist. No mail sent!", $cronjob);
                 continue;

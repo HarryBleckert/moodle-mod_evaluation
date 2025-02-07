@@ -218,7 +218,7 @@ $good_day = ev_get_string('good_day');
 
 $q_translink = '';
 $lang = (!empty($_GET["lang"]) ?$_GET["lang"] :current_language());
-if (strtolower(substr($lang,0,2)) != 'de') {
+if (strtolower(substr($lang,0,2)) != 'de' AND $evaluation->id == 24) {
     // Hier ist eine englische Übersetzung des Fragebogens.
     $q_translink = '<a title="' . ev_get_string('questionaireenglish') . '" target="translation"
                         href="https://moodle.ash-berlin.eu/downloads/Evaluation%20of%20Courses%20WiSe%202024-25%20EN.pdf">'
