@@ -280,7 +280,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
             $default_values['participant_roles'] = implode(',', $default_values['participant_roles']);
         }
         else if (empty($evaluation->participant_roles)) {
-            $default_values['participant_roles'] = arrau('5');
+            $default_values['participant_roles'] = array('5');
         }
     }
 
