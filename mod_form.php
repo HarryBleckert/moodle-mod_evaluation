@@ -84,7 +84,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
         $mform->addHelpButton('participant_roles', 'participant_roles', 'evaluation');
 
         // Set default values (optional)
-        $mform->setDefault('participant_roles', array("5,18"));
+        $mform->setDefault('participant_roles', "5,18");
 
         // Add validation rules (optional)
         //$mform->addRule('participant_roles', get_string('required'), 'required', null, 'client');
