@@ -363,7 +363,7 @@ class mod_evaluation_mod_form extends moodleform_mod {
                 $data['timeclose'] < $data['timeopen']) {
             $errors['timeclose'] = get_string('closebeforeopen', 'evaluation');
         }
-        if (count($data['participant_roles']) < 2) {
+        if (count($data['participant_roles']) < 1) {
             $errors['participant_roles'] = get_string('rols_is_required', 'evaluation');
         }
         return $errors;
