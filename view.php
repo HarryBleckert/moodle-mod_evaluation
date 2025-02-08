@@ -279,7 +279,7 @@ if ($courseid) {
     echo ' (<a href="?id='
             . $id
             . '&course_of_studiesID=' . $course_of_studiesID
-            . '&techerid' .$teacheridSaved . '">' . ev_get_string('remove_filter') . '</a>)';
+            . '&teacherid' .$teacheridSaved . '">' . ev_get_string('remove_filter') . '</a>)';
     if (defined("showTeachers")) {
         echo showTeachers;
         if ($teacheridSaved){
