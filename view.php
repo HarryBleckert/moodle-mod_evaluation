@@ -276,8 +276,18 @@ if ($courseid) {
     } else {
         echo $CourseTitle;
     }
+    echo ' (<a href="?id='
+            . $id
+            . '&course_of_studiesID=' . $course_of_studiesID
+            . '&techerid' .$teacheridSaved . '">' . ev_get_string('remove_filter') . '</a>)';
     if (defined("showTeachers")) {
         echo showTeachers;
+        if ($teacheridSaved){
+            echo ' (<a href="?id='
+                    . $id . '&courseid=' . $courseid
+                    . '&course_of_studiesID=' . $course_of_studiesID
+                    . '">' . ev_get_string('remove_filter') . '</a>)';
+        }
     }
 
     if (!$is_open) {

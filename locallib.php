@@ -5080,9 +5080,10 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                         $term = 1.5 * $week;
                     }
                     $days = remaining_evaluation_days($evaluation);
+                    $weekend = (idate("w")==6 OR idate("w")==0);
                     // print "<hr>tsent: ".date("d.m.Y",$ssent)." - ssent: "
                     //        .date("d.m.Y",$ssent)." - ".date("d.m.Y",time())."<hr>";
-                    if ($tsent) {
+                    if (!$weekend AND $tsent) {
                         if (($tsent_nr and $tsent + (1 * $term) < time()) or ($tsent + (2 * $term) < time())) {
                             $reminders_sent = true;
                             mtrace("Evaluation '$evaluation->name': Sending reminders to teachers ($CFG->dbname)");
@@ -5098,7 +5099,7 @@ function ev_cron($cronjob=true, $cli=false, $test=false, $verbose=false) {
                         }
                     }
                     $evaluation = $DB->get_record_sql("SELECT * from {evaluation} where id=" . $evaluation->id);
-                    if ($ssent) {
+                    if (!$weekend AND $ssent) {
                         if (($ssent_nr and $ssent + (1 * $term) < time()) or ($ssent + (2 * $term) < time())) {
                             $reminders_sent = true;
                             mtrace("Evaluation '$evaluation->name': Sending reminders to students ($CFG->dbname)");
@@ -5273,11 +5274,15 @@ function ev_mail_error_to_admin($error, $additional_info = []) {
 
     mtrace('mod_evaluation: Error caught and mail was sent to ' . $admin->lastname);
     // Send email using Moodle's email function
-    return email_to_user(
+    $mailstatus = $CFG->noemailever;
+    $CFG->noemailever = 0;
+    $ret = email_to_user(
             $admin,
-            core_user::get_support_user(),
+            $USER, // core_user::get_support_user(),
             $subject,
             $message
     );
+    $CFG->noemailever = $mailstatus;
+    return $ret;
 }
 
