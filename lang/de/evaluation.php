@@ -114,6 +114,7 @@ $string['hide_graphic_data'] = 'Grafikdaten verbergen';
 // end graph lib
 
 // view.php
+$string['in'] = 'ist';
 $string['is'] = 'ist';
 $string['was'] = 'war';
 $string['teamteachingtxt'] = 'In Seminaren mit Team Teaching werden die Dozent_innen jeweils einzeln evaluiert.';

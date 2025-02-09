@@ -113,6 +113,7 @@ $string['hide_graphic_data'] = 'Hide chart data';
 // end graph lib
 
 // view.php
+$string['in'] = 'in';
 $string['is'] = 'is';
 $string['was'] = 'was';
 $string['teamteachingtxt'] = 'In seminars with team teaching, the lecturers are evaluated individually.';

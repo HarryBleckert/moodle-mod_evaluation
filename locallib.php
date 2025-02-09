@@ -3866,7 +3866,7 @@ function evaluation_filter_Evaluation($courseid, $evaluation, $user = false) {
                 $a = new stdclass();
                 if ($days < 7) {
                     // $a->ev_end_msg = ($days > 0 ? "in " . $days . ' Tagen' : "heute")
-                    $a->ev_end_msg = ($days > 0 ? get_string("in") . ' ' . $days . ' '
+                    $a->ev_end_msg = ($days > 0 ? ev_get_string("in") . ' ' . $days . ' '
                             .get_string('days'): get_string('today'));
                     $style_b = '<b style="color:#000000;">'.
                             ev_get_string('ev_end_msg',$a)
