@@ -2008,8 +2008,8 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
         $lastaccess = 0;
     }
     if (!isset($evaluation->timeclose)) {
-        return 0;
-    } //$lastaccess; }
+        return $lastaccess;
+    }
     if ( !$courseid){
         $courseid = "";
     }
@@ -2020,6 +2020,7 @@ function evaluation_user_lastaccess($evaluation, $userid, $lastaccess = 0, $role
 
     if (!empty($userlast->lastaccess) and !$is_open) {
         $lastaccess = $userlast->lastaccess ?: 0;
+        return $lastaccess;
     } else if ($is_open) {
         if (empty($userlast->lastaccess)) {
             $fields = array("evaluation", "userid", "role", "courseids", "lastaccess", "timemodified");
@@ -2329,9 +2330,8 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
                 else {
                         $cnt_teachers++;
                         $numTeachersCourse++;
-                        $distinct_t[$roleC->id] = $fullname; //=$cnt_teac
-                        // $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid);
-                        // get inactive teachers
+                        $distinct_t[$roleC->id] = $fullname;
+                        // get active teachers
                         if ($roleC->lastaccess > $timeopen) {
                             $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid);
                             $cnt_teachers_active++;
@@ -2377,9 +2377,10 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
                     $numStudentsCourse++;
                 }
                 $distinct_s[$roleC->id] = $fullname; //=$cnt_students;
-                // get inactive students
-                if ($roleC->lastaccess > $timeopen and !isset($distinct_s_active[$roleC->id])) {
-                    $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid);
+                // get active students
+                if (!isset($distinct_s_active[$roleC->id])
+                        AND $lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid)) {
+                    $roleC->lastaccess = $lastaccess;
                     $cnt_students_active++;
                     $numStudentsActiveCourse++;
                     $distinct_s_active[$roleC->id] = $_SESSION["active_student"][$roleC->id] = $fullname;
@@ -2415,8 +2416,10 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
                 }
                 $distinct_t[$roleC->id] = $fullname; //=$cnt_teac
                 // get inactive teachers
-                if ($roleC->lastaccess > $timeopen and !isset($distinct_t_active[$roleC->id])) {
-                    $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid);
+                if ($roleC->lastaccess > $timeopen and !isset($distinct_t_active[$roleC->id])
+                        AND $lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid)
+                ) {
+                    $roleC->lastaccess = $lastaccess;
                     $cnt_teachers_active++;
                     $numTeachersActiveCourse++;
                     $distinct_t_active[$roleC->id] = $_SESSION["active_teacher"][$roleC->id] = $fullname;
