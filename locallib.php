@@ -4786,8 +4786,10 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     echo "";
     if ($role == "student") {
         ev_show_reminders_log("Sent reminder to $cntStudents students", $cronjob);
+        $a->mails_sent = $cntStudents;
     } else {
         ev_show_reminders_log("Sent reminder to $cntTeachers teachers", $cronjob);
+        $a->mails_sent = $cntTeachers;
     }
     echo "\n";
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60)

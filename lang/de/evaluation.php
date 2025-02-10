@@ -59,7 +59,7 @@ $string['completed_responses'] = 'Summe Abgaben';
 
 // send reminders
 // $string[''] = '';
-$string['sent_reminders_info'] = 'Hinweismails wurden an {$a->role} versandt';
+$string['sent_reminders_info'] = 'Hinweismails wurden an {$a->mails_sent} {$a->role} versandt';
 $string['john_doe'] = 'John Doe';
 $string['send_reminders_noreplies_teachers'] = 'Nur an Lehrende, für die bisher weniger als {$a->min_results_text} Abgaben gemacht wurden.';
 $string['send_reminders_noreplies_students'] = 'Nur an Studierende, die bisher noch nicht an der Evaluation teilgenommen haben.';
