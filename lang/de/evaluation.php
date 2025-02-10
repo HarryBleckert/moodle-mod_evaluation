@@ -116,7 +116,7 @@ $string['hide_graphic_data'] = 'Grafikdaten verbergen';
 // view.php
 $string['in'] = 'in';
 $string['is'] = 'ist';
-$string['days'] = 'Tage';
+$string['days'] = 'Tagen';
 $string['today'] = 'heute';
 $string['was'] = 'war';
 $string['teamteachingtxt'] = 'In Seminaren mit Team Teaching werden die Dozent_innen jeweils einzeln evaluiert.';
