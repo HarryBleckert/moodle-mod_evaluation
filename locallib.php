@@ -4608,7 +4608,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $sender = $senderName . " <$senderMail>";
 
     $cntStudents = $cntTeachers = 0;
-    $cnt = 1;
+    $cnt = 0;
     /*if (!defined('NO_OUTPUT_BUFFERING')) {
         define('NO_OUTPUT_BUFFERING', true);
     }*/
@@ -4641,6 +4641,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
        }
        //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
 
+        $cnt++;
         $username = $evaluation_user["username"];
         $firstname = $evaluation_user["firstname"];
         $lastname = $evaluation_user["lastname"];
@@ -4727,10 +4728,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         if ($role == "student") {
             $hasParticipated = evaluation_has_user_participated($evaluation, $userid);
             if ($noreplies AND $hasParticipated) {
+                ev_show_reminders_log("$cnt. mail not sent: $fullname - $username - $userid - $email - HAS PARTICIPATED!!", $cronjob);
                 continue;
             }
             if (hasUserEvaluationCompleted($evaluation, $userid)) {
-                ev_show_reminders_log("$cnt. $fullname - $username - $userid - $email - COMPLETED ALL!!", $cronjob);
+                ev_show_reminders_log("$cnt. mail not sent: $fullname - $username - $userid - $email - COMPLETED ALL!!", $cronjob);
                 continue;
             }
             $a->myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
@@ -4741,11 +4743,13 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     . ev_get_string('send_reminders_students', $a) . "</body></html>";
         } else { // $role == teacher
             if (!safeCount($_SESSION["distinct_s"])) {
+                ev_show_reminders_log("$cnt. mail not sent: $fullname - $username - $userid - $email - NO SESSION['distinct_s']!!", $cronjob);
                 continue;
             }
 
             $replies = evaluation_countCourseEvaluations($evaluation, false, "teacher", $userid);
-            if ($noreplies AND $replies>=3) {
+            if ($noreplies AND $replies>=$a->min_results_text) {
+                ev_show_reminders_log("$cnt. mail not sent: $fullname - $username - $userid - $email - >= $a->min_results_text replies!!", $cronjob);
                 continue;
             }
             $a->myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, true, true);
@@ -4779,7 +4783,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         else{
             ev_show_reminders_log("$cnt.  Mail not sent.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
-        $cnt++;
     }
     force_current_language($current_language);
     $elapsed = time() - $start;
@@ -4791,6 +4794,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         ev_show_reminders_log("Sent reminder to $cntTeachers teachers", $cronjob);
         $a->mails_sent = $cntTeachers;
     }
+    ev_show_reminders_log("Processed $cnt $a->role records", $cronjob);
     echo "\n";
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60)
             . " seconds. " . date("Ymd H:i:s"), $cronjob);
