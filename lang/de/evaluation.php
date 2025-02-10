@@ -116,6 +116,8 @@ $string['hide_graphic_data'] = 'Grafikdaten verbergen';
 // view.php
 $string['in'] = 'ist';
 $string['is'] = 'ist';
+$string['days'] = 'Tage';
+$string['today'] = 'heute';
 $string['was'] = 'war';
 $string['teamteachingtxt'] = 'In Seminaren mit Team Teaching werden die Dozent_innen jeweils einzeln evaluiert.';
 $string['is_WM_disabled'] = 'Ausgenommen sind Weiterbildende Master Studiengänge.';
