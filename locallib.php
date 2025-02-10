@@ -4641,14 +4641,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         $cnt++;
         $username = $evaluation_user["username"];
-        $firstname = $evaluation_user["firstname"];
-        $lastname = $evaluation_user["lastname"];
+        // $firstname = $evaluation_user["firstname"];
+        // $lastname = $evaluation_user["lastname"];
         $fullname = $a->fullname = str_replace('"','',$evaluation_user["fullname"]);
         $email = strtolower($evaluation_user["email"]);
         $userid = $evaluation_user["id"];
         $lang = $evaluation_user["language"];
 
-        if( empty($username) || empty($firstname)){
+        if( empty($username) || empty($fullname)){
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user!!", $cronjob);
             continue;
         }
@@ -4790,7 +4790,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     . ev_get_string('send_reminders_teachers', $a) . "</body></html>";
 
         }
-        if (!$CFG->noemailever || $test) {
+        if (false) //(!$CFG->noemailever || $test) {
             mail($to, $subject, quoted_printable_encode($message), $headers,"-f$senderMail"); //,"-r '$sender'");
             ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
