@@ -4564,10 +4564,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($verbose) {
         $DB->set_debug(true);
     }
-    if ( $cronjob ){
+    /* handled by ob_start
+     if ( $cronjob ){
         ini_set('output_buffering', 600);
     }
-    /*
+
      * if ($CFG->noemailever){
         $test = true;
     }
@@ -4621,11 +4622,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $headers = array("From" => $sender, "Return-Path" => "<$senderMail>", "Reply-To" => $sender, "MIME-Version" => "1.0",
             "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
 
-    /*f (!defined('NO_OUTPUT_BUFFERING')) {
-        define('NO_OUTPUT_BUFFERING', true);
-    }*/
-    ini_set("output_buffering", 600);
-
     $a = new stdClass();
     $a->minResults = $minResults;
     $a->min_results_text = $minResultsText;
@@ -4647,7 +4643,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $cnt = $cntStudents = $cntTeachers = 0;
     foreach ($evaluation_users as $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
        if(!$cronjob) {
-           @ob_flush();@ob_end_flush();@flush();@ob_start();
+           @ob_flush();@ob_end_flush();ob_start(null, 600);;
        }
        //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
 
