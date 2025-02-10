@@ -4646,7 +4646,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $email = $evaluation_user["email"];
         $userid = $evaluation_user["id"];
         $lang = $evaluation_user["language"];
-        $headers = array("From" => $sender, "Return-Path" => $senderMail, "Reply-To" => $sender, "MIME-Version" => "1.0",
+        $headers = array("From" => $sender, "Return-Path" => "<$senderMail>", "Reply-To" => $sender, "MIME-Version" => "1.0",
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
 
         if( empty($username) || empty($firstname)){
@@ -4792,7 +4792,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
         }
         if (!$CFG->noemailever || $test) {
-            mail($to, $subject, quoted_printable_encode($message), $headers); //,"-r '$sender'");
+            mail($to, $subject, quoted_printable_encode($message), $headers,"-f$senderMail"); //,"-r '$sender'");
             ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
         else{
