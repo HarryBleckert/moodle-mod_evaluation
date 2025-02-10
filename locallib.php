@@ -1696,7 +1696,7 @@ function total_evaluation_days($evaluation) {
     $timeclose = ($evaluation->timeclose > 0 ? $evaluation->timeclose : 0);
     $difference = $timeclose - $timeopen;
     if ($difference > 0) {
-        return round(($difference / 60 / 60 / 24));
+        return floor(($difference / 60 / 60 / 24));
     }
     return 1;
 }
