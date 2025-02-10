@@ -4607,8 +4607,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $senderMail = $evaluation->sendermail;
     $sender = $senderName . " <$senderMail>";
 
-    $cntStudents = $cntTeachers = 0;
-    $cnt = 0;
     /*if (!defined('NO_OUTPUT_BUFFERING')) {
         define('NO_OUTPUT_BUFFERING', true);
     }*/
@@ -4632,12 +4630,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         ev_show_reminders_log(ev_get_string($send_reminders_noreplies, $a), $cronjob);
     }
 
+    $cnt = $cntStudents = $cntTeachers = 0;
     foreach ($evaluation_users as $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
        if(!$cronjob) {
-           @ob_flush();
-           @ob_end_flush();
-           @flush();
-           @ob_start();
+           ini_set("output_buffering", 600);
+           @ob_flush();@ob_end_flush();@flush();@ob_start();
        }
        //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
 
@@ -4653,18 +4650,18 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
 
         if( empty($username) || empty($firstname)){
-            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user", $cronjob);
+            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user!!", $cronjob);
             continue;
         }
         if (empty($email) or strtolower($email) == "unknown" or !strstr($email, "@") or stristr($email, "unknown@")) {
-            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to $email", $cronjob);
+            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to $email!!", $cronjob);
             continue;
         }
 
         if (!empty($CFG->ash)) {
             $blockedusers = array('01242044','00053230');
             if (in_array($username, $blockedusers)){
-                ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - user is in blocklist. No mail sent!", $cronjob);
+                ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - user is in blocklist. No mail sent!!", $cronjob);
                 continue;
             }
             $blockedusers = array('00054699', '00054690', '00054542', '00054686', '00054503', '00054683', '00054780', '00054691', '00054615',
@@ -4690,7 +4687,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     '00054908', '00054648', '00054764', '00054744', '00054694'
                     );
             if (in_array($username, $blockedusers) and date("Y-m-d") == "2025-02-10"){
-                ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - user is in temporary blocklist. No mail sent!", $cronjob);
+                ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - user is in temporary blocklist. No mail sent!!", $cronjob);
                 continue;
             }
         }
