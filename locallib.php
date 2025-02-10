@@ -1704,18 +1704,18 @@ function total_evaluation_days($evaluation) {
 function current_evaluation_day($evaluation) {
     $timeopen = ($evaluation->timeopen > 0 ? $evaluation->timeopen : 0);
     $timeclose = ($evaluation->timeclose > 0 ? $evaluation->timeclose : 0);
-    $difference = time() - $timeopen;
-    if ($difference > 0 and $timeclose > time()) {    //return round(($difference/60/60/24)+1,1);
-        return max(1, round(($difference / 60 / 60 / 24), 1));
+    $current_seconds = time() - $timeopen;
+    if ($current_seconds > 0 and $timeclose > time()) {    //return round(($current_evaluation_day/60/60/24)+1,1);
+        return max(1, floor($current_seconds / (60 * 60 * 24)));
     }
     return total_evaluation_days($evaluation);
 }
 
 function remaining_evaluation_days($evaluation) {
     $timeclose = ($evaluation->timeclose > 0 ? $evaluation->timeclose : 0);
-    $difference = $timeclose - time();
-    if ($difference > 0 and $timeclose > time()) {
-        return round(($difference / 60 / 60 / 24));
+    $remaining_days = $timeclose - time();
+    if ($remaining_days > 0 and $timeclose > time()) {
+        return floor(($remaining_days / 60 / 60 / 24));
     }
     return 0;
 }
