@@ -117,7 +117,6 @@ $string['in'] = 'in';
 $string['is'] = 'is';
 $string['days'] = 'days';
 $string['today'] = 'today';
-
 $string['was'] = 'was';
 $string['teamteachingtxt'] = 'In seminars with team teaching, the lecturers are evaluated individually.';
 $string['is_WM_disabled'] = 'Continuing education master\'s degree programs are excluded.';

@@ -114,7 +114,7 @@ $string['hide_graphic_data'] = 'Grafikdaten verbergen';
 // end graph lib
 
 // view.php
-$string['in'] = 'ist';
+$string['in'] = 'in';
 $string['is'] = 'ist';
 $string['days'] = 'Tage';
 $string['today'] = 'heute';
