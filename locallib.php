@@ -2456,8 +2456,14 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
     }
     $_SESSION["distinct_s"] = safeCount($distinct_s);
     if ($userid) {
+        uasort($my_evaluation_courses, function($a, $b) {
+            return strcmp($a['courseid'], $b['courseid']);
+        });
         return $my_evaluation_courses;
     } else if ($getStudents || $getTeachers) {
+        uasort($my_evaluation_users, function($a, $b) {
+            return strcmp($a['lastname'], $b['lastname']);
+        });
         return $my_evaluation_users;
     } else {
         return array($cnt_courses, $cnt_empty_courses,
