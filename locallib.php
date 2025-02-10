@@ -4604,7 +4604,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $cmid = get_evaluation_cmid_from_id($evaluation);
     $evUrl = $CFG->wwwroot . "/evaluation/view.php?id=" . $cmid;
     $senderName = '=?UTF-8?B?' . base64_encode($evaluation->sendername) . '?=';
-    $senderMail = $evaluation->sendermail;
+    $senderMail = strtolower($evaluation->sendermail);
     $sender = $senderName . " <$senderMail>";
 
     /*if (!defined('NO_OUTPUT_BUFFERING')) {
@@ -4643,7 +4643,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $firstname = $evaluation_user["firstname"];
         $lastname = $evaluation_user["lastname"];
         $fullname = $a->fullname = str_replace('"','',$evaluation_user["fullname"]);
-        $email = $evaluation_user["email"];
+        $email = strtolower($evaluation_user["email"]);
         $userid = $evaluation_user["id"];
         $lang = $evaluation_user["language"];
         $headers = array("From" => $sender, "Return-Path" => "<$senderMail>", "Reply-To" => $sender, "MIME-Version" => "1.0",
