@@ -4814,7 +4814,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             . " seconds. " . date("Ymd H:i:s"), $cronjob);
 
     // send info mails to privileged
-    if (!$test){
+    if (false && !$test){
         $role = ($role == "teacher" ?$role :"student");
         ev_set_reminders($evaluation,$role."s", $noreplies);
         if (!$CFG->noemailever) {
