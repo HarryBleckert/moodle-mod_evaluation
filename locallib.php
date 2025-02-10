@@ -4609,9 +4609,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $headers = array("From" => $sender, "Return-Path" => "<$senderMail>", "Reply-To" => $sender, "MIME-Version" => "1.0",
             "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
 
-    if (!defined('NO_OUTPUT_BUFFERING')) {
+    /*f (!defined('NO_OUTPUT_BUFFERING')) {
         define('NO_OUTPUT_BUFFERING', true);
-    }
+    }*/
     ini_set("output_buffering", 600);
 
     $a = new stdClass();
