@@ -4798,7 +4798,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     . ev_get_string('send_reminders_teachers', $a) . "</body></html>";
 
         }
-        if (false){ //(!$CFG->noemailever || $test) {
+        if (!$CFG->noemailever || $test) {
             mail($to, $subject, quoted_printable_encode($message), $headers,"-f$senderMail"); //,"-r '$sender'");
             ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
@@ -4822,7 +4822,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             . " seconds. " . date("Ymd H:i:s"), $cronjob);
 
     // send info mails to privileged
-    if (false && !$test){
+    if (!$test){
         $role = ($role == "teacher" ?$role :"student");
         ev_set_reminders($evaluation,$role."s", $noreplies);
         if (!$CFG->noemailever) {
