@@ -4666,6 +4666,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - user is in blocklist. No mail sent!", $cronjob);
                 continue;
             }
+            $blockedusers = array('00049756', '00048871', '00050280', '00051438', '00051972', '00052124', '00051914',
+                    '00048286', '39852', '00048161', '00039945', '00051763', '00050531', '00050469', '00047576', '00050701', '00051648',
+                    '00050988', '00052000', '01242042', '00052602', '00049691', '00049779', '00054432', '43464', '00054070',
+                    '00054357', '00054164', '00054166', '00054213', '00054272', '00054419', '00054273', '00054363', '00054383');
+            if (in_array($username, $blockedusers)){
+                ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - user is in temporary blocklist. No mail sent!", $cronjob);
+                continue;
+            }
         }
         unset($_SESSION["possible_evaluations"], $_SESSION["possible_active_evaluations"]);
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
