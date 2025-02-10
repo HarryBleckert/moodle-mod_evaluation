@@ -4564,6 +4564,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($verbose) {
         $DB->set_debug(true);
     }
+    if ( $cronjob ){
+        ini_set('output_buffering', 600);
+    }
     /*
      * if ($CFG->noemailever){
         $test = true;
