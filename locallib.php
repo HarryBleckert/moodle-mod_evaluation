@@ -4606,10 +4606,12 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $senderName = '=?UTF-8?B?' . base64_encode($evaluation->sendername) . '?=';
     $senderMail = strtolower($evaluation->sendermail);
     $sender = $senderName . " <$senderMail>";
+    $headers = array("From" => $sender, "Return-Path" => "<$senderMail>", "Reply-To" => $sender, "MIME-Version" => "1.0",
+            "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
 
-    /*if (!defined('NO_OUTPUT_BUFFERING')) {
+    if (!defined('NO_OUTPUT_BUFFERING')) {
         define('NO_OUTPUT_BUFFERING', true);
-    }*/
+    }
     ini_set("output_buffering", 600);
 
     $a = new stdClass();
@@ -4633,7 +4635,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $cnt = $cntStudents = $cntTeachers = 0;
     foreach ($evaluation_users as $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
        if(!$cronjob) {
-           ini_set("output_buffering", 600);
            @ob_flush();@ob_end_flush();@flush();@ob_start();
        }
        //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
@@ -4646,8 +4647,6 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $email = strtolower($evaluation_user["email"]);
         $userid = $evaluation_user["id"];
         $lang = $evaluation_user["language"];
-        $headers = array("From" => $sender, "Return-Path" => "<$senderMail>", "Reply-To" => $sender, "MIME-Version" => "1.0",
-                "Content-type" => "text/html;charset=UTF-8", "Content-Transfer-Encoding" => "quoted-printable");
 
         if( empty($username) || empty($firstname)){
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user!!", $cronjob);
@@ -4846,7 +4845,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                             . ev_get_string('send_reminders_privileged')
                             . ev_get_string('send_reminders_'.$role.'s', $a) . "</body></html>";
                     $subject = '=?UTF-8?B?' . base64_encode($a->sent_reminders_info . $a->ev_name) . '?=';
-                    mail($email, $subject, quoted_printable_encode($message), $headers);
+                    mail($email, $subject, quoted_printable_encode($message), $headers,"-f$senderMail");
                     $msg = " -Info to privileged persons:";
                     ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt", $cronjob);
                     $cnt++;
@@ -4877,7 +4876,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $msg = "Hey Admin :)<br><br>\n" . ev_get_string('send_reminders_privileged')
                 . $dbname . $mailsSent;
         $msg = str_ireplace("<body>", "<body>" . $msg, $message);
-        mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers);
+        mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers,"-f$senderMail");
         force_current_language($current_language);
     }
     unset($_SESSION["EvaluationsID"]);
