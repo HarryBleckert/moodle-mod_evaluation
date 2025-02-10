@@ -4656,7 +4656,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $email = strtolower($evaluation_user["email"]);
         $userid = $evaluation_user["id"];
         $lang = $evaluation_user["language"];
-ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid", $cronjob);
+        // ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid", $cronjob);
         if( empty($username) || empty($fullname)){
             ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user!!", $cronjob);
             continue;
