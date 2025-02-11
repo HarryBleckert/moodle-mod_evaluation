@@ -4593,7 +4593,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $blockedusers = array();
     $blockedusersfile = $CFG->dataroot . "/" . $CFG->dbname ."/evaluation_blockedusers_" .date("Ymd"). ".txt";
     if (file_exists($blockedusersfile)) {
-        $blockedusers = explode(", ",file_get_contents($blockedusersfile));
+        $blockedusers = explode("\n",file_get_contents($blockedusersfile));
     }
     elseif ($files = glob($CFG->dataroot . "/" . $CFG->dbname . "/evaluation_blockedusers_*.txt")) {
         foreach ($files as $file) {
@@ -4730,10 +4730,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         } else {
             $to = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <$email>";
         }
-        if (!$test && empty($blockedusers[$username])) {
-            $blockedusers[$username] = $username;
-            file_put_contents($blockedusersfile, implode("\n", $blockedusers),FILE_APPEND);
-        }
+
         $testinfo = ($test ? " Test: " : "");
         $subject = $testinfo . '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
 
@@ -4746,6 +4743,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
             }
             $a->testmsg .= "<hr>\n";
+        } elseif (empty($blockedusers[$username])) {
+            $blockedusers[$username] = $username;
+            file_put_contents($blockedusersfile, implode("\n", $blockedusers),FILE_APPEND);
         }
 
         $a->remaining_evaluation_days = $remaining_evaluation_days;
