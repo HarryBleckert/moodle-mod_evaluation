@@ -1514,7 +1514,7 @@ function evaluation_showteachers($evaluation, $courseid, $cmid = false, $user = 
 function validate_evaluation_sessions($evaluation) {
     if (!isset($_SESSION["EvaluationsID"]) || $_SESSION["EvaluationsID"] != $evaluation->id) {
         unset( $_SESSION['allteachers'] );
-        unset($_SESSION["myEvaluations"], $_SESSION['anonresponsestable'], $_SESSION['responsestable'], $_SESSION['blockedusers'],
+        unset($_SESSION["myEvaluations"], $_SESSION['anonresponsestable'], $_SESSION['responsestable'], // $_SESSION['blockedusers'],
                 $_SESSION["numStudents"], $_SESSION["teachers"], $_SESSION["showTeachers"],
                 $_SESSION["participating_courses"], $_SESSION["participating_empty_courses"],
                 $_SESSION["distinct_s"], $_SESSION["distinct_s_active"], $_SESSION["students"], $_SESSION["students_active"], $_SESSION["active_student"],
