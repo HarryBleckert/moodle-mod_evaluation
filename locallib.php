@@ -4564,11 +4564,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($verbose) {
         $DB->set_debug(true);
     }
-     if ( $cronjob ){
+    if ($cronjob) {
         ini_set('output_buffering', 600);
     }
 
-    if ($CFG->noemailever){
+    if ($CFG->noemailever) {
         $test = true;
     }
 
@@ -4592,12 +4592,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
     setlocale(LC_ALL, 'de_DE');
     $current_language = current_language();
-    $role = ($role == "participants" ?"student" :$role);
+    $role = ($role == "participants" ? "student" : $role);
 
     ev_show_reminders_log("\n" . date("Ymd H:i:s") .
             "\nSending reminders to all participants with role $role in evaluation ($CFG->dbname)"
             . "'$evaluation->name' (ID: $evaluation->id)", $cronjob);
-
 
     if ($test) {
         ev_show_reminders_log("Test Mode $test", $cronjob);
@@ -4624,13 +4623,13 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     $a = new stdClass();
     $a->minResults = $minResults;
     $a->min_results_text = $minResultsText;
-    $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
+    $a->role = ev_get_string(($role == "teacher" ? "teachers" : "students"));
     $a->signum = (!empty($CFG->ash)
-            ?"<hr>
+            ? "<hr>
                 <b>Alice Salomon Hochschule Berlin</b><br>
                  - University of Applied Sciences -<br>
                 Alice-Salomon-Platz 5, 12627 Berlin<br>"
-            :"");
+            : "");
     $send_reminders_noreplies = "send_reminders_noreplies_students";
     if ($noreplies) {
         if ($role == "teacher") {
@@ -4641,39 +4640,130 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
 
     $cnt = $cntStudents = $cntTeachers = 0;
     foreach ($evaluation_users as $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
-       if(!$cronjob) {
-           @ob_flush();@ob_end_flush();ob_start(null, 600);;
-       }
-       //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
+        if (!$cronjob) {
+            @ob_flush();
+            @ob_end_flush();
+            ob_start(null, 600);;
+        }
+        //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
 
         $cnt++;
         $username = $evaluation_user["username"];
         // $firstname = $evaluation_user["firstname"];
         // $lastname = $evaluation_user["lastname"];
-        $fullname = $a->fullname = str_replace('"','',$evaluation_user["fullname"]);
+        $fullname = $a->fullname = str_replace('"', '', $evaluation_user["fullname"]);
         $email = strtolower($evaluation_user["email"]);
         $userid = $evaluation_user["id"];
         $lang = $evaluation_user["language"];
         // ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid", $cronjob);
-        if( empty($username) || empty($fullname)){
-            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user!!", $cronjob);
+        if (empty($username) || empty($fullname)) {
+            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user!!",
+                    $cronjob);
             continue;
         }
         if (empty($email) or strtolower($email) == "unknown" or !strstr($email, "@") or stristr($email, "unknown@")) {
-            ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - Can't send mail to $email!!", $cronjob);
+            ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - Can't send mail to $email!!",
+                    $cronjob);
             continue;
         }
 
         if (!empty($CFG->ash)) {
-            $blockedusers = array('01242044','00053230');
-            if (in_array($username, $blockedusers)){
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - user is in blocklist!!", $cronjob);
+            $blockedusers = array('01242044', '00053230');
+            if (in_array($username, $blockedusers)) {
+                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - user is in blocklist!!",
+                        $cronjob);
                 continue;
             }
-            $_SESSION['blockedusers'] = array('00051191', '00053128', '00052157', '00054471', '00049471', '00053914', '00053088', '00051079', '00050383', '00052720', '00052609', '00052120', '00040174', '00052865', '00052317', '00053468', '00051043', '00049197', '00049279', '00051874', '00051462', '00052095', '00051042', '00050817', '00052999', '00036022', '00049755', '00054965', '00053923', '00050452', '00052027', '00047857', '00051192', '00052755', '00049469', '00050966', '00049467', '00054912', '00048102', '00051044', '00051267', '00049318', '00052987', '00054485', '00053965', '00053762', '00054589', '00051194', '00053924', '00052158', '00051970', '00052753', '00052200', '00053926', '00046321', '00051464', '00051527', '00052531', '00051268', '86021202', '00047633', '00054491', '00053240', '00048587', '00053572', '00052498', '00044721', '00047199', '01242005', '00052061', '00047172', '00052839', '00046752', '00050019', '00048898', '00053058', '00052510', '00053927', '00047855', '00051828', '00048789', 'm_12089', '00053281', '00054834', '00051796', '00053928', '86024204', '00051466', '00053448', '00054676', '00052185', '00053234', '00052134', 'assafa', '00054936', '00052959', '00054373', '00049847', '00054268', '00053764', '00051378', '00054354', '00054421', '00051694', '00052772', '00054857', '00051758', '00050890', '00052499', '00052749', '00052747', '05222021', '00052251', '00049752', '00049829', '00052121', '00053684', '00052888', '00049291', '00040803', '00052895', '00048306', '00051316', '00053091', '00051938', '00049248', '00051844', '00054262', '00054422', '00051513', '00053434', '00048687', '00053111', '01242045', '00051207', '00050827', '00053721', '00053079', '00050009', '00048979', '00053069', '00054122', '00052694', '00051269', '00053321', '00054131', '00053731', '00053979', '00051270', '00054063', '00141057', '00053394', '00054839', '00054161', '00049616', '00051287',
-                    '00038418', '00039378', '00039945', '00042234', '00043201', '00043380', '00044377', '00044448', '00044908', '00045706', '00045744', '00045783', '00045887', '00046257', '00046346', '00046683', '00046690', '00046769', '00047200', '00047222', '00047508', '00047557', '00047576', '00047658', '00047701', '00047743', '00047798', '00047816', '00048161', '00048168', '00048220', '00048286', '00048321', '00048416', '00048688', '00048809', '00048871', '00048873', '00049216', '00049312', '00049381', '00049428', '00049445', '00049659', '00049691', '00049742', '00049756', '00049757', '00049778', '00049779', '00049781', '00049805', '00049852', '00049929', '00050015', '00050247', '00050268', '00050275', '00050280', '00050283', '00050313', '00050405', '00050411', '00050469', '00050531', '00050534', '00050549', '00050560', '00050576', '00050623', '00050631', '00050632', '00050655', '00050687', '00050699', '00050701', '00050705', '00050732', '00050815', '00050826', '00050917', '00050932', '00050943', '00050967', '00050986', '00050988', '00051006', '00051035', '00051036', '00051037', '00051056', '00051059', '00051061', '00051073', '00051145', '00051214', '00051244', '00051271', '00051275', '00051288', '00051291', '00051299', '00051304', '00051306', '00051391', '00051411', '00051438', '00051457', '00051468', '00051470', '00051507', '00051508', '00051511', '00051514', '00051515', '00051516', '00051517', '00051523', '00051533', '00051534', '00051536', '00051538', '00051539', '00051540', '00051551', '00051553', '00051555', '00051560', '00051564', '00051571', '00051572', '00051576', '00051627', '00051630', '00051632', '00051633', '00051645', '00051648', '00051649', '00051680', '00051720', '00051725', '00051756', '00051763', '00051770', '00051782', '00051857', '00051871', '00051876', '00051889', '00051914', '00051922', '00051954', '00051972', '00051975', '00051977', '00051983', '00051987', '00051991', '00052000', '00052001', '00052071', '00052081', '00052094', '00052097', '00052101', '00052109', '00052111', '00052115', '00052124', '00052125', '00052129', '00052144', '00052145', '00052159', '00052166', '00052170', '00052176', '00052186', '00052199', '00052212', '00052267', '00052382', '00052420', '00052441', '00052473', '00052490', '00052496', '00052500', '00052518', '00052602', '00052624', '00052639', '00052659', '00052674', '00052676', '00052683', '00052697', '00052706', '00052713', '00052735', '00052769', '00052840', '00052860', '00052914', '00052939', '00052970', '00052975', '00053002', '00053062', '00053092', '00053108', '00053118', '00053143', '00053211', '00053230', '00053258', '00053285', '00053286', '00053288', '00053294', '00053299', '00053365', '00053373', '00053389', '00053458', '00053477', '00053478', '00053479', '00053481', '00053486', '00053545', '00053577', '00053588', '00053591', '00053592', '00053602', '00053612', '00053639', '00053643', '00053644', '00053647', '00053662', '00053683', '00053694', '00053718', '00053765', '00053773', '00053815', '00053865', '00053868', '00053876', '00053892', '00053896', '00053906', '00053932', '00053936', '00053945', '00053968', '00053997', '00054005', '00054012', '00054017', '00054033', '00054034', '00054035', '00054070', '00054163', '00054164', '00054166', '00054171', '00054178', '00054184', '00054185', '00054213', '00054216', '00054217', '00054225', '00054226', '00054227', '00054229', '00054263', '00054272', '00054273', '00054275', '00054277', '00054291', '00054295', '00054308', '00054309', '00054311', '00054320', '00054321', '00054326', '00054330', '00054333', '00054341', '00054343', '00054357', '00054360', '00054362', '00054363', '00054375', '00054382', '00054383', '00054400', '00054415', '00054418', '00054419', '00054426', '00054429', '00054432', '00054440', '00054447', '00054481', '00054488', '00054503', '00054504', '00054524', '00054528', '00054529', '00054531', '00054532', '00054533', '00054535', '00054537', '00054539', '00054540', '00054542', '00054543', '00054545', '00054548', '00054550', '00054556', '00054558', '00054560', '00054561', '00054563', '00054564', '00054565', '00054567', '00054568', '00054569', '00054570', '00054578', '00054579', '00054584', '00054590', '00054591', '00054592', '00054595', '00054596', '00054597', '00054599', '00054600', '00054601', '00054602', '00054603', '00054604', '00054605', '00054608', '00054609', '00054610', '00054612', '00054613', '00054615', '00054616', '00054617', '00054620', '00054622', '00054624', '00054625', '00054626', '00054627', '00054628', '00054637', '00054638', '00054640', '00054641', '00054650', '00054651', '00054652', '00054653', '00054657', '00054658', '00054660', '00054661', '00054668', '00054678', '00054681', '00054682', '00054683', '00054685', '00054686', '00054687', '00054688', '00054690', '00054691', '00054692', '00054694', '00054695', '00054697', '00054699', '00054700', '00054706', '00054707', '00054712', '00054715', '00054719', '00054721', '00054725', '00054726', '00054729', '00054730', '00054737', '00054743', '00054747', '00054751', '00054753', '00054761', '00054763', '00054764', '00054768', '00054769', '00054770', '00054772', '00054773', '00054775', '00054776', '00054778', '00054779', '00054780', '00054784', '00054786', '00054788', '00054792', '00054793', '00054797', '00054799', '00054800', '00054802', '00054804', '00054806', '00054807', '00054808', '00054809', '00054810', '00054812', '00054813', '00054817', '00054824', '00054826', '00054830', '00054833', '00054835', '00054836', '00054840', '00054845', '00054846', '00054855', '00054856', '00054859', '00054861', '00054864', '00054865', '00054866', '00054868', '00054877', '00054886', '00054887', '00054888', '00054889', '00054890', '00054891', '00054892', '00054895', '00054899', '00054900', '00054901', '00054906', '00054907', '00054908', '00054909', '00054910', '00054913', '00054914', '00054922', '00054925', '00054932', '00054935', '00054940', '00054942', '00054947', '00054955', '00054956', '00054962', '00054968', '00054977', '00054982', '01242009', '01242018', '01242019', '01242025', '01242026', '01242030', '01242034', '01242039', '01242042', '01242044', '01242048', '01242053', '05212004', '05242004', '05242007', '07021111', '07023115', '86024203', '86024208', 'm_11305', 'm_11552', 'm_12010', 'm_12087', 'm_12092', 'm_12094');
-            if (in_array($username, $_SESSION['blockedusers']) and date("Y-m-d") == "2025-02-11"){
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - user is in temporary blocklist!!", $cronjob);
+            $_SESSION['blockedusers'] =
+                    array('00051191', '00053128', '00052157', '00054471', '00049471', '00053914', '00053088', '00051079',
+                            '00050383', '00052720', '00052609', '00052120', '00040174', '00052865', '00052317', '00053468',
+                            '00051043', '00049197', '00049279', '00051874', '00051462', '00052095', '00051042', '00050817',
+                            '00052999', '00036022', '00049755', '00054965', '00053923', '00050452', '00052027', '00047857',
+                            '00051192', '00052755', '00049469', '00050966', '00049467', '00054912', '00048102', '00051044',
+                            '00051267', '00049318', '00052987', '00054485', '00053965', '00053762', '00054589', '00051194',
+                            '00053924', '00052158', '00051970', '00052753', '00052200', '00053926', '00046321', '00051464',
+                            '00051527', '00052531', '00051268', '86021202', '00047633', '00054491', '00053240', '00048587',
+                            '00053572', '00052498', '00044721', '00047199', '01242005', '00052061', '00047172', '00052839',
+                            '00046752', '00050019', '00048898', '00053058', '00052510', '00053927', '00047855', '00051828',
+                            '00048789', 'm_12089', '00053281', '00054834', '00051796', '00053928', '86024204', '00051466',
+                            '00053448', '00054676', '00052185', '00053234', '00052134', 'assafa', '00054936', '00052959',
+                            '00054373', '00049847', '00054268', '00053764', '00051378', '00054354', '00054421', '00051694',
+                            '00052772', '00054857', '00051758', '00050890', '00052499', '00052749', '00052747', '05222021',
+                            '00052251', '00049752', '00049829', '00052121', '00053684', '00052888', '00049291', '00040803',
+                            '00052895', '00048306', '00051316', '00053091', '00051938', '00049248', '00051844', '00054262',
+                            '00054422', '00051513', '00053434', '00048687', '00053111', '01242045', '00051207', '00050827',
+                            '00053721', '00053079', '00050009', '00048979', '00053069', '00054122', '00052694', '00051269',
+                            '00053321', '00054131', '00053731', '00053979', '00051270', '00054063', '00141057', '00053394',
+                            '00054839', '00054161', '00049616', '00051287',
+                            '00038418', '00039378', '00039945', '00042234', '00043201', '00043380', '00044377', '00044448',
+                            '00044908', '00045706', '00045744', '00045783', '00045887', '00046257', '00046346', '00046683',
+                            '00046690', '00046769', '00047200', '00047222', '00047508', '00047557', '00047576', '00047658',
+                            '00047701', '00047743', '00047798', '00047816', '00048161', '00048168', '00048220', '00048286',
+                            '00048321', '00048416', '00048688', '00048809', '00048871', '00048873', '00049216', '00049312',
+                            '00049381', '00049428', '00049445', '00049659', '00049691', '00049742', '00049756', '00049757',
+                            '00049778', '00049779', '00049781', '00049805', '00049852', '00049929', '00050015', '00050247',
+                            '00050268', '00050275', '00050280', '00050283', '00050313', '00050405', '00050411', '00050469',
+                            '00050531', '00050534', '00050549', '00050560', '00050576', '00050623', '00050631', '00050632',
+                            '00050655', '00050687', '00050699', '00050701', '00050705', '00050732', '00050815', '00050826',
+                            '00050917', '00050932', '00050943', '00050967', '00050986', '00050988', '00051006', '00051035',
+                            '00051036', '00051037', '00051056', '00051059', '00051061', '00051073', '00051145', '00051214',
+                            '00051244', '00051271', '00051275', '00051288', '00051291', '00051299', '00051304', '00051306',
+                            '00051391', '00051411', '00051438', '00051457', '00051468', '00051470', '00051507', '00051508',
+                            '00051511', '00051514', '00051515', '00051516', '00051517', '00051523', '00051533', '00051534',
+                            '00051536', '00051538', '00051539', '00051540', '00051551', '00051553', '00051555', '00051560',
+                            '00051564', '00051571', '00051572', '00051576', '00051627', '00051630', '00051632', '00051633',
+                            '00051645', '00051648', '00051649', '00051680', '00051720', '00051725', '00051756', '00051763',
+                            '00051770', '00051782', '00051857', '00051871', '00051876', '00051889', '00051914', '00051922',
+                            '00051954', '00051972', '00051975', '00051977', '00051983', '00051987', '00051991', '00052000',
+                            '00052001', '00052071', '00052081', '00052094', '00052097', '00052101', '00052109', '00052111',
+                            '00052115', '00052124', '00052125', '00052129', '00052144', '00052145', '00052159', '00052166',
+                            '00052170', '00052176', '00052186', '00052199', '00052212', '00052267', '00052382', '00052420',
+                            '00052441', '00052473', '00052490', '00052496', '00052500', '00052518', '00052602', '00052624',
+                            '00052639', '00052659', '00052674', '00052676', '00052683', '00052697', '00052706', '00052713',
+                            '00052735', '00052769', '00052840', '00052860', '00052914', '00052939', '00052970', '00052975',
+                            '00053002', '00053062', '00053092', '00053108', '00053118', '00053143', '00053211', '00053230',
+                            '00053258', '00053285', '00053286', '00053288', '00053294', '00053299', '00053365', '00053373',
+                            '00053389', '00053458', '00053477', '00053478', '00053479', '00053481', '00053486', '00053545',
+                            '00053577', '00053588', '00053591', '00053592', '00053602', '00053612', '00053639', '00053643',
+                            '00053644', '00053647', '00053662', '00053683', '00053694', '00053718', '00053765', '00053773',
+                            '00053815', '00053865', '00053868', '00053876', '00053892', '00053896', '00053906', '00053932',
+                            '00053936', '00053945', '00053968', '00053997', '00054005', '00054012', '00054017', '00054033',
+                            '00054034', '00054035', '00054070', '00054163', '00054164', '00054166', '00054171', '00054178',
+                            '00054184', '00054185', '00054213', '00054216', '00054217', '00054225', '00054226', '00054227',
+                            '00054229', '00054263', '00054272', '00054273', '00054275', '00054277', '00054291', '00054295',
+                            '00054308', '00054309', '00054311', '00054320', '00054321', '00054326', '00054330', '00054333',
+                            '00054341', '00054343', '00054357', '00054360', '00054362', '00054363', '00054375', '00054382',
+                            '00054383', '00054400', '00054415', '00054418', '00054419', '00054426', '00054429', '00054432',
+                            '00054440', '00054447', '00054481', '00054488', '00054503', '00054504', '00054524', '00054528',
+                            '00054529', '00054531', '00054532', '00054533', '00054535', '00054537', '00054539', '00054540',
+                            '00054542', '00054543', '00054545', '00054548', '00054550', '00054556', '00054558', '00054560',
+                            '00054561', '00054563', '00054564', '00054565', '00054567', '00054568', '00054569', '00054570',
+                            '00054578', '00054579', '00054584', '00054590', '00054591', '00054592', '00054595', '00054596',
+                            '00054597', '00054599', '00054600', '00054601', '00054602', '00054603', '00054604', '00054605',
+                            '00054608', '00054609', '00054610', '00054612', '00054613', '00054615', '00054616', '00054617',
+                            '00054620', '00054622', '00054624', '00054625', '00054626', '00054627', '00054628', '00054637',
+                            '00054638', '00054640', '00054641', '00054650', '00054651', '00054652', '00054653', '00054657',
+                            '00054658', '00054660', '00054661', '00054668', '00054678', '00054681', '00054682', '00054683',
+                            '00054685', '00054686', '00054687', '00054688', '00054690', '00054691', '00054692', '00054694',
+                            '00054695', '00054697', '00054699', '00054700', '00054706', '00054707', '00054712', '00054715',
+                            '00054719', '00054721', '00054725', '00054726', '00054729', '00054730', '00054737', '00054743',
+                            '00054747', '00054751', '00054753', '00054761', '00054763', '00054764', '00054768', '00054769',
+                            '00054770', '00054772', '00054773', '00054775', '00054776', '00054778', '00054779', '00054780',
+                            '00054784', '00054786', '00054788', '00054792', '00054793', '00054797', '00054799', '00054800',
+                            '00054802', '00054804', '00054806', '00054807', '00054808', '00054809', '00054810', '00054812',
+                            '00054813', '00054817', '00054824', '00054826', '00054830', '00054833', '00054835', '00054836',
+                            '00054840', '00054845', '00054846', '00054855', '00054856', '00054859', '00054861', '00054864',
+                            '00054865', '00054866', '00054868', '00054877', '00054886', '00054887', '00054888', '00054889',
+                            '00054890', '00054891', '00054892', '00054895', '00054899', '00054900', '00054901', '00054906',
+                            '00054907', '00054908', '00054909', '00054910', '00054913', '00054914', '00054922', '00054925',
+                            '00054932', '00054935', '00054940', '00054942', '00054947', '00054955', '00054956', '00054962',
+                            '00054968', '00054977', '00054982', '01242009', '01242018', '01242019', '01242025', '01242026',
+                            '01242030', '01242034', '01242039', '01242042', '01242044', '01242048', '01242053', '05212004',
+                            '05242004', '05242007', '07021111', '07023115', '86024203', '86024208', 'm_11305', 'm_11552', 'm_12010',
+                            'm_12087', 'm_12092', 'm_12094');
+            if (in_array($username, $_SESSION['blockedusers']) and date("Y-m-d") == "2025-02-11") {
+                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - user is in temporary blocklist!!",
+                        $cronjob);
                 continue;
             }
         }
@@ -4689,33 +4779,33 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         force_current_language($lang);
         $a->ev_name = ev_get_tr($evaluation->name);
 
-        if ($test ) { // OR ($cnt<2 AND $CFG->noemailever)) {
+        if ($test) { // OR ($cnt<2 AND $CFG->noemailever)) {
             if (false && $cnt > 1) {
                 break;
             }
             $to = "Harry <Harry@Bleckert.com>";
             // $to = $sender;
             // $to = "Anja Voss <voss@ash-berlin.eu>";
-            if (strpos($test,"@")){
+            if (strpos($test, "@")) {
                 $to = $test;
             }
-            if ( strpos($to,"<") !== false AND strpos($to,">") !== false) {
+            if (strpos($to, "<") !== false and strpos($to, ">") !== false) {
                 list($tname, $emailt) = explode(' <', trim($to, '> '));
-                $to = '=?UTF-8?B?' . base64_encode($tname." (Test)") . '?=' . " <$emailt>";
+                $to = '=?UTF-8?B?' . base64_encode($tname . " (Test)") . '?=' . " <$emailt>";
             }
         } else {
-            $to = '=?UTF-8?B?' . base64_encode($fullname ) . '?=' . " <$email>";
+            $to = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <$email>";
         }
         $_SESSION['blockedusers'][] = $email;
         $testinfo = ($test ? " Test: " : "");
         $subject = $testinfo . '=?UTF-8?B?' . base64_encode($a->ev_name) . '?=';
 
-        $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
+        $a->role = ev_get_string(($role == "teacher" ? "teachers" : "students"));
 
         $a->testmsg = "";
-        if ($test){
+        if ($test) {
             $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
-            if ($noreplies){
+            if ($noreplies) {
                 $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
             }
             $a->testmsg .= "<hr>\n";
@@ -4724,12 +4814,13 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $a->remaining_evaluation_days = $remaining_evaluation_days;
         $a->lastEvaluationDay = $lastEvaluationDay;
         $a->evUrl = $evUrl;
-        $a->reminder = ($remaining_evaluation_days <= 9 ?"<b>" . ev_get_string('send_reminders_remaining', $a) ."</b>" :"");
+        $a->reminder = ($remaining_evaluation_days <= 9 ? "<b>" . ev_get_string('send_reminders_remaining', $a) . "</b>" : "");
         $a->signature = $evaluation->signature;
         if ($role == "student") {
             $hasParticipated = evaluation_has_user_participated($evaluation, $userid);
-            if ($noreplies AND $hasParticipated) {
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $userid - $email - HAS PARTICIPATED!!", $cronjob);
+            if ($noreplies and $hasParticipated) {
+                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $userid - $email - HAS PARTICIPATED!!",
+                        $cronjob);
                 continue;
             }
             if (hasUserEvaluationCompleted($evaluation, $userid)) {
@@ -4739,49 +4830,50 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             $a->myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
             $cntStudents++;
             $a->also = (($hasParticipated or remaining_evaluation_days($evaluation) > 15) ? ""
-                    :ev_get_string('also'));
-            $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
+                    : ev_get_string('also'));
+            $message = '<html><head><title>' . $a->ev_name . '</title></head><body>'
                     . ev_get_string('send_reminders_students', $a) . "</body></html>";
         } else { // $role == teacher
             if (!safeCount($_SESSION["distinct_s"])) {
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $userid - $email - NO SESSION['distinct_s']!!", $cronjob);
+                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $userid - $email - NO SESSION['distinct_s']!!",
+                        $cronjob);
                 continue;
             }
 
             $replies = evaluation_countCourseEvaluations($evaluation, false, "teacher", $userid);
-            if ($noreplies AND $replies>=$a->min_results_text) {
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $userid - $email - >= $a->min_results_text replies!!", $cronjob);
+            if ($noreplies and $replies >= $a->min_results_text) {
+                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $userid - $email - >= $a->min_results_text replies!!",
+                        $cronjob);
                 continue;
             }
             $a->myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, true, true);
             $a->distinct_s = $_SESSION["distinct_s"];
             $a->replies = $replies;
-            $a->submissions = ev_get_string('submission' . ($replies>1 ?"s" :""));
+            $a->submissions = ev_get_string('submission' . ($replies > 1 ? "s" : ""));
 
             $a->onlyfew = "";
             if ($current_evaluation_day > 7 or $replies > 3) {
                 if ($replies < 21) {
                     if ($replies < 1) {
-                        $a->onlyfew = "<b>" .ev_get_string('send_reminders_no_replies',$a) . "</b>.<br>\n";
+                        $a->onlyfew = "<b>" . ev_get_string('send_reminders_no_replies', $a) . "</b>.<br>\n";
                     } else {
-                        $a->onlyfew = "<b>" . ev_get_string('send_reminders_few_replies',$a) . "</b>.<br>\n";
+                        $a->onlyfew = "<b>" . ev_get_string('send_reminders_few_replies', $a) . "</b>.<br>\n";
                     }
                 } else {
-                    $a->onlyfew = "<b>" . ev_get_string('send_reminders_many_replies',$a) .  "</b>.<br>";
+                    $a->onlyfew = "<b>" . ev_get_string('send_reminders_many_replies', $a) . "</b>.<br>";
                 }
             }
 
             $cntTeachers++;
 
-            $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
+            $message = '<html><head><title>' . $a->ev_name . '</title></head><body>'
                     . ev_get_string('send_reminders_teachers', $a) . "</body></html>";
 
         }
-        if (!$CFG->noemailever || ($test && $cnt<2)) {
-            mail($to, $subject, quoted_printable_encode($message), $headers,"-f$senderMail"); //,"-r '$sender'");
+        if (!$CFG->noemailever || ($test && $cnt < 2)) {
+            mail($to, $subject, quoted_printable_encode($message), $headers, "-f$senderMail"); //,"-r '$sender'");
             ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
-        }
-        else{
+        } else {
             ev_show_reminders_log("$cnt.  Mail not sent.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
     }
@@ -4800,54 +4892,55 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60)
             . " seconds. " . date("Ymd H:i:s"), $cronjob);
 
-    $role = ($role == "teacher" ?$role :"student");
+    $role = ($role == "teacher" ? $role : "student");
     $admindata = get_site_admin_user('harry');
 
     // send info mails to privileged
-    if (true || !$test){
-        ev_set_reminders($evaluation,$role."s", $noreplies);
-            if ($emails = ev_set_privileged_users(false, true)){
-                //$mails = explode("\n",$emails);
-                $cnt = 1;
-                foreach ($emails as $username => $email) {
-                    if (!strstr($email,"@") || !strstr($email,"<")){
-                        continue;
-                    }
-                    force_current_language(get_user_lang($username));
-                    $a->ev_name = ev_get_tr($evaluation->name);
-                    $fullname_last = $fullname;
-                    list($fullname, $emailt) = explode(' <', trim($email, '> '));
-                    $fullname = str_replace('"','',$fullname);
-                    $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
-                    $a->sent_reminders_info = ev_get_string('sent_reminders_info',$a) . ": ";
-                    $a->fullname = ""; // ev_get_string('john_doe');
-                    $email = '=?UTF-8?B?' . base64_encode($fullname). '?=' . " <$emailt>";
-                    // $email = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
-                    $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
-                    if ($noreplies){
-                        $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
-                    }
-                    $a->testmsg .= "<hr>\n";
-                    $message = '<html><head><title>' .$a->ev_name .'</title></head><body>'
-                            . ev_get_string('good_day') . " " . $fullname . "<br><br>\n"
-                            . ev_get_string('send_reminders_privileged')
-                            . ev_get_string('send_reminders_'.$role.'s', $a) . "</body></html>";
-                    $subject = '=?UTF-8?B?' . base64_encode($a->sent_reminders_info . $a->ev_name) . '?=';
-                    if ($CFG->noemailever || ($test && $cnt<2)) {
-                        $email = (!empty($admindata->email) ?$admindata->email: "harry.bleckert@ASH-berlin.eu");
-                    }
-                    if ((!$CFG->noemailever && !$test) || ($test && $cnt<2)) {
-                        mail($email, $subject, quoted_printable_encode($message), $headers,"-f$senderMail");
-                    }
-                    $msg = " -Info to privileged persons:";
-                    ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt", $cronjob);
-                    $cnt++;
-                }
-                force_current_language($current_language);
-            } else if ( is_siteadmin()){
-                print nl2br("<hr>Emails:\n" . var_export($emails,true));
-            }
+    if (!$test) {
+        ev_set_reminders($evaluation, $role . "s", $noreplies);
     }
+    if ($emails = ev_set_privileged_users(false, true)) {
+        //$mails = explode("\n",$emails);
+        $cnt = 1;
+        foreach ($emails as $username => $email) {
+            if (!strstr($email, "@") || !strstr($email, "<")) {
+                continue;
+            }
+            force_current_language(get_user_lang($username));
+            $a->ev_name = ev_get_tr($evaluation->name);
+            $fullname_last = $fullname;
+            list($fullname, $emailt) = explode(' <', trim($email, '> '));
+            $fullname = str_replace('"', '', $fullname);
+            $a->role = ev_get_string(($role == "teacher" ? "teachers" : "students"));
+            $a->sent_reminders_info = ev_get_string('sent_reminders_info', $a) . ": ";
+            $a->fullname = ""; // ev_get_string('john_doe');
+            $email = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <$emailt>";
+            // $email = '=?UTF-8?B?' . base64_encode($fullname) . '?=' . " <Harry.Bleckert@ASH-Berlin.eu>";
+            $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
+            if ($noreplies) {
+                $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
+            }
+            $a->testmsg .= "<hr>\n";
+            $message = '<html><head><title>' . $a->ev_name . '</title></head><body>'
+                    . ev_get_string('good_day') . " " . $fullname . "<br><br>\n"
+                    . ev_get_string('send_reminders_privileged')
+                    . ev_get_string('send_reminders_' . $role . 's', $a) . "</body></html>";
+            $subject = '=?UTF-8?B?' . base64_encode($a->sent_reminders_info . $a->ev_name) . '?=';
+            if ($CFG->noemailever || ($test && $cnt < 2)) {
+                $email = (!empty($admindata->email) ? $admindata->email : "harry.bleckert@ASH-berlin.eu");
+            }
+            if ((!$CFG->noemailever && !$test) || ($test && $cnt < 2)) {
+                mail($email, $subject, quoted_printable_encode($message), $headers, "-f$senderMail");
+            }
+            $msg = " -Info to privileged persons:";
+            ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt", $cronjob);
+            $cnt++;
+        }
+        force_current_language($current_language);
+    } else if (is_siteadmin()) {
+        print nl2br("<hr>Emails:\n" . var_export($emails, true));
+    }
+
     // send also one copy to Moodle admin (Harry)
     if ($admindata) {
         force_current_language(get_user_lang($admindata->username));
