@@ -4591,11 +4591,11 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     // $saveduser = $USER;
 
     $blockedusers = array();
-    $blockedusersfile = $CFG->dataroot . "/" . $CFG->dbname ."/evaluation_blockedusers_" .date("Ymd"). ".txt";
+    $blockedusersfile = $CFG->dataroot . "/" . $CFG->dbname ."_evaluation_blockedusers_" .date("Ymd"). ".txt";
     if (file_exists($blockedusersfile)) {
         $blockedusers = explode("\n",file_get_contents($blockedusersfile));
     }
-    elseif ($files = glob($CFG->dataroot . "/" . $CFG->dbname . "/evaluation_blockedusers_*.txt")) {
+    elseif ($files = glob($CFG->dataroot . "/" . $CFG->dbname . "_evaluation_blockedusers_*.txt")) {
         foreach ($files as $file) {
             if (file_exists($file)) {
                 unlink($file); // Delete each file
