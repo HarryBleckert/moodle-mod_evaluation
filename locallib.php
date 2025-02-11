@@ -4564,15 +4564,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     if ($verbose) {
         $DB->set_debug(true);
     }
-    /* handled by ob_start
      if ( $cronjob ){
         ini_set('output_buffering', 600);
     }
 
-     * if ($CFG->noemailever){
+    if ($CFG->noemailever){
         $test = true;
     }
-    */
+
     if (!isset($evaluation->id)) {
         ev_show_reminders_log("ERROR: Evaluation with ID $evaluation->id not found!", $cronjob);
         return false;
