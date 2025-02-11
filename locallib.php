@@ -4743,9 +4743,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 $a->testmsg .= " - " . ev_get_string($send_reminders_noreplies, $a);
             }
             $a->testmsg .= "<hr>\n";
-        } elseif (empty($blockedusers[$username])) {
-            $blockedusers[$username] = $username;
-            file_put_contents($blockedusersfile, implode("\n", $blockedusers),FILE_APPEND);
+        } elseif (!in_array($username, $blockedusers)) {
+            $blockedusers[] = $username;
+            file_put_contents($blockedusersfile, $username . "\n",FILE_APPEND);
         }
 
         $a->remaining_evaluation_days = $remaining_evaluation_days;
