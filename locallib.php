@@ -4821,11 +4821,12 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60)
             . " seconds. " . date("Ymd H:i:s"), $cronjob);
 
+    $role = ($role == "teacher" ?$role :"student");
+    $admindata = get_site_admin_user('harry');
+
     // send info mails to privileged
     if (!$test){
-        $role = ($role == "teacher" ?$role :"student");
         ev_set_reminders($evaluation,$role."s", $noreplies);
-        if (!$CFG->noemailever) {
             if ($emails = ev_set_privileged_users(false, true)){
                 //$mails = explode("\n",$emails);
                 $cnt = 1;
@@ -4853,6 +4854,9 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                             . ev_get_string('send_reminders_privileged')
                             . ev_get_string('send_reminders_'.$role.'s', $a) . "</body></html>";
                     $subject = '=?UTF-8?B?' . base64_encode($a->sent_reminders_info . $a->ev_name) . '?=';
+                    if ($CFG->noemailever) {
+                        $email = (!empty($admindata->email) ?$admindata->email: "harry.bleckert@ASH-berlin.eu");
+                    }
                     mail($email, $subject, quoted_printable_encode($message), $headers,"-f$senderMail");
                     $msg = " -Info to privileged persons:";
                     ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt", $cronjob);
@@ -4862,11 +4866,10 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
             } else if ( is_siteadmin()){
                 print nl2br("<hr>Emails:\n" . var_export($emails,true));
             }
-        }
     }
     // send also one copy to Moodle admin (Harry)
-    if ($admin = get_site_admin_user('harry')) {
-        force_current_language(get_user_lang($admin->username));
+    if ($admindata) {
+        force_current_language(get_user_lang($admindata->username));
         $a->ev_name = ev_get_tr($evaluation->name);
         $a->role = ev_get_string(($role == "teacher" ?"teachers" :"students"));
         $a->testmsg = "<p>" . ev_get_string('send_reminders_pmsg', $a) . "</p>\n";
@@ -4885,7 +4888,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $msg = "Hey Admin :)<br><br>\n" . ev_get_string('send_reminders_privileged')
                 . $dbname . $mailsSent;
         $msg = str_ireplace("<body>", "<body>" . $msg, $message);
-        mail("Harry.Bleckert@ASH-Berlin.eu", $subject, quoted_printable_encode($msg), $headers,"-f$senderMail");
+        $email = (!empty($admindata->email) ?$admindata->email: "harry.bleckert@ASH-berlin.eu");
+        mail($email, $subject, quoted_printable_encode($msg), $headers,"-f$senderMail");
         force_current_language($current_language);
     }
     unset($_SESSION["EvaluationsID"]);
