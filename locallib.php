@@ -4807,7 +4807,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     . ev_get_string('send_reminders_teachers', $a) . "</body></html>";
 
         }
-        if (!$CFG->noemailever || ($test && $cnt < 2)) {
+        if ((!$CFG->noemailever && !$test ) || ($test && $cnt < 2)) {
             mail($to, $subject, quoted_printable_encode($message), $headers, "-f$senderMail"); //,"-r '$sender'");
             ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         } else {
