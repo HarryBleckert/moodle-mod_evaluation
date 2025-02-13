@@ -503,7 +503,7 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
             }
             $evaluation->timeclose = $timeclose = time() + 86400;
             foreach (array("userid", "teacherid") as $participant) {
-                $cnt = 1;
+                $loopcnt = 1;
                 $completed = $DB->get_records_sql("SELECT $participant AS partid, count(*) AS count
 													FROM {evaluation_completed}
 													WHERE evaluation=$evaluation->id
@@ -555,12 +555,12 @@ function evaluation_set_results($evaluation, $forceGlobal = false, $forceCourse 
                     }
                     if (true) //evaluation_debug() )
                     {
-                        print "<br>\n" . str_pad(number_format($cnt), 6, " ", STR_PAD_LEFT) . ". <b>$participant</b>: " .
+                        print "<br>\n" . str_pad(number_format($loopcnt), 6, " ", STR_PAD_LEFT) . ". <b>$participant</b>: " .
                                 str_pad($userid, 6) . " - "
                                 . str_pad($username, 12) . " - " . str_pad($fullname, 42) . " - Replies $utype: $participated\n";
                         @ob_flush();@ob_end_flush();@flush();@ob_start();
                     }
-                    $cnt++;
+                    $loopcnt++;
                 }
             }
         }
@@ -595,7 +595,7 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
         print "'<br><hr><b>ev_shuffle_completed_userids(): No courses found! Aborting.</b><hr>\n";
         return false;
     }
-    $cntC = 1;
+    $loopcntC = 1;
 
     $evaluationstructure = new mod_evaluation_structure($evaluation); // , $cm, $courseid, null, 0, $teacherid, null, null, null,1);
     $evaluationstructure->shuffle_anonym_responses(); // needs to be called to renumber replies
@@ -606,8 +606,8 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
     @ob_flush();@ob_end_flush();@flush();@ob_start();
     foreach ($courses as $courseid) {
         print '<script>document.getElementById("showCourseRec_' . $evaluation->id . '").innerHTML = "<b>' . $courseid . '</b> (' .
-                $cntC . ' courses)";</script>';
-        $cntC++;
+                $loopcntC . ' courses)";</script>';
+        $loopcntC++;
         @ob_flush();@ob_end_flush();@flush();@ob_start();
 
         $completed = $DB->get_records_sql("SELECT * FROM {evaluation_completed} WHERE evaluation=$evaluation->id AND courseid=$courseid 
@@ -619,10 +619,10 @@ function ev_shuffle_completed_userids($evaluation, $force = false) {
             }
             //print "<br><hr>userids: " . var_export($userids, true);
             shuffle($userids);
-            $cnt = 0;
+            $loopcnt = 0;
             foreach ($completed as $record) {
-                $record->userid = $userids[$cnt];
-                $cnt++;
+                $record->userid = $userids[$loopcnt];
+                $loopcnt++;
                 $DB->update_record('evaluation_completed', $record);
             }
         }
@@ -1023,30 +1023,30 @@ function evaluation_LoginAs() {
             if (!empty($_SESSION["privileged_global_users"])) {    //array_merge_recursive_distinct( $privileged_users, $_SESSION["privileged_global_users"]);
                 $privileged_users += $_SESSION["privileged_global_users"];
             }
-            $cnt = 0;
+            $loopcnt = 0;
             $choice = random_int(0, intval(safeCount($privileged_users)));
             if (false) //evaluation_debug( false ) )
             {
                 print "<br><hr>:Selected: $choice\nprivileged_users: " . nl2br(var_export($privileged_users, true)) . "<hr>\n";
             }
             foreach ($privileged_users as $username) {
-                if ($cnt == $choice) {    //print "<br><hr>Current choice: '$username'<hr>\n";
+                if ($loopcnt == $choice) {    //print "<br><hr>Current choice: '$username'<hr>\n";
                     $user = $DB->get_record_sql("SELECT id,username from {user} WHERE $isActive username='" . trim($username) . "'");
                     if (isset($user->id)) {
                         $userid = $user->id;
                         break;
-                    } else if (safeCount($privileged_users) > $cnt) {
+                    } else if (safeCount($privileged_users) > $loopcnt) {
                         $choice++;
                     }
                 }
-                $cnt++;
+                $loopcnt++;
             }
         }
     } else if ($role == "priv_sg") { // stristr($role, "priv_sg")) {
         // $role = "Privilegierte Person (Studiengang)";
 
         if ($CoS_privileged_cnt) {
-            $cnt = 0;
+            $loopcnt = 0;
             $choice = random_int(0, $CoS_privileged_cnt);
             if (false) //evaluation_debug( false ) )
             {
@@ -1054,24 +1054,24 @@ function evaluation_LoginAs() {
                         . nl2br(var_export($CoS_privileged, true)) . "<hr>\n";
             }
             foreach (array_keys($CoS_privileged) as $uKey) {
-                if ($cnt == $choice) {
+                if ($loopcnt == $choice) {
                     $username = $uKey;
                     // print "<br><hr>uKey: \n" .nl2br(var_export($uKey,true))."<hr>\n";
                     if ($user = $DB->get_record_sql("SELECT id from {user} WHERE $isActive username='$username'") and isset($user->id)) {
                         $userid = $user->id;
                         break;
-                    } else if ($CoS_privileged_cnt > $cnt) {
+                    } else if ($CoS_privileged_cnt > $loopcnt) {
                         $choice++;
                     }
                 }
-                $cnt++;
+                $loopcnt++;
             }
         }
     } else if ($role == "priv_sg_sgl") {
         // $role = "Privilegierte Person (Studiengang, SGL)";
 
         if ($CoS_privileged_sgl_cnt) {
-            $cnt = 0;
+            $loopcnt = 0;
             $choice = random_int(0, $CoS_privileged_sgl_cnt);
             if (false) //evaluation_debug( false ) )
             {
@@ -1079,17 +1079,17 @@ function evaluation_LoginAs() {
                         . nl2br(var_export($CoS_privileged, true)) . "<hr>\n";
             }
             foreach (array_keys($CoS_privileged_sgl) as $uKey) {
-                if ($cnt == $choice) {
+                if ($loopcnt == $choice) {
                     $username = $uKey;
                     // print "<br><hr>uKey: \n" .nl2br(var_export($uKey,true))."<hr>\n";
                     if ($user = $DB->get_record_sql("SELECT id from {user} WHERE $isActive username='$username'") and isset($user->id)) {
                         $userid = $user->id;
                         break;
-                    } else if ($CoS_privileged_sgl_cnt > $cnt) {
+                    } else if ($CoS_privileged_sgl_cnt > $loopcnt) {
                         $choice++;
                     }
                 }
-                $cnt++;
+                $loopcnt++;
             }
         }
     } else if (strstr($role, "teacher")) {
@@ -1099,34 +1099,34 @@ function evaluation_LoginAs() {
         } else {
             if ( $teachers ) {
                 $choice = random_int(1, intval(safeCount($teachers)));
-                $cnt = 1;
+                $loopcnt = 1;
                 foreach ($teachers as $teacher) {
-                    if ($cnt == $choice) {
+                    if ($loopcnt == $choice) {
                         if ($user = $DB->get_record_sql("SELECT id from {user} WHERE $isActive id='$teacher->teacherid'") and isset($user->id)) {
                             $userid = $user->id;
                             break;
-                        } else if (safeCount($teachers) > $cnt) {
+                        } else if (safeCount($teachers) > $loopcnt) {
                             $choice++;
                         }
                     }
-                    $cnt++;
+                    $loopcnt++;
                 }
             }
         }
     } else if ($role == "student") {
         if ( $students ) {
             $choice = random_int(1, intval(safeCount($students)));
-            $cnt = 1;
+            $loopcnt = 1;
             foreach ($students as $student) {
-                if ($cnt == $choice) {
+                if ($loopcnt == $choice) {
                     if ($user = $DB->get_record_sql("SELECT id from {user} WHERE $isActive id='$student->userid'") and isset($user->id)) {
                         $userid = $user->id;
                         break;
-                    } else if (safeCount($students) > $cnt) {
+                    } else if (safeCount($students) > $loopcnt) {
                         $choice++;
                     }
                 }
-                $cnt++;
+                $loopcnt++;
             }
         }
     } else if ($role == "user") {
@@ -1221,10 +1221,10 @@ function evaluation_get_nonuserid($evaluation) {
     $users =
             $DB->get_records_sql("SELECT id from {user} WHERE deleted=0 AND suspended=0 AND lastaccess>0 ORDER by lastaccess ASC LIMIT 1000");
     $choice = random_int(1, 270);
-    $cnt = 1;
+    $loopcnt = 1;
     foreach ($users as $user) {
-        $cnt++;
-        if ($cnt <= $choice) {
+        $loopcnt++;
+        if ($loopcnt <= $choice) {
             continue;
         }
         $completed = $DB->get_record_sql("SELECT id,userid from {evaluation_completed} 
@@ -2206,7 +2206,7 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
     $total_evaluation_days = total_evaluation_days($evaluation);
     $timeopen = ($evaluation->timeopen > 0 AND $evaluation->timeopen<time()) ? $evaluation->timeopen : (time() - (30*80600));
     $timeclose = ($evaluation->timeclose > 0) ? $evaluation->timeclose : (time() + 80600);
-    $cnt_courses = $cnt_empty_courses = $cnt_students = $cnt_teachers = $cnt_students_active = $cnt_teachers_active = 0;
+    $loopcnt_courses = $loopcnt_empty_courses = $loopcnt_students = $loopcnt_teachers = $loopcnt_students_active = $loopcnt_teachers_active = 0;
     $distinct_s_active = $distinct_s = $distinct_t_active = $distinct_t = $courseTeachers = array();
     $my_evaluation_courses = $my_evaluation_users = $ids = array();
     $fcourses = "WHERE true";
@@ -2273,10 +2273,10 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
             continue;
         }
 
-        $cnt_courses++;
+        $loopcnt_courses++;
 
         if (evaluation_is_empty_course($course->id)) {
-            $cnt_empty_courses++;
+            $loopcnt_empty_courses++;
         }
 
         //$contextC = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -2286,27 +2286,27 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
         }
         // only used when open!
         if ( $evaluation_is_open) {
-            // $cnt=0;
+            // $loopcnt=0;
             foreach ($roleT as $role) {
                 $rolesC = get_role_users($role->id, $contextC);
                 foreach ($rolesC as $roleC) {
-                    /* if ($cnt<1 AND is_siteadmin()){
+                    /* if ($loopcnt<1 AND is_siteadmin()){
                         print "<hr>RolesC:\n" .nl2br(var_export($roleC, true));
                     }
-                    $cnt++;
+                    $loopcnt++;
                     */
 
                     $lang = ev_get_user_language($userid);
                     $fullname = ($roleC->alternatename ? $roleC->alternatename : $roleC->firstname) . " " . $roleC->lastname;
                     if ($roleC->roleid == 5)  // student
                     {
-                        $cnt_students++;
+                        $loopcnt_students++;
                         $numStudentsCourse++;
-                        $distinct_s[$roleC->id] = $fullname; //=$cnt_students;
+                        $distinct_s[$roleC->id] = $fullname; //=$loopcnt_students;
                         // get active students
                         if ($roleC->lastaccess > $timeopen) {
                             $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid);
-                            $cnt_students_active++;
+                            $loopcnt_students_active++;
                             $numStudentsActiveCourse++;
                             $distinct_s_active[$roleC->id] = $fullname;
                         }
@@ -2328,13 +2328,13 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
 
                 }
                 else {
-                        $cnt_teachers++;
+                        $loopcnt_teachers++;
                         $numTeachersCourse++;
                         $distinct_t[$roleC->id] = $fullname;
                         // get active teachers
                         if ($roleC->lastaccess > $timeopen) {
                             $roleC->lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid);
-                            $cnt_teachers_active++;
+                            $loopcnt_teachers_active++;
                             $numTeachersActiveCourse++;
                             $distinct_t_active[$roleC->id] = $fullname;
                         }
@@ -2365,23 +2365,23 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
 												AND evul.userid=evu.userid");
 
             // print "<hr>Students rolesC: ".nl2br(var_export($rolesC,true)) ."<hr>";
-            // $cnt = 0;
+            // $loopcnt = 0;
             foreach ($rolesC as $roleC) {
-                /* if ($cnt<1 AND is_siteadmin()){
+                /* if ($loopcnt<1 AND is_siteadmin()){
                     print "<hr>roleC:\n" .nl2br(var_export($roleC, true));
                 }
                 */
                 $fullname = ($roleC->alternatename ? $roleC->alternatename : $roleC->firstname) . " " . $roleC->lastname;
                 if (!isset($distinct_s[$roleC->id])) {
-                    $cnt_students++;
+                    $loopcnt_students++;
                     $numStudentsCourse++;
                 }
-                $distinct_s[$roleC->id] = $fullname; //=$cnt_students;
+                $distinct_s[$roleC->id] = $fullname; //=$loopcnt_students;
                 // get active students
                 if (!isset($distinct_s_active[$roleC->id])
                         AND $lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "student", $courseid)) {
                     $roleC->lastaccess = $lastaccess;
-                    $cnt_students_active++;
+                    $loopcnt_students_active++;
                     $numStudentsActiveCourse++;
                     $distinct_s_active[$roleC->id] = $_SESSION["active_student"][$roleC->id] = $fullname;
                 }
@@ -2411,16 +2411,16 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
             foreach ($rolesC as $roleC) {
                 $fullname = ($roleC->alternatename ? $roleC->alternatename : $roleC->firstname) . " " . $roleC->lastname;
                 if (!isset($distinct_t[$roleC->id])) {
-                    $cnt_teachers++;
+                    $loopcnt_teachers++;
                     $numTeachersCourse++;
                 }
-                $distinct_t[$roleC->id] = $fullname; //=$cnt_teac
+                $distinct_t[$roleC->id] = $fullname; //=$loopcnt_teac
                 // get inactive teachers
                 if ($roleC->lastaccess > $timeopen and !isset($distinct_t_active[$roleC->id])
                         AND $lastaccess = evaluation_user_lastaccess($evaluation, $roleC->id, $roleC->lastaccess, "teacher", $courseid)
                 ) {
                     $roleC->lastaccess = $lastaccess;
-                    $cnt_teachers_active++;
+                    $loopcnt_teachers_active++;
                     $numTeachersActiveCourse++;
                     $distinct_t_active[$roleC->id] = $_SESSION["active_teacher"][$roleC->id] = $fullname;
                 }
@@ -2466,11 +2466,11 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
         });
         return $my_evaluation_users;
     } else {
-        return array($cnt_courses, $cnt_empty_courses,
+        return array($loopcnt_courses, $loopcnt_empty_courses,
                 safeCount($distinct_s), safeCount($distinct_s_active),
-                $cnt_students, $cnt_students_active,
+                $loopcnt_students, $loopcnt_students_active,
                 safeCount($distinct_t), safeCount($distinct_t_active),
-                $cnt_teachers, $cnt_teachers_active);
+                $loopcnt_teachers, $loopcnt_teachers_active);
     }
 }
 
@@ -2639,7 +2639,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
             $str .= "</tr>\n";
         } else {
             $replies = "";
-            $cnt = 0;
+            $loopcnt = 0;
             if ($evaluation->teamteaching) {    // get course teachers
                 foreach ($teachers as $teacher) {
                     $Txt = $actionTxt;
@@ -2676,7 +2676,7 @@ function show_user_evaluation_courses($evaluation, $myEvaluations, $cmid = false
                         $str .= "<td>$urlC<span style=\"color:blue;\">" . $myEvaluation["course"] . "</span></td>\n";
                     }
                     $str .= "</tr>\n";
-                    $cnt++;
+                    $loopcnt++;
                 }
             } else {
                 $Txt = $actionTxt;
@@ -3332,7 +3332,7 @@ function make_block_evaluation_visible($evaluation) {
     global $DB;
     $evaluation_semester = get_evaluation_semester($evaluation);
     $courses = evaluation_participating_courses($evaluation);
-    $cnt = 0;
+    $loopcnt = 0;
     $blockinstance =
             $DB->get_record_sql("SELECT id FROM {block_instances} where blockname = 'evaluation' and parentcontextid=1 LIMIT 1");
     $corrections = "";
@@ -3346,8 +3346,8 @@ function make_block_evaluation_visible($evaluation) {
                 isset($coursecontext->id) and isset($blockinstance->id)) {    // move blocks with position < -10 down to -9
             if ($onTop = $DB->get_records_sql("SELECT id, visible, weight FROM {block_positions} 
 								WHERE blockinstanceid != $blockinstance->id AND contextid=$coursecontext->id AND (visible=1 AND weight < -9)")) {
-                $cnt++;
-                $corrections .= str_pad($cnt, 4, " ", STR_PAD_LEFT) . " On top of Evaluation: " . safeCount($onTop) .
+                $loopcnt++;
+                $corrections .= str_pad($loopcnt, 4, " ", STR_PAD_LEFT) . " On top of Evaluation: " . safeCount($onTop) .
                         ' Course: <a href="/course/view.php?id=' .
                         $courseid . '" target="new">' . $courseid . "</a><br>\n";
                 $DB->execute("UPDATE {block_positions} set weight = -9 
@@ -3360,9 +3360,9 @@ function make_block_evaluation_visible($evaluation) {
             if ($blockposid and isset($blockposid->id) and $blockposid->id) // = 45346;
             {
                 $DB->execute("DELETE FROM {block_positions} WHERE id=$blockposid->id");
-                $cnt++;
+                $loopcnt++;
                 //$course = $DB->get_record('course', array('id' => $courseid), '*');
-                $corrections .= str_pad($cnt, 4, " ", STR_PAD_LEFT) . ' Course: <a href="/course/view.php?id=' .
+                $corrections .= str_pad($loopcnt, 4, " ", STR_PAD_LEFT) . ' Course: <a href="/course/view.php?id=' .
                         $courseid . '" target="new">' . $courseid . "</a><br>\n";
             }
         }
@@ -4093,16 +4093,16 @@ function evaluation_autofill_duplicate_field_teacherid($evaluation, $reset = fal
 		{	continue; }*/
         if (!empty($_SESSION["allteachers"][$complete->courseid]) and
                 safeCount($_SESSION["allteachers"][$complete->courseid]) > 0) {
-            $cnt = 0;
+            $loopcnt = 0;
             foreach ($_SESSION["allteachers"][$complete->courseid] as $teacher) {
                 $teacherid = $teacher['id'];
-                if ($cnt == 0) {
+                if ($loopcnt == 0) {
                     $DB->execute("UPDATE {evaluation_completed} SET teacherid=$teacherid WHERE id=$complete->id");
                     $DB->execute("UPDATE {evaluation_value} SET teacherid=$teacherid WHERE completed = $complete->id");
-                    $cnt++;
+                    $loopcnt++;
                     continue;
                 }
-                /*print "<br>\n<br>\n<br>\$cnt: $cnt - ID: $complete->id: CourseID: $complete->courseid - UserID: $complete->userid - Teachers: ".safeCount($teachers)
+                /*print "<br>\n<br>\n<br>\$loopcnt: $loopcnt - ID: $complete->id: CourseID: $complete->courseid - UserID: $complete->userid - Teachers: ".safeCount($teachers)
 		. " - Teacher: " . var_export($teacher,true)." - Session: " . safeCount($_SESSION["allteachers"][$complete->courseid]) . "<br>\n";
 if ( $counter >= 6)	{ exit;} */
 
@@ -4125,7 +4125,7 @@ if ( $counter >= 6)	{ exit;} */
                     $newval->completed = $compl_id;
                     $val_id = $DB->insert_record('evaluation_value', $newval);
                 }
-                $cnt++;
+                $loopcnt++;
                 print '<script>document.getElementById("counter").innerHTML = "'
                         .
                         "Count: $counter - ID: $complete->id: CourseID: $complete->courseid - UserID: $complete->userid - Teacherid: $teacherid" .
@@ -4323,11 +4323,11 @@ function evaluation_autofill_item_studiengang($evaluation, $force = false) {
     $courseids =
             $DB->get_records_sql("SELECT * FROM {evaluation_value} WHERE item=$template AND courseid>0 ORDER BY completed ASC");
     $hits = safeCount($courseids);
-    $cnt = 0;
+    $loopcnt = 0;
     print '<br><span id="counter"></span><br>';
     foreach ($courseids as $courseid) {    // id	courseid	item	completed	value
         set_time_limit(30);
-        $cnt++;
+        $loopcnt++;
         $newval = new stdClass();
         foreach ($courseid as $key => $value) {
             $newval->{$key} = $value;
@@ -4338,9 +4338,9 @@ function evaluation_autofill_item_studiengang($evaluation, $force = false) {
         $position = array_searchi($Studiengang, $sg_arr);
         $newval->value = (is_numeric($position) ? $position : 0) + 1;
         $val_id = $DB->insert_record('evaluation_value', $newval);
-        //print "<hr><br>$cnt/$hits: $val_id - $courseid->courseid - $Studiengang - position: $position - newval: ".$newval->value."<hr>";
+        //print "<hr><br>$loopcnt/$hits: $val_id - $courseid->courseid - $Studiengang - position: $position - newval: ".$newval->value."<hr>";
         print '<script>document.getElementById("counter").innerHTML = "' .
-                "$cnt/$hits: $val_id - $courseid->courseid - $Studiengang - Wert:"
+                "$loopcnt/$hits: $val_id - $courseid->courseid - $Studiengang - Wert:"
                 . trim($newval->value) . '";</script>';
         //print "<script>window.scrollTo(0,document.body.scrollHeight);</script>\n";
         @ob_flush();@ob_end_flush();@flush();@ob_start();
@@ -4412,10 +4412,10 @@ function evaluation_move_from_feedback() {
             $eiID = $DB->insert_record('evaluation_item', $evaluation_item);
             $evaluation_values = $DB->get_records_sql("SELECT * FROM {evaluation_value} WHERE item=$evaluation_itemID ORDER BY id");
             $values = safeCount($evaluation_values);
-            $cnt = 0;
+            $loopcnt = 0;
             foreach ($evaluation_values as $evaluation_value) {
-                $cnt++;
-                print '<script>document.getElementById("counter").innerHTML = "' . $cnt . " of " . $values .
+                $loopcnt++;
+                print '<script>document.getElementById("counter").innerHTML = "' . $loopcnt . " of " . $values .
                         ' rows in values table";</script>';
 
                 if ($completed = $evaluations_completedIDs[$evaluation_value->completed]) {
@@ -4535,7 +4535,7 @@ function evaluation_get_empty_courses($sdate=false) {
     }
     $courses = $DB->get_records_sql("SELECT id, startdate, fullname, shortname, idnumber from {course} 
     $filter ORDER BY startdate ASC");
-    $cnt = $empty_courses = 0;
+    $loopcnt = $empty_courses = 0;
     print "<h2>Empty Courses</h2><br><table>\n";
     print "<tr><th>Courseid</th><th>Shortname</th><th>Fullname</th><th>Idnumber</th><th>Startdate</th></tr>\n";
     foreach ($courses as $course){
@@ -4547,7 +4547,7 @@ function evaluation_get_empty_courses($sdate=false) {
 
             $empty_courses++;
         }
-        $cnt++;
+        $loopcnt++;
     }
     print "</table>\n";
     print "<h2><b>$empty_courses empty courses found $filterText</h2><br><table></table></b>\n";
@@ -4651,8 +4651,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         ev_show_reminders_log(ev_get_string($send_reminders_noreplies, $a), $cronjob);
     }
 
-    $cnt = $cntStudents = $cntTeachers = 0;
-    foreach ($evaluation_users as $evaluation_user) {    //if ( $cnt<280) { $cnt++; continue; }   // set start counter
+    $loopcnt = $loopcntStudents = $loopcntTeachers = 0;
+    foreach ($evaluation_users as $evaluation_user) {    //if ( $loopcnt<280) { $loopcnt++; continue; }   // set start counter
         if (!$cronjob) {
             @ob_flush();
             @ob_end_flush();
@@ -4660,7 +4660,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         }
         //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
 
-        $cnt++;
+        $loopcnt++;
         $username = $evaluation_user["username"];
         // $firstname = $evaluation_user["firstname"];
         // $lastname = $evaluation_user["lastname"];
@@ -4668,14 +4668,14 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $email = strtolower($evaluation_user["email"]);
         $userid = $evaluation_user["id"];
         $lang = $evaluation_user["language"];
-        // ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid", $cronjob);
+        // ev_show_reminders_log("$loopcnt. $fullname - $username - $email - ID: $userid", $cronjob);
         if (empty($username) || empty($fullname)) {
-            ev_show_reminders_log("$cnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user!!",
+            ev_show_reminders_log("$loopcnt. $fullname - $username - $email - ID: $userid - Can't send mail to undefined user!!",
                     $cronjob);
             continue;
         }
         if (empty($email) or strtolower($email) == "unknown" or !strstr($email, "@") or stristr($email, "unknown@")) {
-            ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - Can't send mail to $email!!",
+            ev_show_reminders_log("$loopcnt.  Mail not sent: $fullname - $username - $email - ID: $userid - Can't send mail to $email!!",
                     $cronjob);
             continue;
         }
@@ -4683,20 +4683,20 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         if (!empty($CFG->ash)) {
             $blockedusersondemand = array('01242044', '00053230');
             if (in_array($username, $blockedusersondemand)) {
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - user is in blocklist !!",
+                ev_show_reminders_log("$loopcnt.  Mail not sent: $fullname - $username - $email - ID: $userid - user is in blocklist !!",
                         $cronjob);
                 continue;
             }
             $blockeduserstmp = array('00051191', '00054910', '00053128', '00047200', '00052157', '00054471', '00049471', '00053914', '00053088', '00051079', '00050383', '00054899', '00052720', '00052609', '00052120', '00040174', '00052865', '00052159', '00054548', '00052097', '00052317', '00053468', '00051043', '00051782', '00049197', '00049279', '00051874', '00051462', '00054432', '00052095', '00051042', '00050817', '00054375', '00052999', '00036022', '00049755', '00054965', '00053923', '00050452', '00052027', '00047857', '00054913', '00051192', '00052755', '00049469', '00050966', '00054217', '00049467', '00054912', '00048102', '00051044', '00051267', '00050967', '00049318', '00052094', '00052987', '00054485', '00054726', '00053965', '01242053', '00053762', '00054589', '00051194', '00053924', '00052158', '00052267', '00051970', '00052753', '00052200', '00053683', '00053926', '00046321', '00051464', '00051527', '00052531', '00051268', '00054729', '00054570', '86021202', '00047633', '00054491', '00053240', '00048587', '00053572', '00052498', '00044721', '00047199', '01242005', '00052061', '00047172', '00052839', '00046752', '00054932', '00050019', '00048898', '86024203', '00053058', '00052510', '00053927', '00047855', '00051828', '00048789', 'm_12089', '00053281', '00054070', '00054834', '00051796', '00054540', '00053928', '00053865', '86024204', '00051466', '00053448', '00054855', '00054895', '00054676', '00052185', '00053234', '00052134', 'assafa', '00054936', '00052959', '00054373', '00049847', '00054268', '00053764', '00051378', '00054354', '00054421', '00051694', '00052772', '00054857', '00054216', '00051758', '00050890', '00052499', '00052749', '00052747', '05222021', '00052251', '00049752', '00049829', '00048220', '00052121', '00053684', '00052888', '00053118', '00049291', '00040803', '00052895', '00048306', '00051316', '00053091', '00051938', '00049248', '00051844', '00054262', '00054422', '00051513', '00053434', '00048687', '00054320', '00053111', '01242045', '00051207', '00050827', '00053721', '00053079', '00050009', '00048979', '00051468', '00053069', '00054122', '00052694', '00051269', '00049756', '00053765', '00053321', '00054131', '00052186', '00053731', '00053979', '00051270', '00054833', '00054063', '00141057', '00051797', '00053394', '00054591', '00054590', '00054839', '00054161', '00049616', '00051287', '00053104', '00049398', '00053949', '00052610', '00053766', '00049216', '00053349', '00052989', '00041377', '00048871', '00052364', '00052140', '00050397', '00053767', '00052277', '00052093', '00054492', '01222093', '00047353', '00053200', '00042153', '00046754', '00050333', '00054162', '00049849', '00051471', '00051271', '00054608', '00047603', '00051940', '00053268', 'bergsd', '00049757', '00054552', '00054033', '00054163', '00052512', '00052160', '00054227', '00054592', '00049283', '00053632', '00051041', '00054215', '00051094', '00052995', '00053000', '00051508', '00046274', '00049414', '00053929', '00050882', '00054486', '00044950', '00054730', '00053955', '00052760', '00051146', '00051214', '00050632', '00052150', '00054825', '00053566', '00053891', '00048309', '00047696', '00047598', '00052612', 'boguthk', '00051885', '00052695', '00053072', '00050035', '00054357', '01242007', '05242007', '00053356', '00053248', '00052659', '00052156', '00053205', '00051697', '00053868', '00052574', '00054858', '00051014', '00053803', '00053373', '00051039', '00054838', '00054065', '00054236', '00052092', '00053627', '00051247', '00052563', '00048231', '00050724', '00054395', '00050881', '00049671', '00051326', '00053102', '00052419', '00050268', '00053981', '00048846', '00051288', '00051795', '00053870', 'brodnjak', '00052773', '00052091', '00054964', '00049850', '00046279', '00050060', '00054359', '00050405', '00051698', '00052455', '00052963', '00054529', '00054891', '00051228', '00051289', '00053258', '00054132', '00051011', '00048861', '00054702', '00053367', '00052090', '00052992', '00052467', '00051666', '00053084', '00052544', '00053015', '00053672', '00053351', '00054278', '00053107', '00053858', '00051525', '00050392', '00053276', '00052233', '00053685', '00048790', '00051656', '00052100', '00052913', '00050413', '00053093', '00054355', '00052692', '00052393', '00052898', '00052631', '00053770', '00052815', '00053121', '00050723', '00050549', '00053255', '00053098', '00053477', '00052672', '00042234', '00054270', '00053557', '00054928', '00052252', '00054319', '00054531', '00052590', '00052089', '00052958', '00052161', '00050576', '00053642', '00053275', '00053930', '01242008', '00052201', '00045863', '00047486', '00052748', '00052420', '00052852', '00051971', '01242009', '00053478', '00039378', '00051883', '00053544', '00054914', '00052766', '00054812', '00052071', '00053636', '00052738', '00054734', '01242010', '00049355', '86024207', '01242011', '00050815', '00050356', '00036985', '00054164', '00054940', '00054553', '00054956', '00044335', '00050106', '00053092', '00054165', '00054106', '00048241', '00054962', '00054900', '00052548', '00052163', '00054030', '00054223', '00049997', '00051962', '00054140', '00054420', '00052441', '00049742', '00050699', '00054593', '01242058', '00054265', '00050720', '00054360', '00052207', '00053815', '01242012', '00054762', '00053610', '00051305', '00051725', '00052960', '01242013', '00053048', '00054386', '00053479', '00054732', 'dennhardts', '07023113', '00053617', '00053480', '00046346', '00054222', '00052540', '00051503', '00052608', '00052013', '00048177', '01242001', '00051974', '00053002', '00049758', '00034000', '00054041', '00052939', '00049852', '00053630', '00051540', '00053401', '00052673', '00054789', '00054696', '01242046', '00054406', '00053817', '00051411', '00047143', '00053736', '00052816', '00050641', 'he/him) Doan', '00051981', '00049367', '00052814', '00053545', '00054267', '00054464', '00054699', '00053458', '00054166', '00051291', '00054556', '00053238', '00054271', '05212004', '00049476', '00052661', '00054213', '00053481', '00052101', '00050884', '00054405', '00054603', '00046366', '00052660', '00048803', '00051578', '00053643', '00045783', '00054124', '00051436', '00052123', '00053336', '00053285', '00053288', '00053547', '00047753', '00053251', '00050280', '00052513', '00052615', '00049338', '00054595', '00053078', '00047265', '00052792', '00050281', '00053202', '00054214', '00053703', '00054594', '00051961', '00049898', '00052654', '01242014', '00051693', '00051405', '00052774', '00053108', '00051968', '00050725', '00051622', '00053874', '00054316', '00049738', '00053608', '00053094', '00052361', '00053558', '00052975', '00054524', '00049999', '00054969', '00054609', '00054167', '00052450', '00052693', '00053912', '00053342', '00048794', '00047713', '00052099', '00043380', '00052138', '00053730', '00054272', '00054901', '00050354', '00050021', '00054251', '00050932', '00047628', '00054547', '00050971', '00053604', '00053951', '00053120', '00051751', '00054596', '00052533', '00051314', '00054597', '00053644', '00053095', '00052465', '00052719', '00051037', '00053954', '00051700', '00052906', '00047216', '00047601', '00052043', '00051511', '86024208', '00054419', '00054557', '00054790', '00053262', '00053482', '01242016', '00051430', '00054682', '00054279', '00054674', '00050449', '00048686', '00051792', '00052727', '00050936', '00051897', '00053875', '00054824', '00054233', '00053235', '86024209', '00050431', '05222006', '01242051', '00053622', '00054741', '00053290', '00053686', '00054463', 'feistm', '00052658', '00053570', '00043646', '00052699', '00049892', '00053010', '00053849', '00051025', '00052746', '00051401', '00054598', '00054168', '00054703', '00053327', '00054066', '00053103', '00051036', '00050748', '00050870', '00049618', '00051272', '00051315', '00051035', '00052078', '00054690', '00046756', '00049175', '00054600', '00053096', '00051515', '00052011', '00052382', '00049380', '00053314', '00053883', '00054558', '00049337', '00051463', '00050974', '00054281', '00053656', '00054654', '00054574', '00054813', '00054071', '00052576', '00053582', '00053263', '00049940', '00052144', '00051649', '00054983', '00054836', '00045459', '00049199', '00054418', '00045838', '00051985', '00054490', '00053164', '00053246', '00054263', '00049673', '01242062', '00051226', '00054169', '00047658', '00053243', '00050294', '00054231', '00052145', '00049893', '00052965', '00053032', '00051438', '00050609', '00051871', '00054886', '86024210', '00051031', '00051306', '00051317', '00052674', '00050655', '00054972', '00054361', '00054088', '00051972', '00052789', '00053278', '00052075', '00051980', '00052514', '00053525', '00050275', '00051273', '00053441', '00052577', '00050353', '00052124', '00052017', '00050879', '00050343', '00054890', '00052860', '00051297', '00053824', '00052697', '00053594', '00054374', '00053773', '00053483', '00050985', '00051676', '00050805', '00046683', '00045887', '00053484', '00051635', '00050363', '00049575', '00054362', '00050797', '00052983', '00052714', '00049157', '00053862', '00054067', '00054010', '00050226', '00051197', '00053485', '00054542', '05222008', '00054885', '00054385', '00049232', '00048873', '00053313', '00053426', '00054908', '00054559', '00051274', '00052469', '00054461', '00051954', '00054273', '00052617', '00050822', '00050533', '00052775', '00054117', '00050630', '00049714', '00053237', '00049772', '00054382', '00052423', '00052889', '00050522', '00054318', '00050726', '00053162', '00054363', '00050770', '00053573', '00052920', '00052495', '00053368', '00051914', '00050398', '00052451', '00054112', '00054274', '00054602', '00049732', '00051318', '00053876', '00054275', '00051264', '00053961', '00054604', '00053880', '00054170', '00054365', '00053645', '00052750', '00053346', '01242002', '00053867', '00051275', '00052944', '00052575', '00051893', '00035191', '00051520', '00053968', '00048164', '00054963', '00054440', '00052988', '00053776', '00052549', '00054034', '00054686', '00054867', '00053106', '00053877', '00053602', '00054539', '00054745', '00052578', '00050697', '00053687', '00051889', '00053308', '00049277', '00052193', '00047731', '00052620', '00050081', '00044908', '00051293', '00054793', '00053896', '00053555', '00054503', '00054947', '00052194', '00053199', '00052664', '00052948', '00053646', '00054277', '00052676', '00052444', '00054291', '00053668', '00054285', '00053688');
             if (in_array($username, $blockeduserstmp) and date("Y-m-d") == "2025-02-11") {
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - user is in temporary blocklist !!",
+                ev_show_reminders_log("$loopcnt.  Mail not sent: $fullname - $username - $email - ID: $userid - user is in temporary blocklist !!",
                         $cronjob);
                 $blockedusers[$username] = $username;
                 // continue;
             }
         }
         if (!empty($blockedusers) && in_array($username, $blockedusers)) {
-            ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - user is in daily blocklist !!",
+            ev_show_reminders_log("$loopcnt.  Mail not sent: $fullname - $username - $email - ID: $userid - user is in daily blocklist !!",
                     $cronjob);
             continue;
         }
@@ -4705,7 +4705,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         $myEvaluations = get_evaluation_participants($evaluation, $userid);
 
         if (empty($myEvaluations)) {
-            ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
+            ev_show_reminders_log("$loopcnt.  Mail not sent: $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
                     . "Participating courses: " . count(evaluation_is_user_enrolled($evaluation, $userid)), $cronjob);
             continue;
         }
@@ -4713,8 +4713,8 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         force_current_language($lang);
         $a->ev_name = ev_get_tr($evaluation->name);
 
-        if ($test) { // OR ($cnt<2 AND $CFG->noemailever)) {
-            if (false && $cnt > 1) {
+        if ($test) { // OR ($loopcnt<2 AND $CFG->noemailever)) {
+            if (false && $loopcnt > 1) {
                 break;
             }
             $to = "Harry <Harry@Bleckert.com>";
@@ -4756,30 +4756,30 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         if ($role == "student") {
             $hasParticipated = evaluation_has_user_participated($evaluation, $userid);
             if ($noreplies and $hasParticipated) {
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $userid - $email - HAS PARTICIPATED!!",
+                ev_show_reminders_log("$loopcnt.  Mail not sent: $fullname - $username - $userid - $email - HAS PARTICIPATED!!",
                         $cronjob);
                 continue;
             }
             if (hasUserEvaluationCompleted($evaluation, $userid)) {
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $userid - $email - COMPLETED ALL!!", $cronjob);
+                ev_show_reminders_log("$loopcnt.  Mail not sent: $fullname - $username - $userid - $email - COMPLETED ALL!!", $cronjob);
                 continue;
             }
             $a->myCourses = show_user_evaluation_courses($evaluation, $myEvaluations, $cmid, true, false);
-            $cntStudents++;
+            $loopcntStudents++;
             $a->also = (($hasParticipated or remaining_evaluation_days($evaluation) > 15) ? ""
                     : ev_get_string('also'));
             $message = '<html><head><title>' . $a->ev_name . '</title></head><body>'
                     . ev_get_string('send_reminders_students', $a) . "</body></html>";
         } else { // $role == teacher
             if (!safeCount($_SESSION["distinct_s"])) {
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $userid - $email - NO SESSION['distinct_s']!!",
+                ev_show_reminders_log("$loopcnt.  Mail not sent: $fullname - $username - $userid - $email - NO SESSION['distinct_s']!!",
                         $cronjob);
                 continue;
             }
 
             $replies = evaluation_countCourseEvaluations($evaluation, false, "teacher", $userid);
             if ($noreplies and $replies >= $a->min_results_text) {
-                ev_show_reminders_log("$cnt.  Mail not sent: $fullname - $username - $userid - $email - >= $a->min_results_text replies!!",
+                ev_show_reminders_log("$loopcnt.  Mail not sent: $fullname - $username - $userid - $email - >= $a->min_results_text replies!!",
                         $cronjob);
                 continue;
             }
@@ -4801,31 +4801,31 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                 }
             }
 
-            $cntTeachers++;
+            $loopcntTeachers++;
 
             $message = '<html><head><title>' . $a->ev_name . '</title></head><body>'
                     . ev_get_string('send_reminders_teachers', $a) . "</body></html>";
 
         }
-        if ((!$CFG->noemailever && !$test ) || ($test && $cnt < 2)) {
+        if ((!$CFG->noemailever && !$test ) || ($test && $loopcnt < 2)) {
             mail($to, $subject, quoted_printable_encode($message), $headers, "-f$senderMail"); //,"-r '$sender'");
-            ev_show_reminders_log("$cnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
+            ev_show_reminders_log("$loopcnt.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         } else {
-            ev_show_reminders_log("$cnt.  Mail not sent.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
+            ev_show_reminders_log("$loopcnt.  Mail not sent.$testinfo $fullname - $username - $email - ID: $userid", $cronjob);
         }
     }
     force_current_language($current_language);
     $elapsed = time() - $start;
     echo "";
     if ($role == "student") {
-        ev_show_reminders_log("Sent reminder to $cntStudents students", $cronjob);
-        $a->mails_sent = $cntStudents;
+        ev_show_reminders_log("Sent reminder to $loopcntStudents students", $cronjob);
+        $a->mails_sent = $loopcntStudents;
     } else {
-        ev_show_reminders_log("Sent reminder to $cntTeachers teachers", $cronjob);
-        $a->mails_sent = $cntTeachers;
+        ev_show_reminders_log("Sent reminder to $loopcntTeachers teachers", $cronjob);
+        $a->mails_sent = $loopcntTeachers;
     }
     echo "\n";
-    ev_show_reminders_log("Processed $cnt $a->role records", $cronjob);
+    ev_show_reminders_log("Processed $loopcnt $a->role records", $cronjob);
     ev_show_reminders_log("Total time elapsed : " . (round($elapsed / 60, 0)) . " minutes and " . ($elapsed % 60)
             . " seconds. " . date("Ymd H:i:s"), $cronjob);
 
@@ -4838,7 +4838,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     }
     if ($emails = ev_set_privileged_users(false, true)) {
         //$mails = explode("\n",$emails);
-        $cnt = 1;
+        $loopcnt = 1;
         foreach ($emails as $username => $email) {
             if (!strstr($email, "@") || !strstr($email, "<")) {
                 continue;
@@ -4863,15 +4863,15 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     . ev_get_string('send_reminders_privileged')
                     . ev_get_string('send_reminders_' . $role . 's', $a) . "</body></html>";
             $subject = '=?UTF-8?B?' . base64_encode($a->sent_reminders_info . $a->ev_name) . '?=';
-            if (!$CFG->noemailever || ($test && $cnt < 2)) {
+            if (!$CFG->noemailever || ($test && $loopcnt < 2)) {
                 $email = (!empty($admindata->email) ? $admindata->email : "harry.bleckert@ASH-berlin.eu");
             }
-            if ((!$CFG->noemailever && !$test) || ($test && $cnt < 2)) {
+            if ((!$CFG->noemailever && !$test) || ($test && $loopcnt < 2)) {
                 mail($email, $subject, quoted_printable_encode($message), $headers, "-f$senderMail");
             }
             $msg = " -Info to privileged persons:";
-            ev_show_reminders_log("$cnt.$msg $fullname - $username - $emailt", $cronjob);
-            $cnt++;
+            ev_show_reminders_log("$loopcnt.$msg $fullname - $username - $emailt", $cronjob);
+            $loopcnt++;
         }
         force_current_language($current_language);
     } else if (is_siteadmin()) {
@@ -5021,7 +5021,7 @@ function ev_get_reminders($evaluation, $id) {
         $ndate = $lineA[0];
         $retval .= "<b>$ndate</b>: ";
         $roles = explode(",",$lineA[1]);
-        $cnt = 0;
+        $loopcnt = 0;
         $alen = safeCount($roles);
         foreach ($roles as $role){
             $nrd = "";
@@ -5033,8 +5033,8 @@ function ev_get_reminders($evaluation, $id) {
                 $role =  get_string($role,"evaluation");
             }
             $retval .= $role . $nrd;
-            $cnt++;
-            if ($cnt<$alen){
+            $loopcnt++;
+            if ($loopcnt<$alen){
                 $retval .= ", ";
             }
             else{
