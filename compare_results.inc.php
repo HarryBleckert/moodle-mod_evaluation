@@ -678,7 +678,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $dept = $_SESSION['CoS_department'][$allResult->course_of_studies];
             if ($dept) {
                 $allIDs[$dept] = $allValues[$dept] = $dept;
-                if (defined('EVALUATION_OWNER')) {
+                if (defined('EVALUATION_OWNER') && empty($_SESSION['CoS_privileged_sgl'][$USER->username]) ) {
                     $links = '<a href="analysis_course.php?id=' . $id
                             . '&department='
                             . $dept
