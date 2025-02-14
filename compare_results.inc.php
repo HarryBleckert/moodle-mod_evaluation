@@ -1071,7 +1071,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 							GROUP BY $allKeyV ORDER BY $allKeyV";
                 $_ignoredReplies[$qCount] = $DB->get_records_sql($query);
             }
-            if ($allSelected == "allDepartments") {
+            if ($allSelected == "allDepartments" && !$isOpen) {
                 $query = "SELECT e.department AS department, AVG (v.value::INTEGER)::NUMERIC(10,2) as average
 					  FROM {evaluation_value} v, {evaluation_enrolments} e  
 					  WHERE item=$question->id AND value IN ($qfValues)  $subquery 
@@ -1503,7 +1503,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
 
     // we do not need graphics if we have only 1 data point and this data is already shown in list
-    if ($qSelected && !$filter && !$subquery) {
+    if ($qSelected) {
         print "<br><b>Für die Antworten auf einzelne Fragen werden keine grafischen Ergebnisese angezeigt!</b><br>\n";
     }else{
         // Use source Chartjs With Wrapper Class
