@@ -805,7 +805,7 @@ if ($courseitemfilter > 0) {
     foreach ($items as $key => $item) {
         // filter data display by privileges
         // before: ( !defined('EVALUATION_OWNER') ?true :$cosPrivileged )
-        if (!is_siteadmin() and defined("SiteEvaluation")) {
+        if (!defined('EVALUATION_OWNER') AND !is_siteadmin() and defined("SiteEvaluation")) {
             if ((!$byTeacher and !in_array($item->typ, array("numeric", "multichoice", "multichoicerated"))) or
                     ($courseid and
                             (stripos($item->name, "geschlecht") !== false or stripos($item->name, "semester") !== false or
