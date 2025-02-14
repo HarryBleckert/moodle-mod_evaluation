@@ -814,7 +814,7 @@ if ($courseitemfilter > 0) {
                 continue;
             }
         }
-        if ( $qSelected AND $item->name != $qSelected){
+        if ( $qSelected AND $item->id != $qSelected){
             continue;
         }
         // show text replies only
