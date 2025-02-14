@@ -294,6 +294,7 @@ if (!$courseid) {
 evaluation_showLoading();
 
 // set filter forms
+$qSelected = 0;
 if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context) || $isPermitted)) {
                 // || (defined('EVALUATION_OWNER') OR ($cosPrivileged ?$analysisCoS:false )))) {
     if ($courseid){
@@ -813,7 +814,17 @@ if ($courseitemfilter > 0) {
                 continue;
             }
         }
-
+        if ( $qSelected AND $item->name != $qSelected) {
+            continue;
+        }
+        if ($item->typ == "multichoice" or $item->typ == "multichoicerated") {
+            $values = $DB->get_records_sql("SELECT value, count(value) as countvalue FROM {evaluation_value}
+                    WHERE item = ? AND evaluation = ? $filter $subquery
+                    GROUP BY value ORDER BY countvalue DESC", array($item->id, $evaluation->id));
+            $sumvalue = 'SUM(' . $DB->sql_cast_char2real('value', true) . ')';
+            $sumcount = 'SUM(countvalue)';
+            $sql = "SELECT $sumvalue AS sumvalue, $sumcount AS sumcount, COUNT(value) as countvalue"
+        }
         // show text replies only
         if ($TextOnly and in_array($item->typ, array("numeric", "multichoice", "multichoicerated"))) {
             continue;
