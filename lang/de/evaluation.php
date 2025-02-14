@@ -180,6 +180,7 @@ $string['winter_semester'] = 'Wintersemester';
 // end view.php
 
 // compare_results_inc.php
+$string['apply_filter'] = 'Filter anwenden';
 $string['back'] = 'Zurück';
 $string['analysis_cos'] = 'Auswertungen der Studiengänge';
 $string['reset_selection'] = 'Auswahl zurücksetzen';

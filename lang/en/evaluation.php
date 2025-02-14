@@ -179,6 +179,7 @@ $string['winter_semester'] = 'Winter semester';
 // end view.php
 
 // compare_results_inc.php
+$string['apply_filter'] = 'Apply filter';
 $string['back'] = 'Back';
 $string['analysis_cos'] = 'Evaluation of the degree programs';
 $string['reset_selection'] = 'Reset selection';
@@ -190,7 +191,7 @@ $string['i_dont_know'] = 'I can\'t answer';
 $string['analyzed_sc_questions'] = 'Analyzed single choice questions';
 $string['reply_scheme'] = 'Reply scheme';
 $string['filter_on_questions'] = 'Filter on questions';
-$string['with_reply'] = 'mit Antwort';
+$string['with_reply'] = 'with reply';
 $string['change_sort_up_down'] = 'Switch sorting between Ascending and Descending';
 $string['change_sort_by'] = 'Sort by submissions or by averages';
 $string['click_for_graphics'] = 'Click here to scroll directly to the graphic';

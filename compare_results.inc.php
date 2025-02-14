@@ -664,8 +664,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $aFilter = "course_of_studies <>''";
         // $evaluationResults = safeCount($_SESSION['CoS_department']);
         $departments = array();
-        foreach ($_SESSION['CoS_department'] AS $CoS){
-            $departments[$CoS] =  $CoS;
+        foreach ($_SESSION['CoS_department'] AS $CoS => $department){
+            $departments[$CoS] =  $department;
         }
         $evaluationResults = safeCount($departments);
         $allResults = $DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
