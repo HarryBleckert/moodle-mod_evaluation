@@ -4863,7 +4863,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
                     . ev_get_string('send_reminders_privileged')
                     . ev_get_string('send_reminders_' . $role . 's', $a) . "</body></html>";
             $subject = '=?UTF-8?B?' . base64_encode($a->sent_reminders_info . $a->ev_name) . '?=';
-            if (!$CFG->noemailever || ($test && $loopcnt < 2)) {
+            if ($CFG->noemailever || ($test && $loopcnt < 2)) {
                 $email = (!empty($admindata->email) ? $admindata->email : "harry.bleckert@ASH-berlin.eu");
             }
             if ((!$CFG->noemailever && !$test) || ($test && $loopcnt < 2)) {
