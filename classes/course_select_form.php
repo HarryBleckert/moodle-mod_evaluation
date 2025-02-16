@@ -63,7 +63,7 @@ class mod_evaluation_course_select_form extends moodleform {
         if (!$this->_form->_freezeAll && ($courses = $evaluationstructure->get_completed_courses()) && count($courses)) {
             $elements = [];
             $elements[] = $mform->createElement('autocomplete', 'courseid', get_string('filter_by_course', 'evaluation'),
-                    ['' => get_string('fulllistofcourses')] + $courses);
+                    ['' => get_string('fulllistofcourses') . " (".count($courses).")"] + $courses);
             $elements[] = $mform->createElement('submit', 'submitbutton', get_string('filter'));
             if ($evaluationstructure->get_courseid()) {
                 $elements[] = $mform->createElement('static', 'showall', '',
