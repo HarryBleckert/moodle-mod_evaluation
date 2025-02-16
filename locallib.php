@@ -4656,7 +4656,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
         if (!$cronjob) {
             @ob_flush();
             @ob_end_flush();
-            ob_start(null, 600);;
+            ob_start(null, 600);
         }
         //print print_r($key)."<hr>"; print print_r($evaluation_user);exit;
 
