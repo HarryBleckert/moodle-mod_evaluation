@@ -295,8 +295,10 @@ evaluation_showLoading();
 
 // set filter forms
 $qSelected = "";
-if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context) || $isPermitted)) {
-                // || (defined('EVALUATION_OWNER') OR ($cosPrivileged ?$analysisCoS:false )))) {
+if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context) ||
+                ($isPermitted ? ($cosPrivileged ?$analysisCoS:$teacherid ) :false) )) {
+//if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context))
+//                AND ( $isPermitteddefined('EVALUATION_OWNER') AND )) {
     if ($courseid){
         print "<br>";
     }
@@ -528,7 +530,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
     // Process course of studies select form.
     if ($SiteEvaluation and $cosStudies>1
             AND !$courseid AND $_SESSION["participating_courses_of_studies"]>1
-            AND (!$cosPrivileged OR (isset($_SESSION['CoS_privileged'][$USER->username])
+            AND (!$cosPrivileged OR ($analysisCoS AND isset($_SESSION['CoS_privileged'][$USER->username])
                     ?count($_SESSION['CoS_privileged'][$USER->username])>1:false))){
         $studyselectform =
                 new mod_evaluation_course_of_studies_select_form($url, $evaluationstructure, $evaluation->course == SITEID);
