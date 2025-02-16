@@ -295,10 +295,10 @@ evaluation_showLoading();
 
 // set filter forms
 $qSelected = "";
-if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context) ||
-                ($isPermitted ? ($cosPrivileged ?$analysisCoS:$teacherid ) :false) )) {
+if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context) || $privGlobalUser
+                || ($isPermitted ? ($cosPrivileged ?$analysisCoS:$teacherid ) :false) )) {
 //if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $context))
-//                AND ( $isPermitteddefined('EVALUATION_OWNER') AND )) {
+//                AND ( $isPermitted defined('EVALUATION_OWNER') AND )) {
     if ($courseid){
         print "<br>";
     }
