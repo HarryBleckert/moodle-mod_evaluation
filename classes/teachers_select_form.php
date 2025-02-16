@@ -63,7 +63,7 @@ class mod_evaluation_teachers_select_form extends moodleform {
         if (!$this->_form->_freezeAll && ($courses = $evaluationstructure->get_completed_teachers()) && count($courses)) {
             $elements = [];
             $elements[] = $mform->createElement('autocomplete', 'teacherid', get_string('filter_by_teacher', 'evaluation'),
-                    ['' => get_string('fulllistofteachers', 'evaluation')] + $courses);
+                    ['' => get_string('fulllistofteachers', 'evaluation'). " (".count($courses).")"] + $courses);
             $elements[] = $mform->createElement('submit', 'submitbutton', get_string('filter'));
             if ($evaluationstructure->get_teacherid()) {
                 $elements[] = $mform->createElement('static', 'showall', '',

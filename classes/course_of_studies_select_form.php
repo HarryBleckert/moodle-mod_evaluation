@@ -65,7 +65,7 @@ class mod_evaluation_course_of_studies_select_form extends moodleform {
             $elements = [];
             $elements[] = $mform->createElement('autocomplete', 'course_of_studiesID',
                     get_string('filter_by_course_of_studies', 'evaluation'),
-                    ['' => get_string('fulllistofstudies', 'evaluation')] + $courses);
+                    ['' => get_string('fulllistofstudies', 'evaluation') . " (".count($courses).")"] + $courses);
             $elements[] = $mform->createElement('submit', 'submitbutton', get_string('filter'));
             if ($evaluationstructure->get_course_of_studies()) {
                 $elements[] = $mform->createElement('static', 'showall', '',
