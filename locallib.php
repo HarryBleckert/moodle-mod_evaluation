@@ -1377,7 +1377,7 @@ function possible_active_evaluations($evaluation,$cosFilter = false) {
 // get all teachers of courses of current user of current evaluation - currently unused (Jan 7, 2022))
 function evaluation_get_all_teachers($evaluation, $userid = false, $force = false) {
     validate_evaluation_sessions($evaluation);
-    if ($force or empty($_SESSION["allteachers"]) or !isset($_SESSION["teamteaching_courses"])) {
+    if ($force or empty($_SESSION["allteachers"]) or empty($_SESSION["teamteaching_courses"])) {
         if (empty($_SESSION["allteachers"])) {
             $_SESSION["allteachers"] = array();
         }
@@ -3468,7 +3468,7 @@ function evaluation_count_teamteaching_courses($evaluation) {
         $_SESSION["teamteaching_courses"] = $evaluation->teamteaching_courses;
         return $evaluation->teamteaching_courses;
     }
-    if (!isset($_SESSION["teamteaching_courses"]) or !$_SESSION["teamteaching_courses"]) {
+    if (empty($_SESSION["teamteaching_courses"])) {
         evaluation_get_all_teachers($evaluation);
     }
     //print "<br><br><br><br>Team Teaching Kurse: " .var_export($courses,true);
