@@ -238,9 +238,8 @@ if ($evaluation->course == SITEID) {
     }
 }
 
-//if ( is_siteadmin() OR has_capability('moodle/course:update', $context) )
-if (has_capability('mod/evaluation:edititems', $context) OR isset($_SESSION["privileged_users"][$USER->username]) OR
-        ($evaluation->course != SITEID AND $isPermitted)) {
+//if ( is_siteadmin() OR has_capability('moodle/course:update', $context) ) //isset($_SESSION["privileged_users"][$USER->username]) OR
+if (has_capability('mod/evaluation:edititems', $context) OR ($evaluation->course != SITEID AND $isPermitted)) {
     $editurl = new moodle_url('/mod/evaluation/edit.php', $urlparams + ['do_show' => 'edit']);
     $row[] = new tabobject('edit', $editurl->out(), get_string('edit_items', 'evaluation'));
 
