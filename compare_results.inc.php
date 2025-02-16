@@ -760,12 +760,13 @@ function evaluation_compare_results($evaluation, $courseid = false,
         foreach ($allResults as $allResult) {
             $fullname = "";
             $isCourseStudent = evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid);
-            if (!$privGlobalUser AND (!empty($teacherid) OR $isCourseStudent)){
-                if (!evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid)
-                        and !$isCourseStudent) {
+            // if ((!defined('EVALUATION_OWNER') && (empty($_SESSION['CoS_privileged_sgl'][$USER->username]) ?true :empty($teacherid)) )
+            //if (!$privGlobalUser AND (!empty($teacherid) OR $isCourseStudent)){
+            if (!$privGlobalUser AND empty($_SESSION['CoS_privileged'][$USER->username])){
+                if ($isCourseStudent and !evaluation_has_user_participated($evaluation, $USER->id, $allResult->courseid)) {
                     continue;
                 }
-                if ($isCourseStudent and !evaluation_has_user_participated($evaluation, $USER->id, $allResult->courseid)) {
+                if (!evaluation_is_teacher($evaluation, $myEvaluations, $allResult->courseid) and !$isCourseStudent) {
                     continue;
                 }
             }
@@ -782,6 +783,9 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $fullname = $uRecord->fullname;
             }
 
+            if (empty($fullname)) {
+                continue;
+            }
 
             if ((defined('EVALUATION_OWNER') &&
                             (empty($_SESSION['CoS_privileged_sgl'][$USER->username]) ?true :empty($teacherid)) )
@@ -792,11 +796,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
                         . (strlen($fullname) > 120 ? substr($fullname, 0, 120) . "..." : $fullname) . "</a>";
             } else {
                 $links = $fullname;
-            }
-            if (empty($fullname)) {
-                continue;
-                // $fullname = '<b style="color:red;">Der Kurs mit Kurs-ID ' . $allResult->courseid . ' existiert nicht mehr!</b>';
-                // $links = $fullname;
             }
             $allLinks[] = $links;
             $allIDs[] = $allResult->courseid;
@@ -1341,7 +1340,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
 
             if ((defined('EVALUATION_OWNER') || $allSelected == "allCourses") && stristr($allLinks[$key],"<a") ){
-                //{	$hintLink = '<a href="print.php?showCompare=1&allSelected=useFilter&id='
                 $selector = ($allSelected == "allDepartments") ?"department" : $allKey;
 
                 $hintLink = '<a href="print.php?showCompare=1&allSelected=' . $allSelected . '&id='
