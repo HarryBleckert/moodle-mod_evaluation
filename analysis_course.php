@@ -806,9 +806,9 @@ if ($courseitemfilter > 0) {
         // filter data display by privileges
         // before: ( !defined('EVALUATION_OWNER') ?true :$cosPrivileged )
         if (!defined('EVALUATION_OWNER') AND !is_siteadmin() and defined("SiteEvaluation")) {
-            if ((!$byTeacher and !in_array($item->typ, array("numeric", "multichoice", "multichoicerated"))) or
+            if ((!$byTeacher and !in_array($item->typ, array("numeric", "multichoice", "multichoicerated"))) OR
                     ($courseid and
-                            (stripos($item->name, "geschlecht") !== false or stripos($item->name, "semester") !== false or
+                            (stripos($item->name, "geschlecht") !== false OR stripos($item->name, "semester") !== false OR
                                     stripos($item->name, "studiengang") !== false))
             ) {
                 print "<i>" . $item->position . ". " . $item->name . " wird aus Datenschutzgründen nicht angezeigt!</i><br>\n";
