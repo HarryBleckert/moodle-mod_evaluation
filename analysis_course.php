@@ -811,7 +811,7 @@ if ($courseitemfilter > 0) {
                             (stripos($item->name, "geschlecht") !== false OR stripos($item->name, "semester") !== false OR
                                     stripos($item->name, "studiengang") !== false))
             ) {
-                print "<i>" . $item->position . ". " . $item->name . " wird aus Datenschutzgründen nicht angezeigt!</i><br>\n";
+                print "<i>" . ($item->position-1) . ". " . $item->name . " wird aus Datenschutzgründen nicht angezeigt!</i><br>\n";
                 continue;
             }
         }
