@@ -370,7 +370,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
         }
     } else {
         $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id 
-                    AND (typ like'multichoice%' OR typ='numeric') AND $schemeQ
+                    AND (typ like'multichoice%' OR typ='numeric')
 					ORDER BY position ASC";
         $questions = $DB->get_records_sql($query);
         //print "<br><hr>".var_export($questions,true);exit;
@@ -435,7 +435,7 @@ if ($completed_responses AND (has_capability('mod/evaluation:viewreports', $cont
 
     print    '<select name="qSelected" style="' . $buttonStyle . '" onchange="this.form.submit();">' . "\n"
             . '<option value="">' . get_string("all") . " " . $numQuestions
-            . " vergleichbar auswertbaren " .
+            . " numerisch auswertbaren " .
             get_string("questions", "evaluation") . "</option>\n";
     foreach ($allQuestions as $question) {
         $selected = "";
@@ -811,6 +811,7 @@ if ($courseitemfilter > 0) {
                             (stripos($item->name, "geschlecht") !== false or stripos($item->name, "semester") !== false or
                                     stripos($item->name, "studiengang") !== false))
             ) {
+                print "<i>" . $item->position . ". " . $item->name . " wird aus Datenschutzgründen nicht angezeigt!</i><br>\n";
                 continue;
             }
         }
