@@ -200,7 +200,7 @@ require('tabs.php');
 
 
 // show if CoS privileged filter applied for user
-if (!empty($_SESSION['CoS_privileged'][$USER->username]) and empty($teacherid)) {
+if (!empty($_SESSION['CoS_privileged'][$USER->username]) and empty($teacherid) AND $analysisCoS) {
     print  '<span style="font-weight:600;">' . ev_get_string('analysis_cos') . ": " . '<span style="white-space:pre-line;">'
             . implode(", ", $_SESSION['CoS_privileged'][$USER->username]) . "</span></span><br>\n";
 } elseif ($SiteEvaluation and !$courseid and (!defined('EVALUATION_OWNER') ? true : !$cosPrivileged)) {
