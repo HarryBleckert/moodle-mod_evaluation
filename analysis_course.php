@@ -813,7 +813,7 @@ if ($courseitemfilter > 0) {
                             (stripos($item->name, "geschlecht") !== false OR stripos($item->name, "semester") !== false OR
                                     stripos($item->name, "studiengang") !== false))
             ) {
-                print "<i>" . ($item->position-1) . ". '" . $item->name . "': Die Auswertung wird aus Datenschutzgründen nicht angezeigt!</i><br>\n";
+                print "<i>'" . $item->name . "': Die Auswertung wird aus Datenschutzgründen nicht angezeigt!</i><br>\n";
                 continue;
             }
         }
