@@ -384,6 +384,10 @@ if ($is_open) {
         echo $msg_teachers . $alert;
     }
 }
+else if($isStudent||$isTeacher){
+    print $good_day . " " . $fullname . "<br>\n";
+
+}
 
 
 if (defined('EVALUATION_OWNER') and !$cosPrivileged) {
