@@ -805,13 +805,14 @@ if ($courseitemfilter > 0) {
     echo "<br>\n";
     // Print the items in an analysed form.
     foreach ($items as $key => $item) {
+        $printnr = ($evaluation->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
         // filter data display by privileges
         // before: ( !defined('EVALUATION_OWNER') ?true :$cosPrivileged )
         if (!defined('EVALUATION_OWNER') AND !is_siteadmin() and defined("SiteEvaluation")) {
             if ((!$byTeacher and !in_array($item->typ, array("numeric", "multichoice", "multichoicerated"))) OR
                     ($courseid and (stripos($item->name, "geschlecht") !== false OR stripos($item->name, "semester") !== false))
             ) {
-                print " - <i>'" . $item->name . "': Die Auswertung wird aus Datenschutzgründen nicht angezeigt!</i><br>\n";
+                print "$printnr<i><b>'" . $item->name . "'</b>: Die Auswertung wird aus Datenschutzgründen nicht angezeigt!</i><br>\n";
                 continue;
             }
         }
@@ -827,15 +828,14 @@ if ($courseitemfilter > 0) {
         }
 
         // purpose?
-        if ((!empty($course_of_studiesID) or $courseid) and
+        /*if ((!empty($course_of_studiesID) or $courseid) and
                 stripos($item->name, get_string("course_of_studies", "evaluation")) !== false) {
             continue;
-        }
+        }*/
 
         echo '<table style="width:100%;">';
         //echo nl2br(var_export($key,true)).nl2br(var_export($item,true));
         $itemobj = evaluation_get_item_class($item->typ);
-        $printnr = ($evaluation->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
         echo "<tr><td>\n";
         if (in_array($item->typ, array("multichoice", "multichoicerated"))) {
             $itemobj->print_analysed($item, $printnr, $mygroupid, $evaluationstructure->get_courseid(),
