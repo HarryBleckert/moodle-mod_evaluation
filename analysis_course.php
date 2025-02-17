@@ -811,7 +811,7 @@ if ($courseitemfilter > 0) {
             if ((!$byTeacher and !in_array($item->typ, array("numeric", "multichoice", "multichoicerated"))) OR
                     ($courseid and (stripos($item->name, "geschlecht") !== false OR stripos($item->name, "semester") !== false))
             ) {
-                print "<i>'" . $item->name . "': Die Auswertung wird aus Datenschutzgründen nicht angezeigt!</i><br>\n";
+                print " - <i>'" . $item->name . "': Die Auswertung wird aus Datenschutzgründen nicht angezeigt!</i><br>\n";
                 continue;
             }
         }
