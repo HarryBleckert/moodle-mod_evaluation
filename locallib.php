@@ -4960,6 +4960,7 @@ function ev_get_reminders($evaluation, $id) {
     $nonresponding = " (NR)";
     $remindertxt = ev_get_string('reminders_sent_at'); // Hinweismails wurden versandt am:
     $send_reminders_to = ev_get_string('send_reminders_to'); // Hinweismails versenden an:
+    $reminders_title =  ev_get_string('reminders_title');
     $is_open = evaluation_is_open($evaluation);
     /*
      20240102:teachers,students
@@ -4973,7 +4974,6 @@ function ev_get_reminders($evaluation, $id) {
         $test = optional_param('test', false, PARAM_RAW);
         $remindertxt = '<a href="?id='.$id.'&send_reminders=1">' . $remindertxt . "</a>";
         $non_responders_only = ev_get_string('non_responders_only'); // Nur Non Responders
-        $reminders_title =  ev_get_string('reminders_title');
 
         if ( $send_reminders ){
             ?>
