@@ -4957,10 +4957,12 @@ function ev_set_reminders($evaluation,$action,$noreplies=false) {
 
 function ev_get_reminders($evaluation, $id) {
     global $DB;
+    $a = new stdClass();
+    $a->min_results_text = min_results_text($evaluation);
     $nonresponding = " (NR)";
     $remindertxt = ev_get_string('reminders_sent_at'); // Hinweismails wurden versandt am:
     $send_reminders_to = ev_get_string('send_reminders_to'); // Hinweismails versenden an:
-    $reminders_title =  ev_get_string('reminders_title');
+    $reminders_title =  ev_get_string('reminders_title',$a);
     $is_open = evaluation_is_open($evaluation);
     /*
      20240102:teachers,students
