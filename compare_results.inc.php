@@ -1407,6 +1407,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         print '<script>var table = document.getElementById("chartResultsTable");var row = ncell = "";'
                 . $rows . '</script>';
     }
+
     if ($filter) {
         $filterAvg = $replypattern = 0;
         $validated = false;
@@ -1438,6 +1439,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         if ( $numresultsF < $minReplies){
             $tags["filterPresentation"] = '';
             $tags["filterAvg"] = "";
+            unset($data['average_F']);
         }
     }
     // subquery
@@ -1513,7 +1515,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
         // message regarding max charts to display
         //if ( $allKey AND safeCount($allResults) > $maxCharts )
         if ($allKey and $evaluatedResults >= $maxCharts) {
-            print "<br><b>Es werden nur die ersten $maxCharts Ergebnisese grafisch angezeigt, da die Auswahl > $maxCharts ist!</b><br>\n";
+            $a->maxcharts = $maxCharts;
+            print "<br><b>" . ev_get_string('show_only_first_maxcharts',$a) . "</b><br>\n";
         }
 
         $colors0 = array("black", "red", "green", "blue","orange", "purple", "cyan",

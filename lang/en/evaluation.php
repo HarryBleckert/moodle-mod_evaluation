@@ -231,6 +231,7 @@ $string['incl_duplicated'] = 'including {$a->duplicated} duplicated submissions'
 $string['permitted_cos'] = 'Viewable courses';
 $string['all_filtered_submissions'] = 'All filtered submissions {$a->ftitle}';
 $string['omitted_submissions'] = '{$a->allSubject} with less than {$a->minReplies} submissions {$a->percentage}';
+$string['show_only_first_maxcharts'] = 'Only the first {$a->maxCharts} results will be displayed in Chart.!';
 //$string[''] = '';
 //$string[''] = '';
 // $string[''] = '';

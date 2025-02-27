@@ -58,7 +58,6 @@ $string['completed_responses'] = 'Summe Abgaben';
 // end print.php
 
 // send reminders
-// $string[''] = '';
 $string['sent_reminders_info'] = 'Hinweismails wurden an {$a->mails_sent} {$a->role} versandt';
 $string['john_doe'] = 'John Doe';
 $string['send_reminders_noreplies_teachers'] = 'Nur an Lehrende, für die bisher weniger als {$a->min_results_text} Abgaben gemacht wurden.';
@@ -179,7 +178,7 @@ $string['summer_semester'] = 'Sommersemester';
 $string['winter_semester'] = 'Wintersemester';
 // end view.php
 
-// compare_results_inc.php
+// Statistik / compare_results_inc.php
 $string['apply_filter'] = 'Filter anwenden';
 $string['back'] = 'Zurück';
 $string['analysis_cos'] = 'Auswertungen der Studiengänge';
@@ -214,8 +213,7 @@ $string['apply'] = 'anwenden';
 $string['remove'] = 'entfernen';
 $string['filter_action'] = '<b>Filter</b> {$a->action}';
 $string['remove_filter'] = 'Filter entfernen';
-$string['less_minreplies'] =
-        '<span style="color:#000000;font-weight:bold;">Es gibt für</span>  {$a->ftitle} <span style="color:#000000;font-weight:bold;">weniger als {$a->minReplies} Abgaben</span>. <b>Daher wird keine Auswertung angezeigt!</b>';
+$string['less_minreplies'] = '<span style="color:#000000;font-weight:bold;">Es gibt für</span>  {$a->ftitle} <span style="color:#000000;font-weight:bold;">weniger als {$a->minReplies} Abgaben</span>. <b>Daher wird keine Auswertung angezeigt!</b>';
 $string['except_siteadmin'] = ' - ausgenommen sind Admins';
 $string['team_teaching'] = 'Team Teaching';
 $string['single_submission_per_course'] = 'Eine Abgabe pro Teilnehmer_in und Kurs';
@@ -233,6 +231,7 @@ $string['incl_duplicated'] = 'inkl. {$a->duplicated} duplizierter Abgaben ';
 $string['permitted_cos'] = 'Einsehbare Studiengänge';
 $string['all_filtered_submissions'] = 'Alle gefilterten Abgaben {$a->ftitle}';
 $string['omitted_submissions'] = '{$a->allSubject} mit weniger als {$a->minReplies} Abgaben {$a->percentage}';
+$string['show_only_first_maxcharts'] = 'Es werden nur die ersten {$a->maxCharts} Ergebnisse grafisch angezeigt!';
 //$string[''] = '';
 //$string[''] = '';
 // $string[''] = '';
