@@ -1571,7 +1571,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                             'labels' => $data['averageF_labels'],
                             'backgroundColor' => $colors[1], 'borderColor' => $colors[1]);
         }
-        if ($subquery and isset($data["averageSq"]) {
+        if ($subquery and isset($data["averageSq"])) {
             if ($numresultsSq >= $minReplies) {
                 $JSdata['datasets'][] = $JSdataTable['datasets'][] =
                         array('data' => $data["averageSq"], 'label' => $sqTitle,
