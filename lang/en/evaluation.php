@@ -232,7 +232,7 @@ $string['permitted_cos'] = 'Viewable courses';
 $string['all_filtered_submissions'] = 'All filtered submissions {$a->ftitle}';
 $string['omitted_submissions'] = '{$a->allSubject} with less than {$a->minReplies} submissions {$a->percentage}';
 $string['show_only_first_maxcharts'] = 'Only the first {$a->maxCharts} results will be displayed in Chart!';
-//$string[''] = '';
+$string['no_results_for_single_question'] = 'No graphical evaluations are displayed for the answers to single questions!';
 //$string[''] = '';
 // $string[''] = '';
 // end compare_results_inc.php

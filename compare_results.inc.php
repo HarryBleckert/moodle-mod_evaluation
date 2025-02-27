@@ -1504,7 +1504,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
     // we do not need graphics if we have only 1 data point and this data is already shown in list
     if ($qSelected) {
-        print "<br><b>Für die Antworten auf einzelne Fragen werden keine grafischen Ergebnisese angezeigt!</b><br>\n";
+        print "<br><b>" . ev_get_string('no_results_for_single_question'). "</b><br>\n";
     }else{
         // Use source Chartjs With Wrapper Class
         // using own php wrapper
@@ -1513,7 +1513,6 @@ function evaluation_compare_results($evaluation, $courseid = false,
         */
 
         // message regarding max charts to display
-        //if ( $allKey AND safeCount($allResults) > $maxCharts )
         if ($allKey and $evaluatedResults >= $maxCharts) {
             $a->maxCharts = $maxCharts;
             print "<br><b>" . ev_get_string('show_only_first_maxcharts',$a) . "</b><br>\n";
@@ -1556,26 +1555,29 @@ function evaluation_compare_results($evaluation, $courseid = false,
             // {count: 7, rmin: 5, rmax: 21, min: 0, max: 100};
         }*/
 
-        $JSdata = [
-                'labels' => $data['labels'],
+        $JSdata = $JSdataTable['datasets'][] =
+                ['labels' => $data['labels'],
                 'datasets' => [] //You can add datasets directly here or add them later with addDataset()
-        ];
-        $JSdata['datasets'][] = ['data' => $data['average'], 'label' => "Alle Abgaben", 'labels' => $data['average_labels'],
+                ];
+        $JSdata['datasets'][] = $JSdataTable['datasets'][] =
+                ['data' => $data['average'], 'label' => "Alle Abgaben", 'labels' => $data['average_labels'],
                 'backgroundColor' => $colors[0], 'borderColor' => $colors[0],
             //'axes' => [ 'x' => [ 'labels' => $data['average_labels']] ]
         ];
 
         if ($filter and isset($data["averageF"]) AND $numresultsF >= $minReplies ) {
-            $JSdata['datasets'][] =
+            $JSdata['datasets'][] = $JSdataTable['datasets'][] =
                     ['data' => $data["averageF"], 'label' => implode(", ", $fTitle),
                             'labels' => $data['averageF_labels'],
                             'backgroundColor' => $colors[1], 'borderColor' => $colors[1]];
         }
-        if ($subquery and isset($data["averageSq"])) {
-            $JSdata['datasets'][] =
-                    ['data' => $data["averageSq"], 'label' => $sqTitle,
-                            'labels' => $data['averageSq_labels'],
-                            'backgroundColor' => $colors[2], 'borderColor' => $colors[2]];
+        if ($subquery and isset($data["averageSq"]) {
+            if ($numresultsSq >= $minReplies) {
+                $JSdata['datasets'][] = $JSdataTable['datasets'][] =
+                        ['data' => $data["averageSq"], 'label' => $sqTitle,
+                                'labels' => $data['averageSq_labels'],
+                                'backgroundColor' => $colors[2], 'borderColor' => $colors[2]];
+            }
         }
         // show maximum $maxCharts graphs
         if ($allKey) //AND $evaluatedResults <= $maxCharts )
@@ -1616,16 +1618,15 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 }
                 $replies = $allCounts[$allValues[$key]];
                 // print "<hr>minReplies: $minReplies - key: $key => value:$value - allCounts[$allValues[$key]] = $replies<hr>";
-                if ($replies >= $minReplies) {
-                    $JSdata['datasets'][] =
-                            ['data' => $data['average_' . $value], 'label' => $allValues[$key],
-                                    'labels' => $data['labels_' . $value],
-                                    'backgroundColor' => $colors[$cnt + 3], 'borderColor' => $colors[$cnt + 3]];
-                    $cnt++;
+                $record = array('data' => $data['average_' . $value], 'label' => $allValues[$key],
+                        'labels' => $data['labels_' . $value],
+                        'backgroundColor' => $colors[$cnt + 3], 'borderColor' => $colors[$cnt + 3]);
+                if ($replies >= $minReplies{
+                    if ($cnt <= $maxCharts) {
+                    $JSdata['datasets'][] = $record;
                 }
-                if ($cnt == $maxCharts) {
-                    break;
-                }
+                $JSdataTable['datasets'][] = $record;
+                $cnt++;
             }
         }
         require_once("classes/ChartJS.php");
@@ -1702,7 +1703,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
 
             var dataToTable = function (dataset) {
-                var html = '<table style="overflow:scroll; overflow-x:scroll;text-align:left;">'; //width:100%;
+                var html = '<table style="overflow:scroll; overflow-x:scroll;overflow-y:scroll;text-align:left;">'; //width:100%;
                 html += '<thead><tr><th> </th>'; // style="width:120px;"
 
                 var columnCount = 0;
@@ -1739,7 +1740,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             };
 
             //Chart.helpers.color(color).lighten(0.2);
-            jQuery('#evDataTable').html(dataToTable(<?php echo json_encode($JSdata); ?>));
+            jQuery('#evDataTable').html(dataToTable(<?php echo json_encode($JSdataFull); ?>));
 
         </script>
         <?php
