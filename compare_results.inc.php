@@ -1565,7 +1565,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             //'axes' => [ 'x' => [ 'labels' => $data['average_labels']] ]
         ];
 
-        if ($filter and isset($data["averageF"])) {
+        if ($filter and isset($data["averageF"]) AND $numresultsF >= $minReplies ) {
             $JSdata['datasets'][] =
                     ['data' => $data["averageF"], 'label' => implode(", ", $fTitle),
                             'labels' => $data['averageF_labels'],
