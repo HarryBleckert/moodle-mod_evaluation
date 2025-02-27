@@ -1014,7 +1014,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     /* ToDo 20250227 */
     if (is_siteadmin()) {
         $displayedResults = $evaluationResults - $omittedSubjects;
-        if ($displayedResults > 1 and $displayedResults < $evaluationResults) {
+        if (!$filter AND $displayedResults > 1 and $displayedResults < $evaluationResults) {
             $a->percentage = evaluation_calc_perc($displayedResults, $evaluationResults);
             $a->displayed_results = $displayedResults;
             $a->evaluation_results = $evaluationResults;
