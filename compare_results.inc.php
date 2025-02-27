@@ -1741,7 +1741,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             };
 
             //Chart.helpers.color(color).lighten(0.2);
-            jQuery('#evDataTable').html(dataToTable(<?php echo json_encode($JSdataFull); ?>));
+            jQuery('#evDataTable').html(dataToTable(<?php echo json_encode(Table); ?>));
 
         </script>
         <?php
