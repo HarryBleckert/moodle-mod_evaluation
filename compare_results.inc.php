@@ -1010,7 +1010,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 				<td><span id="omittedSubj"></span></td></tr>' . "\n";
     }
     $displayedResults = array_sum($allCounts);
-    if ($displayedResults>1 AND $displayedResults<$evaluationResults){
+    if ($displayedResults>1 AND $displayedResults<$numresults){
         $a->percentage = evaluation_calc_perc($displayedResults,$evaluationResults);
         $a->displayed_results = $displayedResults;
         $a->evaluation_results = $evaluationResults;
