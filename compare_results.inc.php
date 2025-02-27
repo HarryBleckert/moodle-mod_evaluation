@@ -1020,7 +1020,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $a->evaluation_results = $evaluationResults;
             print  '<tr><td style="text-align:left;">'
                     . ev_get_string('evaluated_results', $a) . '</td>
-				<td>' . ($filter ? $numresultsF : $numresults) - array_sum($allCounts)-$omittedResults . '</td>
+				<td>' . ($filter ? $numresultsF : $numresults) - $omittedResults . '</td>
 				<td style="text-align:left;"><span id="omittedSubject">&nbsp;</span></td>
 				<td><span id="omittedSubj">&nbsp;</span></td></tr>' . "\n";
         }
