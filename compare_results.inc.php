@@ -988,6 +988,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 . "\n";
     }
 
+    $a->minReplies = $minReplies;
+    $a->allSubject = $allSubject;
     if ($omittedResults) {
         $button = '';
         $percentage = evaluation_calc_perc($omittedResults, ($filter ? $numresultsF : $numresults));
@@ -999,16 +1001,26 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
     if ($omittedSubjects){
         $a->percentage = evaluation_calc_perc($omittedSubjects,$evaluatedResults);
-        $a->minReplies = $minReplies;
-        $a->allSubject = $allSubject;
         print  '<tr><td style="text-align:left;">'
                 . ev_get_string('omitted_submissions',$a)
                 . ": " . $omittedSubjects . "/" . $evaluatedResults 
         . '</td>
 				<td>&nbsp;</td>
-				<td style="text-align:left;"><span id="omittedResult"></span></td>
-				<td><span id="omittedAvg"></span></td></tr>' . "\n";
+				<td style="text-align:left;"><span id="omittedSubject"></span></td>
+				<td><span id="omittedSubj"></span></td></tr>' . "\n";
     }
+    $displayedResults = $numresults+$numresultsF;
+    if ($displayedResults>1 AND $displayedResults<$evaluatedResults){
+        $a->percentage = evaluation_calc_perc($displayedResults,$evaluatedResults);
+        $a->displayed_results = $displayedResults;
+        $a->evaluated_results = $evaluatedResults;
+        print  '<tr><td style="text-align:left;">'
+                . ev_get_string('evaluated_results',$a) . '</td>
+				<td>' . $displayedResults . '</td>
+				<td style="text-align:left;"><span id="omittedSubject">&nbsp;</span></td>
+				<td><span id="omittedSubj">&nbsp;</span></td></tr>' . "\n";
+    }
+
 
     /* print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ\n\$presentation: "
         .implode(", ",$presentation)."<hr>"; */

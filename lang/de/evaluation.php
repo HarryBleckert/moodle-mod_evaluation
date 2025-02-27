@@ -233,6 +233,7 @@ $string['all_filtered_submissions'] = 'Alle gefilterten Abgaben {$a->ftitle}';
 $string['omitted_submissions'] = '{$a->allSubject} mit weniger als {$a->minReplies} Abgaben {$a->percentage}';
 $string['show_only_first_maxcharts'] = 'Es werden nur die ersten {$a->maxCharts} Ergebnisse grafisch angezeigt!';
 $string['no_results_for_single_question'] = 'Für die Antworten auf einzelne Fragen werden keine grafischen Auswertungen angezeigt!';
+$string['evaluated_results'] = '{$a->displayed_results}/{$a->evaluated_results} ausgewertete {$a->allSubject} {$a->percentage}';
 //$string[''] = '';
 // $string[''] = '';
 // end compare_results_inc.php
