@@ -1013,7 +1013,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
     if ($displayedResults>1 AND $displayedResults<$numresults){
         $a->percentage = evaluation_calc_perc($displayedResults,$evaluationResults);
         $a->displayed_results = $displayedResults;
-        $a->evaluation_results = $evaluationResults;
+        $a->evaluation_results = $numresults;
         print  '<tr><td style="text-align:left;">'
                 . ev_get_string('evaluated_results',$a) . '</td>
 				<td>' . $displayedResults . '</td>
