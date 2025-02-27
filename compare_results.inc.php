@@ -1026,6 +1026,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         }
     }
 
+
     /* print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ\n\$presentation: "
         .implode(", ",$presentation)."<hr>"; */
     print '</table><div style="display:block;" id="chartResultsList"></div>' . "\n";
