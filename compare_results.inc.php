@@ -1009,19 +1009,22 @@ function evaluation_compare_results($evaluation, $courseid = false,
 				<td style="text-align:left;"><span id="omittedSubject"></span></td>
 				<td><span id="omittedSubj"></span></td></tr>' . "\n";
     }
-    /* ToDo 20250227
-    $displayedResults = array_sum($allCounts);
-    if ($displayedResults>1 AND $displayedResults<$numresults){
-        $a->percentage = evaluation_calc_perc($displayedResults,$evaluationResults);
-        $a->displayed_results = $displayedResults;
-        $a->evaluation_results = $numresults;
-        print  '<tr><td style="text-align:left;">'
-                . ev_get_string('evaluated_results',$a) . '</td>
+
+
+    /* ToDo 20250227 */
+    if ($CFG->dbname == 'moodle_staging') {
+        $displayedResults = array_sum($allCounts) - $omittedResults;
+        if ($displayedResults > 1 and $displayedResults < $numresults) {
+            $a->percentage = evaluation_calc_perc($displayedResults, $evaluationResults);
+            $a->displayed_results = $displayedResults;
+            $a->evaluation_results = $numresults;
+            print  '<tr><td style="text-align:left;">'
+                    . ev_get_string('evaluated_results', $a) . '</td>
 				<td>' . $displayedResults . '</td>
 				<td style="text-align:left;"><span id="omittedSubject">&nbsp;</span></td>
 				<td><span id="omittedSubj">&nbsp;</span></td></tr>' . "\n";
-    }*/
-
+        }
+    }
 
     /* print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ\n\$presentation: "
         .implode(", ",$presentation)."<hr>"; */
