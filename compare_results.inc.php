@@ -1580,8 +1580,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
         }
         // show maximum $maxCharts graphs
-        if ($allKey) //AND $evaluatedResults <= $maxCharts )
-        {    // show graphics for top ten - to Do
+        if ($allKey) { //AND $evaluatedResults <= $maxCharts )
+            // show graphics for top ten - to Do
             //$sortArray[] = array( "allIDs" => $allResult->courseid, "allValues" => $fullname, "allLinks" => $links, "allCounts" => $Counts );
             $newIDs = $newValues = array();
             if ($sortKey == "replies") {
@@ -1621,12 +1621,13 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 $record = array('data' => $data['average_' . $value], 'label' => $allValues[$key],
                         'labels' => $data['labels_' . $value],
                         'backgroundColor' => $colors[$cnt + 3], 'borderColor' => $colors[$cnt + 3]);
-                if ($replies >= $minReplies{
+                if ($replies >= $minReplies) {
                     if ($cnt <= $maxCharts) {
-                    $JSdata['datasets'][] = $record;
+                        $JSdata['datasets'][] = $record;
+                    }
+                    $JSdataTable['datasets'][] = $record;
+                    $cnt++;
                 }
-                $JSdataTable['datasets'][] = $record;
-                $cnt++;
             }
         }
         require_once("classes/ChartJS.php");
