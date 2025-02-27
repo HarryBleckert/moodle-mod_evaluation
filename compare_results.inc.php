@@ -1439,7 +1439,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         if ( $numresultsF < $minReplies){
             $tags["filterPresentation"] = '';
             $tags["filterAvg"] = "";
-            unset($data['average_F']);
+            // unset($data['average_F']);
         }
     }
     // subquery
