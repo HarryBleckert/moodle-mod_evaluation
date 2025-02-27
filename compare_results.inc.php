@@ -1556,27 +1556,27 @@ function evaluation_compare_results($evaluation, $courseid = false,
         }*/
 
         $JSdata = $JSdataTable['datasets'][] =
-                ['labels' => $data['labels'],
+                array('labels' => $data['labels'],
                 'datasets' => [] //You can add datasets directly here or add them later with addDataset()
-                ];
+                );
         $JSdata['datasets'][] = $JSdataTable['datasets'][] =
-                ['data' => $data['average'], 'label' => "Alle Abgaben", 'labels' => $data['average_labels'],
+                array('data' => $data['average'], 'label' => "Alle Abgaben", 'labels' => $data['average_labels'],
                 'backgroundColor' => $colors[0], 'borderColor' => $colors[0],
-            //'axes' => [ 'x' => [ 'labels' => $data['average_labels']] ]
-        ];
+        /*'axes' => [ 'x' => [ 'labels' => $data['average_labels']] ]*/
+                );
 
         if ($filter and isset($data["averageF"]) AND $numresultsF >= $minReplies ) {
             $JSdata['datasets'][] = $JSdataTable['datasets'][] =
-                    ['data' => $data["averageF"], 'label' => implode(", ", $fTitle),
+                    array('data' => $data["averageF"], 'label' => implode(", ", $fTitle),
                             'labels' => $data['averageF_labels'],
-                            'backgroundColor' => $colors[1], 'borderColor' => $colors[1]];
+                            'backgroundColor' => $colors[1], 'borderColor' => $colors[1]);
         }
         if ($subquery and isset($data["averageSq"]) {
             if ($numresultsSq >= $minReplies) {
                 $JSdata['datasets'][] = $JSdataTable['datasets'][] =
-                        ['data' => $data["averageSq"], 'label' => $sqTitle,
+                        array('data' => $data["averageSq"], 'label' => $sqTitle,
                                 'labels' => $data['averageSq_labels'],
-                                'backgroundColor' => $colors[2], 'borderColor' => $colors[2]];
+                                'backgroundColor' => $colors[2], 'borderColor' => $colors[2]);
             }
         }
         // show maximum $maxCharts graphs
