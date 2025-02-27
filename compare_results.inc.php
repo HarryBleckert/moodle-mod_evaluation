@@ -1012,15 +1012,15 @@ function evaluation_compare_results($evaluation, $courseid = false,
 
 
     /* ToDo 20250227 */
-    if ($CFG->dbname == 'moodle_staging') {
-        $displayedResults = array_sum($allCounts) - $omittedResults;
-        if ($displayedResults > 1 and $displayedResults < $numresults) {
+    if (is_siteadmin()) {
+        $displayedResults = $evaluationResults - $omittedSubjects;
+        if ($displayedResults > 1 and $displayedResults < $evaluationResults) {
             $a->percentage = evaluation_calc_perc($displayedResults, $evaluationResults);
             $a->displayed_results = $displayedResults;
-            $a->evaluation_results = $numresults;
+            $a->evaluation_results = $evaluationResults;
             print  '<tr><td style="text-align:left;">'
                     . ev_get_string('evaluated_results', $a) . '</td>
-				<td>' . $displayedResults . '</td>
+				<td>' . ($filter ? $numresultsF : $numresults) - array_sum($allCounts)-$omittedResults . '</td>
 				<td style="text-align:left;"><span id="omittedSubject">&nbsp;</span></td>
 				<td><span id="omittedSubj">&nbsp;</span></td></tr>' . "\n";
         }
