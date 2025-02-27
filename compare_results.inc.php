@@ -1515,7 +1515,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         // message regarding max charts to display
         //if ( $allKey AND safeCount($allResults) > $maxCharts )
         if ($allKey and $evaluatedResults >= $maxCharts) {
-            $a->maxcharts = $maxCharts;
+            $a->maxCharts = $maxCharts;
             print "<br><b>" . ev_get_string('show_only_first_maxcharts',$a) . "</b><br>\n";
         }
 
