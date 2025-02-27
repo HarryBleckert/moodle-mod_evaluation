@@ -1555,7 +1555,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             // {count: 7, rmin: 5, rmax: 21, min: 0, max: 100};
         }*/
 
-        $JSdata = $JSdataTable['datasets'][] =
+        $JSdata = $JSdataTable =
                 array('labels' => $data['labels'],
                 'datasets' => [] //You can add datasets directly here or add them later with addDataset()
                 );
