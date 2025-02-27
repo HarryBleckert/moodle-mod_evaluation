@@ -1009,6 +1009,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 				<td style="text-align:left;"><span id="omittedSubject"></span></td>
 				<td><span id="omittedSubj"></span></td></tr>' . "\n";
     }
+    /* ToDo 20250227
     $displayedResults = array_sum($allCounts);
     if ($displayedResults>1 AND $displayedResults<$numresults){
         $a->percentage = evaluation_calc_perc($displayedResults,$evaluationResults);
@@ -1019,7 +1020,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
 				<td>' . $displayedResults . '</td>
 				<td style="text-align:left;"><span id="omittedSubject">&nbsp;</span></td>
 				<td><span id="omittedSubj">&nbsp;</span></td></tr>' . "\n";
-    }
+    }*/
 
 
     /* print "<hr>\$qfValues: $qfValues -\$scheme: $scheme - \$schemeQ: $schemeQ\n\$presentation: "
