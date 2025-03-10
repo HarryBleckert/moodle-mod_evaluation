@@ -174,7 +174,7 @@ foreach ($evaluation_users as $key => $evaluation_user) {    //if ( $cnt<280) { 
     // get student courses to evaluate
     $USER = core_user::get_user($userid);
 
-    unset($_SESSION["possible_evaluations"],$_SESSION["possible_active_evaluations"]
+    unset($_SESSION["possible_evaluations"],$_SESSION["possible_active_evaluations"]);
     $myEvaluations = get_evaluation_participants($evaluation, $userid);
     if (empty($myEvaluations)) {
         show_log("$cnt. $fullname - $username - $email - ID: $userid - No courses in Evaluation!! - "
