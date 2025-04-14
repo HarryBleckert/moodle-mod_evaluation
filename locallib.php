@@ -1799,7 +1799,7 @@ function evaluation_get_course_studies($evaluation, $link = false, $raw = false)
     return $course_studies;
 }
 
-// get Studiengang name of course from course_categories path
+// get Studiengang and optionally Semester name of course from course_categories path
 function evaluation_get_course_of_studies($courseid, $link = false, $showsemester = false) {
     global $DB;
     if (empty($courseid) or $courseid == 1 or !defined('COURSE_OF_STUDIES_PATH')) {
@@ -4626,7 +4626,7 @@ function ev_send_reminders($evaluation,$role="teacher",$noreplies=false,$test=tr
     // $total_evaluation_days = total_evaluation_days($evaluation);
     $lastEvaluationDay = date("d.m.Y", $evaluation->timeclose);
     $cmid = get_evaluation_cmid_from_id($evaluation);
-    $evUrl = $CFG->wwwroot . "/evaluation/view.php?id=" . $cmid;
+    $evUrl = $CFG->wwwroot . "/mod/evaluation/view.php?id=" . $cmid;
     $senderName = '=?UTF-8?B?' . base64_encode($evaluation->sendername) . '?=';
     $senderMail = strtolower($evaluation->sendermail);
     $sender = $senderName . " <$senderMail>";
