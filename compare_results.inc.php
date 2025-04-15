@@ -382,7 +382,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
                 <?php
             }
             if (defined('EVALUATION_OWNER') OR ($cosPrivileged ?!empty($_SESSION['CoS_privileged'][$USER->username])
-                    :evaluation_is_my_cos($myEvaluations, $allResult->course_of_studies))){
+                    :true)){
 
             if ($allSelected == "allStudies") {
                 $style = $selectStyle;
