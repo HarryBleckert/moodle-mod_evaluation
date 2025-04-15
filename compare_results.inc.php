@@ -363,8 +363,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
 
         }
-        if (($isTeacher or $isStudent) or defined('EVALUATION_OWNER')
-                or ){
+        if (defined('EVALUATION_OWNER') or $isTeacher or $isStudent ){
             print $isFilter ? "" : "- alle: ";
 
             if ($privGlobalUser AND $_SESSION["participating_courses_of_studies"]>1) {
