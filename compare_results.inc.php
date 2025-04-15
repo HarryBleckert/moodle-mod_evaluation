@@ -366,8 +366,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         if (($isTeacher or $isStudent) or defined('EVALUATION_OWNER')){
             print $isFilter ? "" : "- alle: ";
 
-            if ($privGlobalUser AND $_SESSION["participating_courses_of_studies"]>1
-            ) {
+            if ($privGlobalUser AND $_SESSION["participating_courses_of_studies"]>1) {
                 if ($allSelected == "allDepartments") {
                     $style = $selectStyle;
                     $value = "";
@@ -381,21 +380,21 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     echo get_string("departments", "evaluation");
                     ?></button>
                 <?php
-            }
 
-            if ($allSelected == "allStudies") {
-                $style = $selectStyle;
-                $value = "";
-            } else {
-                $style = $buttonStyle;
-                $value = "allStudies";
-            }
-            ?>
-            <button name="allSelected" style="<?php echo $style; ?>" value="<?php
-            echo $value; ?>" onclick="this.form.submit();"><?php
-                echo get_string("courses_of_studies", "evaluation"); ?></button>
+                if ($allSelected == "allStudies") {
+                    $style = $selectStyle;
+                    $value = "";
+                } else {
+                    $style = $buttonStyle;
+                    $value = "allStudies";
+                }
+                ?>
+                <button name="allSelected" style="<?php echo $style; ?>" value="<?php
+                echo $value; ?>" onclick="this.form.submit();"><?php
+                    echo get_string("courses_of_studies", "evaluation"); ?></button>
 
-            <?php
+                <?php
+            }
             //if (defined('EVALUATION_OWNER')){
             if ($allSelected == "allCourses") {
                 $style = $selectStyle;
@@ -706,7 +705,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $allKey = "course_of_studiesID";
         $allKeyV = "course_of_studies";
         $aFilter = "course_of_studies <>''"; // . $cosPrivileged_filter;
-        $evaluationResults = safeCount($DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
+        $evaluationResults = $numCoS = safeCount($DB->get_records_sql("SELECT course_of_studies, count(*) AS count 
 											 FROM {evaluation_completed}
 											 WHERE evaluation=$evaluation->id AND $aFilter $subqueryC
 											 GROUP BY course_of_studies ORDER BY course_of_studies"));
