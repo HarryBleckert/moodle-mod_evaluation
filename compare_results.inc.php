@@ -85,8 +85,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
         $course_of_studies = evaluation_get_course_of_studies_from_evc($course_of_studiesID, $evaluation);
     }
 
-    if (!isset($_SESSION["participating_courses_of_studies"])) {
-        $_SESSION["participating_courses_of_studies"] = 0;
+    if (true || !isset($_SESSION["participating_courses_of_studies"])) {
+        $_SESSION["participating_courses_of_studies"] = 1;
         if (!empty($sg_filter)) {
             $_SESSION["participating_courses_of_studies"] = safeCount($sg_filter);
         }
@@ -725,7 +725,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             // $isCourseStudent = evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid);
             $is_my_cos = evaluation_is_my_cos($myEvaluations, $allResult->course_of_studies);
             if (defined('EVALUATION_OWNER') ||
-                    (($cosPrivileged ?!empty($_SESSION['CoS_privileged'][$USER->username][$allResult->course_of_studies]) ?true :$is_my_cos))) {
+                    (($cosPrivileged ?!empty($_SESSION['CoS_privileged'][$USER->username][$allResult->course_of_studies]) ?true
+                            :evaluation_is_my_cos($myEvaluations, $allResult->course_of_studies)))) {
                 $links = '<a href="analysis_course.php?id=' . $id .
                         '&course_of_studiesID='
                         . $course_of_studiesID

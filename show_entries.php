@@ -100,7 +100,7 @@ $evurl = new moodle_url('/mod/evaluation/show_entries.php', array('id' => $cm->i
 evSetPage($url, $evurl, get_string("show_entries", "evaluation"));
 $PAGE->set_url(new moodle_url($url, array('userid' => $userid, 'showcompleted' => $showcompleted, 'delete' => $deleteid)));
 
-if (!isset($_SESSION["participating_courses_of_studies"])) {
+if (true || !isset($_SESSION["participating_courses_of_studies"])) {
     $_SESSION["participating_courses_of_studies"] = 3;
     if (!empty($sg_filter)) {
         $_SESSION["participating_courses_of_studies"] = safeCount($sg_filter);

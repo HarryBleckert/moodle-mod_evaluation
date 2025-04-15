@@ -157,10 +157,8 @@ if (!has_capability('mod/evaluation:edititems', $context) && !$evaluationcomplet
 //$evaluationcompletion->trigger_module_viewed(); // error with 4.2
 evaluation_trigger_module_viewed($evaluation, $cm, $courseid);
 
+
 /// Print the main part of the page
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 
 if (!isset($_SESSION["myEvaluations"])) {
     $_SESSION["myEvaluations"] = get_evaluation_participants($evaluation, $USER->id);
@@ -480,7 +478,7 @@ if (defined('EVALUATION_OWNER') or $isPermitted or has_capability('mod/evaluatio
         }
 
         // $teamteaching_courses = $_SESSION["teamteaching_courses"];
-        if (!isset($_SESSION["participating_courses_of_studies"])) {
+        if (true || !isset($_SESSION["participating_courses_of_studies"])) {
             $_SESSION["participating_courses_of_studies"] = $courses_of_studies;
             if (!empty($sg_filter)) {
                 $_SESSION["participating_courses_of_studies"] = safeCount($sg_filter);

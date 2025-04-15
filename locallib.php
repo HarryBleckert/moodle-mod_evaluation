@@ -3599,7 +3599,8 @@ function ev_set_privileged_users($show = false, $getEmails = false) {
         $cfgA = explode("\n", file_get_contents($cfgFile));
         $privileged_users = $_SESSION["privileged_global_users"] =  $_SESSION["privileged_users"]
                 = $_SESSION["privileged_global_users_wm"] = $_SESSION["course_of_studies_wm"]
-                = $_SESSION['CoS_department'] = $_SESSION['CoS_privileged'] = $_SESSION['CoS_privileged_sgl'] = array();
+                = $_SESSION['CoS_department'] = $_SESSION['CoS_privileged'] = $_SESSION['CoS_privileged_sgl']
+                = array();
 
         foreach ($cfgA as $line) {
             $CoS = "";

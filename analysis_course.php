@@ -115,7 +115,7 @@ $ev_name = ev_get_tr($evaluation->name);
 $icon = '<img src="pix/icon120.png" height="30" alt="' . $ev_name . '">';
 echo $OUTPUT->heading($icon . "&nbsp;" . format_string($ev_name));
 
-if (!isset($_SESSION["participating_courses_of_studies"])) {
+if (true || !isset($_SESSION["participating_courses_of_studies"])) {
     $_SESSION["participating_courses_of_studies"] = 3;
     if (!empty($sg_filter)) {
         $_SESSION["participating_courses_of_studies"] = safeCount($sg_filter);
