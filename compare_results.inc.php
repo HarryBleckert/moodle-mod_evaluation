@@ -366,7 +366,7 @@ function evaluation_compare_results($evaluation, $courseid = false,
         if (defined('EVALUATION_OWNER') or $isTeacher or $isStudent ){
             print $isFilter ? "" : "- alle: ";
 
-            if ($privGlobalUser AND $_SESSION["participating_courses_of_studies"]>1) {
+            if (defined('EVALUATION_OWNER') || $cosPrivileged) {
                 if ($allSelected == "allDepartments") {
                     $style = $selectStyle;
                     $value = "";
@@ -381,8 +381,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     ?></button>
                 <?php
             }
-            if ($cosPrivileged ?!empty($_SESSION['CoS_privileged'][$USER->username])
-                    :evaluation_is_my_cos($myEvaluations, $allResult->course_of_studies)){
+            if (defined('EVALUATION_OWNER') OR ($cosPrivileged ?!empty($_SESSION['CoS_privileged'][$USER->username])
+                    :evaluation_is_my_cos($myEvaluations, $allResult->course_of_studies))){
 
             if ($allSelected == "allStudies") {
                 $style = $selectStyle;
