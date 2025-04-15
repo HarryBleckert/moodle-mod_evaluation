@@ -363,7 +363,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
             }
 
         }
-        if (($isTeacher or $isStudent) or defined('EVALUATION_OWNER')){
+        if (($isTeacher or $isStudent) or defined('EVALUATION_OWNER')
+                or ){
             print $isFilter ? "" : "- alle: ";
 
             if ($privGlobalUser AND $_SESSION["participating_courses_of_studies"]>1) {
@@ -380,21 +381,25 @@ function evaluation_compare_results($evaluation, $courseid = false,
                     echo get_string("departments", "evaluation");
                     ?></button>
                 <?php
-
-                if ($allSelected == "allStudies") {
-                    $style = $selectStyle;
-                    $value = "";
-                } else {
-                    $style = $buttonStyle;
-                    $value = "allStudies";
-                }
-                ?>
-                <button name="allSelected" style="<?php echo $style; ?>" value="<?php
-                echo $value; ?>" onclick="this.form.submit();"><?php
-                    echo get_string("courses_of_studies", "evaluation"); ?></button>
-
-                <?php
             }
+            if ($cosPrivileged ?!empty($_SESSION['CoS_privileged'][$USER->username])
+                    :evaluation_is_my_cos($myEvaluations, $allResult->course_of_studies)){
+
+            if ($allSelected == "allStudies") {
+                $style = $selectStyle;
+                $value = "";
+            } else {
+                $style = $buttonStyle;
+                $value = "allStudies";
+            }
+            ?>
+            <button name="allSelected" style="<?php echo $style; ?>" value="<?php
+            echo $value; ?>" onclick="this.form.submit();"><?php
+                echo get_string("courses_of_studies", "evaluation"); ?></button>
+
+            <?php
+            }
+
             //if (defined('EVALUATION_OWNER')){
             if ($allSelected == "allCourses") {
                 $style = $selectStyle;
