@@ -160,8 +160,8 @@ function evaluation_compare_results($evaluation, $courseid = false,
     }
 
     $query = "SELECT * FROM {evaluation_item} WHERE evaluation=$evaluation->id 
-				AND (typ='multichoice' OR typ='numeric') AND hasvalue=1 
-				AND name NOT ILIKE '%" . get_string("course_of_studies", "evaluation") . "%' 
+				AND typ IN ('multichoice','numeric','multichoicerated') AND hasvalue=1 
+				/* AND name NOT ILIKE '%" . get_string("course_of_studies", "evaluation") . "%' */ 
 				ORDER by position ASC";
     $allQuestions = $DB->get_records_sql($query);
     $numAllQuestions = safeCount($allQuestions);
