@@ -2159,7 +2159,6 @@ function evaluation_is_teacher($evaluation, $myEvaluations, $courseid = false) {
 }
 
 function evaluation_is_my_courseid($myEvaluations, $courseid) {
-    global $USER;
     foreach ($myEvaluations as $myEvaluation) {
         if ($myEvaluation['courseid'] == $courseid) {
             return true;
@@ -2167,6 +2166,17 @@ function evaluation_is_my_courseid($myEvaluations, $courseid) {
     }
     return false;
 }
+
+
+function evaluation_is_my_cos($myEvaluations, $cos) {
+    foreach ($myEvaluations as $myEvaluation) {
+        if ($myEvaluation['courseofstudies'] == $cos) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 function array_merge_recursive_distinct(array &$array1, array &$array2) {
     $merged = $array1;
@@ -2284,6 +2294,7 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
         if (!is_array($contextC) AND !is_object($contextC)){
             continue;
         }
+        $course_of_studies = evaluation_get_course_of_studies($courseid, false);  // get Studiengang without link
         // only used when open!
         if ( $evaluation_is_open) {
             // $loopcnt=0;
@@ -2316,6 +2327,7 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
                                     "username" => $roleC->username,
                                     "email" => $roleC->email, "fullname" => $fullname, "courseid" => $course->id,
                                     "course" => $course->fullname, "shortname" => $course->shortname,
+                                    "course_of_studies" => $course_of_studies,
                                     "lastaccess" => $roleC->lastaccess, "language" => $lang,
                                     "teachers" => $_SESSION["allteachers"][$course->id], "reminder" => $reminder);
                         } else if ($getStudents) {
@@ -2343,6 +2355,7 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
                                     array("role" => "teacher", "id" => $roleC->id, "username" => $roleC->username,
                                             "email" => $roleC->email, "fullname" => $fullname, "courseid" => $course->id,
                                             "course" => $course->fullname, "shortname" => $course->shortname,
+                                            "course_of_studies" => $course_of_studies,
                                             "teachers" => $_SESSION["allteachers"][$course->id], "lastaccess" => $roleC->lastaccess,
                                             "language" => $lang, "reminder" => $reminder);
                         } else if ($getTeachers) {
@@ -2391,6 +2404,7 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
                             array("role" => "student", "id" => $roleC->id, "username" => $roleC->username, "language" => $lang,
                                     "email" => $roleC->email, "fullname" => $fullname, "courseid" => $course->id,
                                     "course" => $course->fullname, "shortname" => $course->shortname,
+                                    "course_of_studies" => $course_of_studies,
                                     "teachers" => $_SESSION["allteachers"][$course->id], "lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                 } else if ($getStudents) {
                     $my_evaluation_users[$roleC->id] =
@@ -2429,6 +2443,7 @@ function array_merge_recursive_distinct(array &$array1, array &$array2) {
                             array("courseid" => $course->id, "role" => "teacher", "id" => $roleC->id, "language" => $lang,
                                     "username" => $roleC->username, "email" => $roleC->email, "fullname" => $fullname,
                                     "course" => $course->fullname, "shortname" => $course->shortname,
+                                    "course_of_studies" => $course_of_studies,
                                     "teachers" => $_SESSION["allteachers"][$course->id],"lastaccess" => $roleC->lastaccess, "reminder" => $reminder);
                 } else if ($getTeachers) {
                     $my_evaluation_users[$roleC->id] =

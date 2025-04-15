@@ -253,7 +253,7 @@ if (defined('EVALUATION_OWNER') and $evaluation->course == SITEID) {
 }
 
 $all_courses = false;
-$Studiengang = $showTeachers = "";
+$course_of_studies = $showTeachers = "";
 
 if ($SiteEvaluation and !$courseid) {
     $all_courses = true;
@@ -263,16 +263,16 @@ if ($SiteEvaluation and !$courseid) {
 }
 if ($courseid) {
     if ($evaluation->course == SITEID) {
-        $Studiengang = evaluation_get_course_of_studies($courseid, true);  // get Studiengang with link
+        $course_of_studies = evaluation_get_course_of_studies($courseid, true);  // get Studiengang with link
         $semester = evaluation_get_course_of_studies($courseid, true, true);  // get Semester with link
-        if (!empty($Studiengang)) {
-            $Studiengang = get_string("course_of_studies", "evaluation") .
+        if (!empty($course_of_studies)) {
+            $course_of_studies = get_string("course_of_studies", "evaluation") .
                     ": <span style=\"font-size:12pt;font-weight:bold;display:inline;\">"
-                    . $Studiengang .
+                    . $course_of_studies .
                     (empty($semester) ? "" : " <span style=\"font-size:10pt;font-weight:normal;\">(" . $semester . ")</span>") .
                     "</span><br>\n";
         }
-        echo $Studiengang . $CourseTitle;
+        echo $course_of_studies . $CourseTitle;
     } else {
         echo $CourseTitle;
     }

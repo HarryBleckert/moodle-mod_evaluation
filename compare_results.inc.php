@@ -722,8 +722,10 @@ function evaluation_compare_results($evaluation, $courseid = false,
             $course_of_studiesID =
                     evaluation_get_course_of_studies_id_from_evc($id, $allResult->course_of_studies, $evaluation);
             $allCosIDs[] = $course_of_studiesID;
-            if (defined('EVALUATION_OWNER') &&
-                    (empty($_SESSION['CoS_privileged'][$USER->username][$allResult->course_of_studies]) ?true :empty($teacherid))) {
+            // $isCourseStudent = evaluation_is_student($evaluation, $myEvaluations, $allResult->courseid);
+
+            if (defined('EVALUATION_OWNER') ||
+                    (($cosPrivileged ?!empty($_SESSION['CoS_privileged'][$USER->username][$allResult->course_of_studies]) ?true :true))) {
                 $links = '<a href="analysis_course.php?id=' . $id .
                         '&course_of_studiesID='
                         . $course_of_studiesID
