@@ -307,7 +307,9 @@ function evSetPage($url, $url2 = false, $anker = false) {
             evHideSettings();
             //$CFG->additionalhtmlfooter = evaluation_additional_html();
         }
-        print '<div id="LoginAs" class="LoginAs d-print-none"></div><span style="clear:both;"><br></span>';
+        print '<div class="d-print-none" style="display:inline;text-align:left;"></div>';
+        print '<div id="LoginAs" class="LoginAs d-print-none" style="display:inline;text-align:left;"></div>
+        <span style="clear:both;"><br></span>';
     }
 }
 
