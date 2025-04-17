@@ -307,7 +307,8 @@ function evSetPage($url, $url2 = false, $anker = false) {
             evHideSettings();
             //$CFG->additionalhtmlfooter = evaluation_additional_html();
         }
-        print '<div class="d-print-none" style="display:inline;text-align:left;"></div>';
+        print '<div class="d-print-none" style="display:inline;text-align:left;"><a 
+            href="/my">ASH Dashboard</a>&nbsp;&nbsp;<a href="/mod/evaluation/">Alle Evaluationen</a></div>';
         print '<div id="LoginAs" class="LoginAs d-print-none" style="display:inline;text-align:left;"></div>
         <span style="clear:both;"><br></span>';
     }
